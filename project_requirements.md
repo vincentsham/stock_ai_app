@@ -7,11 +7,22 @@ The AI agent will provide real-time stock analysis and insights. It will fetch s
 
 ## Functional Requirements
 
-| ID  | Feature                     | Input                          | Output                                                                 | Source         |
-|------|-----------------------------|--------------------------------|------------------------------------------------------------------------|----------------|
-| FR1  | Stock Information Retrieval | Stock ticker symbol (e.g., AAPL, TSLA) | Ticker symbol, company name, current stock price, current time         | Seeking Alpha  |
-| FR2  | News Headlines              | Stock ticker symbol           | 5 most recent news headlines                                          | Seeking Alpha  |
+| ID  | Feature | Input | Output  | Source         |
+|------|-------|------|----------|----------------|
+| FR1  | Stock Information Retrieval | Stock ticker symbol (e.g., AAPL, TSLA) | Ticker symbol, company name, current stock price, current time         | yfinance  |
+| FR2  | News Headlines              | Stock ticker symbol           | 5 most recent news headlines                                          |  |
 
+---
+
+## ETL Requirements
+
+| ID  | Feature | Input | Output  | Source         |
+|------|-------|------|----------|----------------|
+| ETLR1  | Stock price table | Stock ticker symbol (e.g., AAPL, TSLA) | Ticker symbol, company name, current stock price, current time         | yfinance  |
+| ETLR2  | News Headlines table | Stock ticker symbol           | 5 most recent news headlines                                          |  |
+| ETLR3  | Earnings table | Stock ticker symbol           | historical earnings and earnings date  | CoinCodex |
+| ETLR4  | Earning Transcript table | Stock ticker symbol           | earning transcript data | API Ninja |
+| ETLR5  | Financial Statement table | Stock ticker symbol           | financial statement data | FMP |
 ---
 
 ## Non-Functional Requirements
