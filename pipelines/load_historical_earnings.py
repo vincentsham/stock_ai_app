@@ -44,7 +44,7 @@ def insert_historical_earnings(conn, data, ticker):
     try:
         cursor = conn.cursor()
         query = """
-        INSERT INTO historical_earnings (
+        INSERT INTO earnings (
             tic, fiscal_year, fiscal_quarter, fiscal_date_ending, earnings_date, eps, eps_estimated, session, revenue, revenue_estimated, price_before, price_after, last_updated
         ) VALUES (
             %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
@@ -61,7 +61,7 @@ def insert_historical_earnings(conn, data, ticker):
             price_before = EXCLUDED.price_before,
             price_after = EXCLUDED.price_after,
             last_updated = EXCLUDED.last_updated
-        WHERE historical_earnings.last_updated IS NULL OR EXCLUDED.last_updated > historical_earnings.last_updated;
+        WHERE earnings.last_updated IS NULL OR EXCLUDED.last_updated > earnings.last_updated;
         """
         for record in data:
             fiscal_date = record.get("fiscalDateEnding")

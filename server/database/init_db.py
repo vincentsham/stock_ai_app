@@ -75,7 +75,7 @@ try:
 
     # Create a table for historical earnings data if it does not exist
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS historical_earnings (
+    CREATE TABLE IF NOT EXISTS earnings (
         tic VARCHAR(20) NOT NULL,
         fiscal_year INT NOT NULL,
         fiscal_quarter INT NOT NULL,
@@ -92,7 +92,7 @@ try:
         PRIMARY KEY (tic, fiscal_year, fiscal_quarter)
     );
     """)
-    print("Table 'historical_earnings' created or already exists with composite primary key.")
+    print("Table 'earnings' created or already exists with composite primary key.")
 
     conn.commit()
     print("Tables created successfully!")
