@@ -1,6 +1,5 @@
 import yfinance as yf
 import psycopg as pg
-from psycopg.extras import execute_values
 from dotenv import load_dotenv
 import os
 
@@ -30,13 +29,12 @@ def connect_to_db():
         return None
 
 # Fetch stock data from yfinance
-def fetch_stock_data(tickers):
+def fetch_stock_data(tic):
     data = {}
-    for ticker in tickers:
-        print(f"Fetching all available historical data for {ticker}...")
-        stock = yf.Ticker(ticker)
-        hist = stock.history(period="max")  # Fetch all available historical data
-        data[ticker] = hist.reset_index()
+    print(f"Fetching all available historical data for {tic}...")
+    stock = yf.Ticker(tic)
+    hist = stock.history(period="max")  # Fetch all available historical data
+    data[tic] = hist.reset_index()
     return data
 
 # Insert stock data into the database
@@ -50,10 +48,10 @@ def insert_stock_data(conn, data):
             ]
             query = """
             INSERT INTO stock_ohlcv (date, tic, open, high, low, close, volume)
-            VALUES %s
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (date, tic) DO NOTHING;
             """
-            execute_values(cursor, query, rows)
+            cursor.executemany(query, rows)  # Use executemany for bulk insert
         conn.commit()
         print("Data inserted successfully!")
     except Exception as e:
@@ -61,9 +59,12 @@ def insert_stock_data(conn, data):
         conn.rollback()
 
 if __name__ == "__main__":
-    tickers = ["AAPL", "TSLA", "NVDA"]
     conn = connect_to_db()
     if conn:
-        stock_data = fetch_stock_data(tickers)
-        insert_stock_data(conn, stock_data)
+        cursor = conn.cursor()
+        cursor.execute("SELECT tic FROM stock_metadata;")
+        records = cursor.fetchall()
+        for tic in records:
+            stock_data = fetch_stock_data(tic[0])
+            insert_stock_data(conn, stock_data)
         conn.close()

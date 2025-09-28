@@ -94,6 +94,26 @@ try:
     """)
     print("Table 'earnings' created or already exists with composite primary key.")
 
+
+    # Create a table for historical earnings transcripts data if it does not exist
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS earnings_transcripts (
+        tic             VARCHAR(20)  NOT NULL,
+        fiscal_year     INT          NOT NULL,
+        fiscal_quarter  INT          NOT NULL,
+        earnings_date   DATE,
+        transcript      TEXT,
+        raw_json        JSONB,   -- renamed from payload
+        source          TEXT DEFAULT 'api-ninjas/earningstranscript',
+        last_updated    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (tic, fiscal_year, fiscal_quarter)
+    );
+    """)
+    print("Table 'earnings_transcripts' created or already exists with composite primary key.")
+
+
+    
+
     conn.commit()
     print("Tables created successfully!")
 except Exception as e:

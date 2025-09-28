@@ -78,4 +78,11 @@ The AI agent will provide real-time stock analysis and insights. It will fetch s
 
 ---
 
-This document outlines the initial requirements and scope for the AI agent. Additional features can be added in future iterations based on user feedback and project goals.
+## Sources
+1. Yahoo FInance
+2. CoinCodex
+3. FMP API
+4. Twelvedata API
+5. News API
+6. Benzinga
+7. Nasdaq
