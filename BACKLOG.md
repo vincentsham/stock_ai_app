@@ -27,7 +27,7 @@
 
 ## Backlog Table
 
-| ID  | Category       | Description                                      | Priority | Status    | Open Date  | Close Date |
-|------|----------------|--------------------------------------------------|----------|-----------|------------|------------|
-| 1    | Feature        | Create Table - Earning Transcripts         | High     | In Progress | 2025-09-27 |            |
+| ID  | Category | Description | Priority | Status    | Open Date  | Close Date |
+|------|--------|----------|----------|-----------|------------|------------|
+| 1    | Feature  | Create Table - Earnings Transcripts   | High     | Close | 2025-09-27 | 2025-09-28 |
 ---
