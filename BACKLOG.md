@@ -31,7 +31,9 @@
 
 | ID  | Category | Description | Priority | Status    | Open Date  | Close Date |
 |------|--------|----------|----------|-----------|------------|------------|
-| 3    | Feature  | Create Table - Earnings using FMP   | Low     | Open |  |  |
+| 3 | Feature  | Create an advanced ai agent to find the important news, reddit post, tweets  | High     | Open |  |  |
+| 1001 | Feature  | Create Table - Earnings using FMP   | Low     | Open |  |  |
+
 
 
 ### Closed Backlog Items
