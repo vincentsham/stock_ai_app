@@ -39,6 +39,7 @@ def fetch_stock_data(tic):
 
 # Insert stock data into the database
 def insert_stock_data(conn, data):
+    total_records = 0
     try:
         cursor = conn.cursor()
         for ticker, df in data.items():
@@ -49,14 +50,21 @@ def insert_stock_data(conn, data):
             query = """
             INSERT INTO stock_ohlcv (date, tic, open, high, low, close, volume)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (date, tic) DO NOTHING;
+            ON CONFLICT (date, tic) DO UPDATE SET
+                open = EXCLUDED.open,
+                high = EXCLUDED.high,
+                low = EXCLUDED.low,
+                close = EXCLUDED.close,
+                volume = EXCLUDED.volume;
             """
             cursor.executemany(query, rows)  # Use executemany for bulk insert
+            total_records += cursor.rowcount
         conn.commit()
-        print("Data inserted successfully!")
+        return total_records
     except Exception as e:
         print(f"Error inserting data: {e}")
         conn.rollback()
+        return 0
 
 if __name__ == "__main__":
     conn = connect_to_db()
@@ -66,5 +74,6 @@ if __name__ == "__main__":
         records = cursor.fetchall()
         for tic in records:
             stock_data = fetch_stock_data(tic[0])
-            insert_stock_data(conn, stock_data)
+            total_records = insert_stock_data(conn, stock_data)
+            print(f"For {tic[0]}: Total records processed = {total_records}") 
         conn.close()

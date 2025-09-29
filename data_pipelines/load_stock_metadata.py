@@ -56,6 +56,7 @@ def fetch_stock_metadata(tickers):
 
 # Insert stock metadata into the database
 def insert_stock_metadata(conn, data):
+    total_records = 0
     try:
         cursor = conn.cursor()
         query = """
@@ -77,18 +78,21 @@ def insert_stock_metadata(conn, data):
         for record in data:
             try:
                 cursor.execute(query, record)
+                total_records += cursor.rowcount
             except UniqueViolation:
                 print(f"Duplicate entry for {record[0]}")
         conn.commit()
-        print("Metadata inserted successfully!")
+        return total_records
     except Exception as e:
         print(f"Error inserting metadata: {e}")
         conn.rollback()
+        return 0
 
 if __name__ == "__main__":
     tickers = ["AAPL", "TSLA", "NVDA"]
     conn = connect_to_db()
     if conn:
         stock_metadata = fetch_stock_metadata(tickers)
-        insert_stock_metadata(conn, stock_metadata)
+        total_records = insert_stock_metadata(conn, stock_metadata)
+        print(f"Total records inserted: {total_records}")
         conn.close()

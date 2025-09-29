@@ -45,13 +45,13 @@ def insert_historical_earnings(conn, data, ticker):
         cursor = conn.cursor()
         query = """
         INSERT INTO earnings (
-            tic, fiscal_year, fiscal_quarter, fiscal_date_ending, earnings_date, eps, eps_estimated, session, revenue, revenue_estimated, price_before, price_after, last_updated
+            tic, fiscal_year, fiscal_quarter, fiscal_date, earnings_date, eps, eps_estimated, session, revenue, revenue_estimated, price_before, price_after, last_updated
         ) VALUES (
             %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
         )
         ON CONFLICT (tic, fiscal_year, fiscal_quarter)
         DO UPDATE SET
-            fiscal_date_ending = EXCLUDED.fiscal_date_ending,
+            fiscal_date = EXCLUDED.fiscal_date,
             earnings_date = EXCLUDED.earnings_date,
             eps = EXCLUDED.eps,
             eps_estimated = EXCLUDED.eps_estimated,
@@ -60,9 +60,9 @@ def insert_historical_earnings(conn, data, ticker):
             revenue_estimated = EXCLUDED.revenue_estimated,
             price_before = EXCLUDED.price_before,
             price_after = EXCLUDED.price_after,
-            last_updated = EXCLUDED.last_updated
-        WHERE earnings.last_updated IS NULL OR EXCLUDED.last_updated > earnings.last_updated;
+            last_updated = EXCLUDED.last_updated;
         """
+        total_records = 0
         for record in data:
             fiscal_date = record.get("fiscalDateEnding")
             fiscal_date = pd.to_datetime(fiscal_date) 
@@ -71,44 +71,41 @@ def insert_historical_earnings(conn, data, ticker):
             fiscal_month = fiscal_date.month
             if fiscal_month in [3, 4, 5]:
                 fiscal_quarter = 1
-                fiscal_date = "{}-03-31".format(fiscal_year)
             elif fiscal_month in [6, 7, 8]:
                 fiscal_quarter = 2
-                fiscal_date = "{}-06-30".format(fiscal_year)
             elif fiscal_month in [9, 10, 11]:
                 fiscal_quarter = 3
-                fiscal_date = "{}-09-30".format(fiscal_year)
             elif fiscal_month in [12]:
                 fiscal_quarter = 4
-                fiscal_date = "{}-12-31".format(fiscal_year)
             elif fiscal_month in [1, 2]:
                 fiscal_quarter = 4
                 fiscal_year -= 1
-                fiscal_date = "{}-12-31".format(fiscal_year)
             else:
                 print(f"Unexpected fiscal date {fiscal_date} for ticker {ticker}")
                 continue
 
             cursor.execute(query, (
-            ticker,
-            fiscal_year,
-            fiscal_quarter,
-            fiscal_date,
-            record.get("date"),
-            record.get("eps") if pd.notnull(record.get("eps")) else None,
-            record.get("epsEstimated") if pd.notnull(record.get("epsEstimated")) else None,
-            record.get("time") if pd.notnull(record.get("time")) else None,
-            int(float(record.get("revenue", 0) or 0)) if pd.notnull(record.get("revenue")) else None,
-            int(float(record.get("revenueEstimated", 0) or 0)) if pd.notnull(record.get("revenueEstimated")) else None,
-            record.get("priceBefore") if pd.notnull(record.get("priceBefore")) else None,
-            record.get("priceAfter") if pd.notnull(record.get("priceAfter")) else None,
-            record.get("updatedFromDate")
+                ticker,
+                fiscal_year,
+                fiscal_quarter,
+                record.get("fiscalDateEnding"),
+                record.get("date"),
+                record.get("eps") if pd.notnull(record.get("eps")) else None,
+                record.get("epsEstimated") if pd.notnull(record.get("epsEstimated")) else None,
+                record.get("time") if pd.notnull(record.get("time")) else None,
+                int(float(record.get("revenue", 0) or 0)) if pd.notnull(record.get("revenue")) else None,
+                int(float(record.get("revenueEstimated", 0) or 0)) if pd.notnull(record.get("revenueEstimated")) else None,
+                record.get("priceBefore") if pd.notnull(record.get("priceBefore")) else None,
+                record.get("priceAfter") if pd.notnull(record.get("priceAfter")) else None,
+                record.get("updatedFromDate")
             ))
+            total_records += cursor.rowcount
         conn.commit()
-        print(f"Historical earnings data for {ticker} inserted successfully!")
+        return total_records
     except Exception as e:
         print(f"Error inserting data for {ticker}: {e}")
         conn.rollback()
+        return 0
 
 if __name__ == "__main__":
     conn = connect_to_db()
@@ -118,5 +115,6 @@ if __name__ == "__main__":
         records = cursor.fetchall()
         for tic, exchange in records:
             data = fetch_historical_earnings(tic, exchange)
-            insert_historical_earnings(conn, data, tic)
+            total_records = insert_historical_earnings(conn, data, tic)
+            print(f"For {tic}: Total records processed = {total_records}")
         conn.close()

@@ -27,6 +27,15 @@
 
 ## Backlog Table
 
+### Open Backlog Items
+
+| ID  | Category | Description | Priority | Status    | Open Date  | Close Date |
+|------|--------|----------|----------|-----------|------------|------------|
+| 3    | Feature  | Create Table - Earnings using FMP   | Low     | Open |  |  |
+
+
+### Closed Backlog Items
+
 | ID  | Category | Description | Priority | Status    | Open Date  | Close Date |
 |------|--------|----------|----------|-----------|------------|------------|
 | 0    | Feature  | Create Table - Stock metadata   | High     | Close | 2025-09-20 | 2025-09-26 |
@@ -35,5 +44,7 @@
 | 0    | Feature  | Create Basic AI Agent  | High     | Close | 2025-09-20 | 2025-09-26 |
 | 0    | Miscellaneous | Restructure File and Folder Structure | High | Close | 2025-09-20 | 2025-09-26 |
 | 1    | Feature  | Create Table - Earnings Transcripts   | High     | Close | 2025-09-27 | 2025-09-28 |
-| 2    | Feature  | Create Table - Financial Statements   | High     | Open | 2025-09-28 |  |
----
+| 2    | Feature  | Create Table - Income Statements   | High     | Close | 2025-09-28 | 2025-09-29 |
+| 2    | Feature  | Create Table - Cash Flows   | High     | Close | 2025-09-28 | 2025-09-29 |
+| 2    | Feature  | Create Table - Balance Sheets   | High     | Close | 2025-09-28 | 2025-09-29 |
+| 2    | Feature  | Add No. of inserted records   | Low     | Close | 2025-09-28 | 2025-09-29 |

@@ -46,36 +46,40 @@ def fetch_earnings_transcript(ticker, year, quarter):
 
 # Insert earnings transcript data into the database
 def insert_earnings_transcript(conn, data, tic, fiscal_year, fiscal_quarter, earnings_date, url=None):
+    total_records = 0
     try:
         cursor = conn.cursor()
         query = """
         INSERT INTO earnings_transcripts (
-            raw_json, fiscal_quarter, last_updated, earnings_date, fiscal_year, transcript, tic, source
+            tic, fiscal_year, fiscal_quarter, earnings_date, raw_json, source
         ) VALUES (
-            %s, %s, %s, %s, %s, %s, %s, %s
+            %s, %s, %s, %s, %s, %s
         )
         ON CONFLICT (tic, fiscal_year, fiscal_quarter)
         DO UPDATE SET
-            raw_json = EXCLUDED.raw_json,
-            last_updated = EXCLUDED.last_updated,
             earnings_date = EXCLUDED.earnings_date,
-            transcript = EXCLUDED.transcript,
-            source = EXCLUDED.source
-        WHERE earnings_transcripts.last_updated IS NULL OR EXCLUDED.last_updated > earnings_transcripts.last_updated;
+            raw_json = EXCLUDED.raw_json,
+            source = EXCLUDED.source;
         """
         cursor.execute(query, (
-            json.dumps(data),  # Serialize the raw_json field
-            fiscal_quarter,
-            datetime.datetime.now(),
-            earnings_date,
-            fiscal_year,
-            data.get("transcript"),
             tic,
+            fiscal_year,
+            fiscal_quarter,
+            earnings_date,
+            # data.get("transcript"), --- IGNORE ---
+            json.dumps(data),  # Serialize the raw_json field    
             url
         ))
+        total_records += cursor.rowcount
         conn.commit()
+
+        # Calculate total records (inserted + updated)
+        return total_records
+
     except Exception as e:
+        print(f"Error inserting transcript for {tic}: {e}")
         conn.rollback()
+        return 0
 
 # Update fiscal year and quarter in earnings_transcripts table
 def update_fiscal_data_record_by_record(conn):
@@ -167,15 +171,17 @@ if __name__ == "__main__":
 
         for record in records:
             tic = record[0]
+            total_records = 0
             for year in range(2025, 2027):
                 for quarter in range(1, 5):
                     data, url = fetch_earnings_transcript(tic, year, quarter)
                     if data:
                         earnings_date = data.get("date")
                         fiscal_year, fiscal_quarter, earnings_date = lookup_fiscal_data(conn, tic, earnings_date)
-                        insert_earnings_transcript(conn, data, tic, fiscal_year, fiscal_quarter, earnings_date, url)
+                        total_records += insert_earnings_transcript(conn, data, tic, fiscal_year, fiscal_quarter, earnings_date, url)
                         print(f"Inserted transcript for {tic} for Q{fiscal_quarter} {fiscal_year}")
                     else:
                         print(f"No data found for {tic} for Q{quarter} {year}")
+            print(f"For {tic}: Total records processed = {total_records}")  
         conn.close()
 
