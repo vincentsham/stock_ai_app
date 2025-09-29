@@ -5,12 +5,21 @@ The AI agent will provide real-time stock analysis and insights. It will fetch s
 
 ---
 
-## Functional Requirements
+## AI Agent Requirements
 
 | ID  | Feature | Input | Output  | Source         |
 |------|-------|------|----------|----------------|
-| FR1  | Stock Information Retrieval | Stock ticker symbol (e.g., AAPL, TSLA) | Ticker symbol, company name, current stock price, current time         | yfinance  |
-| FR2  | News Headlines              | Stock ticker symbol           | 5 most recent news headlines                                          |  |
+| AR1  | Extract important news, reddit posts, tweets |  Stock ticker   | news, reddit posts, tweets  |
+| AR2  | Analyze the stock financial statements |  Stock ticker   | score, summary and comments  |
+| AR3  | Analyze the stock's recent catalysts |  Stock ticker   | score, summary and comments  |
+
+---
+## Report Requirements
+
+| ID  | Feature | Input | Output  | Source         |
+|------|-------|------|----------|----------------|
+| RP1  | Stock Information Retrieval | Stock ticker | Ticker symbol, company name, current stock price, current time         | yfinance  |
+| RP2  | News Headlines              | Stock ticker | 5 most recent news headlines                                          |  |
 
 ---
 
@@ -52,21 +61,13 @@ The AI agent will provide real-time stock analysis and insights. It will fetch s
 
 | ID   | Feature                                      | Status |
 |------|----------------------------------------------|--------|
-| SF1  | Fetch historical stock price data (e.g., last 7 days) | Yes    |
-| SF2  | Provide additional financial metrics (e.g., P/E ratio, market cap) | Yes    |
-| SF3  | Provide links to the full news articles for the headlines | Yes    |
-| SF4  | Perform sentiment analysis for the news headlines | Yes    |
+
 
 ### Excluded Features
 
 | ID   | Feature                                      | Status |
 |------|----------------------------------------------|--------|
-| EF1  | Support for multiple stock tickers in a single query | No     |
-| EF2  | Analyze stock trends and provide a summary (e.g., bullish or bearish) | Not Yet |
-| EF3  | Allow users to set alerts for specific stock price thresholds | No     |
-| EF4  | Integrate with a database to store user queries and responses | Not Yet |
-| EF5  | Support voice-based queries in addition to text | No     |
-| EF6  | Offer recommendations based on stock performance (e.g., buy, sell, hold) | Not Yet |
+
 
 ---
 
