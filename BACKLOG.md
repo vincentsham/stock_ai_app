@@ -36,6 +36,8 @@
 | 5 | Feature  | Create Table - Analyst Ratins From FMP API  | High     | Open |  |  |
 | 6 | Feature  | Create Table - Dividends From FMP API  | High     | Open |  |  |
 | 1001 | Feature  | Transfer Tables that has text to Pinecone  | Medium     | Open |  |  |
+| 1002 | Miscellaneous  | Create a md doc for table scehma  | Medium     | In Progress | 2025-09-30 |  |
+| 1002 | Miscellaneous  | Create a md doc for source  | Medium     | In Progress | 2025-09-30 |  |
 | 10001 | Feature  | Create Table - Earnings using FMP   | Low     | Open |  |  |
 
 
