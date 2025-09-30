@@ -32,7 +32,11 @@
 | ID  | Category | Description | Priority | Status    | Open Date  | Close Date |
 |------|--------|----------|----------|-----------|------------|------------|
 | 3 | Feature  | Create an advanced ai agent to find the important news, reddit post, tweets  | High     | Open |  |  |
-| 1001 | Feature  | Create Table - Earnings using FMP   | Low     | Open |  |  |
+| 4 | Feature  | Create Table - News From FMP API  | High     | Open |  |  |
+| 5 | Feature  | Create Table - Analyst Ratins From FMP API  | High     | Open |  |  |
+| 6 | Feature  | Create Table - Dividends From FMP API  | High     | Open |  |  |
+| 1001 | Feature  | Transfer Tables that has text to Pinecone  | Medium     | Open |  |  |
+| 10001 | Feature  | Create Table - Earnings using FMP   | Low     | Open |  |  |
 
 
 
