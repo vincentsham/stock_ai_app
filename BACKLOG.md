@@ -40,9 +40,10 @@ examples:
 | 4 | Feature  | Create Table - News From FMP API  | High     | Open |  |  |
 | 5 | Feature  | Create Table - Analyst Ratins From FMP API  | High     | Open |  |  |
 | 6 | Feature  | Create Table - Dividends From FMP API  | High     | Open |  |  |
-| 1001 | Feature  | Transfer Tables that has text to Pinecone  | Medium     | Open |  |  |
+| 7 | Feature  | Create an advanced ai agent to analyze news  | High     | Open |  |  |
 | 10001 | Feature  | Create Table - Earnings using FMP   | Low     | Open |  |  |
-
+| 10002 | Feature  | Transfer Tables that has text to Pinecone  | Low     | Open |  |  |
+| 10003 | Feature  | Analyze popularity trends  | Low     | Open |  |  |
 
 
 ### Closed Backlog Items
