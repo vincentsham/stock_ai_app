@@ -1,5 +1,14 @@
 # Database Schema Documentation
 
+## List of Tables
+- `stock_metadata`: Contains metadata about stocks, such as industry, sector, and market information.
+- `stock_ohlcv`: Stores historical OHLCV (Open, High, Low, Close, Volume) data for stocks.
+- `earnings`: Contains earnings data, including EPS, revenue, and session information.
+- `earnings_transcripts`: Stores transcripts of earnings calls for companies.
+- `cash_flows`: Contains cash flow statement data for companies.
+- `balance_sheets`: Stores balance sheet data for companies.
+- `income_statements`: Contains income statement data for companies.
+
 ## Table: stock_metadata
 **Description**: Contains metadata about stocks, such as industry, sector, and market information.
 
