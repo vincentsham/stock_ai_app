@@ -168,6 +168,24 @@ def table_creation(conn):
         """)
         print("Table 'balance_sheets' created or already exists with composite primary key.")
 
+        # Create a table for news data if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS news (
+            tic             VARCHAR(20) NOT NULL,              -- stock ticker
+            published_date  TIMESTAMP   NOT NULL,              -- from API publishedDate
+            publisher       TEXT,
+            title           TEXT NOT NULL,
+            site            TEXT,
+            content         TEXT,
+            url             TEXT NOT NULL,
+            raw_json        JSONB,
+            source          TEXT,
+            last_updated    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (tic, url)             -- composite PK: unique news per ticker+url
+        );
+        """)
+        print("Table 'news' created or already exists with composite primary key.")
+
 
 
         conn.commit()
