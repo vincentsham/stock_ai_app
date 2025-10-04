@@ -41,6 +41,7 @@ examples:
 | 6 | Feature  | Create Table - Dividends From FMP API  | High     | Open |  |  |
 | 7 | Feature  | Create an advanced ai agent to analyze news  | High     | Open |  |  |
 | 1001 | Feature  | Create Table - Earnings using FMP   | Medium     | Open |  |  |
+| 1003 | Feature  | Delete news record that is noise  | Medium     | Open |  |  |
 | 10001 | Feature  | Transfer Tables that has text to Pinecone  | Low     | Open |  |  |
 | 10002 | Feature  | Analyze popularity trends  | Low     | Open |  |  |
 
