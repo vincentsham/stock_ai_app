@@ -13,7 +13,7 @@ examples:
 - Resolve duplicate entries in the `earnings` table
 - Address API rate limit handling for data fetching
 
-## Technical Debt
+## Technical
 examples:
 - Refactor ETL pipeline for better modularity
 - Optimize database queries for faster performance
@@ -42,6 +42,7 @@ examples:
 | 7 | Feature  | Create an advanced ai agent to analyze news  | High     | Open |  |  |
 | 1001 | Feature  | Create Table - Earnings using FMP   | Medium     | Open |  |  |
 | 1003 | Feature  | Delete news record that is noise  | Medium     | Open |  |  |
+| 1004 | Technical  | Rewrite the loading scripts that can extract new data | Medium     | Open |  |  |
 | 10001 | Feature  | Transfer Tables that has text to Pinecone  | Low     | Open |  |  |
 | 10002 | Feature  | Analyze popularity trends  | Low     | Open |  |  |
 
