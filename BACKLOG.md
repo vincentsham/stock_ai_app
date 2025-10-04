@@ -37,7 +37,6 @@ examples:
 | ID  | Category | Description | Priority | Status    | Open Date  | Close Date |
 |------|--------|----------|----------|-----------|------------|------------|
 | 3 | Feature  | Create an advanced ai agent to find the important news, reddit post, tweets  | High     | Open |  |  |
-| 4 | Feature  | Create Table - News From FMP API  | High     | Open |  |  |
 | 5 | Feature  | Create Table - Analyst Ratins From FMP API  | High     | Open |  |  |
 | 6 | Feature  | Create Table - Dividends From FMP API  | High     | Open |  |  |
 | 7 | Feature  | Create an advanced ai agent to analyze news  | High     | Open |  |  |
@@ -60,5 +59,6 @@ examples:
 | 2    | Feature  | Create Table - Cash Flows   | High     | Close | 2025-09-28 | 2025-09-29 |
 | 2    | Feature  | Create Table - Balance Sheets   | High     | Close | 2025-09-28 | 2025-09-29 |
 | 2    | Feature  | Add No. of inserted records   | Low     | Close | 2025-09-28 | 2025-09-29 |
+| 4 | Feature  | Create Table - News From FMP API  | High     | Close | 2025-10-04  | 2025-10-04 |
 | 1002 | Miscellaneous  | Create a md doc for table scehma  | Medium     | Close | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous  | Create a md doc for source  | Medium     | Close | 2025-09-30 | 2025-09-30 |
