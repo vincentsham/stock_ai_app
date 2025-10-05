@@ -1,39 +1,5 @@
-from dotenv import load_dotenv
-import os
 from psycopg import connect
-import getpass
-import psycopg as pg
-
-# Load environment variables from .env file
-load_dotenv()
-
-# Database credentials
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-
-# Prompt for the postgres superuser password
-def get_postgres_password():
-    return getpass.getpass(prompt="Enter the postgres superuser password: ")
-
-
-# Connect to PostgreSQL
-def connect_to_db():
-    try:
-        conn = pg.connect(
-            dbname=DB_NAME,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            host=DB_HOST,
-            port=DB_PORT
-        )
-        return conn
-    except Exception as e:
-        print(f"Error connecting to the database: {e}")
-        return None
-
+from utils import connect_to_db
 
 # Connect to PostgreSQL
 def table_creation(conn):
