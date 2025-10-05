@@ -39,7 +39,7 @@ examples:
 | 3 | Feature  | Create an advanced ai agent to find the important news, reddit post, tweets  | High     | Open |  |  |
 | 5 | Feature  | Create Table - Analyst Ratins From FMP API  | High     | Open |  |  |
 | 6 | Feature  | Create Table - Dividends From FMP API  | High     | Open |  |  |
-| 7 | Feature  | Create an advanced ai agent to analyze news  | High     | Open |  |  |
+| 8 | Feature  | Create Table - News analysis  | High     | Open |  |  |
 | 1001 | Feature  | Create Table - Earnings using FMP   | Medium     | Open |  |  |
 | 1003 | Feature  | Delete news record that is noise  | Medium     | Open |  |  |
 | 1004 | Technical  | Rewrite the loading scripts that can extract new data | Medium     | Open |  |  |
@@ -62,5 +62,6 @@ examples:
 | 2    | Feature  | Create Table - Balance Sheets   | High     | Close | 2025-09-28 | 2025-09-29 |
 | 2    | Feature  | Add No. of inserted records   | Low     | Close | 2025-09-28 | 2025-09-29 |
 | 4 | Feature  | Create Table - News From FMP API  | High     | Close | 2025-10-04  | 2025-10-04 |
+| 7 | Feature  | Create an advanced ai agent to analyze news  | High     | Close | 2025-10-05 | 2025-10-05 |
 | 1002 | Miscellaneous  | Create a md doc for table scehma  | Medium     | Close | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous  | Create a md doc for source  | Medium     | Close | 2025-09-30 | 2025-09-30 |
