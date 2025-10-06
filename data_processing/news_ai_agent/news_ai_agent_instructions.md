@@ -11,43 +11,23 @@ This agent operates under the **LangGraph framework**, where each stage is imple
 ### Graph Flow
 
 ```
-Input Node → Stage 1 Node (category, event_type) → Filter (noise)
-  → Stage 2 Node (impact, duration, sentiment) → Filter (minor)
-  → Output Node
+Input Node (data from raw.news) 
+  → Stage 1 Node (category, event_type) → Filter (noise)
+    → Stage 2 Node (time_horizon, duration, impact_magnitude, affected_dimensions, sentiment) → Filter (minor)
+      → Output Node (data loaded into core.news_analysis)
 ```
 
-- Each node is an `LLMNode` or `ToolNode`.
 - The `News` state (defined in `news_state_model_and_functions.md`) propagates between nodes.
 - Use `ConditionalEdge` for routing logic.
-
-Example minimal LangGraph definition:
-
-```python
-from langgraph.graph import Graph
-
-graph = Graph()
-graph.add_node("stage1", stage1)
-graph.add_node("stage2", stage2)
-graph.add_edge("stage1", "stage2", condition=lambda s: s.category != "noise")
-graph.add_edge("stage2", "output", condition=lambda s: s.impact_magnitude != "minor")
-```
+- All outputs **lowercase JSON**; strict schema validation with one auto-retry on invalid JSON.
 
 ---
 
-## 0) Pipeline Overview
 
-**Agent chain:**
+### Input and Output Locations
 
-```
-Input (headline, summary, ticker, publisher, publish_date)
-  → Stage 1 (category, event_type)
-    → Stage 2 (time_horizon, duration, impact_magnitude, affected_dimensions, sentiment)
-      → Output
-```
-
-**Runtime rules:**
-
-- All outputs **lowercase JSON**; strict schema validation with one auto-retry on invalid JSON.
+- **Input Location**: The input data is sourced from the `raw.news` table in the database. This table contains raw news items with fields such as `ticker`, `headline`, `summary`, `publisher`, `publish_date`, and `url`.
+- **Output Location**: The processed data is stored in the `core.news_analysis` table. This table includes additional fields such as `category`, `event_type`, `time_horizon`, `duration`, `impact_magnitude`, `affected_dimensions`, and `sentiment`.
 
 ---
 
@@ -61,12 +41,14 @@ Each news item must provide:
   "headline": "Tesla posts record Q3 deliveries",
   "summary": "Tesla delivered 435,000 vehicles in Q3 2025, exceeding expectations and marking an all-time high.",
   "publisher": "reuters",
-  "publish_date": "2025-10-03 12:15:05"
+  "publish_date": "2025-10-03 12:15:05",
+  "url": "https://www.reuters.com/tesla-record-q3-deliveries"
 }
 ```
 
 Notes:
 
+- The input data is sourced from the `raw.news` table.
 - `publish_date` is informational context only; do not infer future events.
 - `summary` should be 2–4 factual sentences.
 
@@ -295,4 +277,3 @@ graph.add_edge("stage2", "output", condition=lambda s: s.impact_magnitude != "mi
 - Keep `temperature` between `0.0–0.2`.
 - Use schema validation: Pydantic.
 - Log prompt and truncated responses for debugging.
-

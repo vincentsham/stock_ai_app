@@ -155,6 +155,29 @@ def table_creation(conn):
 
 
 
+        # Create a table for news analysis if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.news_analysis (
+            tic             VARCHAR(20) NOT NULL,              -- stock ticker
+            url             TEXT NOT NULL,                    -- URL of the news article
+            title           TEXT NOT NULL,                    -- Title of the news article
+            content         TEXT,                             -- Content of the news article
+            publisher       TEXT,                             -- Publisher of the news article
+            published_date  TIMESTAMP NOT NULL,               -- Date and time the news was published
+            category        VARCHAR(50),                      -- Category of the news (e.g., fundamental, technical)
+            event_type      TEXT,                             -- Type of event described in the news
+            time_horizon    VARCHAR(50),                      -- Time horizon of the impact (e.g., short_term)
+            duration        TEXT,                             -- Duration of the impact
+            impact_magnitude VARCHAR(50),                    -- Magnitude of the impact (e.g., minor, major)
+            affected_dimensions TEXT[],                      -- List of affected dimensions (e.g., revenue, profit)
+            sentiment       VARCHAR(50),                     -- Sentiment analysis result (e.g., positive, negative)
+            last_updated    TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp of the last update
+            PRIMARY KEY (tic, url)                           -- Composite PK: unique analysis per ticker+url
+        );
+        """)
+        print("Table 'news_analysis' created or already exists with composite primary key.")
+
+
         conn.commit()
         
     except Exception as e:

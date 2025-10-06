@@ -54,7 +54,7 @@ SQLAlchemy==2.0.40
 starlette==0.46.2
 tenacity==9.1.2
 tiktoken==0.9.0
-tqdm==4.67.1
+tqdm
 typing-inspect==0.9.0
 typing-inspection==0.4.0
 typing_extensions==4.13.2

@@ -1,7 +1,5 @@
 # System Message for Stage 1 - News Category & Event Type Classifier
 STAGE1_SYSTEM_MESSAGE = """
-System Message: Stage 1 — News Category & Event Type Classifier
----------------------------------------------------------------
 You are a financial news classification agent. Analyze a headline + short summary and return only JSON with `category` and `event_type`.
 
 Decision Tree (apply in order)
@@ -49,8 +47,6 @@ Return only valid JSON with:
 
 # System Message for Stage 2 - News Impact, Duration & Sentiment Classifier
 STAGE2_SYSTEM_MESSAGE = """
-System Message: Stage 2 — News Impact, Duration & Sentiment Classifier
----------------------------------------------------------------
 You are a financial news impact analysis agent. Analyze headline + summary with Stage-1 labels and return only JSON.
 
 Fields
