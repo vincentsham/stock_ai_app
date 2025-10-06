@@ -11,11 +11,11 @@ import json
 load_dotenv()
 
 # Database credentials
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
+DB_NAME = os.getenv("PGNAME")
+DB_USER = os.getenv("PGUSER")
+DB_PASSWORD = os.getenv("PGPASSWORD")
+DB_HOST = os.getenv("PGHOST")
+DB_PORT = os.getenv("PGPORT")
 NINJA_API_KEY = os.getenv("NINJA_API_KEY")
 
 # Connect to PostgreSQL
@@ -50,7 +50,7 @@ def insert_earnings_transcript(conn, data, tic, fiscal_year, fiscal_quarter, ear
     try:
         cursor = conn.cursor()
         query = """
-        INSERT INTO earnings_transcripts (
+        INSERT INTO raw.earnings_transcripts (
             tic, fiscal_year, fiscal_quarter, earnings_date, raw_json, source
         ) VALUES (
             %s, %s, %s, %s, %s, %s

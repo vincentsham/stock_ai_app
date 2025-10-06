@@ -8,11 +8,11 @@ import os
 load_dotenv()
 
 # Database credentials
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
+DB_NAME = os.getenv("PGNAME")
+DB_USER = os.getenv("PGUSER")
+DB_PASSWORD = os.getenv("PGPASSWORD")
+DB_HOST = os.getenv("PGHOST")
+DB_PORT = os.getenv("PGPORT")
 
 # Connect to PostgreSQL
 def connect_to_db():
@@ -60,7 +60,7 @@ def insert_stock_metadata(conn, data):
     try:
         cursor = conn.cursor()
         query = """
-        INSERT INTO stock_metadata (tic, name, sector, industry, country, market_cap, employees, description, website, exchange, currency)
+        INSERT INTO raw.stock_metadata (tic, name, sector, industry, country, market_cap, employees, description, website, exchange, currency)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (tic) DO UPDATE SET
             name = EXCLUDED.name,

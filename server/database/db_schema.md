@@ -1,6 +1,14 @@
 # Database Schema Documentation
 
-## List of Tables
+## List of Schemas
+- `raw`: Stores raw data ingested from various sources.
+- `core`: Contains processed and cleaned data.
+- `mart`: Holds data prepared for downstream applications and analytics.
+
+## Schema: raw
+**Description**: Stores raw data ingested from various sources.
+
+### Tables in `raw`
 - `stock_metadata`: Contains metadata about stocks, such as industry, sector, and market information.
 - `stock_ohlcv`: Stores historical OHLCV (Open, High, Low, Close, Volume) data for stocks.
 - `earnings`: Contains earnings data, including EPS, revenue, and session information.
@@ -8,9 +16,18 @@
 - `cash_flows`: Contains cash flow statement data for companies.
 - `balance_sheets`: Stores balance sheet data for companies.
 - `income_statements`: Contains income statement data for companies.
+- `news`: Stores news articles related to stocks.
 
-## Table: stock_metadata
+## Schema: core
+**Description**: Contains processed and cleaned data.
+
+## Schema: mart
+**Description**: Holds data prepared for downstream applications and analytics.
+
+## Table: stock_metadata 
 **Description**: Contains metadata about stocks, such as industry, sector, and market information.
+
+**Schema**: `raw`
 
 **Source**: `yfinance`
 
@@ -31,8 +48,10 @@
 | website         | character varying          | YES         |             | Official website of the company          |
 | last_updated    | timestamp without time zone| YES         |             | Timestamp of the last update             |
 
-## Table: stock_ohlcv
+## Table: stock_ohlcv 
 **Description**: Stores historical OHLCV (Open, High, Low, Close, Volume) data for stocks.
+
+**Schema**: `raw`
 
 **Source**: `yfinance`
 
@@ -49,8 +68,10 @@
 | volume          | bigint                     | NO          |             | Trading volume of the stock              |
 | last_updated    | timestamp without time zone| YES         |             | Timestamp of the last update             |
 
-## Table: earnings
+## Table: earnings 
 **Description**: Contains earnings data, including EPS, revenue, and session information.
+
+**Schema**: `raw`
 
 **Source**: `CoinCodex API`
 
@@ -72,8 +93,10 @@
 | session         | character varying          | YES         |             | Trading session (e.g., pre-market)       |
 | last_updated    | timestamp without time zone| YES         |             | Timestamp of the last update             |
 
-## Table: earnings_transcripts
+## Table: earnings_transcripts 
 **Description**: Stores transcripts of earnings calls for companies.
+
+**Schema**: `raw`
 
 **Source**: `API Ninjas Earnings Transcript API`
 
@@ -89,8 +112,10 @@
 | source          | text                       | YES         |             | Source of the transcript                 |
 | last_updated    | timestamp without time zone| YES         |             | Timestamp of the last update             |
 
-## Table: cash_flows
+## Table: cash_flows 
 **Description**: Contains cash flow statement data for companies.
+
+**Schema**: `raw`
 
 **Source**: `Financial Modeling Prep API`
 
@@ -106,8 +131,10 @@
 | source          | text                       | YES         |             | Source of the cash flow data             |
 | last_updated    | timestamp without time zone| YES         |             | Timestamp of the last update             |
 
-## Table: balance_sheets
+## Table: balance_sheets 
 **Description**: Stores balance sheet data for companies.
+
+**Schema**: `raw`
 
 **Source**: `Financial Modeling Prep API`
 
@@ -123,8 +150,10 @@
 | source          | text                       | YES         |             | Source of the balance sheet data         |
 | last_updated    | timestamp without time zone| YES         |             | Timestamp of the last update             |
 
-## Table: income_statements
+## Table: income_statements 
 **Description**: Contains income statement data for companies.
+
+**Schema**: `raw`
 
 **Source**: `Financial Modeling Prep API`
 
@@ -138,4 +167,26 @@
 | fiscal_date     | date                       | NO          |             | Fiscal date of the income statement data |
 | raw_json        | jsonb                      | NO          |             | Raw JSON data of the income statement    |
 | source          | text                       | YES         |             | Source of the income statement data      |
+| last_updated    | timestamp without time zone| YES         |             | Timestamp of the last update             |
+
+## Table: news 
+**Description**: Stores news articles related to stocks.
+
+**Schema**: `raw`
+
+**Source**: `Financial Modeling Prep API`
+
+**Script**: `load_news.py`
+
+| Column Name     | Data Type  | Is Nullable | Primary Key | Description   |
+|-----------------|------------|-------------|-------------|---------------|
+| tic             | character varying          | NO          | YES         | Stock ticker symbol                      |
+| published_date  | timestamp without time zone| NO          | YES         | Date and time the news was published     |
+| publisher       | text                       | YES         |             | Publisher of the news article            |
+| title           | text                       | NO          |             | Title of the news article                |
+| site            | text                       | YES         |             | Website where the news was published     |
+| content         | text                       | YES         |             | Content of the news article              |
+| url             | text                       | NO          |             | URL of the news article                  |
+| raw_json        | jsonb                      | YES         |             | Raw JSON data of the news article        |
+| source          | text                       | YES         |             | Source of the news article               |
 | last_updated    | timestamp without time zone| YES         |             | Timestamp of the last update             |

@@ -8,11 +8,11 @@ import json
 load_dotenv()
 
 # Database credentials
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
+DB_NAME = os.getenv("PGNAME")
+DB_USER = os.getenv("PGUSER")
+DB_PASSWORD = os.getenv("PGPASSWORD")
+DB_HOST = os.getenv("PGHOST")
+DB_PORT = os.getenv("PGPORT")
 
 # API credentials
 API_KEY = os.getenv("FMP_API_KEY")
@@ -50,7 +50,7 @@ def insert_news(data, tic, url, conn):
         with conn.cursor() as cur:
             for record in data:
                 cur.execute("""
-                    INSERT INTO news (
+                    INSERT INTO raw.news (
                         tic, published_date, publisher, title, site, content, url, raw_json, source
                     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT (tic, url) DO UPDATE

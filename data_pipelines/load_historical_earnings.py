@@ -8,11 +8,11 @@ import pandas as pd
 load_dotenv()
 
 # Database credentials
-DB_NAME = os.getenv("DB_NAME")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
+DB_NAME = os.getenv("PGNAME")
+DB_USER = os.getenv("PGUSER")
+DB_PASSWORD = os.getenv("PGPASSWORD")
+DB_HOST = os.getenv("PGHOST")
+DB_PORT = os.getenv("PGPORT")
 
 # Connect to PostgreSQL
 def connect_to_db():
@@ -44,7 +44,7 @@ def insert_historical_earnings(conn, data, ticker):
     try:
         cursor = conn.cursor()
         query = """
-        INSERT INTO earnings (
+        INSERT INTO raw.earnings (
             tic, fiscal_year, fiscal_quarter, fiscal_date, earnings_date, eps, eps_estimated, session, revenue, revenue_estimated, price_before, price_after, last_updated
         ) VALUES (
             %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s

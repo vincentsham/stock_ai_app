@@ -15,26 +15,9 @@ def table_creation(conn):
         else:
             print("Connection test failed!")
 
-    
-        # Create a table for stock OHLCV data if it does not exist
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS stock_ohlcv (
-            date DATE NOT NULL,
-            tic VARCHAR(10) NOT NULL,
-            open FLOAT NOT NULL,
-            high FLOAT NOT NULL,
-            low FLOAT NOT NULL,
-            close FLOAT NOT NULL,
-            volume BIGINT NOT NULL,
-            last_updated    TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (date, tic)
-        );
-        """)
-        print("Table 'stock_ohlcv' created or already exists.")
-
         # Create a table for stock metadata if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS stock_metadata (
+        CREATE TABLE IF NOT EXISTS raw.stock_metadata (
             tic VARCHAR(10) PRIMARY KEY,
             name VARCHAR(255),
             sector VARCHAR(255),
@@ -51,9 +34,27 @@ def table_creation(conn):
         """)
         print("Table 'stock_metadata' created or already exists.")
 
+
+        # Create a table for stock OHLCV data if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS raw.stock_ohlcv (
+            date DATE NOT NULL,
+            tic VARCHAR(10) NOT NULL,
+            open FLOAT NOT NULL,
+            high FLOAT NOT NULL,
+            low FLOAT NOT NULL,
+            close FLOAT NOT NULL,
+            volume BIGINT NOT NULL,
+            last_updated    TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (date, tic)
+        );
+        """)
+        print("Table 'stock_ohlcv' created or already exists.")
+
+
         # Create a table for historical earnings data if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS earnings (
+        CREATE TABLE IF NOT EXISTS raw.earnings (
             tic VARCHAR(20) NOT NULL,
             fiscal_year INT NOT NULL,
             fiscal_quarter INT NOT NULL,
@@ -75,7 +76,7 @@ def table_creation(conn):
 
         # Create a table for historical earnings transcripts data if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS earnings_transcripts (
+        CREATE TABLE IF NOT EXISTS raw.earnings_transcripts (
             tic             VARCHAR(20)  NOT NULL,
             fiscal_year     INT          NOT NULL,
             fiscal_quarter  INT          NOT NULL,
@@ -91,7 +92,7 @@ def table_creation(conn):
 
         # Create a table for income statements if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS income_statements (
+        CREATE TABLE IF NOT EXISTS raw.income_statements (
             tic             VARCHAR(20)  NOT NULL,                 -- e.g., AAPL
             fiscal_year     INT          NOT NULL,                 -- e.g., 2025
             fiscal_quarter  INT          NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
@@ -106,7 +107,7 @@ def table_creation(conn):
 
         # Create a table for cash flows if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS cash_flows (
+        CREATE TABLE IF NOT EXISTS raw.cash_flows (
             tic             VARCHAR(20)  NOT NULL,                 -- e.g., AAPL
             fiscal_year     INT          NOT NULL,                 -- e.g., 2025
             fiscal_quarter  INT          NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
@@ -121,7 +122,7 @@ def table_creation(conn):
 
         # Create a table for balance sheets if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS balance_sheets (
+        CREATE TABLE IF NOT EXISTS raw.balance_sheets (
             tic             VARCHAR(20)  NOT NULL,                 -- e.g., AAPL
             fiscal_year     INT          NOT NULL,                 -- e.g., 2025
             fiscal_quarter  INT          NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
@@ -136,7 +137,7 @@ def table_creation(conn):
 
         # Create a table for news data if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS news (
+        CREATE TABLE IF NOT EXISTS raw.news (
             tic             VARCHAR(20) NOT NULL,              -- stock ticker
             published_date  TIMESTAMP   NOT NULL,              -- from API publishedDate
             publisher       TEXT,
