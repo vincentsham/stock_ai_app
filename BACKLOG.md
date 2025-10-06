@@ -36,15 +36,15 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Open Date  | Close Date |
 |------|--------|----------|----------|-----------|------------|------------|
-| 3 | Feature  | Create an advanced ai agent to find the important news, reddit post, tweets  | High     | Open |  |  |
+| 3 | Feature  | Create Table - News analysis  | High     | Open |  |  |
 | 5 | Feature  | Create Table - Analyst Ratins From FMP API  | High     | Open |  |  |
 | 6 | Feature  | Create Table - Dividends From FMP API  | High     | Open |  |  |
-| 8 | Feature  | Create Table - News analysis  | High     | Open |  |  |
 | 1001 | Feature  | Create Table - Earnings using FMP   | Medium     | Open |  |  |
 | 1003 | Feature  | Delete news record that is noise  | Medium     | Open |  |  |
 | 1004 | Technical  | Rewrite the loading scripts that can extract new data | Medium     | Open |  |  |
 | 10001 | Feature  | Transfer Tables that has text to Pinecone  | Low     | Open |  |  |
 | 10002 | Feature  | Analyze popularity trends  | Low     | Open |  |  |
+| 10003 | Feature  | Create an advanced ai agent to find the important news, reddit post, tweets  | Low     | Open |  |  |
 
 
 ### Closed Backlog Items
