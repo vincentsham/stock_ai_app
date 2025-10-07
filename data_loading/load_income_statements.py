@@ -1,37 +1,14 @@
 import requests
 import os
 from psycopg import connect
-from dotenv import load_dotenv
+from server.database.utils import connect_to_db
 import json
 
-# Load environment variables
-load_dotenv()
-
-# Database credentials
-DB_NAME = os.getenv("PGNAME")
-DB_USER = os.getenv("PGUSER")
-DB_PASSWORD = os.getenv("PGPASSWORD")
-DB_HOST = os.getenv("PGHOST")
-DB_PORT = os.getenv("PGPORT")
 
 # API credentials
 API_KEY = os.getenv("FMP_API_KEY")
 BASE_URL = "https://financialmodelingprep.com/stable/income-statement"
 
-# Connect to PostgreSQL
-def connect_to_db():
-    try:
-        conn = connect(
-            dbname=DB_NAME,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            host=DB_HOST,
-            port=DB_PORT
-        )
-        return conn
-    except Exception as e:
-        print(f"Error connecting to the database: {e}")
-        return None
 
 # Fetching data
 def fetch_records(tic, period, limit=5):

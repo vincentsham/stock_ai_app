@@ -81,6 +81,8 @@ def table_creation(conn):
             fiscal_year     INT          NOT NULL,
             fiscal_quarter  INT          NOT NULL,
             earnings_date   DATE         NOT NULL,
+            transcript      TEXT,
+            transcript_hash TEXT,
             raw_json        JSONB,   -- renamed from payload
             source          TEXT DEFAULT 'api-ninjas/earningstranscript',
             last_updated    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -176,6 +178,41 @@ def table_creation(conn):
         );
         """)
         print("Table 'news_analysis' created or already exists with composite primary key.")
+
+
+        # Create a table for earnings transcript chunks if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.earnings_transcript_chunks (
+            -- Transcript identity
+            tic             VARCHAR(20) NOT NULL,
+            fiscal_year     INT NOT NULL,
+            fiscal_quarter  INT NOT NULL,
+            earnings_date   DATE,
+
+            -- Sequential id within a single transcript (1..N)
+            chunk_id        INT NOT NULL,
+
+            -- Chunk content
+            chunk           TEXT NOT NULL,
+            token_count     INT,
+            -- optional integrity/lineage
+            chunk_hash      TEXT,
+            transcript_hash TEXT,
+
+            last_updated    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+            PRIMARY KEY (tic, fiscal_year, fiscal_quarter, chunk_id)
+        );
+        """)
+        print("Table 'earnings_transcript_chunks' created or already exists with composite primary key.")
+
+        # Create a full-text index for keyword/BM25 search
+        cursor.execute("""
+        CREATE INDEX IF NOT EXISTS idx_core_earnings_transcripts_chunks_tsv
+          ON core.earnings_transcript_chunks
+          USING GIN (to_tsvector('english', chunk));
+        """)
+        print("Index 'idx_core_earnings_transcripts_chunks_tsv' created or already exists.")
 
 
         conn.commit()

@@ -1,37 +1,15 @@
 import requests
 from psycopg import connect
-from dotenv import load_dotenv
+from server.database.utils import connect_to_db
 import os
 import datetime
 import time
 import json
-
+import hashlib
 
 # Load environment variables
-load_dotenv()
-
-# Database credentials
-DB_NAME = os.getenv("PGNAME")
-DB_USER = os.getenv("PGUSER")
-DB_PASSWORD = os.getenv("PGPASSWORD")
-DB_HOST = os.getenv("PGHOST")
-DB_PORT = os.getenv("PGPORT")
 NINJA_API_KEY = os.getenv("NINJA_API_KEY")
 
-# Connect to PostgreSQL
-def connect_to_db():
-    try:
-        conn = connect(
-            dbname=DB_NAME,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            host=DB_HOST,
-            port=DB_PORT
-        )
-        return conn
-    except Exception as e:
-        print(f"Error connecting to the database: {e}")
-        return None
 
 # Fetch earnings transcript data from the API
 def fetch_earnings_transcript(ticker, year, quarter):
@@ -51,9 +29,9 @@ def insert_earnings_transcript(conn, data, tic, fiscal_year, fiscal_quarter, ear
         cursor = conn.cursor()
         query = """
         INSERT INTO raw.earnings_transcripts (
-            tic, fiscal_year, fiscal_quarter, earnings_date, raw_json, source
+            tic, fiscal_year, fiscal_quarter, earnings_date, transcript, transcript_hash, raw_json, source
         ) VALUES (
-            %s, %s, %s, %s, %s, %s
+            %s, %s, %s, %s, %s, %s, %s, %s
         )
         ON CONFLICT (tic, fiscal_year, fiscal_quarter)
         DO UPDATE SET
@@ -66,7 +44,8 @@ def insert_earnings_transcript(conn, data, tic, fiscal_year, fiscal_quarter, ear
             fiscal_year,
             fiscal_quarter,
             earnings_date,
-            # data.get("transcript"), --- IGNORE ---
+            data.get("transcript"),  # transcript text
+            hashlib.sha256(data.get("transcript", "").encode('utf-8')).hexdigest(),  # transcript_hash
             json.dumps(data),  # Serialize the raw_json field    
             url
         ))
@@ -81,66 +60,6 @@ def insert_earnings_transcript(conn, data, tic, fiscal_year, fiscal_quarter, ear
         conn.rollback()
         return 0
 
-# Update fiscal year and quarter in earnings_transcripts table
-def update_fiscal_data_record_by_record(conn):
-    try:
-        cursor = conn.cursor()
-        select_query = """
-        SELECT tic, earnings_date FROM earnings_transcripts;
-        """
-        cursor.execute(select_query)
-        records = cursor.fetchall()
-
-        for record in records:
-            tic, earnings_date = record
-            update_query = """
-            UPDATE earnings_transcripts
-            SET 
-                fiscal_year = earnings.fiscal_year,
-                fiscal_quarter = earnings.fiscal_quarter
-            FROM 
-                earnings
-            WHERE 
-                earnings_transcripts.tic = earnings.tic
-            AND 
-                earnings_transcripts.earnings_date = earnings.earnings_date
-            AND 
-                earnings_transcripts.tic = %s
-            AND 
-                earnings_transcripts.earnings_date = %s;
-            """
-            cursor.execute(update_query, (tic, earnings_date))
-        conn.commit()
-        print("Updated fiscal_year and fiscal_quarter for each record in earnings_transcripts table.")
-    except Exception as e:
-        print(f"Error updating fiscal data record by record: {e}")
-        conn.rollback()
-
-# Update fiscal year and quarter for a specific record before inserting earnings transcript
-def update_fiscal_data_before_insert(conn, tic, earnings_date):
-    try:
-        cursor = conn.cursor()
-        update_query = """
-        UPDATE earnings_transcripts
-        SET 
-            fiscal_year = earnings.fiscal_year,
-            fiscal_quarter = earnings.fiscal_quarter
-        FROM 
-            earnings
-        WHERE 
-            earnings_transcripts.tic = earnings.tic
-        AND 
-            earnings_transcripts.earnings_date = earnings.earnings_date
-        AND 
-            earnings_transcripts.tic = %s
-        AND 
-            earnings_transcripts.earnings_date = %s;
-        """
-        cursor.execute(update_query, (tic, earnings_date))
-        conn.commit()
-    except Exception as e:
-        print(f"Error updating fiscal data for {tic} on {earnings_date}: {e}")
-        conn.rollback()
 
 
 def lookup_fiscal_data(conn, tic, earnings_date):
@@ -148,7 +67,7 @@ def lookup_fiscal_data(conn, tic, earnings_date):
         cursor = conn.cursor()
         query = """
         SELECT fiscal_year, fiscal_quarter, earnings_date
-        FROM earnings
+        FROM raw.earnings
         WHERE tic = %s AND ABS(earnings_date::DATE - %s::DATE) <= 10;
         """
         cursor.execute(query, (tic, earnings_date))
@@ -157,6 +76,7 @@ def lookup_fiscal_data(conn, tic, earnings_date):
             print(f"Found fiscal data for {tic} near {earnings_date}: FY{result[0]} Q{result[1]} on {result[2]}")
             return result[0], result[1], result[2]  # fiscal_year, fiscal_quarter, earnings_date
         else:
+            print(f"Found no fiscal data for {tic} near {earnings_date}")
             return None, None, None
     except Exception as e:
         print(f"Error fetching fiscal data for {tic} near {earnings_date}: {e}")
@@ -166,7 +86,7 @@ if __name__ == "__main__":
     conn = connect_to_db()
     if conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT tic FROM stock_metadata;")
+        cursor.execute("SELECT tic FROM raw.stock_metadata;")
         records = cursor.fetchall()
 
         for record in records:
@@ -178,6 +98,8 @@ if __name__ == "__main__":
                     if data:
                         earnings_date = data.get("date")
                         fiscal_year, fiscal_quarter, earnings_date = lookup_fiscal_data(conn, tic, earnings_date)
+                        if not fiscal_year or not fiscal_quarter:
+                            continue
                         total_records += insert_earnings_transcript(conn, data, tic, fiscal_year, fiscal_quarter, earnings_date, url)
                         print(f"Inserted transcript for {tic} for Q{fiscal_quarter} {fiscal_year}")
                     else:
