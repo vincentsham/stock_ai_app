@@ -39,7 +39,7 @@ examples:
 | 5 | Feature  | Create Table - Analyst Ratins From FMP API  | High     | Open |  |  |
 | 6 | Feature  | Create Table - Dividends From FMP API  | High     | Open |  |  |
 | 8 | Feature  | Create Table - Earnings Chunks  | High     | Open |  |  |
-| 9 | Feature  | Create Table - Earnings Embeddings  | High     | Open |  |  |
+| 8 | Feature  | Create Table - Earnings Embeddings  | High     | Open |  |  |
 | 1001 | Feature  | Create Table - Earnings using FMP   | Medium     | Open |  |  |
 | 1003 | Feature  | Delete news record that is noise  | Medium     | Open |  |  |
 | 1004 | Technical  | Rewrite the loading scripts that can extract new data | Medium     | Open |  |  |
