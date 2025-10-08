@@ -215,6 +215,45 @@ def table_creation(conn):
         print("Index 'idx_core_earnings_transcripts_chunks_tsv' created or already exists.")
 
 
+        # Ensure the vector extension is available
+        cursor.execute("CREATE EXTENSION IF NOT EXISTS vector;")
+        print("Extension 'vector' created or already exists.")
+        
+        # Create a table for earnings transcript embeddings if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.earnings_transcript_embeddings (
+            tic             VARCHAR(20) NOT NULL,
+            fiscal_year     INT NOT NULL,
+            fiscal_quarter  INT NOT NULL,
+            earnings_date   DATE,
+
+            -- Sequential id within a single transcript (1..N)
+            chunk_id        INT NOT NULL,
+
+            -- Embedding vector
+            embedding       VECTOR(1536) NOT NULL,
+            embedding_model TEXT NOT NULL,
+
+            last_updated    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+            PRIMARY KEY (tic, fiscal_year, fiscal_quarter, chunk_id),
+            FOREIGN KEY (tic, fiscal_year, fiscal_quarter, chunk_id)
+                REFERENCES core.earnings_transcript_chunks (tic, fiscal_year, fiscal_quarter, chunk_id)
+                ON DELETE CASCADE
+        );
+        """)
+        print("Table 'earnings_transcript_embeddings' created or already exists with composite primary key.")
+
+        # Create an HNSW index for the embeddings
+        cursor.execute("""
+        CREATE INDEX IF NOT EXISTS idx_core_earnings_transcript_embeddings_vec_hnsw
+          ON core.earnings_transcript_embeddings
+          USING hnsw (embedding vector_cosine_ops)
+          WITH (m = 16, ef_construction = 200);
+        """)
+        print("Index 'idx_core_earnings_transcript_embeddings_vec_hnsw' created or already exists.")
+
+
         conn.commit()
         
     except Exception as e:
