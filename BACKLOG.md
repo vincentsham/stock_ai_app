@@ -39,12 +39,11 @@ examples:
 | 5 | Feature  | Create Table - Analyst Ratins From FMP API  | High     | Open |  |  |
 | 6 | Feature  | Create Table - Dividends From FMP API  | High     | Open |  |  |
 | 9 | Feature  | Make sure no dup records in news on (tic, title) | High     | Open |  |  |
-| 10 | Feature  | Create an advanced ai agent to analyze earnings transcripts | High     | Open |  |  |
+| 11 | Feature  | Create a data processing task to process the company profile | Medium     | Open |  |  |
 | 1001 | Feature  | Create Table - Earnings using FMP   | Medium     | Open |  |  |
 | 1003 | Feature  | Delete news record that is noise  | Medium     | Open |  |  |
 | 1004 | Technical  | Rewrite the loading scripts that can extract new data | Medium     | Open |  |  |
-| 1006 | Feature  | Create a data processing task to process the company profile | Medium     | Open |  |  |
-| 1007 | Technical  | Improve the human prompt of news ai agent | Medium     | Open |  |  |
+| 1006 | Technical  | Improve the human prompt of news ai agent | Medium     | Open |  |  |
 | 10001 | Feature  | Transfer Tables that has text to Pinecone  | Low     | Open |  |  |
 | 10002 | Feature  | Analyze popularity trends  | Low     | Open |  |  |
 | 10003 | Feature  | Create an advanced ai agent to find the important news, reddit post, tweets  | Low     | Open |  |  |
@@ -69,6 +68,7 @@ examples:
 | 7 | Feature  | Create an advanced ai agent to analyze news  | High     | Close | 2025-10-05 | 2025-10-05 |
 | 8 | Feature  | Create Table - Earnings Chunks  | High     | Close | 2025-10-07 | 2025-10-07 |
 | 8 | Feature  | Create Table - Earnings Embeddings  | High     | Close | 2025-10-07 | 2025-10-07 |
+| 10 | Feature  | Create an advanced ai agent to analyze earnings transcripts | High  | Close | 2025-10-08 | 2025-10-09 |
 | 1002 | Miscellaneous  | Create a md doc for table scehma  | Medium     | Close | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous  | Create a md doc for source  | Medium     | Close | 2025-09-30 | 2025-09-30 |
 | 1005 | Technical  | Improve news ai agent prompt | Medium     | Close | 2025-10-06 | 2025-10-06 |
