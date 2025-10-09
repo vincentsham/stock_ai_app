@@ -1,4 +1,4 @@
-from state import News
+from data_processing.news_ai_agent.states import News
 from prompts import STAGE1_PROMPT, STAGE2_PROMPT, STAGE1_SYSTEM_MESSAGE, STAGE2_SYSTEM_MESSAGE
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage

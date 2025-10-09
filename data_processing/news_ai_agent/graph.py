@@ -1,7 +1,7 @@
 from langgraph.graph import START, END
 from langgraph.graph import StateGraph
 from nodes import stage1, stage2
-from state import News
+from data_processing.news_ai_agent.states import News
 import time  # Import the time module for timing
 
 

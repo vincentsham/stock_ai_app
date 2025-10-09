@@ -1,7 +1,7 @@
 import time
 import pandas as pd
 from server.database.utils import connect_to_db
-from state import News
+from data_processing.news_ai_agent.states import News
 from graph import create_graph
 from tqdm import tqdm  # Import tqdm for progress tracking
 
