@@ -12,16 +12,16 @@ BASE_URL = "https://financialmodelingprep.com/stable/news/stock"
 
 # Fetching news data
 def fetch_news(tic, limit=100):
-    url = f"{BASE_URL}?symbols={tic}&limit={limit}&apikey={API_KEY}"
-    response = requests.get(url)
+    source_url = f"{BASE_URL}?symbols={tic}&limit={limit}&apikey={API_KEY}"
+    response = requests.get(source_url)
     if response.status_code == 200:
-        return response.json(), url
+        return response.json(), source_url
     else:
         print(f"Failed to fetch data: {response.status_code}")
         return None, None
 
 # Insert news data into the table
-def insert_news(data, tic, url, conn):
+def insert_news(data, tic, source_url, conn):
     total_records = 0
     try:
         with conn.cursor() as cur:
@@ -30,13 +30,16 @@ def insert_news(data, tic, url, conn):
                     INSERT INTO raw.news (
                         tic, published_date, publisher, title, site, content, url, raw_json, source
                     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    ON CONFLICT (tic, url) DO UPDATE
-                    SET publisher = EXCLUDED.publisher,
-                        title = EXCLUDED.title,
+                    ON CONFLICT (tic, title) DO UPDATE
+                    SET 
+                        publisher = EXCLUDED.publisher,
                         site = EXCLUDED.site,
                         content = EXCLUDED.content,
+                        url = EXCLUDED.url,
                         raw_json = EXCLUDED.raw_json,
-                        source = EXCLUDED.source;
+                        source = EXCLUDED.source,
+                        published_date = EXCLUDED.published_date
+                    WHERE EXCLUDED.published_date > raw.news.published_date;
                 """, (
                     tic,
                     record.get("publishedDate"),
@@ -46,7 +49,7 @@ def insert_news(data, tic, url, conn):
                     record.get("text"),
                     record.get("url"),
                     json.dumps(record),  # raw JSON payload
-                    url
+                    source_url
                 ))
                 total_records += cur.rowcount
             conn.commit()
@@ -61,14 +64,14 @@ def main():
     conn = connect_to_db()
     if conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT tic FROM stock_metadata;")
+        cursor.execute("SELECT tic FROM raw.stock_metadata;")
         records = cursor.fetchall()
         for record in records:
             tic = record[0]
             total_records = 0
-            data, url = fetch_news(tic=tic, limit=100)
+            data, source_url = fetch_news(tic=tic, limit=100)
             if data:
-                total_records += insert_news(data, tic, url, conn)
+                total_records += insert_news(data, tic, source_url, conn)
             print(f"For {tic}: Total records processed = {total_records}")
         conn.close()
 

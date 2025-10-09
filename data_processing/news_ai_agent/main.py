@@ -80,7 +80,7 @@ def main():
     # Use tqdm to track progress
     for state in tqdm(states, desc="Processing states"):
         final_state = app.invoke(state)
-        if "impact_magnitude" in final_state and final_state["impact_magnitude"] == "major":
+        if "impact_magnitude" in final_state and final_state["impact_magnitude"] == 1:
             no_major_news += 1
         processed_data.append(final_state)
 

@@ -1,14 +1,23 @@
 from pydantic import BaseModel, Field
 from typing import List, Literal, Optional
+from enum import IntEnum
 
 # Define enums for the state model
 Category = Literal["fundamental", "market_perception", "technical", "noise"]
-TimeHorizon = Literal["short_term", "mid_term", "long_term"]
-ImpactMag = Literal["minor", "moderate", "major"]
-Sentiment = Literal["positive", "neutral", "negative"]
 AffectedDimensions = Literal[
     "revenue", "profit", "cash", "cost", "risk", "technology", "sentiment"
 ]
+# ---- Enums / Literals ----
+class Tri(IntEnum):
+    NEG = -1
+    NEU = 0
+    POS = 1
+
+class Horizon(IntEnum):
+    SHORT = 0
+    MID = 1
+    LONG = 2
+
 
 class News(BaseModel):
     # Inputs
@@ -24,8 +33,8 @@ class News(BaseModel):
     event_type: Optional[str] = Field(None, description="Event type of the news")
 
     # Stage 2 outputs
-    time_horizon: Optional[TimeHorizon] = Field(None, description="Time horizon for the news impact")
+    time_horizon: Optional[Horizon] = Field(None, description="Time horizon for the news impact")
     duration: Optional[str] = Field(None, description="Duration of the news impact")
-    impact_magnitude: Optional[ImpactMag] = Field(None, description="Impact magnitude of the news")
+    impact_magnitude: Optional[Tri] = Field(None, description="Impact magnitude of the news")
     affected_dimensions: Optional[List[AffectedDimensions]] = Field(None, description="Affected dimensions of the news")
-    sentiment: Optional[Sentiment] = Field(None, description="Sentiment of the news")
+    sentiment: Optional[Tri] = Field(None, description="Sentiment of the news")
