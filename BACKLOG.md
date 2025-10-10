@@ -47,6 +47,7 @@ examples:
 | 10001 | Feature | Transfer Tables that has text to Pinecone | Low | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
+| 10007 | Miscellaneous | Update the earnings transcipt instruction doc | Low | Open |  |  |  |
 </div>
 
 
