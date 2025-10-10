@@ -19,17 +19,21 @@ All node logic, state models, and prompts are designed to be **Copilot-compatibl
 
 ---
 
+
 ## 🧩 Execution Flow (LangGraph)
 
-### Order of Nodes
+### Node/Branch Structure
 
 ```
 input
-→ past_retriever → past_analysis
-→ outlook_retriever → future_analysis
-→ risk_retriever → risk_analysis
-→ merge_results → output
+→ fanout (parallel branch)
+    ├─ past_retriever_node → past_analysis_node
+    ├─ future_retriever_node → future_analysis_node
+    └─ risk_retriever_node → risk_analysis_node → queries_powered_by_llm → risk_response_retriever_node → risk_response_analysis_node
+→ merge (implicit at END)
 ```
+
+### Core Rules
 
 ### Core Rules
 
@@ -44,48 +48,43 @@ input
 
 ---
 
+
 ## 🧱 Node Function Signatures (`nodes.py`)
 
 All node signatures follow strict type contracts and include inline **Copilot task hints** for auto-generation.
 
 ```python
-from states import RetrievalState, PastState, FutureState, RiskState, MergedState
+from states import MergedState
 
-# @copilot: implement retrieval logic using psycopg2 or asyncpg
-# Fetch top-K transcript chunks using pgvector cosine similarity
-# Return dict containing 'chunks' and 'chunks_score'
-def retriever(state: RetrievalState) -> dict:
-    pass
+# @copilot: retrieve top-K transcript chunks for a given analysis type ("past", "future", "risk", "risk_response")
+def retriever(state: MergedState, type: Literal["past", "future", "risk", "risk_response"]) -> dict:
+    ...
 
-# @copilot: call LLM with PAST_PROMPT, validate JSON → PastState
-# Return dict following PastState schema
-def past_analysis(state: PastState) -> dict:
-    pass
+# @copilot: call LLM with the appropriate system prompt and context for the given analysis type
+def analysis_node(state: MergedState, type: Literal["past", "future", "risk", "risk_response"], history: Optional[Literal["past", "future", "risk", "risk_response"]] = None) -> dict:
+    ...
 
-# @copilot: call LLM with FUTURE_PROMPT, validate JSON → FutureState
-# Return dict following FutureState schema
-def future_analysis(state: FutureState) -> dict:
-    pass
+# @copilot: use LLM to generate risk response queries based on risk analysis output
+def queries_powered_by_llm(state: MergedState) -> dict:
+    ...
 
-# @copilot: call LLM with RISK_PROMPT, validate JSON → RiskState
-# Return dict following RiskState schema
-def risk_analysis(state: RiskState) -> dict:
-    pass
+# Partial functions for each node type (see nodes.py for details)
+past_analysis_node = partial(analysis_node, type='past')
+future_analysis_node = partial(analysis_node, type='future')
+risk_analysis_node = partial(analysis_node, type='risk')
+risk_response_analysis_node = partial(analysis_node, type='risk_response', history='risk')
 
-# @copilot: merge validated PastState, FutureState, and RiskState
-# Return MergedState JSON-serializable object
-def merge_results(past: PastState, future: FutureState, risk: RiskState) -> MergedState:
-    merged = MergedState(past=past, future=future, risk=risk)
-    return merged
+past_retriever_node = partial(retriever, type='past')
+future_retriever_node = partial(retriever, type='future')
+risk_retriever_node = partial(retriever, type='risk')
+risk_response_retriever_node = partial(retriever, type='risk_response')
 ```
 
-| Function          | Input            | Output                             | Description                                          |
-| ----------------- | ---------------- | ---------------------------------- | ---------------------------------------------------- |
-| `retriever`       | `RetrievalState` | dict with `chunks`, `chunks_score` | Retrieves transcript segments for an aspect.         |
-| `past_analysis`   | `PastState`      | dict                               | LLM-based factual summary of historical performance. |
-| `future_analysis` | `FutureState`    | dict                               | LLM-based extraction of guidance and catalysts.      |
-| `risk_analysis`   | `RiskState`      | dict                               | LLM-based detection of disclosed risks.              |
-| `merge_results`   | 3 State objects  | `MergedState`                      | Combines all outputs into one unified JSON.          |
+| Function                  | Input         | Output         | Description |
+|---------------------------|---------------|----------------|-------------|
+| `retriever`               | `MergedState`, type | dict      | Retrieves transcript segments for an aspect |
+| `analysis_node`           | `MergedState`, type | dict      | LLM-based analysis for the given aspect |
+| `queries_powered_by_llm`  | `MergedState` | dict           | LLM-based query generation for risk response |
 
 ---
 
@@ -170,13 +169,20 @@ class RiskState(BaseModel):
     summary: Optional[str] = None
 ```
 
+
 ### MergedState
 
 ```python
 class MergedState(BaseModel):
-    past: PastState
-    future: FutureState
-    risk: RiskState
+    company_info: CompanyInfo
+    past_retriever: Optional[RetrieverState] = None
+    future_retriever: Optional[RetrieverState] = None
+    risk_retriever: Optional[RetrieverState] = None
+    risk_response_retriever: Optional[RetrieverState] = None
+    past_analysis: Optional[PastState] = None
+    future_analysis: Optional[FutureState] = None
+    risk_analysis: Optional[RiskState] = None
+    risk_response_analysis: Optional[RiskResponseState] = None
 ```
 
 ---
@@ -240,21 +246,41 @@ LIMIT 5;
 
 ---
 
+
 ## 🧪 Test Example
 
 ```python
-from nodes import retriever, past_analysis, future_analysis, risk_analysis, merge_results
-from states import RetrievalState, PastState, FutureState, RiskState
+from nodes import (
+    past_retriever_node, future_retriever_node, risk_retriever_node,
+    past_analysis_node, future_analysis_node, risk_analysis_node,
+    risk_response_analysis_node, risk_response_retriever_node,
+    queries_powered_by_llm
+)
+from states import merged_state_factory
 
-# @copilot: simulate full pipeline
-retrieved = retriever(RetrievalState(tic="AAPL", fiscal_year=2025, fiscal_quarter=3))
+# @copilot: simulate full pipeline for TSLA Q2 2025
+state = merged_state_factory(
+    tic="TSLA",
+    company_name="Tesla, Inc.",
+    industry="Automotive",
+    sector="Consumer Discretionary",
+    company_description="Tesla, Inc. is a leading electric vehicle and clean energy company.",
+    fiscal_year=2025,
+    fiscal_quarter=2,
+    earnings_date="2025-07-24"
+)
 
-past = past_analysis(PastState(**retrieved))
-future = future_analysis(FutureState(**retrieved))
-risk = risk_analysis(RiskState(**retrieved))
+# Run the graph (see graph.py for orchestration)
+result = app.invoke(state)
 
-merged = merge_results(past, future, risk)
-print(merged.model_dump_json(indent=2))
+print("===========past===============")
+print(result['past_analysis'])
+print("===========future===============")
+print(result['future_analysis'])
+print("===========risk===============")
+print(result['risk_analysis'])
+print("===========risk response===============")
+print(result['risk_response_analysis'])
 ```
 
 ---
@@ -264,10 +290,10 @@ print(merged.model_dump_json(indent=2))
 ```
 earnings_ai_agent/
 │
-├── states.py                # Pydantic models
-├── prompts.py               # LLM prompt templates
-├── nodes.py                 # Node logic (retrievers + analyzers)
-├── graph.py                 # LangGraph flow definition
+├── states.py                # Pydantic models and state factory
+├── prompts.py               # LLM prompt templates and queries
+├── nodes.py                 # Node logic (retrievers, analyzers, query generation)
+├── graph.py                 # LangGraph flow definition and orchestration
 ├── main.py                  # CLI or batch entry
 └── docs/
     └── earnings_transcript_ai_agent_spec.md
