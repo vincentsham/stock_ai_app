@@ -2,26 +2,11 @@ from data_processing.news_ai_agent.states import News
 from prompts import STAGE1_PROMPT, STAGE2_PROMPT, STAGE1_SYSTEM_MESSAGE, STAGE2_SYSTEM_MESSAGE
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
+from data_processing.utils import run_llm
 from dotenv import load_dotenv
 import json
 
-load_dotenv()
 
-# Initialize the LLM model with structured output
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, response_format={"type": "json_object"})
-
-def run_llm(prompt: str, system_message: str) -> dict:
-    """Interact with the LLM using a system message and a human prompt."""
-    try:
-        system_prompt = SystemMessage(content=system_message)
-        human_prompt = HumanMessage(content=prompt)
-
-        messages = [system_prompt, human_prompt]
-        response = llm.invoke(messages)
-        return response
-    except Exception as e:
-        # Raise an exception to be handled by the graph or caller
-        raise RuntimeError(f"LLM invocation failed: {e}")
 
 def stage1(state: News) -> dict:
     """Run Stage 1 LLM classifier.
@@ -36,8 +21,11 @@ def stage1(state: News) -> dict:
         publisher=state.publisher,
         publish_date=state.publish_date
     )
-
-    response = json.loads(run_llm(prompt, STAGE1_SYSTEM_MESSAGE).content)
+    system_prompt = SystemMessage(content=STAGE1_SYSTEM_MESSAGE)
+    human_prompt = HumanMessage(content=prompt)
+    messages = [system_prompt, human_prompt]
+    response = json.loads(run_llm(messages).content)
+    
     category = response.get("category")
     event_type = response.get("event_type")
     return {
@@ -66,7 +54,12 @@ def stage2(state: News) -> dict:
         category=state.category,
         event_type=state.event_type
     )
-    response = json.loads(run_llm(prompt, STAGE2_SYSTEM_MESSAGE).content)
+
+    system_prompt = SystemMessage(content=STAGE2_SYSTEM_MESSAGE)
+    human_prompt = HumanMessage(content=prompt)
+    messages = [system_prompt, human_prompt]
+    response = json.loads(run_llm(messages).content)
+
     time_horizon = response.get("time_horizon")
     duration = response.get("duration")
     impact_magnitude = response.get("impact_magnitude")

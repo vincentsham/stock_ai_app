@@ -2,6 +2,7 @@ from __future__ import annotations
 from enum import IntEnum
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, Field, conint
+from prompts import PAST_PERFORMANCE_QUERIES, FUTURE_OUTLOOK_QUERIES, RISK_FACTORS_QUERIES
 
 # ---- Enums / Literals ----
 class Tri(IntEnum):
@@ -33,7 +34,7 @@ class CompanyInfo(BaseModel):
     fiscal_quarter: int
     earnings_date: Optional[str] = None
 
-class RetrieverState(CompanyInfo):
+class RetrieverState(BaseModel):
     """
     State for retrieving relevant chunks.
 
@@ -50,11 +51,8 @@ class RetrieverState(CompanyInfo):
     chunks: List[str] = Field(default_factory=list, description="List of relevant transcript chunks")
     chunks_score : List[float] = Field(default_factory=list, description="List of scores corresponding to the chunks")
 
-    @classmethod
-    def from_parent(cls, parent: CompanyInfo, **kwargs) -> RetrieverState:
-        return cls(**parent.model_dump(), **kwargs)
 
-class PastState(RetrieverState):
+class PastState(BaseModel):
     """
     State for analyzing past performance.
 
@@ -71,12 +69,9 @@ class PastState(RetrieverState):
     performance_factors: List[str] = []
     summary: Optional[str] = None
 
-    @classmethod
-    def from_parent(cls, parent: RetrieverState, **kwargs) -> PastState:
-        return cls(**parent.model_dump(), **kwargs)
     
 
-class FutureState(RetrieverState):
+class FutureState(BaseModel):
     """
     State for analyzing future outlook.
 
@@ -103,12 +98,9 @@ class FutureState(RetrieverState):
     catalysts: List[str] = []
     summary: Optional[str] = None
 
-    @classmethod
-    def from_parent(cls, parent: RetrieverState, **kwargs) -> FutureState:
-        return cls(**parent.model_dump(), **kwargs)
 
 
-class RiskState(RetrieverState):
+class RiskState(BaseModel):
     """
     State for analyzing risks.
 
@@ -127,9 +119,25 @@ class RiskState(RetrieverState):
     risk_factors: List[str] = []
     summary: Optional[str] = None
 
-    @classmethod
-    def from_parent(cls, parent: RetrieverState, **kwargs) -> RiskState:
-        return cls(**parent.model_dump(), **kwargs)
+
+class RiskResponseState(BaseModel):
+    """
+    State for analyzing risk responses.
+
+    Output (strict JSON only):
+    {
+    "mitigation_mentioned": 0|1,
+    "mitigation_effectiveness": -1|0|1,
+    "mitigation_time_horizon": 0|1|2,
+    "mitigation_actions": ["<action1>", "<action2>", ...],
+    "summary": "<2–3 concise sentences with quotes>"
+    }
+    """
+    mitigation_mentioned: Optional[Binary01] = None
+    mitigation_effectiveness: Optional[Tri] = None
+    mitigation_time_horizon: Optional[Horizon] = None
+    mitigation_actions: List[str] = []
+    summary: Optional[str] = None
 
 
 class MergedState(BaseModel):
@@ -137,9 +145,17 @@ class MergedState(BaseModel):
     Merged state combining PastState, FutureState, and RiskState.
     """
     company_info: CompanyInfo
-    past: Optional[PastState] = None
-    future: Optional[FutureState] = None
-    risk: Optional[RiskState] = None
+
+    past_retriever: Optional[RetrieverState] = None
+    future_retriever: Optional[RetrieverState] = None
+    risk_retriever: Optional[RetrieverState] = None
+    risk_response_retriever: Optional[RetrieverState] = None
+
+    past_analysis: Optional[PastState] = None
+    future_analysis: Optional[FutureState] = None
+    risk_analysis: Optional[RiskState] = None
+    risk_response_analysis: Optional[RiskResponseState] = None
+
 
 def merged_state_factory(
         tic: str,
@@ -165,28 +181,29 @@ def merged_state_factory(
         fiscal_quarter=fiscal_quarter,
         earnings_date=earnings_date
     )
-    past_retriever = RetrieverState.from_parent(
-        parent=company_info,
-        top_k=top_k
-    )
-    
-    future_retriever = RetrieverState.from_parent(
-        parent=company_info,
-        top_k=top_k
-    )
-    risk_retriever = RetrieverState.from_parent(
-        parent=company_info,
-        top_k=top_k
-    )
+    past_retriever_state = RetrieverState(top_k=top_k)
+    past_retriever_state.queries = PAST_PERFORMANCE_QUERIES
+    future_retriever_state = RetrieverState(top_k=top_k)
+    future_retriever_state.queries = FUTURE_OUTLOOK_QUERIES
+    risk_retriever_state = RetrieverState(top_k=top_k)
+    risk_retriever_state.queries = RISK_FACTORS_QUERIES
+    risk_response_retriever_state = RetrieverState(top_k=top_k)
 
-    past_state = PastState.from_parent(parent=past_retriever)
-    future_state = FutureState.from_parent(parent=future_retriever)
-    risk_state = RiskState.from_parent(parent=risk_retriever)
+    past_state = PastState()
+    future_state = FutureState()
+    risk_state = RiskState()
+    risk_response_state = RiskResponseState()
 
     merged_state = MergedState(
         company_info=company_info,
-        past=past_state,
-        future=future_state,
-        risk=risk_state
+        past_retriever=past_retriever_state,
+        future_retriever=future_retriever_state,
+        risk_retriever=risk_retriever_state,
+        risk_response_retriever=risk_response_retriever_state,
+        past_analysis=past_state,
+        future_analysis=future_state,
+        risk_analysis=risk_state,
+        risk_response_analysis=risk_response_state
     )
+
     return merged_state

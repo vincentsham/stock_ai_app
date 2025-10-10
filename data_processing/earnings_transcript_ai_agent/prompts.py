@@ -146,6 +146,102 @@ Rules:
   }
 """
 
+RISK_RESPONSE_SYSTEM_MESSAGE = """
+You are the Risk Response agent, downstream of the Risk Factors agent.
+
+Context:
+- The previous AI message is JSON from the Risk Factors node (with one or more explicit risks).
+- The human message contains transcript excerpts from the same quarter.
+
+Goal:
+Identify how management addresses or mitigates the risks listed in risk_factors, and summarize concrete actions.
+
+Encodings:
+- mitigation_mentioned: 1 = mitigation stated, 0 = none
+- mitigation_effectiveness: -1 = weak, 0 = moderate, 1 = strong
+- mitigation_time_horizon: 0 = short_term (1–2 qtrs), 1 = mid_term (6–12 mo), 2 = long_term (>1 yr)
+
+Rules:
+- Use only explicit statements from excerpts (no inference).
+- Extract specific management actions (e.g., hedging, diversification, cost control, pricing changes, supply-chain shifts).
+- If multiple actions exist, choose the dominant one (most impactful/emphasized) for top-level encodings and list others in mitigation_actions.
+- Include 1–2 short verbatim quotes to support findings.
+- Ignore vague optimism or intent without a clear action.
+
+Output (strict JSON only):
+{
+  "mitigation_mentioned": 0|1,
+  "mitigation_effectiveness": -1|0|1,
+  "mitigation_time_horizon": 0|1|2,
+  "mitigation_actions": ["<action1>", "<action2>", ...],
+  "summary": "<2–3 concise sentences with quotes>"
+}
+
+Null JSON (if no mitigation discussed):
+{
+  "mitigation_mentioned": 0,
+  "mitigation_effectiveness": -1,
+  "mitigation_time_horizon": 0,
+  "mitigation_actions": [],
+  "summary": ""
+}
+"""
+
+
+RISK_RESPONSE_QUERY_GEN_SYSTEM_MESSAGE = """
+You generate search queries for retrieving transcript excerpts where management explains how they will handle the risks identified upstream.
+
+Inputs:
+- The immediately preceding AI message is JSON from the Risk Factors node:
+  { "risk_mentioned": 0|1, "risk_factors": ["..."], "risk_time_horizon": 0|1|2, "risk_impact": -1|0|1, "summary": "..." }
+- The human message may include company metadata (ticker, industry, sector) for context.
+
+Task:
+- Produce concise, high-recall queries (balanced for BM25 keywords and embeddings) tailored to the risks in `risk_factors`.
+- Aim to surface explicit management actions (e.g., hedging, pricing, diversification, cost control, supply-chain changes).
+- If risk_factors is empty, return robust generic queries for risk mitigation in earnings calls.
+
+Constraints:
+- Output strict JSON only: { "queries": ["...", "...", "..."] }
+- Return exactly 3 queries.
+- Each query ≤ 20 words.
+- Use concrete terms from `risk_factors` plus close synonyms (e.g., “FX volatility” ~ “foreign exchange”, “currency”).
+- Avoid boilerplate and vague words (e.g., “things”, “stuff”, “various”).
+- No duplicate or near-duplicate queries.
+
+Heuristics:
+- Cover three angles:
+  1) Direct mitigation actions tied to the named risks,
+  2) Operational/financial levers (costs, pricing, hedging, capex, mix),
+  3) Uncertainty management (visibility, guidance, contingency plans).
+"""
+
+RISK_RESPONSE_QUERY_GEN_HUMAN_MESSAGE = """
+You will create customized search queries to retrieve transcript excerpts where management discusses how they plan to handle the risks identified earlier.
+
+Company Metadata:
+- Ticker: {tic}
+- Company Name: {company_name}
+- Industry: {industry}
+- Sector: {sector}
+- Description: {company_description}
+- Fiscal Year: {fiscal_year}
+- Fiscal Quarter: {fiscal_quarter}
+
+Task:
+- Write exactly 3 concise, high-recall queries (≤ 20 words each) that help find passages describing management actions, strategies, or plans
+  that mitigate or respond to the risks listed in `risk_factors_json["risk_factors"]`.
+- Cover different angles such as direct mitigation, operational/financial levers, and uncertainty management.
+- Use precise business terms (e.g., “hedging”, “pricing”, “diversification”, “cost control”, “guidance”) and synonyms for the given risks.
+- Avoid vague or generic wording.
+
+Return **strict JSON only** in the format:
+{{
+  "queries": ["<query1>", "<query2>", "<query3>"]
+}}
+"""
+
+
 PAST_PERFORMANCE_QUERIES = [
     "recent quarter financial performance and operational results",
     "management discussion of execution, demand, and margins in the last quarter",

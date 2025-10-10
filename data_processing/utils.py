@@ -6,13 +6,9 @@ load_dotenv()
 
 llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
-def run_llm(prompt: str, system_message: str) -> dict:
+def run_llm(messages: list[BaseMessage]) -> dict:
     """Interact with the LLM using a system message and a human prompt."""
     try:
-        system_prompt = SystemMessage(content=system_message)
-        human_prompt = HumanMessage(content=prompt)
-
-        messages = [system_prompt, human_prompt]
         response = llm.invoke(messages)
         return response
     except Exception as e:
