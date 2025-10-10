@@ -40,10 +40,11 @@ examples:
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 5 | Feature | Create Table - Analyst Ratins From FMP API | High | Open |  |  |  |
 | 6 | Feature | Create Table - Dividends From FMP API | High | Open |  |  |  |
-| 11 | Feature | Create a data processing task to process the company profile | Medium | Open |  |  |  |
-| 1001 | Feature | Create Table - Earnings using FMP | Medium | Open |  |  |  |
+| 11 | Feature | Create a data processing task to process the company profile | High | Open |  |  |  |
+| 12 | Feature | Extend the earnings transcript ai agent to analyze how company handle the risk | High | Open |  |  |  |
+| 1001 | Technical | Rewrite the loading scripts that can just insert and update new data | Medium | Open |  |  |  |
 | 1003 | Feature | Delete news record that is noise | Medium | Open |  |  |  |
-| 1004 | Technical | Rewrite the loading scripts that can extract new data | Medium | Open |  |  |  |
+| 1004 |  |  | Medium | Open |  |  |  |
 | 10001 | Feature | Transfer Tables that has text to Pinecone | Low | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
