@@ -40,7 +40,6 @@ examples:
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 5 | Feature | Create Table - Analyst Ratins From FMP API | High | Open |  |  |  |
 | 6 | Feature | Create Table - Dividends From FMP API | High | Open |  |  |  |
-| 11 | Feature | Create a data processing task to process the company profile | High | Open |  |  |  |
 | 1001 | Technical | Rewrite the loading scripts that can just insert and update new data | Medium | Open |  |  |  |
 | 1003 | Feature | Delete news record that is noise | Medium | Open |  |  |  |
 | 1004 | Miscellaneous | Create and load data into earnings_transcript_analysis | Medium | Open |  |  |  |
@@ -72,6 +71,7 @@ examples:
 | 8 | Feature | Create Table - Earnings Chunks | High | Close | feature_8 | 2025-10-07 | 2025-10-07 |
 | 8 | Feature | Create Table - Earnings Embeddings | High | Close | feature_8 | 2025-10-07 | 2025-10-07 |
 | 10 | Feature | Create an advanced ai agent to analyze earnings transcripts | High | Close | feature_10 | 2025-10-08 | 2025-10-09 |
+| 11 | Feature | Create a data processing task to process the company profile | High | Close | feat_11 | 2025-10-11 | 2025-10-11 |
 | 12 | Feature | Extend the earnings transcript ai agent to analyze how company handle the risk | High | Close | feat_12 | 2025-10-09 | 2025-10-10 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous | Create a md doc for source | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
