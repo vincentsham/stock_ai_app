@@ -1,107 +1,195 @@
-# Stock AI App
+# AI Stock Intelligence System  
+**Author:** Vincent Sham  
+**Project:** Multi-Agent AI Framework for Comprehensive Stock Analysis  
 
-A modern AI-powered application for stock analysis. This app provides insights into stock prices, financial metrics, and news headlines using advanced AI models and data pipelines.
+---
 
-## ✨ Features
+## Table of Contents
+- [Project Overview](#project-overview)
+- [System Architecture](#system-architecture)
+- [Stock Type Classification](#stock-type-classification)
+  - [Purpose](#1-purpose)
+  - [Three-Layer Taxonomy](#2-three-layer-taxonomy)
+  - [Benefits of Subtypes](#3-benefits-of-subtypes)
+  - [Example Hierarchy](#4-example-hierarchy)
+  - [Dynamic Labeling](#5-dynamic-labeling)
+- [Multi-Pillar Scoring Framework](#multi-pillar-scoring-framework)
+  - [Purpose](#1-purpose-1)
+  - [Pillar → Sub-Pillar Hierarchy](#2-pillar--sub-pillar-hierarchy)
+  - [Trend-Aware Scoring](#3-trend-aware-scoring)
+  - [Peer Comparison Framework](#4-peer-comparison-framework)
+  - [Interpretability](#5-interpretability)
+- [AI-Generated Ratings & Price Targets](#ai-generated-ratings--price-targets)
+- [Objective](#objective)
+- [Future Development Roadmap](#future-development-roadmap)
 
-- **Real-time Stock Analysis** - Get up-to-date stock prices and financial metrics
-- **AI-Powered Insights** - Leverage AI to analyze stock trends and provide recommendations
-- **Data Pipelines** - Automated ETL pipelines for loading and processing stock data
-- **Responsive Design** - Clean, modern UI for seamless user experience
+---
 
-## 🏗️ Architecture
+## Project Overview  
 
-The Stock AI App follows a client-server architecture:
+This project is a **multi-agent AI system for comprehensive stock analysis**.  
+The framework integrates structured financial data and unstructured textual insights to create an explainable, adaptive pipeline for evaluating publicly traded companies.  
 
-### Client (Next.js + React)
-- Modern React application built with Next.js
-- Components for user input, stock data display, and analysis results
+The system combines data from earnings reports, financial statements, analyst estimates, news, and market trends.  
+Its objective is to build an **AI-driven “analyst”** that can classify, score, and rate stocks in a consistent, data-grounded, and interpretable manner — providing quantitative scores, qualitative rationales, and AI-generated price targets.  
 
-### Server (FastAPI + Custom AI Models)
-- Python backend using FastAPI for API endpoints
-- Custom AI models for stock analysis and insights
-- Integration with financial data APIs for real-time data
+---
 
-### Pipelines (ETL)
-- Python scripts and Jupyter notebooks for data extraction, transformation, and loading
-- Integration with databases for storing and querying stock data
+## System Architecture  
 
-## 🚀 Getting Started
+The system is composed of specialized **AI agents**, each focused on a distinct data domain:  
 
-### Prerequisites
+| Agent | Primary Function |
+|--------|------------------|
+| **News Agent** | Classifies financial headlines by event type and extracts sentiment and market perception. |
+| **Earnings Transcript Agent** | Analyzes tone, confidence, and risk language in management commentary. |
+| **Financial Report Agent** | Extracts quantitative fundamentals from income statements, balance sheets, and cash flow statements. |
+| **Analyst Forecast Agent** | Aggregates analyst consensus, price-target revisions, and forecast trends. |
+| **Market Trend Agent** | Evaluates recent price action, volatility, liquidity, and technical momentum indicators. |
 
-- Node.js 18+
-- Python 3.10+
-- API keys for financial data sources (e.g., Yahoo Finance, CoinCodex)
+Each agent outputs structured JSON data stored in the database (`core` and `mart` schemas).  
+A **Feature Aggregation Layer** normalizes and merges these outputs into a unified feature space, which feeds into the **Stock Type Classifier** and **Multi-Pillar Scoring Engine**.  
 
-### Installation
+---
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/vincentsham/stock_ai_app.git
-   cd stock_ai_app
-   ```
+## Stock Type Classification  
 
-2. **Set up the server**
-   ```bash
-   cd server
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   pip install -r requirements.txt
-   ```
+### 1. Purpose  
+Stock type classification determines *how a company should be evaluated* by grouping it with peers that share similar structural and behavioral characteristics.  
+Different types emphasize different aspects of performance (e.g., growth vs. stability), allowing **type-specific weights** and **contextual scoring**.
 
-3. **Configure environment variables**  
-   Create a `.env` file in the server directory:
-   ```env
-   API_KEY=your_api_key
-   DATABASE_URL=your_database_url
-   ```
+---
 
-4. **Set up the client**
-   ```bash
-   cd ../client
-   npm install
-   ```
+### 2. Three-Layer Taxonomy
 
-### Running the Application
+| Layer | Definition | Examples |
+|--------|-------------|-----------|
+| **L1 — Archetype** | Broad classification based on financial structure and business model. | Growth, Value, Defensive, Cyclical, High-Margin, Mega-Cap, Pre-Profit, Turnaround |
+| **L2 — Subtype** | Specialized subclass capturing unique strategic or financial behavior within the archetype. | Growth → Hypergrowth / Sustainable / Emerging<br>Pre-Profit → R&D-Led / Pre-Revenue / Scale-Up<br>Value → Deep / Quality / Income |
+| **L3 — Tags** | Thematic or situational multi-labels for catalysts and qualitative context. | AI_Beneficiary, Founder_Led, Buyback_Program, Green_Transition, Regulatory_Risk, etc. |
 
-1. **Start the server**
-   ```bash
-   cd server
-   uvicorn main:app --reload
-   ```
+---
 
-2. **Start the client**
-   ```bash
-   cd client
-   npm run dev
-   ```
+### 3. Benefits of Subtypes
 
-3. **Open your browser and navigate to http://localhost:3000**
+| Advantage | Explanation |
+|------------|-------------|
+| **Interpretability** | Clarifies a company’s identity within its archetype (e.g., *Sustainable Growth* vs. *Hypergrowth*). |
+| **Scoring Precision** | Enables subtype-specific weightings (e.g., *Growth* → Growth/Momentum, *Value* → Valuation/Profitability). |
+| **Peer Comparison** | Ensures fair benchmarking within relevant cohorts. |
+| **Lifecycle Tracking** | Captures company evolution over time (*Pre-Profit → Growth → High-Margin*). |
+| **Explainability** | Improves transparency for dashboards and textual rationales. |
 
-## 🔍 How It Works
+---
 
-1. **User sends a query** through the interface (e.g., "What is the NVIDIA stock price?")
-2. **Server processes the query** using AI models and data pipelines
-3. **Data is retrieved** from financial APIs or databases
-4. **AI generates insights** based on the data
-5. **Results are displayed** to the user in real-time
+### 4. Example Hierarchy
 
-## 🤝 Contributing
+**Growth Archetype**
+- **Hypergrowth:** Revenue CAGR ≥ 25% or Rule-of-40 ≥ 40  
+- **Sustainable Growth:** Revenue CAGR 15–25% with positive FCF  
+- **Emerging Growth:** Revenue CAGR 10–15% with high reinvestment  
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+**Pre-Profit Archetype**
+- **Pre-Revenue:** Revenue TTM < $5M  
+- **R&D-Led:** R&D / Revenue ≥ 50%  
+- **Scale-Up:** Revenue growth ≥ 30% but still unprofitable  
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+**Value Archetype**
+- **Deep Value:** P/E or P/S ≤ sector 20th percentile  
+- **Quality Value:** Cheap but high ROIC and margin stability  
+- **Income Value:** Dividend yield ≥ sector 75th percentile  
 
-## 📝 License
+**Defensive Archetype**
+- **Dividend Aristocrat:** 10+ years of dividend increases  
+- **Utility Defensive:** Low-beta, stable cash-flow sectors  
+- **Staple Defensive:** Predictable consumer demand patterns  
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+---
 
-## 🙏 Acknowledgments
+### 5. Dynamic Labeling  
+- Supports **multi-labeling** (e.g., Apple = {Mega-Cap, High-Margin, Growth})  
+- **Priority rules** determine primary label when overlaps occur  
+- Label history allows tracking of **lifecycle transitions** across time  
 
-- Built with [Next.js](https://nextjs.org/), [React](https://reactjs.org/), and [FastAPI](https://fastapi.tiangolo.com/)
-- Powered by financial data APIs and custom AI models
+---
+
+## Multi-Pillar Scoring Framework  
+
+### 1. Purpose  
+After classification, each stock is evaluated across **six high-level investment pillars**, further decomposed into **sub-pillars**.  
+This hierarchical design ensures interpretability, fine-grained weighting, and modular agent contributions.
+
+---
+
+### 2. Pillar → Sub-Pillar Hierarchy
+
+| Pillar | Sub-Pillars | Focus |
+|---------|--------------|--------|
+| **Growth** | Revenue Growth, Earnings Growth, Reinvestment & Expansion, Market Share Gain | Measures business expansion pace and reinvestment efficiency. |
+| **Profitability** | Margins, Return Metrics, Operational Efficiency | Captures ability to convert revenue into cash and returns. |
+| **Quality & Risk** | Balance Sheet Strength, Earnings Stability, Financial Risk, Operational Risk | Assesses resilience and downside protection. |
+| **Valuation** | Absolute Valuation, Relative Valuation, Sentiment Valuation | Compares pricing versus intrinsic and peer benchmarks. |
+| **Momentum** | Price Momentum, Volume Flow, Sentiment Momentum, Catalyst Reaction | Tracks technical and behavioral market signals. |
+| **Execution** | Earnings Surprise, Guidance Revisions, Transcript Tone, Operational Actions | Measures management delivery and forward execution. |
+
+---
+
+### 3. Trend-Aware Scoring  
+The scoring engine incorporates **temporal trend analysis** to capture changes in company performance over time.  
+Rather than relying solely on static snapshots, it evaluates whether each pillar is **improving, stable, or deteriorating**, integrating directionality into the scoring process.  
+This trend component strengthens interpretability by identifying consistent growth trajectories or early signs of weakening fundamentals.
+
+---
+
+### 4. Peer Comparison Framework  
+The scoring system applies **peer-based normalization** to ensure fair and context-specific evaluations.  
+Each company’s pillar and sub-pillar results are compared against a relevant peer group — defined by **sector**, **market-cap range**, and **stock type or subtype**.  
+This approach enables more meaningful benchmarking, allowing the system to measure performance relative to similar companies rather than the entire market.
+
+---
+
+### 5. Interpretability  
+Each company’s final evaluation can be visualized as a hierarchical breakdown:  
+
+> **Total Score → Pillars → Sub-Pillars → Features**  
+
+This enables the system to generate **transparent textual rationales**, such as:  
+
+> “Tesla scores high in *Growth* (89) driven by *Revenue Growth + EPS Expansion*,  
+> but low in *Valuation* (42) due to elevated EV/EBITDA multiples.”  
+
+---
+
+## AI-Generated Ratings & Price Targets  
+
+The top layer of the system produces **AI-generated investment ratings and price targets (PTs)** by synthesizing all quantitative and qualitative signals.  
+
+- **Ratings:** Generated on a numerical or categorical scale (*Buy / Hold / Sell*)  
+- **Price Targets:** Estimated using a blend of valuation modeling, peer comparison, and growth projections  
+- **Rationale:** Each rating/PT includes an interpretable explanation detailing contributing pillars, sub-pillars, and risk factors  
+
+This capability transforms the framework from an analytics engine into a fully autonomous, explainable **AI equity-research analyst**.
+
+---
+
+## Objective  
+
+The project’s objective is to develop an **adaptive, multi-agent AI analyst** that can:  
+1. Collect and normalize diverse financial signals.  
+2. Classify companies into dynamic, explainable stock types.  
+3. Evaluate them through a multi-pillar, sub-pillar, and trend-aware scoring hierarchy.  
+4. Benchmark results using peer comparisons for contextual fairness.  
+5. Produce transparent investment ratings and AI-derived price targets with rationale.  
+
+By combining data engineering, financial modeling, and natural-language understanding, this system delivers a **coherent, interpretable, and context-aware stock intelligence layer** for both quantitative research and portfolio decision support.
+
+---
+
+## Future Development Roadmap  
+
+| Focus Area | Description |
+|-------------|--------------|
+| **Narrative & Sentiment Expansion** | Extend beyond tone analysis to capture *narrative evolution* and *discourse alignment*. The system will measure how company messaging shifts across time, how analyst narratives align or diverge from management tone, and how social sentiment compares with institutional views. |
+| **Catalyst & Event Awareness** | Incorporate detection of key market-moving events such as earnings surprises, M&A activity, product launches, and regulatory actions. This layer will enhance short-term interpretability and connect pillar scoring to event-driven insights. |
+
+---
