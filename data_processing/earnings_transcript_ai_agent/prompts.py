@@ -51,7 +51,7 @@ Output (strict JSON):
   "sentiment": -1|0|1,
   "durability": 0|1|2,
   "performance_factors": ["<factor1>", "<factor2>", ...],
-  "summary": "<short summary with quotes>"
+  "past_summary": "<short summary with quotes>"
 }
 
 Rules:
@@ -99,7 +99,7 @@ Output (strict JSON):
   "growth_acceleration": -1|0|1,
   "future_outlook_sentiment": -1|0|1,
   "catalysts": ["<factor1>", "<factor2>", ...],
-  "summary": "<short factual summary with quotes>"
+  "future_summary": "<short factual summary with quotes>"
 }
 
 Rules:
@@ -130,7 +130,7 @@ Output (strict JSON):
   "risk_impact": -1|0|1,
   "risk_time_horizon": 0|1|2,
   "risk_factors": ["<factor1>", "<factor2>", ...],
-  "summary": "<2–3 concise sentences with quotes>"
+  "risk_summary": "<2–3 concise sentences with quotes>"
 }
 
 Rules:
@@ -142,7 +142,7 @@ Rules:
     "risk_impact": -1,
     "risk_time_horizon": 0,
     "risk_factors": [],
-    "summary": ""
+    "risk_summary": ""
   }
 """
 
@@ -174,7 +174,7 @@ Output (strict JSON only):
   "mitigation_effectiveness": -1|0|1,
   "mitigation_time_horizon": 0|1|2,
   "mitigation_actions": ["<action1>", "<action2>", ...],
-  "summary": "<2–3 concise sentences with quotes>"
+  "mitigation_summary": "<2–3 concise sentences with quotes>"
 }
 
 Null JSON (if no mitigation discussed):
@@ -183,7 +183,7 @@ Null JSON (if no mitigation discussed):
   "mitigation_effectiveness": -1,
   "mitigation_time_horizon": 0,
   "mitigation_actions": [],
-  "summary": ""
+  "mitigation_summary": ""
 }
 """
 

@@ -7,7 +7,7 @@ from nodes import (
     past_retriever_node, future_retriever_node, risk_retriever_node,
     past_analysis_node, future_analysis_node, risk_analysis_node,
     risk_response_analysis_node, risk_response_retriever_node,
-    queries_powered_by_llm
+    risk_response_queries_powered_by_llm
 )
 from states import merged_state_factory, MergedState, PastState, FutureState, RiskState
 
@@ -38,7 +38,7 @@ def create_graph() -> StateGraph:
     graph.add_node("future_analysis_node", future_analysis_node)
     graph.add_node("risk_analysis_node", risk_analysis_node)
 
-    graph.add_node("queries_powered_by_llm", queries_powered_by_llm)
+    graph.add_node("risk_response_queries_powered_by_llm", risk_response_queries_powered_by_llm)
     graph.add_node("risk_response_retriever_node", risk_response_retriever_node)
     graph.add_node("risk_response_analysis_node", risk_response_analysis_node)
 
@@ -52,8 +52,8 @@ def create_graph() -> StateGraph:
     graph.add_edge("future_retriever_node", "future_analysis_node")
     graph.add_edge("risk_retriever_node", "risk_analysis_node")
 
-    graph.add_edge("risk_analysis_node", "queries_powered_by_llm")
-    graph.add_edge("queries_powered_by_llm", "risk_response_retriever_node")
+    graph.add_edge("risk_analysis_node", "risk_response_queries_powered_by_llm")
+    graph.add_edge("risk_response_queries_powered_by_llm", "risk_response_retriever_node")
     graph.add_edge("risk_response_retriever_node", "risk_response_analysis_node")
 
     # all three analysis branches converge to merge_results
@@ -105,7 +105,9 @@ if __name__ == "__main__":
                 earnings_date="2025-07-24"
             )
 
+    # import pdb; pdb.set_trace()
     result = app.invoke(state)
+
     print(result)
     print("===========past===============")
     print(result['past_analysis'])

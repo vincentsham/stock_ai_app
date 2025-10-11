@@ -1,6 +1,6 @@
 from __future__ import annotations
 from enum import IntEnum
-from typing import List, Optional, Dict, Any
+from typing import TypedDict, List, Optional, Dict, Any
 from pydantic import BaseModel, Field, conint
 from prompts import PAST_PERFORMANCE_QUERIES, FUTURE_OUTLOOK_QUERIES, RISK_FACTORS_QUERIES
 
@@ -21,20 +21,41 @@ Binary01 = conint(ge=0, le=1)  # 0 or 1
 
 
 # ---- Aspect States ----
-class CompanyInfo(BaseModel):
+class CompanyInfo(TypedDict):
     """
     Basic company and earnings information.
     """
     tic: str
+    fiscal_year: int
+    fiscal_quarter: int
+    earnings_date: Optional[str] = None
     company_name: Optional[str] = None
     industry: Optional[str] = None
     sector: Optional[str] = None
     company_description: Optional[str] = None
-    fiscal_year: int
-    fiscal_quarter: int
-    earnings_date: Optional[str] = None
 
-class RetrieverState(BaseModel):
+    @classmethod
+    def create(cls, 
+               tic: str,
+               fiscal_year: int,
+               fiscal_quarter: int,
+               earnings_date: Optional[str] = None,
+               company_name: Optional[str] = None,
+               industry: Optional[str] = None,
+               sector: Optional[str] = None,
+               company_description: Optional[str] = None) -> CompanyInfo:
+        return cls(
+            tic=tic,
+            fiscal_year=fiscal_year,
+            fiscal_quarter=fiscal_quarter,
+            earnings_date=earnings_date,
+            company_name=company_name,
+            industry=industry,
+            sector=sector,
+            company_description=company_description
+        )  
+
+class RetrieverState(TypedDict):
     """
     State for retrieving relevant chunks.
 
@@ -47,10 +68,22 @@ class RetrieverState(BaseModel):
     - chunks_score: list of scores corresponding to the chunks
     """
     top_k: Optional[int] = 5  # Number of top chunks to retrieve
-    queries: List[str] = Field(default_factory=list, description="List of query strings to guide retrieval")
-    chunks: List[str] = Field(default_factory=list, description="List of relevant transcript chunks")
-    chunks_score : List[float] = Field(default_factory=list, description="List of scores corresponding to the chunks")
+    queries: List[str] = []
+    chunks: List[str] = []
+    chunks_score : List[float] = []
 
+    @classmethod
+    def create(cls, 
+               top_k: int = 5,
+               queries: List[str] = [],
+               chunks: List[str] = [],
+               chunks_score: List[float] = []) -> RetrieverState:
+        return cls(
+            top_k=top_k,
+            queries=queries,
+            chunks=chunks,
+            chunks_score=chunks_score
+        )
 
 class PastState(BaseModel):
     """
@@ -61,17 +94,28 @@ class PastState(BaseModel):
         "sentiment": -1|0|1,
         "durability": 0|1|2,
         "performance_factors": ["<factor1>", "<factor2>", ...],
-        "summary": "<short summary with quotes>"
+        "past_summary": "<short summary with quotes>"
     }
     """
     sentiment: Optional[Tri] = None
     durability: Optional[Horizon] = None
     performance_factors: List[str] = []
-    summary: Optional[str] = None
+    past_summary: Optional[str] = None
 
-    
+    @classmethod
+    def create(cls,
+               sentiment: Optional[Tri] = None,
+               durability: Optional[Horizon] = None,
+               performance_factors: Optional[List[str]] = [],
+               past_summary: Optional[str] = None) -> PastState:
+        return cls(
+            sentiment=sentiment,
+            durability=durability,
+            performance_factors=performance_factors,
+            past_summary=past_summary
+        )
 
-class FutureState(BaseModel):
+class FutureState(TypedDict):
     """
     State for analyzing future outlook.
 
@@ -85,7 +129,7 @@ class FutureState(BaseModel):
         "growth_acceleration": -1|0|1,
         "future_outlook_sentiment": -1|0|1,
         "catalysts": ["<factor1>", "<factor2>", ...],
-        "summary": "<short factual summary with quotes>"
+        "future_summary": "<short factual summary with quotes>"
     }
     """
     guidance_direction: Optional[Tri] = None
@@ -96,11 +140,34 @@ class FutureState(BaseModel):
     growth_acceleration: Optional[Tri] = None
     future_outlook_sentiment: Optional[Tri] = None
     catalysts: List[str] = []
-    summary: Optional[str] = None
+    future_summary: Optional[str] = None
+
+    @classmethod
+    def create(cls,
+               guidance_direction: Optional[Tri] = None,
+               revenue_outlook: Optional[Tri] = None,
+               earnings_outlook: Optional[Tri] = None,
+               margin_outlook: Optional[Tri] = None,
+               cashflow_outlook: Optional[Tri] = None,
+               growth_acceleration: Optional[Tri] = None,
+               future_outlook_sentiment: Optional[Tri] = None,
+               catalysts: List[str] = [],
+               future_summary: Optional[str] = None) -> FutureState:
+        return cls(
+            guidance_direction=guidance_direction,
+            revenue_outlook=revenue_outlook,
+            earnings_outlook=earnings_outlook,
+            margin_outlook=margin_outlook,
+            cashflow_outlook=cashflow_outlook,
+            growth_acceleration=growth_acceleration,
+            future_outlook_sentiment=future_outlook_sentiment,
+            catalysts=catalysts,
+            future_summary=future_summary
+        )
 
 
 
-class RiskState(BaseModel):
+class RiskState(TypedDict):
     """
     State for analyzing risks.
 
@@ -110,17 +177,32 @@ class RiskState(BaseModel):
         "risk_impact": -1|0|1,
         "risk_time_horizon": 0|1|2,
         "risk_factors": ["<factor1>", "<factor2>", ...],
-        "summary": "<2–3 concise sentences with quotes>"
+        "risk_summary": "<2–3 concise sentences with quotes>"
     }
     """
     risk_mentioned: Optional[Binary01] = None
     risk_impact: Optional[Tri] = None
     risk_time_horizon: Optional[Horizon] = None
     risk_factors: List[str] = []
-    summary: Optional[str] = None
+    risk_summary: Optional[str] = None
+
+    @classmethod
+    def create(cls,
+               risk_mentioned: Optional[Binary01] = None,
+               risk_impact: Optional[Tri] = None,
+               risk_time_horizon: Optional[Horizon] = None,
+               risk_factors: List[str] = [],
+               risk_summary: Optional[str] = None) -> RiskState:
+        return cls(
+            risk_mentioned=risk_mentioned,
+            risk_impact=risk_impact,
+            risk_time_horizon=risk_time_horizon,
+            risk_factors=risk_factors,
+            risk_summary=risk_summary
+        )
 
 
-class RiskResponseState(BaseModel):
+class RiskResponseState(TypedDict):
     """
     State for analyzing risk responses.
 
@@ -130,14 +212,29 @@ class RiskResponseState(BaseModel):
     "mitigation_effectiveness": -1|0|1,
     "mitigation_time_horizon": 0|1|2,
     "mitigation_actions": ["<action1>", "<action2>", ...],
-    "summary": "<2–3 concise sentences with quotes>"
+    "mitigation_summary": "<2–3 concise sentences with quotes>"
     }
     """
     mitigation_mentioned: Optional[Binary01] = None
     mitigation_effectiveness: Optional[Tri] = None
     mitigation_time_horizon: Optional[Horizon] = None
     mitigation_actions: List[str] = []
-    summary: Optional[str] = None
+    mitigation_summary: Optional[str] = None
+
+    @classmethod
+    def create(cls,
+               mitigation_mentioned: Optional[Binary01] = None,
+               mitigation_effectiveness: Optional[Tri] = None,
+               mitigation_time_horizon: Optional[Horizon] = None,
+               mitigation_actions: List[str] = [],
+               mitigation_summary: Optional[str] = None) -> RiskResponseState:
+        return cls(
+            mitigation_mentioned=mitigation_mentioned,
+            mitigation_effectiveness=mitigation_effectiveness,
+            mitigation_time_horizon=mitigation_time_horizon,
+            mitigation_actions=mitigation_actions,
+            mitigation_summary=mitigation_summary
+        )
 
 
 class MergedState(BaseModel):
@@ -171,7 +268,7 @@ def merged_state_factory(
     """
     Helper function to create a MergedState object from company info and analysis states.
     """
-    company_info = CompanyInfo(
+    company_info = CompanyInfo.create(
         tic=tic,
         company_name=company_name,
         industry=industry,
@@ -181,18 +278,15 @@ def merged_state_factory(
         fiscal_quarter=fiscal_quarter,
         earnings_date=earnings_date
     )
-    past_retriever_state = RetrieverState(top_k=top_k)
-    past_retriever_state.queries = PAST_PERFORMANCE_QUERIES
-    future_retriever_state = RetrieverState(top_k=top_k)
-    future_retriever_state.queries = FUTURE_OUTLOOK_QUERIES
-    risk_retriever_state = RetrieverState(top_k=top_k)
-    risk_retriever_state.queries = RISK_FACTORS_QUERIES
-    risk_response_retriever_state = RetrieverState(top_k=top_k)
+    past_retriever_state = RetrieverState.create(top_k=top_k, queries=PAST_PERFORMANCE_QUERIES)
+    future_retriever_state = RetrieverState.create(top_k=top_k, queries=FUTURE_OUTLOOK_QUERIES)
+    risk_retriever_state = RetrieverState.create(top_k=top_k, queries=RISK_FACTORS_QUERIES)
+    risk_response_retriever_state = RetrieverState.create(top_k=top_k)
 
-    past_state = PastState()
-    future_state = FutureState()
-    risk_state = RiskState()
-    risk_response_state = RiskResponseState()
+    past_state = PastState.create()
+    future_state = FutureState.create()
+    risk_state = RiskState.create()
+    risk_response_state = RiskResponseState.create()
 
     merged_state = MergedState(
         company_info=company_info,

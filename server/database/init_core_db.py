@@ -134,6 +134,55 @@ def table_creation(conn):
         print("Index 'idx_core_earnings_transcript_embeddings_vec_hnsw' created or already exists.")
 
 
+        # Create a table for earnings transcript analysis if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.earnings_transcript_analysis (
+            tic                     VARCHAR(10) NOT NULL,
+            fiscal_year             INT NOT NULL,
+            fiscal_quarter           INT NOT NULL,
+
+            -- === Past analysis ===
+            sentiment               SMALLINT,       -- -1, 0, 1
+            durability              SMALLINT,       -- 0, 1, 2
+            performance_factors     TEXT[] NOT NULL DEFAULT '{}',
+            past_summary            TEXT,
+
+            -- === Future analysis ===
+            guidance_direction      SMALLINT,       -- -1, 0, 1
+            revenue_outlook         SMALLINT,       -- -1, 0, 1
+            margin_outlook          SMALLINT,       -- -1, 0, 1
+            earnings_outlook        SMALLINT,       -- -1, 0, 1
+            cashflow_outlook        SMALLINT,       -- -1, 0, 1
+            growth_acceleration     SMALLINT,       -- -1, 0, 1
+            future_outlook_sentiment SMALLINT,      -- -1, 0, 1
+            catalysts               TEXT[] NOT NULL DEFAULT '{}',
+            future_summary          TEXT,
+
+            -- === Risk analysis ===
+            risk_mentioned          SMALLINT,       -- 0 or 1
+            risk_impact             SMALLINT,       -- -1, 0, 1
+            risk_time_horizon       SMALLINT,       -- 0, 1, 2
+            risk_factors            TEXT[] NOT NULL DEFAULT '{}',
+            risk_summary            TEXT,
+
+            -- === Mitigation / risk response ===
+            mitigation_mentioned     SMALLINT,      -- 0 or 1
+            mitigation_effectiveness SMALLINT,      -- -1, 0, 1
+            mitigation_time_horizon  SMALLINT,      -- 0, 1, 2
+            mitigation_actions       TEXT[] NOT NULL DEFAULT '{}',
+            mitigation_summary       TEXT,
+
+            -- Optional for tracking & versioning
+            last_updated            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+            PRIMARY KEY (tic, fiscal_year, fiscal_quarter)
+        );
+        """)
+        print("Table 'earnings_transcript_analysis' created or already exists with composite primary key.")
+
+
+
+
         conn.commit()
         
     except Exception as e:
