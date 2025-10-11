@@ -16,6 +16,27 @@ def table_creation(conn):
             print("Connection test failed!")
 
 
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.stock_metadata (
+            tic VARCHAR(10) PRIMARY KEY,
+            name VARCHAR(255),
+            sector VARCHAR(255),
+            industry VARCHAR(255),
+            country VARCHAR(255),
+            market_cap BIGINT,
+            employees INTEGER,
+            description TEXT,
+            website VARCHAR(255),
+            exchange VARCHAR(255),
+            currency VARCHAR(10),
+            summary TEXT,                       -- 200-300 words
+            short_summary TEXT,                 -- ~150 words    
+            last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        """)
+        print("Table 'stock_metadata' created or already exists.")
+
+
         # Create a table for news analysis if it does not exist
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.news_analysis (
