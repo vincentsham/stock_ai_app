@@ -40,10 +40,11 @@ examples:
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 5 | Feature | Create Table - Analyst Ratins From FMP API | High | Open |  |  |  |
 | 6 | Feature | Create Table - Dividends From FMP API | High | Open |  |  |  |
-| 13 | Feature | Create Table - Earnings Transcript Analysis | High | Open |  |  |  |
+| 13 | Feature | Create Table - Earnings Transcript Analysis | Medium | Open |  |  |  |
+| 13 | Feature | Create and load data into earnings_transcript_analysis | Medium | Open |  |  |  |
 | 1001 | Technical | Rewrite the loading scripts that can just insert and update new data | Medium | Open |  |  |  |
 | 1003 | Feature | Delete news record that is noise | Medium | Open |  |  |  |
-| 1004 | Miscellaneous | Create and load data into earnings_transcript_analysis | Medium | Open |  |  |  |
+| 1004 | Miscellaneous | Update db schema document | Medium | Open |  |  |  |
 | 10001 | Feature | Transfer Tables that has text to Pinecone | Low | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
