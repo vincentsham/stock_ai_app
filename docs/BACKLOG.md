@@ -38,8 +38,6 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-| 5 | Feature | Create Table - Analyst Ratings From FMP API | High | Open |  |  |  |
-| 6 | Feature | Create Table - Dividends From FMP API | High | Open |  |  |  |
 | 14 | Feature | Create an ai agent for analyzing analyst ratings | High | Open |  |  |  |
 | 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Open |  |  |  |
 | 1003 | Feature | Delete news record that is noise | Medium | Open |  |  |  |
@@ -72,6 +70,8 @@ examples:
 | 2 | Feature | Add No. of inserted records | Low | Close | feature_2 | 2025-09-28 | 2025-09-29 |
 | 3 | Feature | Create Table - News analysis | High | Close | feature_3 | 2025-10-06 | 2025-10-06 |
 | 4 | Feature | Create Table - News From FMP API | High | Close | feature_4 | 2025-10-04 | 2025-10-04 |
+| 5 | Feature | Create Table - Analyst Ratings From FMP API | High | Open | feat_5 | 2025-10-12 | 2025-10-12 |
+| 6 | Feature | Create Table - Dividends From FMP API | High | Open | feat_5 | 2025-10-12 |2025-10-12 |
 | 7 | Feature | Create an advanced ai agent to analyze news | High | Close | feature_7 | 2025-10-05 | 2025-10-05 |
 | 8 | Feature | Create Table - Earnings Chunks | High | Close | feature_8 | 2025-10-07 | 2025-10-07 |
 | 8 | Feature | Create Table - Earnings Embeddings | High | Close | feature_8 | 2025-10-07 | 2025-10-07 |
