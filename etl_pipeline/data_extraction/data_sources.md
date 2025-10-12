@@ -4,8 +4,8 @@
 **Description**: A Python library for accessing historical market data, stock metadata, and financial information.
 
 **Usage**: Used in the following scripts:
-- `load_stock_metadata.py`
-- `load_stock_ohlcv.py`
+- `extract_stock_metadata.py`
+- `extract_stock_ohlcv.py`
 
 **Documentation**: [yfinance Documentation](https://pypi.org/project/yfinance/)
 
@@ -15,9 +15,9 @@
 **Description**: Provides financial statement data, including income statements, balance sheets, and cash flow statements for publicly traded companies.
 
 **Usage**: Used in the following scripts:
-- `load_income_statements.py`
-- `load_balance_sheets.py`
-- `load_cash_flows.py`
+- `extract_income_statements.py`
+- `extract_balance_sheets.py`
+- `extract_cash_flows.py`
 
 **Limitation**: 250 API calls per day in the free tier.
 
@@ -29,7 +29,7 @@
 **Description**: Offers earnings call transcripts for publicly traded companies.
 
 **Usage**: Used in the following script:
-- `load_earnings_transcripts.py`
+- `extract_earnings_transcripts.py`
 
 **Limitation**: 10,000 API calls per month in the free tier.
 
@@ -41,6 +41,6 @@
 **Description**: Provides historical earnings data for stocks.
 
 **Usage**: Used in the following script:
-- `load_historical_earnings.py`
+- `extract_historical_earnings.py`
 
 **Documentation**: [CoinCodex API](https://coincodex.com/api/)

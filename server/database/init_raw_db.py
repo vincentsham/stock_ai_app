@@ -156,6 +156,57 @@ def table_creation(conn):
         print("Table 'news' created or already exists with composite primary key.")
 
 
+        # Create a table for analyst price targets data if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS raw.analyst_price_targets (
+            tic               varchar(10) NOT NULL,
+            published_at      timestamp NOT NULL,
+            news_title        text,
+            news_base_url     text,
+            news_publisher    text,
+                       
+            analyst_name      text,
+            broker            text,
+            price_target      numeric(12,2),
+            adj_price_target  numeric(12,2),
+            price_when_posted numeric(12,4),
+
+            url               text NOT NULL,
+            raw_json          jsonb NOT NULL,
+            source            text NOT NULL,
+            ingested_at       timestamp DEFAULT now(),
+
+            PRIMARY KEY (tic, url)
+        );
+        """)
+        print("Table 'analyst_price_targets' created or already exists with composite primary key.")
+
+        # Create a table for analyst grades data if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS raw.analyst_grades (
+            tic               varchar(10) NOT NULL,
+            published_at      timestamp NOT NULL,
+            news_title        text,
+            news_base_url     text,
+            news_publisher    text,
+
+            new_grade         text,
+            previous_grade    text,
+            grading_company   text,
+            action            text,
+            price_when_posted numeric(12,4),
+
+            url               text NOT NULL,
+            raw_json          jsonb NOT NULL,
+            source            text NOT NULL,
+            ingested_at       timestamp DEFAULT now(),
+
+            PRIMARY KEY (tic, url)
+        );
+        """)
+        print("Table 'analyst_grades' created or already exists with composite primary key.")
+
+
 
     
         conn.commit()

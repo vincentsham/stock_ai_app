@@ -31,7 +31,7 @@
 
 **Source**: `yfinance`
 
-**Script**: `load_stock_metadata.py`
+**Script**: `extract_stock_metadata.py`
 
 | Column Name     | Data Type                  | Is Nullable | Primary Key | Description                              |
 |-----------------|----------------------------|-------------|-------------|------------------------------------------|
@@ -55,7 +55,7 @@
 
 **Source**: `yfinance`
 
-**Script**: `load_stock_ohlcv.py`
+**Script**: `extract_stock_ohlcv.py`
 
 | Column Name     | Data Type                  | Is Nullable | Primary Key | Description                              |
 |-----------------|----------------------------|-------------|-------------|------------------------------------------|
@@ -75,7 +75,7 @@
 
 **Source**: `CoinCodex API`
 
-**Script**: `load_historical_earnings.py`
+**Script**: `extract_historical_earnings.py`
 
 | Column Name     | Data Type                  | Is Nullable | Primary Key | Description                              |
 |-----------------|----------------------------|-------------|-------------|------------------------------------------|
@@ -100,7 +100,7 @@
 
 **Source**: `API Ninjas Earnings Transcript API`
 
-**Script**: `load_earnings_transcripts.py`
+**Script**: `extract_earnings_transcripts.py`
 
 | Column Name     | Data Type                  | Is Nullable | Primary Key | Description                              |
 |-----------------|----------------------------|-------------|-------------|------------------------------------------|
@@ -119,7 +119,7 @@
 
 **Source**: `Financial Modeling Prep API`
 
-**Script**: `load_cash_flows.py`
+**Script**: `extract_cash_flows.py`
 
 | Column Name     | Data Type                  | Is Nullable | Primary Key | Description                              |
 |-----------------|----------------------------|-------------|-------------|------------------------------------------|
@@ -138,7 +138,7 @@
 
 **Source**: `Financial Modeling Prep API`
 
-**Script**: `load_balance_sheets.py`
+**Script**: `extract_balance_sheets.py`
 
 | Column Name     | Data Type                  | Is Nullable | Primary Key | Description                              |
 |-----------------|----------------------------|-------------|-------------|------------------------------------------|
@@ -157,7 +157,7 @@
 
 **Source**: `Financial Modeling Prep API`
 
-**Script**: `load_income_statements.py`
+**Script**: `extract_income_statements.py`
 
 | Column Name     | Data Type                  | Is Nullable | Primary Key | Description                              |
 |-----------------|----------------------------|-------------|-------------|------------------------------------------|
@@ -176,7 +176,7 @@
 
 **Source**: `Financial Modeling Prep API`
 
-**Script**: `load_news.py`
+**Script**: `extract_news.py`
 
 | Column Name     | Data Type  | Is Nullable | Primary Key | Description   |
 |-----------------|------------|-------------|-------------|---------------|

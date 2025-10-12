@@ -57,7 +57,7 @@ def main():
     conn = connect_to_db()
     if conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT tic FROM stock_metadata;")
+        cursor.execute("SELECT tic FROM raw.stock_metadata;")
         records = cursor.fetchall()
         for record in records:
             tic = record[0]
