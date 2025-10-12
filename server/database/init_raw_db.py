@@ -15,37 +15,40 @@ def table_creation(conn):
         else:
             print("Connection test failed!")
 
-        # Create a table for stock metadata if it does not exist
+        # Create a table for stock profiles if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS raw.stock_metadata (
-            tic VARCHAR(10) PRIMARY KEY,
-            name VARCHAR(255),
-            sector VARCHAR(255),
-            industry VARCHAR(255),
-            country VARCHAR(255),
-            market_cap BIGINT,
-            employees INTEGER,
-            description TEXT,
-            website VARCHAR(255),
-            exchange VARCHAR(255),
-            currency VARCHAR(10),
-            last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        CREATE TABLE IF NOT EXISTS raw.stock_profiles (
+            tic            VARCHAR(10) PRIMARY KEY,
+            name           VARCHAR(255),
+            sector         VARCHAR(255),
+            industry       VARCHAR(255),
+            country        VARCHAR(255),
+            market_cap     BIGINT,
+            employees      INTEGER,
+            description    TEXT,
+            website        TEXT,
+            exchange       TEXT,
+            currency       VARCHAR(10),
+            source         TEXT,
+            raw_json       JSONB,
+            payload_sha256 CHAR(64),
+            updated_at    TIMESTAMPTZ DEFAULT now()
         );
         """)
-        print("Table 'stock_metadata' created or already exists.")
+        print("Table 'stock_profiles' created or already exists.")
 
 
         # Create a table for stock OHLCV data if it does not exist
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS raw.stock_ohlcv (
-            date DATE NOT NULL,
-            tic VARCHAR(10) NOT NULL,
-            open FLOAT NOT NULL,
-            high FLOAT NOT NULL,
-            low FLOAT NOT NULL,
-            close FLOAT NOT NULL,
-            volume BIGINT NOT NULL,
-            last_updated    TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+            date          DATE NOT NULL,
+            tic           VARCHAR(10) NOT NULL,
+            open          NUMERIC(12,4) NOT NULL,
+            high          NUMERIC(12,4) NOT NULL,
+            low           NUMERIC(12,4) NOT NULL,
+            close         NUMERIC(12,4) NOT NULL,
+            volume        BIGINT NOT NULL,
+            updated_at   TIMESTAMPTZ DEFAULT now(),
             PRIMARY KEY (date, tic)
         );
         """)

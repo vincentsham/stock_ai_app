@@ -2,21 +2,22 @@ import yfinance as yf
 from psycopg import connect
 from psycopg.errors import UniqueViolation
 from server.database.utils import connect_to_db
-import os
+import json
+from utils import hash_dict
 
 
-# Fetch stock metadata from yfinance
-def fetch_stock_metadata(tickers):
+# Fetch stock profiles from yfinance
+def fetch_records(tickers):
     data = []
     for ticker in tickers:
-        print(f"Fetching metadata for {ticker}...")
+        print(f"Fetching info for {ticker}...")
         stock = yf.Ticker(ticker)
         info = stock.info
         exchange = info.get("exchange")
         if exchange == "NMS":
             exchange = "NASDAQ"
         data.append((
-            ticker,
+            ticker.upper(),
             info.get("longName"),
             info.get("sector"),
             info.get("industry"),
@@ -27,17 +28,23 @@ def fetch_stock_metadata(tickers):
             info.get("website"),
             exchange,
             info.get("currency"),
+            "yfinance",
+            json.dumps(info),
+            hash_dict(info)
         ))
     return data
 
-# Insert stock metadata into the database
-def insert_stock_metadata(conn, data):
+# Insert records into the database
+def insert_records(conn, data):
     total_records = 0
     try:
         cursor = conn.cursor()
         query = """
-        INSERT INTO raw.stock_metadata (tic, name, sector, industry, country, market_cap, employees, description, website, exchange, currency)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO raw.stock_profiles (
+            tic, name, sector, industry, country, market_cap, employees, description, website, exchange, currency, source, raw_json, payload_sha256
+        ) VALUES (
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+        )
         ON CONFLICT (tic) DO UPDATE SET
             name = EXCLUDED.name,
             sector = EXCLUDED.sector,
@@ -49,7 +56,10 @@ def insert_stock_metadata(conn, data):
             website = EXCLUDED.website,
             exchange = EXCLUDED.exchange,
             currency = EXCLUDED.currency,
-            last_updated = CURRENT_TIMESTAMP;
+            source = EXCLUDED.source,
+            raw_json = EXCLUDED.raw_json,
+            payload_sha256 = EXCLUDED.payload_sha256,
+            updated_at = NOW();
         """
         for record in data:
             try:
@@ -60,7 +70,7 @@ def insert_stock_metadata(conn, data):
         conn.commit()
         return total_records
     except Exception as e:
-        print(f"Error inserting metadata: {e}")
+        print(f"Error inserting records: {e}")
         conn.rollback()
         return 0
 
@@ -68,7 +78,7 @@ if __name__ == "__main__":
     tickers = ["AAPL", "TSLA", "NVDA"]
     conn = connect_to_db()
     if conn:
-        stock_metadata = fetch_stock_metadata(tickers)
-        total_records = insert_stock_metadata(conn, stock_metadata)
+        records = fetch_records(tickers)
+        total_records = insert_records(conn, records)
         print(f"Total records inserted: {total_records}")
         conn.close()

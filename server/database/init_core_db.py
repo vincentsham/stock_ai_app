@@ -17,24 +17,25 @@ def table_creation(conn):
 
 
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.stock_metadata (
-            tic VARCHAR(10) PRIMARY KEY,
-            name VARCHAR(255),
-            sector VARCHAR(255),
-            industry VARCHAR(255),
-            country VARCHAR(255),
-            market_cap BIGINT,
-            employees INTEGER,
-            description TEXT,
-            website VARCHAR(255),
-            exchange VARCHAR(255),
-            currency VARCHAR(10),
-            summary TEXT,                       -- 200-300 words
-            short_summary TEXT,                 -- ~150 words    
-            last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        CREATE TABLE IF NOT EXISTS core.stock_profiles (
+            tic             VARCHAR(10) PRIMARY KEY,      -- one canonical record per ticker
+            name            VARCHAR(255),
+            sector          VARCHAR(255),
+            industry        VARCHAR(255),
+            country         VARCHAR(255),
+            market_cap      BIGINT,                
+            employees       INTEGER,
+            description     TEXT,
+            website         TEXT,
+            exchange        TEXT,
+            currency        VARCHAR(10),
+            summary         TEXT,                         -- ~200–300 words (for LLMs)
+            short_summary   TEXT,                         -- ~80–150 words (UI-friendly)
+            payload_sha256  CHAR(64),               -- hash of the raw JSON payload for integrity/lineage
+            updated_at      TIMESTAMPTZ DEFAULT now()     -- auto-managed timestamp
         );
         """)
-        print("Table 'stock_metadata' created or already exists.")
+        print("Table 'stock_profiles' created or already exists.")
 
 
         # Create a table for news analysis if it does not exist

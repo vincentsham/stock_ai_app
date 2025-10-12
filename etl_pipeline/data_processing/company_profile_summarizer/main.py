@@ -6,15 +6,18 @@ from graph import create_graph
 from tqdm import tqdm
 
 def insert_records(data, conn):
-    """Insert processed data into core.stock_metadata."""
+    """Insert processed data into core.stock_profiles."""
     try:
         with conn.cursor() as cur:
             for record in data:
                 cur.execute("""
-                    INSERT INTO core.stock_metadata (
-                        tic, name, sector, industry, country, market_cap, employees, exchange, currency, website, description, summary, short_summary, last_updated
+                    INSERT INTO core.stock_profiles (
+                        tic, name, sector, industry, country, 
+                        market_cap, employees, exchange, currency, 
+                        website, description, summary, short_summary, 
+                        payload_sha256, updated_at
                     ) VALUES (
-                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW()
+                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW()
                     )
                     ON CONFLICT (tic) DO UPDATE SET
                         name = EXCLUDED.name,
@@ -29,7 +32,8 @@ def insert_records(data, conn):
                         description = EXCLUDED.description,
                         summary = EXCLUDED.summary,
                         short_summary = EXCLUDED.short_summary,
-                        last_updated = NOW();
+                        payload_sha256 = EXCLUDED.payload_sha256,
+                        updated_at = NOW();
                 """, (
                     record.get("tic"),
                     record.get("company_name"),
@@ -43,7 +47,8 @@ def insert_records(data, conn):
                     record.get("website"),
                     record.get("description"),
                     record.get("summary"),
-                    record.get("short_summary")
+                    record.get("short_summary"),
+                    record.get("payload_sha256"),
                 ))
             conn.commit()
     except Exception as e:
@@ -56,17 +61,33 @@ def main():
     conn = connect_to_db()
     if conn:
         query = """
-            SELECT tic, name, sector, industry, country, market_cap, employees, exchange, currency, website, description
-            FROM raw.stock_metadata;
+            WITH latest_raw AS (
+                SELECT DISTINCT ON (tic)
+                        tic, name, sector, industry, country, market_cap, employees,
+                        description, website, exchange, currency, payload_sha256, updated_at
+                FROM raw.stock_profiles
+                ORDER BY tic, updated_at DESC
+            )
+            SELECT r.tic, r.name, r.sector, r.industry, r.country, 
+                   r.market_cap, r.employees, r.exchange, r.currency, 
+                   r.website, r.description, r.payload_sha256
+            FROM latest_raw r
+            LEFT JOIN core.stock_profiles c USING (tic)
+            WHERE c.tic IS NULL
+                OR c.payload_sha256 IS DISTINCT FROM r.payload_sha256;
         """
-        df = pd.read_sql_query(query, conn)
+        with conn.cursor() as cur:
+            cur.execute(query)
+            rows = cur.fetchall()
+            columns = [desc[0] for desc in cur.description]
+            df = pd.DataFrame(rows, columns=columns)
     else:
         print("Could not connect to database.")
         return
 
     # Construct states from the retrieved records
     states = [
-        CompanyProfileState(
+        (CompanyProfileState(
             tic=row['tic'],
             company_name=row['name'],
             sector=row['sector'],
@@ -78,7 +99,8 @@ def main():
             currency=row['currency'],
             website=row['website'],
             description=row['description']
-        )
+        ), 
+        row['payload_sha256'])
         for _, row in df.iterrows()
     ]
 
@@ -92,7 +114,8 @@ def main():
 
     # Use tqdm to track progress
     for state in tqdm(states, desc="Processing company profiles"):
-        final_state = app.invoke(state)
+        final_state = app.invoke(state[0])
+        final_state['payload_sha256'] = state[1]  # retain payload_sha256 for integrity
         processed_data.append(final_state)
 
     # Load processed data into core.stock_metadata
