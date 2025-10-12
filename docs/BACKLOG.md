@@ -38,7 +38,7 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-| 5 | Feature | Create Table - Analyst Ratins From FMP API | High | Open |  |  |  |
+| 5 | Feature | Create Table - Analyst Ratings From FMP API | High | Open |  |  |  |
 | 6 | Feature | Create Table - Dividends From FMP API | High | Open |  |  |  |
 | 14 | Feature | Create an ai agent for analyzing analyst ratings | High | Open |  |  |  |
 | 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Open |  |  |  |
