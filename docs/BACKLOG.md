@@ -76,12 +76,12 @@ examples:
 | 12 | Feature | Extend the earnings transcript ai agent to analyze how company handle the risk | High | Close | feat_12 | 2025-10-09 | 2025-10-10 |
 | 13 | Feature | Create Table - Earnings Transcript Analysis | Medium | Open | feat_13 | 2025-10-11 | 2025-10-11 |
 | 13 | Feature | Create and load data into earnings_transcript_analysis | Medium | Open | feat_13 | 2025-10-11 | 2025-10-11 |
-| 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Open |  | 2025-10-12 | 2025-10-13 |
+| 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous | Create a md doc for source | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
-| 1003 | Feature | Standardise the db columns | Medium | Open |  | 2025-10-12 | 2025-10-13 |
-| 1004 | Miscellaneous | Update db schema document | Medium | Open |  | 2025-10-12 | 2025-10-13 |
+| 1003 | Feature | Standardise the db columns | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
+| 1004 | Miscellaneous | Update db schema document | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
 | 1005 | Technical | Make sure no dup records in news on (tic, title) | Medium | Close | tech_1006 | 2025-10-09 | 2025-10-09 |
 | 1006 | Technical | Improve news ai agent prompt | Medium | Close | tech_1006 | 2025-10-09 | 2025-10-09 |
-| 10007 | Miscellaneous | Update the earnings transcipt instruction doc | Low | Open | misc_10007 | 2025-10-10 | 2025-10-10 |
+| 10007 | Miscellaneous | Update the earnings transcipt instruction doc | Low | Close | misc_10007 | 2025-10-10 | 2025-10-10 |
 </div>
