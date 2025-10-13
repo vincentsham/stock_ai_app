@@ -1,5 +1,5 @@
 from server.database.utils import connect_to_db
-import hashlib
+from etl_pipeline.utils import hash_dict, hash_text
 import tiktoken
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
@@ -53,9 +53,16 @@ def process_and_load_chunks():
             cursor = conn.cursor()
             # Fetch records from raw.earnings_transcripts
             cursor.execute("""
-                SELECT tic, fiscal_year, fiscal_quarter, earnings_date, transcript, transcript_hash
-                FROM raw.earnings_transcripts
-                WHERE transcript IS NOT NULL;
+                SELECT et.tic, et.fiscal_year, et.fiscal_quarter, 
+                       et.earnings_date, et.transcript, et.transcript_sha256
+                FROM raw.earnings_transcripts AS et
+                LEFT JOIN core.earnings_transcript_chunks AS etc
+                ON et.tic = etc.tic
+                    AND et.fiscal_year = etc.fiscal_year
+                    AND et.fiscal_quarter = etc.fiscal_quarter
+                WHERE et.transcript IS NOT NULL
+                    AND (etc.transcript_sha256 IS NULL
+                        OR et.transcript_sha256 <> etc.transcript_sha256);
             """)
             records = cursor.fetchall()
             total_records = 0
@@ -71,26 +78,39 @@ def process_and_load_chunks():
                 
                 # Chunk the transcript
                 for chunk_id, chunk in enumerate(chunks):
-                    chunk_hash = hashlib.sha256(chunk.encode('utf-8')).hexdigest()
+                    chunk_hash = hash_text(chunk)
 
 
                     # Insert chunk into core.earnings_transcript_chunks
                     cursor.execute("""
                         INSERT INTO core.earnings_transcript_chunks (
-                            tic, fiscal_year, fiscal_quarter, earnings_date, chunk_id, chunk, token_count, chunk_hash, transcript_hash
-                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-                        ON CONFLICT (tic, fiscal_year, fiscal_quarter, chunk_id) DO NOTHING;
+                            tic, fiscal_year, fiscal_quarter, earnings_date, 
+                            chunk_id, chunk, token_count, chunk_sha256, transcript_sha256, updated_at
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+                        ON CONFLICT (tic, fiscal_year, fiscal_quarter, chunk_id) 
+                        DO UPDATE SET
+                            earnings_date = EXCLUDED.earnings_date,
+                            chunk = EXCLUDED.chunk,
+                            token_count = EXCLUDED.token_count,
+                            chunk_sha256 = EXCLUDED.chunk_sha256,
+                            transcript_sha256 = EXCLUDED.transcript_sha256,
+                            updated_at = NOW()
+                        WHERE core.earnings_transcript_chunks.transcript_sha256 <> EXCLUDED.transcript_sha256
+                            OR core.earnings_transcript_chunks.chunk_sha256 <> EXCLUDED.chunk_sha256;
                     """, (
-                        tic, fiscal_year, fiscal_quarter, earnings_date, chunk_id, chunk, len(enc.encode(chunk)), chunk_hash, transcript_hash
+                        tic, fiscal_year, fiscal_quarter, earnings_date, 
+                        chunk_id, chunk, len(enc.encode(chunk)), chunk_hash, transcript_hash
                     ))
                     total_records += cursor.rowcount
 
             conn.commit()
-            print("Chunks processed and loaded successfully.")
+            return total_records
 
     except Exception as e:
         print(f"Error: {e}")
         conn.rollback()
+        return 0
 
 if __name__ == "__main__":
-    process_and_load_chunks()
+    total_records = process_and_load_chunks()
+    print(f"Chunks processed and loaded successfully. Total new/updated chunks: {total_records}")

@@ -21,7 +21,13 @@ class Horizon(IntEnum):
 
 class News(BaseModel):
     # Inputs
-    ticker: str = Field(..., description="Stock ticker symbol, e.g., AAPL")
+    tic: str = Field(..., description="Stock ticker symbol, e.g., AAPL")
+    company_name: str = Field(..., description="Full company name, e.g., Apple Inc.")
+    industry: str = Field(..., description="Industry of the company, e.g., Technology")
+    sector: str = Field(..., description="Sector of the company, e.g., Consumer Electronics")
+    company_description: str = Field(..., description="Description of the company")
+
+    # News article details
     headline: str = Field(..., description="Headline of the news article")
     summary: str = Field(..., description="Summary or content of the news article")
     url: str = Field(..., description="URL of the news article")

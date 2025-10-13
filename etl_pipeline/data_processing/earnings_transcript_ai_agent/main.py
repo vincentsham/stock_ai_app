@@ -4,6 +4,7 @@ from server.database.utils import connect_to_db
 from states import merged_state_factory, MergedState
 from graph import create_graph
 from tqdm import tqdm
+from etl_pipeline.utils import read_sql_query  # Import the custom read_sql_query function
 
 def insert_records(data, conn):
     """Insert processed data into core.earnings_transcript_analysis."""
@@ -17,14 +18,14 @@ def insert_records(data, conn):
                         guidance_direction, revenue_outlook, margin_outlook, earnings_outlook, cashflow_outlook, growth_acceleration, future_outlook_sentiment, catalysts, future_summary,
                         risk_mentioned, risk_impact, risk_time_horizon, risk_factors, risk_summary,
                         mitigation_mentioned, mitigation_effectiveness, mitigation_time_horizon, mitigation_actions, mitigation_summary,
-                        last_updated
+                        transcript_sha256, updated_at
                     ) VALUES (
                         %s, %s, %s,
                         %s, %s, %s, %s,
                         %s, %s, %s, %s, %s, %s, %s, %s, %s,
                         %s, %s, %s, %s, %s,
                         %s, %s, %s, %s, %s,
-                        NOW()
+                        %s, NOW()
                     )
                     ON CONFLICT (tic, fiscal_year, fiscal_quarter) DO UPDATE SET
                         sentiment = EXCLUDED.sentiment,
@@ -50,7 +51,8 @@ def insert_records(data, conn):
                         mitigation_time_horizon = EXCLUDED.mitigation_time_horizon,
                         mitigation_actions = EXCLUDED.mitigation_actions,
                         mitigation_summary = EXCLUDED.mitigation_summary,
-                        last_updated = NOW();
+                        transcript_sha256 = EXCLUDED.transcript_sha256,
+                        updated_at = NOW();
                 """,
                 (
                     record.get("company_info", {}).get("tic"),
@@ -78,7 +80,8 @@ def insert_records(data, conn):
                     record.get("risk_response_analysis", {}).get("mitigation_effectiveness"),
                     record.get("risk_response_analysis", {}).get("mitigation_time_horizon"),
                     record.get("risk_response_analysis", {}).get("mitigation_actions"),
-                    record.get("risk_response_analysis", {}).get("mitigation_summary")
+                    record.get("risk_response_analysis", {}).get("mitigation_summary"),
+                    record.get("transcript_sha256"),
                 ))
             conn.commit()
     except Exception as e:
@@ -91,11 +94,13 @@ def main():
     conn = connect_to_db()
     if conn:
         query = """
-            SELECT et.tic, sm.name, sm.sector, sm.industry, sm.short_summary, et.fiscal_year, et.fiscal_quarter, et.earnings_date
-            FROM raw.earnings_transcripts et
-            LEFT JOIN core.stock_metadata sm ON et.tic = sm.tic;
+            SELECT et.tic, sm.name, sm.sector, sm.industry, sm.short_summary, 
+                   et.fiscal_year, et.fiscal_quarter, et.earnings_date, et.transcript_sha256
+            FROM raw.earnings_transcripts AS et
+            JOIN core.stock_profiles AS sm 
+            ON et.tic = sm.tic;
         """
-        df = pd.read_sql_query(query, conn)
+        df = read_sql_query(query, conn)
     else:
         print("Could not connect to database.")
         return
@@ -104,7 +109,7 @@ def main():
 
     # Construct states from the retrieved records
     states = [
-        merged_state_factory(
+        (merged_state_factory(
             tic=row['tic'],
             company_name=row['name'],
             sector=row['sector'],
@@ -113,7 +118,7 @@ def main():
             fiscal_year=row['fiscal_year'],
             fiscal_quarter=row['fiscal_quarter'],
             earnings_date=row['earnings_date'].isoformat()
-        )
+        ), row['transcript_sha256'])
         for _, row in df.iterrows()
     ]
 
@@ -128,7 +133,8 @@ def main():
 
     # Use tqdm to track progress
     for state in tqdm(states, desc="Processing company profiles"):
-        final_state = app.invoke(state)
+        final_state = app.invoke(state[0])
+        final_state['transcript_sha256'] = state[1]  # Add transcript_sha256 to the final state
         processed_data.append(final_state)
 
     # Load processed data into core.stock_metadata

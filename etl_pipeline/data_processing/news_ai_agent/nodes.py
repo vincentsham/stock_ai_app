@@ -1,8 +1,8 @@
-from data_processing.news_ai_agent.states import News
+from states import News
 from prompts import STAGE1_PROMPT, STAGE2_PROMPT, STAGE1_SYSTEM_MESSAGE, STAGE2_SYSTEM_MESSAGE
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
-from data_processing.utils import run_llm
+from etl_pipeline.utils import run_llm
 from dotenv import load_dotenv
 import json
 
@@ -15,9 +15,13 @@ def stage1(state: News) -> dict:
     Output: {"category": <str>, "event_type": <str>} 
     """
     prompt = STAGE1_PROMPT.format(
+        tic=state.tic,
+        company_name=state.company_name,
+        industry=state.industry,
+        sector=state.sector,
+        company_description=state.company_description,
         headline=state.headline,
         summary=state.summary,
-        ticker=state.ticker,
         publisher=state.publisher,
         publish_date=state.publish_date
     )
@@ -46,9 +50,13 @@ def stage2(state: News) -> dict:
     }
     """
     prompt = STAGE2_PROMPT.format(
+        tic=state.tic,
+        company_name=state.company_name,
+        industry=state.industry,
+        sector=state.sector,
+        company_description=state.company_description,
         headline=state.headline,
         summary=state.summary,
-        ticker=state.ticker,
         publisher=state.publisher,
         publish_date=state.publish_date,
         category=state.category,

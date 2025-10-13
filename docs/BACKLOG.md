@@ -39,14 +39,12 @@ examples:
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 14 | Feature | Create an ai agent for analyzing analyst ratings | High | Open |  |  |  |
-| 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Open |  |  |  |
-| 1003 | Feature | Standardise the db columns | Medium | Open |  |  |  |
-| 1004 | Miscellaneous | Update db schema document | Medium | Open |  |  |  |
 | 1007 | Feature | Create and load raw tables in core | Medium | Open |  |  |  |
-| 1008 | Miscellaneous | Create psql partition logic | Medium | Open |  |  |  |
+| 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 10001 | Feature | Transfer Tables that has text to Pinecone | Low | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
+| 10004 | Miscellaneous | Create psql partition logic | Low | Open |  |  |  |
 </div>
 
 
@@ -78,8 +76,11 @@ examples:
 | 12 | Feature | Extend the earnings transcript ai agent to analyze how company handle the risk | High | Close | feat_12 | 2025-10-09 | 2025-10-10 |
 | 13 | Feature | Create Table - Earnings Transcript Analysis | Medium | Open | feat_13 | 2025-10-11 | 2025-10-11 |
 | 13 | Feature | Create and load data into earnings_transcript_analysis | Medium | Open | feat_13 | 2025-10-11 | 2025-10-11 |
+| 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Open |  | 2025-10-12 | 2025-10-13 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous | Create a md doc for source | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
+| 1003 | Feature | Standardise the db columns | Medium | Open |  | 2025-10-12 | 2025-10-13 |
+| 1004 | Miscellaneous | Update db schema document | Medium | Open |  | 2025-10-12 | 2025-10-13 |
 | 1005 | Technical | Make sure no dup records in news on (tic, title) | Medium | Close | tech_1006 | 2025-10-09 | 2025-10-09 |
 | 1006 | Technical | Improve news ai agent prompt | Medium | Close | tech_1006 | 2025-10-09 | 2025-10-09 |
 | 10007 | Miscellaneous | Update the earnings transcipt instruction doc | Low | Open | misc_10007 | 2025-10-10 | 2025-10-10 |

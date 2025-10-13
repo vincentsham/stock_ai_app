@@ -4,7 +4,7 @@
 **Description**: A Python library for accessing historical market data, stock metadata, and financial information.
 
 **Usage**: Used in the following scripts:
-- `extract_stock_metadata.py`
+- `extract_stock_profiles.py`
 - `extract_stock_ohlcv.py`
 
 **Documentation**: [yfinance Documentation](https://pypi.org/project/yfinance/)
@@ -18,6 +18,7 @@
 - `extract_income_statements.py`
 - `extract_balance_sheets.py`
 - `extract_cash_flows.py`
+- `extract_earnings.py`
 
 **Limitation**: 250 API calls per day in the free tier.
 
@@ -41,6 +42,6 @@
 **Description**: Provides historical earnings data for stocks.
 
 **Usage**: Used in the following script:
-- `extract_historical_earnings.py`
+- `extract_earnings.py`
 
 **Documentation**: [CoinCodex API](https://coincodex.com/api/)

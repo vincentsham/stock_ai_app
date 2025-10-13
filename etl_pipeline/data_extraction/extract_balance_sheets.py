@@ -3,7 +3,7 @@ import os
 from psycopg import connect
 from server.database.utils import connect_to_db
 import json
-
+from etl_pipeline.utils import hash_dict
 
 
 # API credentials
@@ -31,19 +31,23 @@ def insert_records(data, tic, url, conn):
                 fiscal_quarter = int(record.get("period")[1]) if record.get("period") != "FY" else 0
                 cur.execute("""
                     INSERT INTO raw.balance_sheets (
-                        tic, fiscal_year, fiscal_quarter, fiscal_date, raw_json, source
-                    ) VALUES (%s, %s, %s, %s, %s, %s)
-                    ON CONFLICT (tic, fiscal_year, fiscal_quarter) DO UPDATE
-                    SET fiscal_date = EXCLUDED.fiscal_date,
+                        tic, fiscal_year, fiscal_quarter, source, 
+                        raw_json, raw_json_sha256, updated_at
+                    ) VALUES (%s, %s, %s, %s, %s, %s, NOW())
+                    ON CONFLICT (tic, fiscal_year, fiscal_quarter) 
+                    DO UPDATE
+                    SET source = EXCLUDED.source,
                         raw_json = EXCLUDED.raw_json,
-                        source = EXCLUDED.source;
+                        raw_json_sha256 = EXCLUDED.raw_json_sha256,
+                        updated_at = NOW()
+                    WHERE raw.balance_sheets.raw_json_sha256 IS DISTINCT FROM EXCLUDED.raw_json_sha256;
                 """, (
                     tic,
                     fiscal_year,
                     fiscal_quarter,
-                    record.get("date"),
+                    url,
                     json.dumps(record),  # raw JSON payload
-                    url
+                    hash_dict(record)
                 ))
                 total_records += cur.rowcount
             conn.commit()
@@ -58,7 +62,7 @@ def main():
     conn = connect_to_db()
     if conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT tic FROM stock_metadata;")
+        cursor.execute("SELECT tic FROM core.stock_profiles;")
         records = cursor.fetchall()
         for record in records:
             tic = record[0]

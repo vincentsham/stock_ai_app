@@ -3,7 +3,7 @@ from psycopg import connect
 from psycopg.errors import UniqueViolation
 from server.database.utils import connect_to_db
 import json
-from utils import hash_dict
+from etl_pipeline.utils import hash_dict
 
 
 # Fetch stock profiles from yfinance
@@ -41,7 +41,7 @@ def insert_records(conn, data):
         cursor = conn.cursor()
         query = """
         INSERT INTO raw.stock_profiles (
-            tic, name, sector, industry, country, market_cap, employees, description, website, exchange, currency, source, raw_json, payload_sha256
+            tic, name, sector, industry, country, market_cap, employees, description, website, exchange, currency, source, raw_json, raw_json_sha256
         ) VALUES (
             %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
         )
@@ -58,8 +58,9 @@ def insert_records(conn, data):
             currency = EXCLUDED.currency,
             source = EXCLUDED.source,
             raw_json = EXCLUDED.raw_json,
-            payload_sha256 = EXCLUDED.payload_sha256,
-            updated_at = NOW();
+            raw_json_sha256 = EXCLUDED.raw_json_sha256,
+            updated_at = NOW()
+        WHERE raw.stock_profiles.raw_json_sha256 IS DISTINCT FROM EXCLUDED.raw_json_sha256;
         """
         for record in data:
             try:

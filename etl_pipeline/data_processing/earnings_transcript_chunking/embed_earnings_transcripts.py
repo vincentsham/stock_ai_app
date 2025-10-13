@@ -21,15 +21,18 @@ def process_and_store_embeddings():
             cursor = conn.cursor()
             # Fetch chunks without embeddings
             cursor.execute("""
-                SELECT tic, fiscal_year, fiscal_quarter, earnings_date, chunk_id, chunk
-                FROM core.earnings_transcript_chunks
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM core.earnings_transcript_embeddings e
-                    WHERE e.tic = core.earnings_transcript_chunks.tic
-                        AND e.fiscal_year = core.earnings_transcript_chunks.fiscal_year
-                        AND e.fiscal_quarter = core.earnings_transcript_chunks.fiscal_quarter
-                        AND e.chunk_id = core.earnings_transcript_chunks.chunk_id
-                );
+                SELECT etc.tic, etc.fiscal_year, etc.fiscal_quarter, etc.earnings_date, 
+                       etc.chunk_id, etc.chunk, etc.chunk_sha256, etc.transcript_sha256
+                FROM core.earnings_transcript_chunks AS etc
+                LEFT JOIN core.earnings_transcript_embeddings AS e
+                ON etc.tic = e.tic
+                    AND etc.fiscal_year = e.fiscal_year
+                    AND etc.fiscal_quarter = e.fiscal_quarter
+                    AND etc.chunk_id = e.chunk_id
+                WHERE e.chunk_sha256 IS NULL
+                    OR e.chunk_sha256 <> etc.chunk_sha256
+                    OR e.transcript_sha256 IS NULL
+                    OR e.transcript_sha256 <> etc.transcript_sha256;
             """)
             records = cursor.fetchall()
 
@@ -37,6 +40,7 @@ def process_and_store_embeddings():
             batch_size = 32
 
             # Add tqdm progress bar
+            total_records = 0
             for i in tqdm(range(0, len(records), batch_size), desc="Processing batches"):
                 batch = records[i:i + batch_size]
 
@@ -52,24 +56,40 @@ def process_and_store_embeddings():
                     fiscal_quarter = record[2]
                     earnings_date = record[3]
                     chunk_id = record[4]
+                    chunk_hash = record[6]
+                    transcript_hash = record[7]
 
                     # Insert embedding into the database
                     cursor.execute("""
                         INSERT INTO core.earnings_transcript_embeddings (
-                            tic, fiscal_year, fiscal_quarter, earnings_date, chunk_id, embedding, embedding_model
-                        ) VALUES (%s, %s, %s, %s, %s, %s, %s)
-                        ON CONFLICT (tic, fiscal_year, fiscal_quarter, chunk_id) DO NOTHING;
+                            tic, fiscal_year, fiscal_quarter, earnings_date, 
+                            chunk_id, chunk_sha256, transcript_sha256, 
+                            embedding, embedding_model, updated_at
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+                        ON CONFLICT (tic, fiscal_year, fiscal_quarter, chunk_id) 
+                        DO UPDATE SET
+                            earnings_date = EXCLUDED.earnings_date,
+                            chunk_sha256 = EXCLUDED.chunk_sha256,
+                            transcript_sha256 = EXCLUDED.transcript_sha256,
+                            embedding = EXCLUDED.embedding,
+                            embedding_model = EXCLUDED.embedding_model,
+                            updated_at = NOW()
+                        WHERE core.earnings_transcript_embeddings.transcript_sha256 <> EXCLUDED.transcript_sha256
+                            OR core.earnings_transcript_embeddings.chunk_sha256 <> EXCLUDED.chunk_sha256;
                     """, (
-                        tic, fiscal_year, fiscal_quarter, earnings_date, chunk_id, embedding, embedding_model_name
+                        tic, fiscal_year, fiscal_quarter, earnings_date, 
+                        chunk_id, chunk_hash, transcript_hash, embedding, embedding_model_name
                     ))
+                    total_records += cursor.rowcount
 
             conn.commit()
-            print("Embeddings processed and stored successfully.")
+            return total_records
 
     except Exception as e:
         print(f"Error: {e}")
         conn.rollback()
+        return 0
 
 if __name__ == "__main__":
-    process_and_store_embeddings()
-    # connect_to_db()
+    total_records = process_and_store_embeddings()
+    print(f"Total records processed: {total_records}")

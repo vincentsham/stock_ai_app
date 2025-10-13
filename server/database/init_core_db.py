@@ -31,7 +31,7 @@ def table_creation(conn):
             currency        VARCHAR(10),
             summary         TEXT,                         -- ~200–300 words (for LLMs)
             short_summary   TEXT,                         -- ~80–150 words (UI-friendly)
-            payload_sha256  CHAR(64),               -- hash of the raw JSON payload for integrity/lineage
+            raw_json_sha256 CHAR(64),               -- hash of the raw JSON payload for integrity/lineage
             updated_at      TIMESTAMPTZ DEFAULT now()     -- auto-managed timestamp
         );
         """)
@@ -54,7 +54,8 @@ def table_creation(conn):
             impact_magnitude INT,                    -- Magnitude of the impact (e.g., minor, major)
             affected_dimensions TEXT[],                      -- List of affected dimensions (e.g., revenue, profit)
             sentiment       INT,                     -- Sentiment analysis result (e.g., positive, negative)
-            last_updated    TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Timestamp of the last update
+            raw_json_sha256 CHAR(64) NOT NULL,               -- hash of the raw JSON payload for integrity/lineage
+            updated_at      TIMESTAMPTZ DEFAULT now(),
             PRIMARY KEY (tic, url)                           -- Composite PK: unique analysis per ticker+url
         );
         """)
@@ -75,12 +76,12 @@ def table_creation(conn):
 
             -- Chunk content
             chunk           TEXT NOT NULL,
-            token_count     INT,
+            token_count     INT NOT NULL,
             -- optional integrity/lineage
-            chunk_hash      TEXT,
-            transcript_hash TEXT,
+            chunk_sha256    TEXT NOT NULL,
+            transcript_sha256 TEXT NOT NULL,
 
-            last_updated    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at      TIMESTAMPTZ DEFAULT now(),
 
             PRIMARY KEY (tic, fiscal_year, fiscal_quarter, chunk_id)
         );
@@ -110,12 +111,14 @@ def table_creation(conn):
 
             -- Sequential id within a single transcript (1..N)
             chunk_id        INT NOT NULL,
-
+            chunk_sha256    TEXT NOT NULL,
+            transcript_sha256 TEXT NOT NULL,
+                       
             -- Embedding vector
             embedding       VECTOR(1536) NOT NULL,
             embedding_model TEXT NOT NULL,
 
-            last_updated    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at      TIMESTAMPTZ DEFAULT now(),
 
             PRIMARY KEY (tic, fiscal_year, fiscal_quarter, chunk_id),
             FOREIGN KEY (tic, fiscal_year, fiscal_quarter, chunk_id)
@@ -133,6 +136,9 @@ def table_creation(conn):
           WITH (m = 16, ef_construction = 200);
         """)
         print("Index 'idx_core_earnings_transcript_embeddings_vec_hnsw' created or already exists.")
+
+
+
 
 
         # Create a table for earnings transcript analysis if it does not exist
@@ -174,7 +180,8 @@ def table_creation(conn):
             mitigation_summary       TEXT,
 
             -- Optional for tracking & versioning
-            last_updated            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            transcript_sha256      TEXT NOT NULL,
+            updated_at      TIMESTAMPTZ DEFAULT now(),
 
             PRIMARY KEY (tic, fiscal_year, fiscal_quarter)
         );

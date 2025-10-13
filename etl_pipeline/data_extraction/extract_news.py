@@ -3,7 +3,7 @@ import os
 from psycopg import connect
 from server.database.utils import connect_to_db
 import json
-
+from etl_pipeline.utils import hash_dict
 
 # API credentials
 API_KEY = os.getenv("FMP_API_KEY")
@@ -26,21 +26,25 @@ def insert_news(data, tic, source_url, conn):
     try:
         with conn.cursor() as cur:
             for record in data:
-                cur.execute("""
+                cur.execute(
+                    """
                     INSERT INTO raw.news (
-                        tic, published_date, publisher, title, site, content, url, raw_json, source
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    ON CONFLICT (tic, title) DO UPDATE
+                        tic, published_date, publisher, title, 
+                        site, content, url, source, raw_json, raw_json_sha256, updated_at
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+                    ON CONFLICT (tic, url) DO UPDATE
                     SET 
+                        published_date = EXCLUDED.published_date,
                         publisher = EXCLUDED.publisher,
+                        title = EXCLUDED.title,
                         site = EXCLUDED.site,
                         content = EXCLUDED.content,
-                        url = EXCLUDED.url,
-                        raw_json = EXCLUDED.raw_json,
                         source = EXCLUDED.source,
-                        published_date = EXCLUDED.published_date
-                    WHERE EXCLUDED.published_date > raw.news.published_date;
-                """, (
+                        raw_json = EXCLUDED.raw_json,
+                        raw_json_sha256 = EXCLUDED.raw_json_sha256,
+                        updated_at = NOW()
+                    WHERE raw.news.raw_json_sha256 <> EXCLUDED.raw_json_sha256;
+                    """, (
                     tic,
                     record.get("publishedDate"),
                     record.get("publisher"),
@@ -48,8 +52,9 @@ def insert_news(data, tic, source_url, conn):
                     record.get("site"),
                     record.get("text"),
                     record.get("url"),
+                    source_url,
                     json.dumps(record),  # raw JSON payload
-                    source_url
+                    hash_dict(record)
                 ))
                 total_records += cur.rowcount
             conn.commit()
@@ -64,7 +69,7 @@ def main():
     conn = connect_to_db()
     if conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT tic FROM raw.stock_metadata;")
+        cursor.execute("SELECT tic FROM core.stock_profiles;")
         records = cursor.fetchall()
         for record in records:
             tic = record[0]

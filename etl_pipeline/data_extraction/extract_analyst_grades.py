@@ -3,6 +3,7 @@ import os
 from psycopg import connect
 from server.database.utils import connect_to_db
 import json
+from etl_pipeline.utils import hash_dict, none_if_empty
 
 
 # API credentials
@@ -21,8 +22,7 @@ def fetch_records(tic, page=0, limit=100):
         return None, None
 
 
-def none_if_empty(val):
-    return None if val == "" else val
+
 
 # Insert data into the table
 def insert_records(data, tic, url, conn):
@@ -33,9 +33,12 @@ def insert_records(data, tic, url, conn):
 
                 cur.execute("""
                     INSERT INTO raw.analyst_grades (
-                        tic, published_at, news_title, news_base_url, news_publisher, new_grade, previous_grade, grading_company, action, price_when_posted, url, raw_json, source
+                        tic, published_at, news_title, news_base_url, 
+                        news_publisher, new_grade, previous_grade, grading_company, 
+                        action, price_when_posted, url, 
+                        source, raw_json, raw_json_sha256, updated_at
                     ) VALUES (
-                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW()
                     )
                     ON CONFLICT (tic, url) DO UPDATE SET
                         published_at = EXCLUDED.published_at,
@@ -47,9 +50,11 @@ def insert_records(data, tic, url, conn):
                         grading_company = EXCLUDED.grading_company,
                         action = EXCLUDED.action,
                         price_when_posted = EXCLUDED.price_when_posted,
-                        raw_json = EXCLUDED.raw_json,
                         source = EXCLUDED.source,
-                        ingested_at = now();
+                        raw_json = EXCLUDED.raw_json,
+                        raw_json_sha256 = EXCLUDED.raw_json_sha256,
+                        updated_at = NOW()
+                    WHERE raw.analyst_grades.raw_json_sha256 <> EXCLUDED.raw_json_sha256;
                 """,
                 (
                     tic,
@@ -63,8 +68,9 @@ def insert_records(data, tic, url, conn):
                     none_if_empty(record.get("action")),
                     none_if_empty(record.get("priceWhenPosted")),
                     none_if_empty(record.get("newsURL")),
+                    url,
                     json.dumps(record),
-                    url
+                    hash_dict(record)
                 ))
                 total_records += cur.rowcount
             conn.commit()
@@ -80,7 +86,7 @@ def main():
     conn = connect_to_db()
     if conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT tic FROM raw.stock_metadata;")
+        cursor.execute("SELECT tic FROM core.stock_profiles;")
         records = cursor.fetchall()
         for record in records:
             tic = record[0]

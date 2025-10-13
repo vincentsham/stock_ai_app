@@ -1,6 +1,6 @@
 from states import CompanyProfileState
 from prompts import SYSTEM_PROMPT, HUMAN_PROMPT
-from etl_pipeline.data_processing.utils import run_llm  # Adjust import if needed
+from etl_pipeline.utils import run_llm  # Adjust import if needed
 import json
 
 
