@@ -66,16 +66,16 @@ examples:
 | 2 | Feature | Add No. of inserted records | Low | Close | feature_2 | 2025-09-28 | 2025-09-29 |
 | 3 | Feature | Create Table - News analysis | High | Close | feature_3 | 2025-10-06 | 2025-10-06 |
 | 4 | Feature | Create Table - News From FMP API | High | Close | feature_4 | 2025-10-04 | 2025-10-04 |
-| 5 | Feature | Create Table - Analyst Ratings From FMP API | High | Open | feat_5 | 2025-10-12 | 2025-10-12 |
-| 6 | Feature | Create Table - Dividends From FMP API | High | Open | feat_5 | 2025-10-12 |2025-10-12 |
+| 5 | Feature | Create Table - Analyst Ratings From FMP API | High | Close | feat_5 | 2025-10-12 | 2025-10-12 |
+| 6 | Feature | Create Table - Dividends From FMP API | High | Close | feat_5 | 2025-10-12 |2025-10-12 |
 | 7 | Feature | Create an advanced ai agent to analyze news | High | Close | feature_7 | 2025-10-05 | 2025-10-05 |
 | 8 | Feature | Create Table - Earnings Chunks | High | Close | feature_8 | 2025-10-07 | 2025-10-07 |
 | 8 | Feature | Create Table - Earnings Embeddings | High | Close | feature_8 | 2025-10-07 | 2025-10-07 |
 | 10 | Feature | Create an advanced ai agent to analyze earnings transcripts | High | Close | feature_10 | 2025-10-08 | 2025-10-09 |
 | 11 | Feature | Create a data processing task to process the company profile | High | Close | feat_11 | 2025-10-11 | 2025-10-11 |
 | 12 | Feature | Extend the earnings transcript ai agent to analyze how company handle the risk | High | Close | feat_12 | 2025-10-09 | 2025-10-10 |
-| 13 | Feature | Create Table - Earnings Transcript Analysis | Medium | Open | feat_13 | 2025-10-11 | 2025-10-11 |
-| 13 | Feature | Create and load data into earnings_transcript_analysis | Medium | Open | feat_13 | 2025-10-11 | 2025-10-11 |
+| 13 | Feature | Create Table - Earnings Transcript Analysis | Medium | Close | feat_13 | 2025-10-11 | 2025-10-11 |
+| 13 | Feature | Create and load data into earnings_transcript_analysis | Medium | Close | feat_13 | 2025-10-11 | 2025-10-11 |
 | 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous | Create a md doc for source | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
