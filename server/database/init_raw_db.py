@@ -29,7 +29,7 @@ def table_creation(conn):
             website        TEXT,
             exchange       TEXT,
             currency       VARCHAR(10),
-            source         TEXT,
+            source         VARCHAR(255),
             raw_json       JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
             updated_at    TIMESTAMPTZ DEFAULT now()
@@ -48,6 +48,7 @@ def table_creation(conn):
             low           NUMERIC(12,4) NOT NULL,
             close         NUMERIC(12,4) NOT NULL,
             volume        BIGINT NOT NULL,
+            source        VARCHAR(255),
             updated_at   TIMESTAMPTZ DEFAULT now(),
             PRIMARY KEY (date, tic)
         );
@@ -70,7 +71,7 @@ def table_creation(conn):
             revenue_estimated NUMERIC(20,2),
             price_before NUMERIC(12,4),
             price_after NUMERIC(12,4),
-            source                 TEXT,                  -- e.g., 'fmp', 'yahoo', etc.
+            source                 VARCHAR(255),                  -- e.g., 'fmp', 'yahoo', etc.
             raw_json               JSONB        NOT NULL,                 -- verbatim payload (optional but useful)
             raw_json_sha256        CHAR(64)     NOT NULL,
             updated_at            TIMESTAMPTZ DEFAULT now(),
@@ -89,7 +90,7 @@ def table_creation(conn):
             earnings_date   DATE         NOT NULL,
             transcript      TEXT         NOT NULL,
             transcript_sha256 CHAR(64)     NOT NULL,
-            source          TEXT,
+            source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
             updated_at      TIMESTAMPTZ DEFAULT now(),
@@ -105,7 +106,7 @@ def table_creation(conn):
             tic             VARCHAR(20)  NOT NULL,                 -- e.g., AAPL
             fiscal_year     INT          NOT NULL,                 -- e.g., 2025
             fiscal_quarter  INT          NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
-            source          TEXT,
+            source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
             updated_at      TIMESTAMPTZ DEFAULT now(),
@@ -120,7 +121,7 @@ def table_creation(conn):
             tic             VARCHAR(20)  NOT NULL,                 -- e.g., AAPL
             fiscal_year     INT          NOT NULL,                 -- e.g., 2025
             fiscal_quarter  INT          NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
-            source          TEXT,
+            source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
             updated_at      TIMESTAMPTZ DEFAULT now(),
@@ -135,7 +136,7 @@ def table_creation(conn):
             tic             VARCHAR(20)  NOT NULL,                 -- e.g., AAPL
             fiscal_year     INT          NOT NULL,                 -- e.g., 2025
             fiscal_quarter  INT          NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
-            source          TEXT,
+            source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
             updated_at      TIMESTAMPTZ DEFAULT now(),
@@ -154,7 +155,7 @@ def table_creation(conn):
             site            TEXT,
             content         TEXT,
             url             TEXT NOT NULL,
-            source          TEXT,
+            source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
             updated_at      TIMESTAMPTZ DEFAULT now(),
@@ -181,7 +182,7 @@ def table_creation(conn):
             price_when_posted numeric(12,4),
 
             url               text NOT NULL,
-            source          TEXT,
+            source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
             updated_at      TIMESTAMPTZ DEFAULT now(),
@@ -207,7 +208,7 @@ def table_creation(conn):
             price_when_posted numeric(12,4),
 
             url               text NOT NULL,
-            source          TEXT,
+            source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
             updated_at      TIMESTAMPTZ DEFAULT now(),
@@ -218,8 +219,26 @@ def table_creation(conn):
         print("Table 'analyst_grades' created or already exists with composite primary key.")
 
 
+        # Create a table for dividends data if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS raw.dividends (
+            tic                VARCHAR(10) NOT NULL,
+            ex_dividend_date   DATE NOT NULL,
+            declaration_date   DATE,
+            payment_date       DATE,
+            adj_dividend       NUMERIC(12,6),
+            dividend           NUMERIC(12,6),
+            dividend_yield     NUMERIC(12,8),
+            frequency          VARCHAR(50),
+            source             VARCHAR(255),
+            raw_json           JSONB,
+            raw_json_sha256    CHAR(64),
+            updated_at      TIMESTAMPTZ DEFAULT now(),
+            PRIMARY KEY (tic, ex_dividend_date)
+        );
+        """)
+        print("Table 'dividends' created or already exists with composite primary key.")
 
-    
         conn.commit()
         
     except Exception as e:

@@ -54,18 +54,19 @@ def insert_records(conn, data):
         cursor = conn.cursor()
         for ticker, df in data.items():
             rows = [
-                (row['Date'], ticker, row['Open'], row['High'], row['Low'], row['Close'], row['Volume'])
+                (row['Date'], ticker, row['Open'], row['High'], row['Low'], row['Close'], row['Volume'], 'yfinance')
                 for _, row in df.iterrows()
             ]
             query = """
-            INSERT INTO raw.stock_ohlcv (date, tic, open, high, low, close, volume)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO raw.stock_ohlcv (date, tic, open, high, low, close, volume, source, updated_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NOW())
             ON CONFLICT (date, tic) DO UPDATE SET
                 open = EXCLUDED.open,
                 high = EXCLUDED.high,
                 low = EXCLUDED.low,
                 close = EXCLUDED.close,
                 volume = EXCLUDED.volume,
+                source = EXCLUDED.source,
                 updated_at = NOW();
             """
             cursor.executemany(query, rows)  # Use executemany for bulk insert
