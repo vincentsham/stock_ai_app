@@ -39,6 +39,9 @@ examples:
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 14 | Feature | Create an ai agent for analyzing analyst ratings | High | Open |  |  |  |
+| 15 | Feature | Catalyst logic | High | Open |  |  |  |
+| 16 | Feature | uuid for some tables | High | Open |  |  |  |
+| 17 | Feature | integrate catalysts into news, analyst ratings and earnings | High | Open |  |  |  |
 | 1007 | Feature | Create and load raw tables in core | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 10001 | Feature | Transfer Tables that has text to Pinecone | Low | Open |  |  |  |
