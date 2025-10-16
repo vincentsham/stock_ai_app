@@ -38,10 +38,14 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-| 14 | Feature | Create an ai agent for analyzing analyst ratings | High | Open |  |  |  |
 | 15 | Feature | Catalyst logic | High | Open |  |  |  |
 | 16 | Feature | uuid for some tables | High | Open |  |  |  |
 | 17 | Feature | integrate catalysts into news, analyst ratings and earnings | High | Open |  |  |  |
+| 18 | Feature | A job for analyzing earnings  | High | Open |  |  |  |
+| 19 | Feature | A job for analyzing balance sheets | High | Open |  |  |  |
+| 20 | Feature | A job for analyzing income statements | High | Open |  |  |  |
+| 21 | Feature | A job for analyzing cash flows | High | Open |  |  |  |
+| 22 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
 | 1007 | Feature | Create and load raw tables in core | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
@@ -80,6 +84,7 @@ examples:
 | 12 | Feature | Extend the earnings transcript ai agent to analyze how company handle the risk | High | Close | feat_12 | 2025-10-09 | 2025-10-10 |
 | 13 | Feature | Create Table - Earnings Transcript Analysis | Medium | Close | feat_13 | 2025-10-11 | 2025-10-11 |
 | 13 | Feature | Create and load data into earnings_transcript_analysis | Medium | Close | feat_13 | 2025-10-11 | 2025-10-11 |
+| 14 | Feature | Create a data processing job for analyzing analyst ratings | High | Close | feat_14 | 2025-10-15 | 2025-10-16 |
 | 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous | Create a md doc for source | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
