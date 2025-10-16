@@ -277,6 +277,79 @@ def table_creation(conn):
         """)
         print("Table 'analyst_rating_monthly_summary' created or already exists.")
 
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.earnings_metrics (
+            -- Entity & period
+            tic               VARCHAR(10) NOT NULL,
+            fiscal_year       INT         NOT NULL,
+            fiscal_quarter    SMALLINT    NOT NULL CHECK (fiscal_quarter BETWEEN 1 AND 4),
+
+            -- Raw values / estimates
+            eps               FLOAT,
+            eps_estimated     FLOAT,
+            eps_ttm           FLOAT,
+            revenue           FLOAT,
+            revenue_estimated FLOAT,
+            revenue_ttm       FLOAT,
+                       
+            pre_eps_flag     SMALLINT,
+            pre_revenue_flag SMALLINT,
+                       
+
+            -- EPS phase
+            eps_phase         VARCHAR(50),
+
+            -- EPS surprise / beats
+            eps_surprise_pct               FLOAT,
+            eps_beat_flag                  SMALLINT,
+            eps_beat_count_4q              SMALLINT,
+            eps_beat_streak_length         SMALLINT,
+            eps_consistency                FLOAT,
+
+            -- EPS growth / trend / acceleration
+            eps_qoq_growth_pct             FLOAT,
+            eps_growth_flag                SMALLINT,
+            eps_growth_count_4q            SMALLINT,
+            eps_growth_streak_length       SMALLINT,
+            eps_yoy_growth_pct             FLOAT,
+            eps_trend_strength             FLOAT,
+            eps_ttm_growth_pct             FLOAT,
+            eps_acceleration               FLOAT,
+            eps_ttm_acceleration           FLOAT,
+            eps_acceleration_flag          SMALLINT,
+            eps_acceleration_count_4q      SMALLINT,
+            eps_acceleration_streak_length SMALLINT,
+
+            -- Revenue surprise / beats
+            revenue_surprise_pct               FLOAT,
+            revenue_beat_flag                  SMALLINT,
+            revenue_beat_count_4q              SMALLINT,
+            revenue_beat_streak_length         SMALLINT,
+            revenue_consistency                FLOAT,
+
+            -- Revenue growth / trend / acceleration
+            revenue_qoq_growth_pct             FLOAT,
+            revenue_growth_flag                SMALLINT,
+            revenue_growth_count_4q            SMALLINT,
+            revenue_growth_streak_length       SMALLINT,
+            revenue_yoy_growth_pct             FLOAT,
+            revenue_trend_strength             FLOAT,
+            revenue_ttm_growth_pct             FLOAT,
+            revenue_acceleration               FLOAT,
+            revenue_ttm_acceleration           FLOAT,
+            revenue_acceleration_flag          SMALLINT,
+            revenue_acceleration_count_4q      SMALLINT,
+            revenue_acceleration_streak_length SMALLINT,
+
+            -- Bookkeeping
+            updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+            PRIMARY KEY (tic, fiscal_year, fiscal_quarter)
+        );
+        """)
+        print("Table 'earnings_metrics' created or already exists.")
+
+
         conn.commit()
         
     except Exception as e:
