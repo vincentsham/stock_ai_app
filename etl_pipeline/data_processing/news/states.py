@@ -32,7 +32,7 @@ class News(BaseModel):
     summary: str = Field(..., description="Summary or content of the news article")
     url: str = Field(..., description="URL of the news article")
     publisher: str = Field(..., description="Publisher of the news article")
-    publish_date: str = Field(..., description="Publish date of the news article")
+    published_at: str = Field(..., description="Publish date of the news article")
 
     # Stage 1 outputs
     category: Optional[Category] = Field(None, description="Category of the news")

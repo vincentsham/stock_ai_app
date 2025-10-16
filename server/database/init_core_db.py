@@ -16,6 +16,10 @@ def table_creation(conn):
             print("Connection test failed!")
 
 
+        # Create schema 'core' if it does not exist
+        cursor.execute("""CREATE SCHEMA IF NOT EXISTS core;""")
+        print("Schema 'core' created or already exists.")
+
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.stock_profiles (
             tic             VARCHAR(10) PRIMARY KEY,      -- one canonical record per ticker
@@ -46,7 +50,7 @@ def table_creation(conn):
             title           TEXT NOT NULL,                    -- Title of the news article
             content         TEXT,                             -- Content of the news article
             publisher       TEXT,                             -- Publisher of the news article
-            published_date  TIMESTAMP NOT NULL,               -- Date and time the news was published
+            published_at  TIMESTAMP NOT NULL,               -- Date and time the news was published
             category        VARCHAR(50),                      -- Category of the news (e.g., fundamental, technical)
             event_type      TEXT,                             -- Type of event described in the news
             time_horizon    INT,                      -- Time horizon of the impact (e.g., short_term)
@@ -138,9 +142,6 @@ def table_creation(conn):
         print("Index 'idx_core_earnings_transcript_embeddings_vec_hnsw' created or already exists.")
 
 
-
-
-
         # Create a table for earnings transcript analysis if it does not exist
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.earnings_transcript_analysis (
@@ -189,7 +190,92 @@ def table_creation(conn):
         print("Table 'earnings_transcript_analysis' created or already exists with composite primary key.")
 
 
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.analyst_grades (
+            tic             VARCHAR(10)        NOT NULL,
+            url             TEXT               NOT NULL,
+            published_at    TIMESTAMP          NOT NULL,
+            broker          TEXT,
+            grade           SMALLINT,                      -- +1 = Buy, 0 = Hold, -1 = Sell
+            action          TEXT,                          -- upgrade, downgrade, initiation, reiteration, other
+            raw_json_sha256 CHAR(64)          NOT NULL,               -- hash of the raw JSON payload for integrity/lineage  
+            updated_at      TIMESTAMPTZ DEFAULT now(),
+            
+            PRIMARY KEY (tic, url)
+        );
+        """)
+        print("Table 'analyst_grades' created or already exists.")
 
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.analyst_rating_monthly_summary (
+            tic               VARCHAR(10)   NOT NULL,
+            start_date        DATE          NOT NULL,
+            end_date          DATE          NOT NULL,
+
+            -- ---- Price Target (pt_) statistics ----
+            pt_count          INTEGER       DEFAULT 0,
+            pt_high           FLOAT,
+            pt_low            FLOAT,
+            pt_p25            FLOAT,
+            pt_median         FLOAT,
+            pt_p75            FLOAT,
+            pt_mean           FLOAT,
+            pt_stddev         FLOAT,
+            pt_dispersion     FLOAT,
+
+            pt_upgrade_n      INTEGER       DEFAULT 0,
+            pt_downgrade_n    INTEGER       DEFAULT 0,
+            pt_reiterate_n    INTEGER       DEFAULT 0,
+            pt_init_n         INTEGER       DEFAULT 0,
+
+            -- ---- Grade statistics ----
+            grade_count       INTEGER       DEFAULT 0,
+            grade_buy_n       INTEGER       DEFAULT 0,
+            grade_hold_n      INTEGER       DEFAULT 0,
+            grade_sell_n      INTEGER       DEFAULT 0,
+            grade_buy_ratio   FLOAT,
+            grade_hold_ratio  FLOAT,
+            grade_sell_ratio  FLOAT,
+            grade_balance     FLOAT,
+
+            grade_upgrade_n   INTEGER       DEFAULT 0,
+            grade_downgrade_n INTEGER       DEFAULT 0,
+            grade_reiterate_n INTEGER       DEFAULT 0,
+            grade_init_n      INTEGER       DEFAULT 0,
+
+            -- ---- Implied return statistics ----
+            ret_mean          FLOAT,
+            ret_median        FLOAT,
+            ret_p25           FLOAT,
+            ret_p75           FLOAT,
+            ret_stddev        FLOAT,
+            ret_dispersion    FLOAT,
+            ret_high          FLOAT,
+            ret_low           FLOAT,
+
+            ret_upgrade_n     INTEGER       DEFAULT 0,
+            ret_downgrade_n   INTEGER       DEFAULT 0,
+            ret_reiterate_n   INTEGER       DEFAULT 0,
+            ret_init_n        INTEGER       DEFAULT 0,
+
+            -- ---- Price statistics ----
+            price_start       FLOAT,
+            price_end         FLOAT,
+            price_high        FLOAT,
+            price_low         FLOAT,
+            price_p25         FLOAT,
+            price_median      FLOAT,
+            price_p75         FLOAT,
+            price_mean        FLOAT,
+            price_stddev      FLOAT,
+
+            updated_at        TIMESTAMPTZ DEFAULT NOW(),
+
+            PRIMARY KEY (tic, start_date, end_date)
+        );
+        """)
+        print("Table 'analyst_rating_monthly_summary' created or already exists.")
 
         conn.commit()
         

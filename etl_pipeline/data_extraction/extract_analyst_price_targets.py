@@ -32,19 +32,18 @@ def insert_records(data, tic, url, conn):
                 # Map API fields to DB columns
                 cur.execute("""
                     INSERT INTO raw.analyst_price_targets (
-                        tic, published_at, news_title, news_base_url, news_publisher, 
-                        analyst_name, broker, price_target, adj_price_target, 
+                        tic, published_at, title, site, 
+                        analyst_name, company, price_target, adj_price_target, 
                         price_when_posted, url, source, raw_json, raw_json_sha256, updated_at
                     ) VALUES (
-                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW()
+                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW()
                     )
                     ON CONFLICT (tic, url) DO UPDATE SET
                         published_at = EXCLUDED.published_at,
-                        news_title = EXCLUDED.news_title,
-                        news_base_url = EXCLUDED.news_base_url,
-                        news_publisher = EXCLUDED.news_publisher,
+                        title = EXCLUDED.title,
+                        site = EXCLUDED.site,
                         analyst_name = EXCLUDED.analyst_name,
-                        broker = EXCLUDED.broker,
+                        company = EXCLUDED.company,
                         price_target = EXCLUDED.price_target,
                         adj_price_target = EXCLUDED.adj_price_target,
                         price_when_posted = EXCLUDED.price_when_posted,
@@ -52,13 +51,13 @@ def insert_records(data, tic, url, conn):
                         raw_json = EXCLUDED.raw_json,
                         raw_json_sha256 = EXCLUDED.raw_json_sha256,
                         updated_at = NOW()
-                    WHERE raw.analyst_price_targets.raw_json_sha256 <> EXCLUDED.raw_json_sha256;
+                    WHERE raw.analyst_price_targets.raw_json_sha256 <> EXCLUDED.raw_json_sha256 
+                        AND raw.analyst_price_targets.published_at < EXCLUDED.published_at;
                 """,
                 (
                     tic,
                     none_if_empty(record.get("publishedDate")),
                     none_if_empty(record.get("newsTitle")),
-                    none_if_empty(record.get("newsBaseURL")),
                     none_if_empty(record.get("newsPublisher")),
                     none_if_empty(record.get("analystName")),
                     none_if_empty(record.get("analystCompany")),
@@ -89,9 +88,14 @@ def main():
             tic = record[0]
             total_records = 0
             # You can page through results if needed
-            data, url = fetch_records(tic=tic, page=0, limit=100)
-            if data:
-                total_records += insert_records(data, tic, url,conn)
+            for page in range(10):  # Fetch up to 10 pages
+                data, url = fetch_records(tic=tic, page=page, limit=100)
+                print(f"Fetched {len(data) if data else 0} records for {tic} on page {page}")
+                if data:
+                    total_records += insert_records(data, tic, url,conn)
+                else:
+                    break  # Stop if no more data
+
             print(f"For {tic}: Total records processed = {total_records}")
         conn.close()
 

@@ -23,7 +23,7 @@ def stage1(state: News) -> dict:
         headline=state.headline,
         summary=state.summary,
         publisher=state.publisher,
-        publish_date=state.publish_date
+        published_at=state.published_at
     )
     system_prompt = SystemMessage(content=STAGE1_SYSTEM_MESSAGE)
     human_prompt = HumanMessage(content=prompt)
@@ -58,7 +58,7 @@ def stage2(state: News) -> dict:
         headline=state.headline,
         summary=state.summary,
         publisher=state.publisher,
-        publish_date=state.publish_date,
+        published_at=state.published_at,
         category=state.category,
         event_type=state.event_type
     )

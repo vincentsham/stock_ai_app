@@ -33,38 +33,38 @@ def insert_records(data, tic, url, conn):
 
                 cur.execute("""
                     INSERT INTO raw.analyst_grades (
-                        tic, published_at, news_title, news_base_url, 
-                        news_publisher, new_grade, previous_grade, grading_company, 
+                        tic, published_at, title, 
+                        site, company, 
+                        new_grade, previous_grade, 
                         action, price_when_posted, url, 
                         source, raw_json, raw_json_sha256, updated_at
                     ) VALUES (
-                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW()
+                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW()
                     )
                     ON CONFLICT (tic, url) DO UPDATE SET
                         published_at = EXCLUDED.published_at,
-                        news_title = EXCLUDED.news_title,
-                        news_base_url = EXCLUDED.news_base_url,
-                        news_publisher = EXCLUDED.news_publisher,
+                        title = EXCLUDED.title,
+                        site = EXCLUDED.site,
+                        company = EXCLUDED.company,
                         new_grade = EXCLUDED.new_grade,
                         previous_grade = EXCLUDED.previous_grade,
-                        grading_company = EXCLUDED.grading_company,
                         action = EXCLUDED.action,
                         price_when_posted = EXCLUDED.price_when_posted,
                         source = EXCLUDED.source,
                         raw_json = EXCLUDED.raw_json,
                         raw_json_sha256 = EXCLUDED.raw_json_sha256,
                         updated_at = NOW()
-                    WHERE raw.analyst_grades.raw_json_sha256 <> EXCLUDED.raw_json_sha256;
+                    WHERE raw.analyst_grades.raw_json_sha256 <> EXCLUDED.raw_json_sha256
+                        AND raw.analyst_grades.published_at < EXCLUDED.published_at;
                 """,
                 (
                     tic,
                     none_if_empty(record.get("publishedDate")),
                     none_if_empty(record.get("newsTitle")),
-                    none_if_empty(record.get("newsBaseURL")),
                     none_if_empty(record.get("newsPublisher")),
+                    none_if_empty(record.get("gradingCompany")),
                     none_if_empty(record.get("newGrade")),
                     none_if_empty(record.get("previousGrade")),
-                    none_if_empty(record.get("gradingCompany")),
                     none_if_empty(record.get("action")),
                     none_if_empty(record.get("priceWhenPosted")),
                     none_if_empty(record.get("newsURL")),
@@ -92,9 +92,14 @@ def main():
             tic = record[0]
             total_records = 0
             # You can page through results if needed
-            data, url = fetch_records(tic=tic, page=0, limit=100)
-            if data:
-                total_records += insert_records(data, tic, url,conn)
+            for page in range(10):  # Fetch up to 10 pages
+                data, url = fetch_records(tic=tic, page=page, limit=100)
+                print(f"Fetched {len(data) if data else 0} records for {tic} on page {page}")
+                if data:
+                    total_records += insert_records(data, tic, url,conn)
+                else:
+                    break  # Stop if no more data
+
             print(f"For {tic}: Total records processed = {total_records}")
         conn.close()
 

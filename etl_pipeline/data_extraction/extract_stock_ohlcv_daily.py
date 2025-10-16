@@ -16,11 +16,11 @@ def fetch_records(tic, start_date=None):
     return data
 
 
-# Check if tic exists in raw.stock_ohlcv table
+# Check if tic exists in raw.stock_ohlcv_daily table
 def check_tic_exists(conn, tic):
     try:
         cursor = conn.cursor()
-        query = "SELECT 1 FROM raw.stock_ohlcv WHERE tic = %s LIMIT 1;"
+        query = "SELECT 1 FROM raw.stock_ohlcv_daily WHERE tic = %s LIMIT 1;"
         cursor.execute(query, (tic,))
         return cursor.fetchone() is not None
     except Exception as e:
@@ -32,7 +32,7 @@ def check_price_change(conn, tic, new_data):
     try:
         # print(new_data)
         cursor = conn.cursor()
-        query = "SELECT close FROM raw.stock_ohlcv WHERE tic = %s AND date = %s;"
+        query = "SELECT close FROM raw.stock_ohlcv_daily WHERE tic = %s AND date = %s;"
         cursor.execute(query, (tic, new_data['Date'].iloc[-1]))
         result = cursor.fetchone()
         if result:
@@ -58,7 +58,7 @@ def insert_records(conn, data):
                 for _, row in df.iterrows()
             ]
             query = """
-            INSERT INTO raw.stock_ohlcv (date, tic, open, high, low, close, volume, source, updated_at)
+            INSERT INTO raw.stock_ohlcv_daily (date, tic, open, high, low, close, volume, source, updated_at)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NOW())
             ON CONFLICT (date, tic) DO UPDATE SET
                 open = EXCLUDED.open,
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     conn = connect_to_db()
     if conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT date FROM raw.stock_ohlcv ORDER BY date DESC LIMIT 1;")
+        cursor.execute("SELECT date FROM raw.stock_ohlcv_daily ORDER BY date DESC LIMIT 1;")
         last_date = cursor.fetchone()[0] if cursor.rowcount > 0 else pd.to_datetime("2000-01-01")
         print(f"Last date in database: {last_date}")
         # last_date minus 30 days

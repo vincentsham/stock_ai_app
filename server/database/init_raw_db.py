@@ -15,6 +15,10 @@ def table_creation(conn):
         else:
             print("Connection test failed!")
 
+        # Create schema 'raw' if it does not exist
+        cursor.execute("""CREATE SCHEMA IF NOT EXISTS raw;""")
+        print("Schema 'raw' created or already exists.")
+
         # Create a table for stock profiles if it does not exist
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS raw.stock_profiles (
@@ -38,9 +42,9 @@ def table_creation(conn):
         print("Table 'stock_profiles' created or already exists.")
 
 
-        # Create a table for stock OHLCV data if it does not exist
+        # Create a table for stock OHLCV daily data if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS raw.stock_ohlcv (
+        CREATE TABLE IF NOT EXISTS raw.stock_ohlcv_daily (
             date          DATE NOT NULL,
             tic           VARCHAR(10) NOT NULL,
             open          NUMERIC(12,4) NOT NULL,
@@ -53,7 +57,7 @@ def table_creation(conn):
             PRIMARY KEY (date, tic)
         );
         """)
-        print("Table 'stock_ohlcv' created or already exists.")
+        print("Table 'stock_ohlcv_daily' created or already exists.")
 
 
         # Create a table for historical earnings data if it does not exist
@@ -149,7 +153,7 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS raw.news (
             tic             VARCHAR(20) NOT NULL,              -- stock ticker
-            published_date  TIMESTAMP   NOT NULL,              -- from API publishedDate
+            published_at  TIMESTAMP   NOT NULL,              -- from API publishedDate
             publisher       TEXT,
             title           TEXT NOT NULL,
             site            TEXT,
@@ -171,17 +175,16 @@ def table_creation(conn):
         CREATE TABLE IF NOT EXISTS raw.analyst_price_targets (
             tic               varchar(10) NOT NULL,
             published_at      timestamp NOT NULL,
-            news_title        text,
-            news_base_url     text,
-            news_publisher    text,
+            title        text,
+            site    text,
                        
             analyst_name      text,
-            broker            text,
+            company   text,
             price_target      numeric(12,2),
             adj_price_target  numeric(12,2),
             price_when_posted numeric(12,4),
 
-            url               text NOT NULL,
+            url              text NOT NULL,
             source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
@@ -197,13 +200,12 @@ def table_creation(conn):
         CREATE TABLE IF NOT EXISTS raw.analyst_grades (
             tic               varchar(10) NOT NULL,
             published_at      timestamp NOT NULL,
-            news_title        text,
-            news_base_url     text,
-            news_publisher    text,
-
+            title        text,
+            site    text,
+                       
+            company           text,
             new_grade         text,
             previous_grade    text,
-            grading_company   text,
             action            text,
             price_when_posted numeric(12,4),
 

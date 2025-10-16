@@ -45,7 +45,7 @@ Classify the following news for ticker {tic}:
 - Headline: {headline}
 - Summary: {summary}
 - Publisher: {publisher}
-- Publish Date: {publish_date}
+- Published At: {published_at}
 """
 
 # System Message for Stage 2 - News Impact, Duration & Sentiment Classifier
@@ -119,7 +119,7 @@ Analyze the following news for ticker {tic}:
 - Headline: {headline}
 - Summary: {summary}
 - Publisher: {publisher}
-- Publish Date: {publish_date}
+- Published At: {published_at}
 - Category: {category}
 - Event Type: {event_type}
 """

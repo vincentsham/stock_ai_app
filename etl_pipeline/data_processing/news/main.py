@@ -13,7 +13,7 @@ def insert_records(data, conn):
             for record in data:
                 cur.execute("""
                     INSERT INTO core.news_analysis (
-                        tic, url, title, content, publisher, published_date, category, event_type,
+                        tic, url, title, content, publisher, published_at, category, event_type,
                         time_horizon, duration, impact_magnitude, affected_dimensions, sentiment,
                         raw_json_sha256, updated_at
                     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
@@ -21,6 +21,7 @@ def insert_records(data, conn):
                     SET title = EXCLUDED.title,
                         content = EXCLUDED.content,
                         publisher = EXCLUDED.publisher,
+                        published_at = EXCLUDED.published_at,
                         category = EXCLUDED.category,
                         event_type = EXCLUDED.event_type,
                         time_horizon = EXCLUDED.time_horizon,
@@ -37,7 +38,7 @@ def insert_records(data, conn):
                     record.get("headline"),
                     record.get("summary"),
                     record.get("publisher"),
-                    record.get("publish_date"),
+                    record.get("published_at"),
                     record.get("category"),
                     record.get("event_type"),
                     record.get("time_horizon"),
@@ -64,7 +65,7 @@ def main():
                     n.title,
                     n.content,
                     n.publisher,
-                    n.published_date,
+                    n.published_at,
                     n.raw_json_sha256,
                     sp.name,
                     sp.industry,
@@ -93,7 +94,7 @@ def main():
             summary=row['content'],
             url=row['url'],
             publisher=row['publisher'],
-            publish_date=str(row['published_date'])  # Convert to string
+            published_at=str(row['published_at'])  # Convert to string
         ), row['raw_json_sha256'])  # Keep track of the hash
         for _, row in df.iterrows()
     ]

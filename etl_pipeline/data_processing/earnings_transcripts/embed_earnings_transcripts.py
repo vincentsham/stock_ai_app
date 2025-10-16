@@ -10,7 +10,7 @@ from tqdm import tqdm
 load_dotenv()
 
 # Initialize the embedding model
-embedding_model_name = "text-embedding-3-small"
+embedding_model_name = os.getenv("OPENAI_EMBEDDING_MODEL")
 embedding_model = OpenAIEmbeddings(model=embedding_model_name)
 
 # Main function to process and store embeddings

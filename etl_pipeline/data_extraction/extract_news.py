@@ -29,12 +29,12 @@ def insert_news(data, tic, source_url, conn):
                 cur.execute(
                     """
                     INSERT INTO raw.news (
-                        tic, published_date, publisher, title, 
+                        tic, published_at, publisher, title, 
                         site, content, url, source, raw_json, raw_json_sha256, updated_at
                     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
                     ON CONFLICT (tic, url) DO UPDATE
                     SET 
-                        published_date = EXCLUDED.published_date,
+                        published_at = EXCLUDED.published_at,
                         publisher = EXCLUDED.publisher,
                         title = EXCLUDED.title,
                         site = EXCLUDED.site,
@@ -43,7 +43,8 @@ def insert_news(data, tic, source_url, conn):
                         raw_json = EXCLUDED.raw_json,
                         raw_json_sha256 = EXCLUDED.raw_json_sha256,
                         updated_at = NOW()
-                    WHERE raw.news.raw_json_sha256 <> EXCLUDED.raw_json_sha256;
+                    WHERE raw.news.raw_json_sha256 <> EXCLUDED.raw_json_sha256
+                        AND raw.news.published_at < EXCLUDED.published_at;
                     """, (
                     tic,
                     record.get("publishedDate"),
