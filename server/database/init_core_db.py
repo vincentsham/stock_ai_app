@@ -45,7 +45,7 @@ def table_creation(conn):
         # Create a table for news analysis if it does not exist
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.news_analysis (
-            tic             VARCHAR(20) NOT NULL,              -- stock ticker
+            tic             VARCHAR(10) NOT NULL,              -- stock ticker
             url             TEXT NOT NULL,                    -- URL of the news article
             title           TEXT NOT NULL,                    -- Title of the news article
             content         TEXT,                             -- Content of the news article
@@ -70,7 +70,7 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.earnings_transcript_chunks (
             -- Transcript identity
-            tic             VARCHAR(20) NOT NULL,
+            tic             VARCHAR(10) NOT NULL,
             fiscal_year     INT NOT NULL,
             fiscal_quarter  INT NOT NULL,
             earnings_date   DATE,
@@ -108,7 +108,7 @@ def table_creation(conn):
         # Create a table for earnings transcript embeddings if it does not exist
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.earnings_transcript_embeddings (
-            tic             VARCHAR(20) NOT NULL,
+            tic             VARCHAR(10) NOT NULL,
             fiscal_year     INT NOT NULL,
             fiscal_quarter  INT NOT NULL,
             earnings_date   DATE,
@@ -348,6 +348,74 @@ def table_creation(conn):
         );
         """)
         print("Table 'earnings_metrics' created or already exists.")
+
+       # Create a table for income statements if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.income_statements (
+            -- Identity & period alignment
+            tic                               VARCHAR(10)  NOT NULL,
+            fiscal_year                           SMALLINT     NOT NULL,
+            fiscal_quarter                        SMALLINT,                 -- 1–4 if quarterly; NULL if FY
+            period                                VARCHAR(10)  NOT NULL,    -- "Q1".."Q4", "FY" (as reported)
+            earnings_date                          DATE         NOT NULL,    -- period end date (company fiscal)
+
+            -- Filing / meta
+            filing_date                           DATE,
+            accepted_date                         TIMESTAMP,                -- raw feed is naive (no TZ)
+            cik                                   VARCHAR(20),
+            reported_currency                     VARCHAR(10),
+
+            -- Key financials (from JSON; snake_cased)
+            revenue                               BIGINT,
+            cost_of_revenue                       BIGINT,
+            gross_profit                          BIGINT,
+            research_and_development_expenses     BIGINT,
+            general_and_administrative_expenses   BIGINT,
+            selling_and_marketing_expenses        BIGINT,
+            selling_general_and_administrative_expenses BIGINT,
+            other_expenses                        BIGINT,
+            operating_expenses                    BIGINT,
+            cost_and_expenses                     BIGINT,
+
+            -- Operating & non-operating
+            ebitda                                BIGINT,
+            ebit                                  BIGINT,
+            non_operating_income_excluding_interest BIGINT,
+            operating_income                      BIGINT,
+            total_other_income_expenses_net       BIGINT,
+            income_before_tax                     BIGINT,
+            income_tax_expense                    BIGINT,
+
+            -- Net income breakdowns
+            net_income_from_continuing_operations BIGINT,
+            net_income_from_discontinued_operations BIGINT,
+            other_adjustments_to_net_income       BIGINT,
+            net_income                            BIGINT,
+            net_income_deductions                 BIGINT,
+            bottom_line_net_income                BIGINT,
+
+            -- Interest details
+            net_interest_income                   BIGINT,
+            interest_income                       BIGINT,
+            interest_expense                      BIGINT,
+            depreciation_and_amortization         BIGINT,
+
+            -- EPS & shares
+            eps                                   NUMERIC(10,2),
+            eps_diluted                           NUMERIC(10,2),
+            weighted_average_shs_out              BIGINT,
+            weighted_average_shs_out_dil          BIGINT,
+
+            -- Raw payload for traceability
+            raw_json                              JSONB        NOT NULL,
+            raw_json_sha256                       CHAR(64)     NOT NULL,
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (tic, fiscal_year, fiscal_quarter)
+        );
+        """)
+        print("Table 'income_statements' created or already exists with composite primary key.")
+
+
 
 
         conn.commit()

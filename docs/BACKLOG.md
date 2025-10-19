@@ -45,6 +45,8 @@ examples:
 | 20 | Feature | A job for analyzing income statements | High | Open |  |  |  |
 | 21 | Feature | A job for analyzing cash flows | High | Open |  |  |  |
 | 22 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
+| 23 | Miscellaneous | Add columns calendar year, quarter | High | Open |  |  |  |
+| 23 | Bugs | raw.earnings table - earnings date is not correct and may be remove fiscal date| High | Open |  |  |  |
 | 1007 | Feature | Create and load raw tables in core | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
