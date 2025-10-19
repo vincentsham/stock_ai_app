@@ -4,7 +4,7 @@ from typing import Dict
 
 from sklearn import metrics
 
-from server.database.utils import connect_to_db
+from server.database.utils import connect_to_db, insert_records
 from etl_pipeline.utils import read_sql_query
 
 def read_earnings(conn, tic: str) -> pd.DataFrame:
@@ -157,40 +157,6 @@ def compute_acceleration_metrics(df: pd.DataFrame, prefix: str) -> pd.DataFrame:
 
 
 
-def insert_records(df: pd.DataFrame, conn):
-    """
-    Fast and minimal insert/upsert using psycopg cursor.execute with tuples.
-    """
-    # Replace NaN/NA with None for PostgreSQL compatibility
-    df = df.replace({pd.NA: None, float('nan'): None})
-
-    cols = list(df.columns)
-    placeholders = ", ".join(["%s"] * len(cols))
-    updates = ", ".join([f"{c}=EXCLUDED.{c}" for c in cols])
-
-    sql = f"""
-        INSERT INTO core.earnings_metrics ({', '.join(cols)})
-        VALUES ({placeholders})
-        ON CONFLICT (tic, fiscal_year, fiscal_quarter)
-        DO UPDATE SET {updates}, updated_at = NOW();
-    """
-
-    try:
-        with conn.cursor() as cursor:
-            # Convert DataFrame to a sequence of tuples and execute in bulk
-            data = tuple(df.itertuples(index=False, name=None))
-            cursor.executemany(sql, data)  # ✅ psycopg safe bulk method
-            total_records = cursor.rowcount
-        conn.commit()
-        return total_records
-        
-    except Exception as e:
-        conn.rollback()
-        print(f"Error inserting earnings metrics: {e}")
-        return 0
-
-    
-
 def main():
     
     # Connect to the database
@@ -211,7 +177,7 @@ def main():
                 df = compute_surprise_metrics(df, prefix)
                 df = compute_growth_metrics(df, prefix)
                 df = compute_acceleration_metrics(df, prefix)
-            total_records = insert_records(df, conn)
+            total_records = insert_records(conn, df, "core.earnings_metrics", ["tic", "fiscal_year", "fiscal_quarter"])
             print(f"Inserted/Updated {total_records} records into core.earnings_metrics for {tic}.")
         conn.close()
         # Display one record as a dictionary

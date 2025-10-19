@@ -53,11 +53,11 @@ def table_creation(conn):
             published_at  TIMESTAMP NOT NULL,               -- Date and time the news was published
             category        VARCHAR(50),                      -- Category of the news (e.g., fundamental, technical)
             event_type      TEXT,                             -- Type of event described in the news
-            time_horizon    INT,                      -- Time horizon of the impact (e.g., short_term)
+            time_horizon    SMALLINT,                      -- Time horizon of the impact (e.g., short_term)
             duration        TEXT,                             -- Duration of the impact
-            impact_magnitude INT,                    -- Magnitude of the impact (e.g., minor, major)
+            impact_magnitude SMALLINT,                    -- Magnitude of the impact (e.g., minor, major)
             affected_dimensions TEXT[],                      -- List of affected dimensions (e.g., revenue, profit)
-            sentiment       INT,                     -- Sentiment analysis result (e.g., positive, negative)
+            sentiment       SMALLINT,                     -- Sentiment analysis result (e.g., positive, negative)
             raw_json_sha256 CHAR(64) NOT NULL,               -- hash of the raw JSON payload for integrity/lineage
             updated_at      TIMESTAMPTZ DEFAULT now(),
             PRIMARY KEY (tic, url)                           -- Composite PK: unique analysis per ticker+url

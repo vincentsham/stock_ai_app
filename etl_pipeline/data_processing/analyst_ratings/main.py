@@ -1,4 +1,4 @@
-from server.database.utils import connect_to_db
+from server.database.utils import connect_to_db, insert_records
 from etl_pipeline.utils import read_sql_query, timestamp_to_trading_date, convert_numpy_types
 import pandas as pd
 import numpy as np
@@ -356,96 +356,6 @@ def stock_price_statistics(df, start_date, end_date):
     return {"price_stats": price_stats}
 
 
-def insert_record(conn, record):
-    """
-    Insert a record into the core.analyst_rating_monthly_summary table.
-
-    Args:
-        conn: Database connection object.
-        record: Dictionary containing the data to insert. Keys must match the table schema.
-    """
-    try:
-        cursor = conn.cursor()
-        query = """
-        INSERT INTO core.analyst_rating_monthly_summary (
-            tic, start_date, end_date,
-            pt_count, pt_high, pt_low, pt_p25, pt_median, pt_p75, pt_mean, pt_stddev, pt_dispersion,
-            pt_upgrade_n, pt_downgrade_n, pt_reiterate_n, pt_init_n,
-            grade_count, grade_buy_n, grade_hold_n, grade_sell_n, grade_buy_ratio, grade_hold_ratio, grade_sell_ratio, grade_balance,
-            grade_upgrade_n, grade_downgrade_n, grade_reiterate_n, grade_init_n,
-            ret_mean, ret_median, ret_p25, ret_p75, ret_stddev, ret_dispersion, ret_high, ret_low,
-            ret_upgrade_n, ret_downgrade_n, ret_reiterate_n, ret_init_n,
-            price_start, price_end, price_high, price_low, price_p25, price_median, price_p75, price_mean, price_stddev,
-            updated_at
-        ) VALUES (
-            %(tic)s, %(start_date)s, %(end_date)s,
-            %(pt_count)s, %(pt_high)s, %(pt_low)s, %(pt_p25)s, %(pt_median)s, %(pt_p75)s, %(pt_mean)s, %(pt_stddev)s, %(pt_dispersion)s,
-            %(pt_upgrade_n)s, %(pt_downgrade_n)s, %(pt_reiterate_n)s, %(pt_init_n)s,
-            %(grade_count)s, %(grade_buy_n)s, %(grade_hold_n)s, %(grade_sell_n)s, %(grade_buy_ratio)s, %(grade_hold_ratio)s, %(grade_sell_ratio)s, %(grade_balance)s,
-            %(grade_upgrade_n)s, %(grade_downgrade_n)s, %(grade_reiterate_n)s, %(grade_init_n)s,
-            %(ret_mean)s, %(ret_median)s, %(ret_p25)s, %(ret_p75)s, %(ret_stddev)s, %(ret_dispersion)s, %(ret_high)s, %(ret_low)s,
-            %(ret_upgrade_n)s, %(ret_downgrade_n)s, %(ret_reiterate_n)s, %(ret_init_n)s,
-            %(price_start)s, %(price_end)s, %(price_high)s, %(price_low)s, %(price_p25)s, %(price_median)s, %(price_p75)s, %(price_mean)s, %(price_stddev)s,
-            NOW()
-        )
-        ON CONFLICT (tic, start_date, end_date) DO UPDATE SET
-            pt_count = EXCLUDED.pt_count,
-            pt_high = EXCLUDED.pt_high,
-            pt_low = EXCLUDED.pt_low,
-            pt_p25 = EXCLUDED.pt_p25,
-            pt_median = EXCLUDED.pt_median,
-            pt_p75 = EXCLUDED.pt_p75,
-            pt_mean = EXCLUDED.pt_mean,
-            pt_stddev = EXCLUDED.pt_stddev,
-            pt_dispersion = EXCLUDED.pt_dispersion,
-            pt_upgrade_n = EXCLUDED.pt_upgrade_n,
-            pt_downgrade_n = EXCLUDED.pt_downgrade_n,
-            pt_reiterate_n = EXCLUDED.pt_reiterate_n,
-            pt_init_n = EXCLUDED.pt_init_n,
-            grade_count = EXCLUDED.grade_count,
-            grade_buy_n = EXCLUDED.grade_buy_n,
-            grade_hold_n = EXCLUDED.grade_hold_n,
-            grade_sell_n = EXCLUDED.grade_sell_n,
-            grade_buy_ratio = EXCLUDED.grade_buy_ratio,
-            grade_hold_ratio = EXCLUDED.grade_hold_ratio,
-            grade_sell_ratio = EXCLUDED.grade_sell_ratio,
-            grade_balance = EXCLUDED.grade_balance,
-            grade_upgrade_n = EXCLUDED.grade_upgrade_n,
-            grade_downgrade_n = EXCLUDED.grade_downgrade_n,
-            grade_reiterate_n = EXCLUDED.grade_reiterate_n,
-            grade_init_n = EXCLUDED.grade_init_n,
-            ret_mean = EXCLUDED.ret_mean,
-            ret_median = EXCLUDED.ret_median,
-            ret_p25 = EXCLUDED.ret_p25,
-            ret_p75 = EXCLUDED.ret_p75,
-            ret_stddev = EXCLUDED.ret_stddev,
-            ret_dispersion = EXCLUDED.ret_dispersion,
-            ret_high = EXCLUDED.ret_high,
-            ret_low = EXCLUDED.ret_low,
-            ret_upgrade_n = EXCLUDED.ret_upgrade_n,
-            ret_downgrade_n = EXCLUDED.ret_downgrade_n,
-            ret_reiterate_n = EXCLUDED.ret_reiterate_n,
-            ret_init_n = EXCLUDED.ret_init_n,
-            price_start = EXCLUDED.price_start,
-            price_end = EXCLUDED.price_end,
-            price_high = EXCLUDED.price_high,
-            price_low = EXCLUDED.price_low,
-            price_p25 = EXCLUDED.price_p25,
-            price_median = EXCLUDED.price_median,
-            price_p75 = EXCLUDED.price_p75,
-            price_mean = EXCLUDED.price_mean,
-            price_stddev = EXCLUDED.price_stddev,
-            updated_at = NOW();
-        """
-        cursor.execute(query, convert_numpy_types(record))
-        conn.commit()
-        return cursor.rowcount
-    except Exception as e:
-        print(f"Error inserting record: {e}")
-        conn.rollback()
-        return 0
-
-
 def main():
     conn = connect_to_db()
     if conn:
@@ -472,7 +382,6 @@ def main():
             cursor.execute(f"SELECT date FROM raw.stock_ohlcv_daily WHERE tic = '{tic}';")
             dates = cursor.fetchall()
 
-            total_records = 0
             for date in dates:
                 end_date = date[0]
                 start_date = date[0] - pd.Timedelta(days=30)
@@ -510,9 +419,10 @@ def main():
 
                 results.append(result)
             
+            df = pd.DataFrame(results)
+            total_records = insert_records(conn, df, "core.analyst_rating_monthly_summary", ["tic", "start_date", "end_date"])
 
-            for record in results:
-                total_records += insert_record(conn, record)
+    
             print(f"Processed {total_records} records for {tic}")
             # print(f"Processed {len(results)} records for {tic}")
 

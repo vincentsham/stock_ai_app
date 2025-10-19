@@ -1,92 +1,12 @@
 import time
 import pandas as pd
-from server.database.utils import connect_to_db
+from server.database.utils import connect_to_db, insert_records
 from states import merged_state_factory, MergedState
 from graph import create_graph
 from tqdm import tqdm
 from etl_pipeline.utils import read_sql_query  # Import the custom read_sql_query function
 
-def insert_records(data, conn):
-    """Insert processed data into core.earnings_transcript_analysis."""
-    try:
-        with conn.cursor() as cur:
-            for record in data:
-                cur.execute("""
-                    INSERT INTO core.earnings_transcript_analysis (
-                        tic, fiscal_year, fiscal_quarter,
-                        sentiment, durability, performance_factors, past_summary,
-                        guidance_direction, revenue_outlook, margin_outlook, earnings_outlook, cashflow_outlook, growth_acceleration, future_outlook_sentiment, catalysts, future_summary,
-                        risk_mentioned, risk_impact, risk_time_horizon, risk_factors, risk_summary,
-                        mitigation_mentioned, mitigation_effectiveness, mitigation_time_horizon, mitigation_actions, mitigation_summary,
-                        transcript_sha256, updated_at
-                    ) VALUES (
-                        %s, %s, %s,
-                        %s, %s, %s, %s,
-                        %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                        %s, %s, %s, %s, %s,
-                        %s, %s, %s, %s, %s,
-                        %s, NOW()
-                    )
-                    ON CONFLICT (tic, fiscal_year, fiscal_quarter) DO UPDATE SET
-                        sentiment = EXCLUDED.sentiment,
-                        durability = EXCLUDED.durability,
-                        performance_factors = EXCLUDED.performance_factors,
-                        past_summary = EXCLUDED.past_summary,
-                        guidance_direction = EXCLUDED.guidance_direction,
-                        revenue_outlook = EXCLUDED.revenue_outlook,
-                        margin_outlook = EXCLUDED.margin_outlook,
-                        earnings_outlook = EXCLUDED.earnings_outlook,
-                        cashflow_outlook = EXCLUDED.cashflow_outlook,
-                        growth_acceleration = EXCLUDED.growth_acceleration,
-                        future_outlook_sentiment = EXCLUDED.future_outlook_sentiment,
-                        catalysts = EXCLUDED.catalysts,
-                        future_summary = EXCLUDED.future_summary,
-                        risk_mentioned = EXCLUDED.risk_mentioned,
-                        risk_impact = EXCLUDED.risk_impact,
-                        risk_time_horizon = EXCLUDED.risk_time_horizon,
-                        risk_factors = EXCLUDED.risk_factors,
-                        risk_summary = EXCLUDED.risk_summary,
-                        mitigation_mentioned = EXCLUDED.mitigation_mentioned,
-                        mitigation_effectiveness = EXCLUDED.mitigation_effectiveness,
-                        mitigation_time_horizon = EXCLUDED.mitigation_time_horizon,
-                        mitigation_actions = EXCLUDED.mitigation_actions,
-                        mitigation_summary = EXCLUDED.mitigation_summary,
-                        transcript_sha256 = EXCLUDED.transcript_sha256,
-                        updated_at = NOW();
-                """,
-                (
-                    record.get("company_info", {}).get("tic"),
-                    record.get("company_info", {}).get("fiscal_year"),
-                    record.get("company_info", {}).get("fiscal_quarter"),
-                    record.get("past_analysis", {}).get("sentiment"),
-                    record.get("past_analysis", {}).get("durability"),
-                    record.get("past_analysis", {}).get("performance_factors"),
-                    record.get("past_analysis", {}).get("past_summary"),
-                    record.get("future_analysis", {}).get("guidance_direction"),
-                    record.get("future_analysis", {}).get("revenue_outlook"),
-                    record.get("future_analysis", {}).get("margin_outlook"),
-                    record.get("future_analysis", {}).get("earnings_outlook"),
-                    record.get("future_analysis", {}).get("cashflow_outlook"),
-                    record.get("future_analysis", {}).get("growth_acceleration"),
-                    record.get("future_analysis", {}).get("sentiment"),
-                    record.get("future_analysis", {}).get("catalysts"),
-                    record.get("future_analysis", {}).get("future_summary"),
-                    record.get("risk_analysis", {}).get("risk_mentioned"),
-                    record.get("risk_analysis", {}).get("risk_impact"),
-                    record.get("risk_analysis", {}).get("risk_time_horizon"),
-                    record.get("risk_analysis", {}).get("risk_factors"),
-                    record.get("risk_analysis", {}).get("risk_summary"),
-                    record.get("risk_response_analysis", {}).get("mitigation_mentioned"),
-                    record.get("risk_response_analysis", {}).get("mitigation_effectiveness"),
-                    record.get("risk_response_analysis", {}).get("mitigation_time_horizon"),
-                    record.get("risk_response_analysis", {}).get("mitigation_actions"),
-                    record.get("risk_response_analysis", {}).get("mitigation_summary"),
-                    record.get("transcript_sha256"),
-                ))
-            conn.commit()
-    except Exception as e:
-        print(f"Error inserting analysis data: {e}")
-        conn.rollback()
+
 
 def main():
     """Main function to execute the stock profile summarization pipeline."""
@@ -135,16 +55,47 @@ def main():
     for state in tqdm(states, desc="Processing company profiles"):
         final_state = app.invoke(state[0])
         final_state['transcript_sha256'] = state[1]  # Add transcript_sha256 to the final state
-        processed_data.append(final_state)
+        out = {  
+                    "tic": final_state.get("company_info", {}).get("tic"),
+                    "fiscal_year": final_state.get("company_info", {}).get("fiscal_year"),
+                    "fiscal_quarter": final_state.get("company_info", {}).get("fiscal_quarter"),
+                    "sentiment": final_state.get("past_analysis", {}).get("sentiment"),
+                    "durability": final_state.get("past_analysis", {}).get("durability"),
+                    "performance_factors": final_state.get("past_analysis", {}).get("performance_factors"),
+                    "past_summary": final_state.get("past_analysis", {}).get("past_summary"),
+                    "guidance_direction": final_state.get("future_analysis", {}).get("guidance_direction"),
+                    "revenue_outlook": final_state.get("future_analysis", {}).get("revenue_outlook"),
+                    "margin_outlook": final_state.get("future_analysis", {}).get("margin_outlook"),
+                    "earnings_outlook": final_state.get("future_analysis", {}).get("earnings_outlook"),
+                    "cashflow_outlook": final_state.get("future_analysis", {}).get("cashflow_outlook"),
+                    "growth_acceleration": final_state.get("future_analysis", {}).get("growth_acceleration"),
+                    "future_outlook_sentiment": final_state.get("future_analysis", {}).get("sentiment"),
+                    "catalysts": final_state.get("future_analysis", {}).get("catalysts"),
+                    "future_summary": final_state.get("future_analysis", {}).get("future_summary"),
+                    "risk_mentioned": final_state.get("risk_analysis", {}).get("risk_mentioned"),
+                    "risk_impact": final_state.get("risk_analysis", {}).get("risk_impact"),
+                    "risk_time_horizon": final_state.get("risk_analysis", {}).get("risk_time_horizon"),
+                    "risk_factors": final_state.get("risk_analysis", {}).get("risk_factors"),
+                    "risk_summary": final_state.get("risk_analysis", {}).get("risk_summary"),
+                    "mitigation_mentioned": final_state.get("risk_response_analysis", {}).get("mitigation_mentioned"),
+                    "mitigation_effectiveness": final_state.get("risk_response_analysis", {}).get("mitigation_effectiveness"),
+                    "mitigation_time_horizon": final_state.get("risk_response_analysis", {}).get("mitigation_time_horizon"),
+                    "mitigation_actions": final_state.get("risk_response_analysis", {}).get("mitigation_actions"),
+                    "mitigation_summary": final_state.get("risk_response_analysis", {}).get("mitigation_summary"),
+                    "transcript_sha256": final_state.get("transcript_sha256"),
+        }
+        processed_data.append(out)
 
     # Load processed data into core.stock_metadata
+    total_records = 0
     if conn:
-        insert_records(processed_data, conn)
+        df = pd.DataFrame(processed_data)
+        total_records = insert_records(conn, df, "core.earnings_transcript_analysis", ["tic", "fiscal_year", "fiscal_quarter"])
         conn.close()
 
     # End timing
     end_time = time.time()
-    print(f"Processed {len(states)} records in {end_time - start_time:.2f} seconds.")
+    print(f"Inserted/Updated {total_records} records in {end_time - start_time:.2f} seconds.")
     print(f"Total number of records is {len(processed_data)}.")
 
 if __name__ == "__main__":
