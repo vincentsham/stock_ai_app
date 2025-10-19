@@ -48,7 +48,6 @@ examples:
 | 1007 | Feature | Create and load raw tables in core | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
-| 1010 | Miscellaneous | refactor the insert records function | Medium | Open |  |  |  |
 | 10001 | Feature | Transfer Tables that has text to Pinecone | Low | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
@@ -93,5 +92,6 @@ examples:
 | 1004 | Miscellaneous | Update db schema document | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
 | 1005 | Technical | Make sure no dup records in news on (tic, title) | Medium | Close | tech_1006 | 2025-10-09 | 2025-10-09 |
 | 1006 | Technical | Improve news ai agent prompt | Medium | Close | tech_1006 | 2025-10-09 | 2025-10-09 |
+| 1010 | Miscellaneous | refactor the insert records function | Medium | Close | misc_1010 | 2025-10-18 | 2025-10-18 |
 | 10007 | Miscellaneous | Update the earnings transcipt instruction doc | Low | Close | misc_10007 | 2025-10-10 | 2025-10-10 |
 </div>
