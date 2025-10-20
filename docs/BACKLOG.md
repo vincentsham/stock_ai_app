@@ -41,10 +41,15 @@ examples:
 | 15 | Feature | Catalyst logic | High | Open |  |  |  |
 | 16 | Feature | uuid for some tables | High | Open |  |  |  |
 | 17 | Feature | integrate catalysts into news, analyst ratings and earnings | High | Open |  |  |  |
-| 19 | Feature | A job for analyzing balance sheets | High | Open |  |  |  |
-
-| 21 | Feature | A job for analyzing cash flows | High | Open |  |  |  |
+| 19 | Feature | load balance sheets into core | High | Open |  |  |  |
+| 21 | Feature | load cash flows into core | High | Open |  |  |  |
 | 22 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
+| 24 | Feature | growth, stability, acceleration framework | High | Open |  |  |  |
+| 25 | Feature | revenue analysis | High | Open |  |  |  |
+| 26 | Feature | profitability analysis | High | Open |  |  |  |
+| 27 | Feature | efficiency analysis | High | Open |  |  |  |
+| 28 | Feature | cash flow analysis | High | Open |  |  |  |
+| 29 | Feature | balance sheet analysis | High | Open |  |  |  |
 | 1007 | Feature | Create and load raw tables in core | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
