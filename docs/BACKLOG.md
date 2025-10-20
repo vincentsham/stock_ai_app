@@ -42,7 +42,7 @@ examples:
 | 16 | Feature | uuid for some tables | High | Open |  |  |  |
 | 17 | Feature | integrate catalysts into news, analyst ratings and earnings | High | Open |  |  |  |
 | 19 | Feature | A job for analyzing balance sheets | High | Open |  |  |  |
-| 20 | Feature | A job for analyzing income statements | High | Open |  |  |  |
+
 | 21 | Feature | A job for analyzing cash flows | High | Open |  |  |  |
 | 22 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
 | 1007 | Feature | Create and load raw tables in core | Medium | Open |  |  |  |
@@ -85,8 +85,9 @@ examples:
 | 13 | Feature | Create and load data into earnings_transcript_analysis | Medium | Close | feat_13 | 2025-10-11 | 2025-10-11 |
 | 14 | Feature | Create a data processing job for analyzing analyst ratings | High | Close | feat_14 | 2025-10-15 | 2025-10-16 |
 | 18 | Feature | A job for earnings metrics | High | Close | feat_18 | 2025-10-16 | 2025-10-16 |
-| 23 | Miscellaneous | Add columns calendar year, quarter | High | Open | feat_23 | 2025-10-19 | 2025-10-19 |
-| 23 | Bugs | raw.earnings table - earnings date is not correct and may be remove fiscal date| High | Open | feat_23 | 2025-10-19 | 2025-10-19 |
+| 20 | Feature | load income statements into core | High | Close | feat_20 | 2025-10-18 | 2025-10-18 |
+| 23 | Miscellaneous | Add columns calendar year, quarter | High | Close | feat_23 | 2025-10-19 | 2025-10-19 |
+| 23 | Bugs | raw.earnings table - earnings date is not correct and may be remove fiscal date| High | Close | feat_23 | 2025-10-19 | 2025-10-19 |
 | 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous | Create a md doc for source | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
