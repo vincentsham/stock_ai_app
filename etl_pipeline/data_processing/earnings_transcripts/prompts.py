@@ -7,8 +7,8 @@ Company Metadata:
 - Industry: {industry}
 - Sector: {sector}
 - Description: {company_description}
-- Fiscal Year: {fiscal_year}
-- Fiscal Quarter: {fiscal_quarter}
+- Calendar Year: {calendar_year}
+- Calendar Quarter: {calendar_quarter}
 
 Each excerpt is from the same quarter and may include management remarks or Q&A.
 Analyze the text according to the system instructions for the {stage} node and produce the required JSON output.
@@ -225,8 +225,8 @@ Company Metadata:
 - Industry: {industry}
 - Sector: {sector}
 - Description: {company_description}
-- Fiscal Year: {fiscal_year}
-- Fiscal Quarter: {fiscal_quarter}
+- Calendar Year: {calendar_year}
+- Calendar Quarter: {calendar_quarter}
 
 Task:
 - Write exactly 3 concise, high-recall queries (≤ 20 words each) that help find passages describing management actions, strategies, or plans
@@ -249,7 +249,7 @@ PAST_PERFORMANCE_QUERIES = [
 ]
 
 FUTURE_OUTLOOK_QUERIES = [
-    "management outlook and guidance for upcoming quarters or next fiscal year",
+    "management outlook and guidance for upcoming quarters or next year",
     "future growth plans, expansion, or strategic initiatives discussed by management",
     "expectations for revenue, margins, and cash flow going forward"
 ]

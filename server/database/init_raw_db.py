@@ -63,11 +63,9 @@ def table_creation(conn):
         # Create a table for historical earnings data if it does not exist
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS raw.earnings (
-            tic VARCHAR(20) NOT NULL,
-            fiscal_year INT NOT NULL,
-            fiscal_quarter INT NOT NULL,
-            fiscal_date DATE,              
+            tic VARCHAR(10) NOT NULL,
             earnings_date DATE NOT NULL,
+            fiscal_date DATE,
             session VARCHAR(10),
             eps NUMERIC(10,4),
             eps_estimated NUMERIC(10,4),
@@ -79,7 +77,7 @@ def table_creation(conn):
             raw_json               JSONB        NOT NULL,                 -- verbatim payload (optional but useful)
             raw_json_sha256        CHAR(64)     NOT NULL,
             updated_at            TIMESTAMPTZ DEFAULT now(),
-            PRIMARY KEY (tic, fiscal_year, fiscal_quarter)
+            PRIMARY KEY (tic, earnings_date)
         );
         """)
         print("Table 'earnings' created or already exists with composite primary key.")
@@ -88,17 +86,13 @@ def table_creation(conn):
         # Create a table for historical earnings transcripts data if it does not exist
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS raw.earnings_transcripts (
-            tic             VARCHAR(20)  NOT NULL,
-            fiscal_year     INT          NOT NULL,
-            fiscal_quarter  INT          NOT NULL,
+            tic             VARCHAR(10)  NOT NULL,
             earnings_date   DATE         NOT NULL,
-            transcript      TEXT         NOT NULL,
-            transcript_sha256 CHAR(64)     NOT NULL,
             source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
             updated_at      TIMESTAMPTZ DEFAULT now(),
-            PRIMARY KEY (tic, fiscal_year, fiscal_quarter)
+            PRIMARY KEY (tic, earnings_date)
         );
         """)
         print("Table 'earnings_transcripts' created or already exists with composite primary key.")
@@ -107,9 +101,10 @@ def table_creation(conn):
         # Create a table for income statements if it does not exist
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS raw.income_statements (
-            tic             VARCHAR(20)  NOT NULL,                 -- e.g., AAPL
-            fiscal_year     INT          NOT NULL,                 -- e.g., 2025
-            fiscal_quarter  INT          NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
+            tic             VARCHAR(10)  NOT NULL,                 -- e.g., AAPL
+            fiscal_year     SMALLINT    NOT NULL,                 -- e.g., 2025
+            fiscal_quarter  SMALLINT    NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
+            fiscal_date     DATE       NOT NULL,
             source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
@@ -122,9 +117,10 @@ def table_creation(conn):
         # Create a table for cash flows if it does not exist
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS raw.cash_flows (
-            tic             VARCHAR(20)  NOT NULL,                 -- e.g., AAPL
-            fiscal_year     INT          NOT NULL,                 -- e.g., 2025
-            fiscal_quarter  INT          NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
+            tic             VARCHAR(10)  NOT NULL,                 -- e.g., AAPL
+            fiscal_year     SMALLINT          NOT NULL,                 -- e.g., 2025
+            fiscal_quarter  SMALLINT          NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
+            fiscal_date     DATE       NOT NULL,
             source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
@@ -137,9 +133,10 @@ def table_creation(conn):
         # Create a table for balance sheets if it does not exist
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS raw.balance_sheets (
-            tic             VARCHAR(20)  NOT NULL,                 -- e.g., AAPL
-            fiscal_year     INT          NOT NULL,                 -- e.g., 2025
-            fiscal_quarter  INT          NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
+            tic             VARCHAR(10)  NOT NULL,                 -- e.g., AAPL
+            fiscal_year     SMALLINT          NOT NULL,                 -- e.g., 2025
+            fiscal_quarter  SMALLINT          NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
+            fiscal_date     DATE       NOT NULL,
             source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
@@ -152,7 +149,7 @@ def table_creation(conn):
         # Create a table for news data if it does not exist
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS raw.news (
-            tic             VARCHAR(20) NOT NULL,              -- stock ticker
+            tic             VARCHAR(10) NOT NULL,              -- stock ticker
             published_at  TIMESTAMP   NOT NULL,              -- from API publishedDate
             publisher       TEXT,
             title           TEXT NOT NULL,

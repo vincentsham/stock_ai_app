@@ -15,8 +15,8 @@ def main():
     if conn:
         query = """
             SELECT et.tic, sm.name, sm.sector, sm.industry, sm.short_summary, 
-                   et.fiscal_year, et.fiscal_quarter, et.earnings_date, et.transcript_sha256
-            FROM raw.earnings_transcripts AS et
+                   et.calendar_year, et.calendar_quarter, et.earnings_date, et.transcript_sha256
+            FROM core.earnings_transcripts AS et
             JOIN core.stock_profiles AS sm 
             ON et.tic = sm.tic;
         """
@@ -35,8 +35,8 @@ def main():
             sector=row['sector'],
             industry=row['industry'],
             company_description=row['short_summary'],
-            fiscal_year=row['fiscal_year'],
-            fiscal_quarter=row['fiscal_quarter'],
+            calendar_year=row['calendar_year'],
+            calendar_quarter=row['calendar_quarter'],
             earnings_date=row['earnings_date'].isoformat()
         ), row['transcript_sha256'])
         for _, row in df.iterrows()
@@ -57,8 +57,8 @@ def main():
         final_state['transcript_sha256'] = state[1]  # Add transcript_sha256 to the final state
         out = {  
                     "tic": final_state.get("company_info", {}).get("tic"),
-                    "fiscal_year": final_state.get("company_info", {}).get("fiscal_year"),
-                    "fiscal_quarter": final_state.get("company_info", {}).get("fiscal_quarter"),
+                    "calendar_year": final_state.get("company_info", {}).get("calendar_year"),
+                    "calendar_quarter": final_state.get("company_info", {}).get("calendar_quarter"),
                     "sentiment": final_state.get("past_analysis", {}).get("sentiment"),
                     "durability": final_state.get("past_analysis", {}).get("durability"),
                     "performance_factors": final_state.get("past_analysis", {}).get("performance_factors"),
@@ -90,7 +90,7 @@ def main():
     total_records = 0
     if conn:
         df = pd.DataFrame(processed_data)
-        total_records = insert_records(conn, df, "core.earnings_transcript_analysis", ["tic", "fiscal_year", "fiscal_quarter"])
+        total_records = insert_records(conn, df, "core.earnings_transcript_analysis", ["tic", "calendar_year", "calendar_quarter"])
         conn.close()
 
     # End timing

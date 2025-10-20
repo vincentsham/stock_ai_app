@@ -3,28 +3,38 @@ import json
 from server.database.utils import connect_to_db, insert_records, execute_query
 
 
-def read_income_statements():
+def read_records():
     """
     Reads data from the raw.income_statements table and returns it as a pandas DataFrame.
     """
     query = """
     SELECT 
-        tic, 
-        fiscal_year, 
-        fiscal_quarter, 
-        source, 
-        raw_json, 
-        raw_json_sha256, 
-        updated_at
-    FROM raw.income_statements;
+        i.tic, 
+        c.calendar_year,
+        c.calendar_quarter,
+        c.earnings_date,
+        i.fiscal_year, 
+        i.fiscal_quarter, 
+        i.fiscal_date,
+        i.source, 
+        i.raw_json, 
+        i.raw_json_sha256 
+    FROM raw.income_statements as i
+    LEFT JOIN core.earnings_calendar as c
+    ON i.tic = c.tic AND ABS(i.fiscal_date::DATE - c.fiscal_date::DATE) <= 15
+    LEFT JOIN core.income_statements AS ci
+    ON i.tic = ci.tic AND i.fiscal_year = ci.fiscal_year AND i.fiscal_quarter = ci.fiscal_quarter
+    WHERE ci.raw_json_sha256 IS NULL 
+        OR i.raw_json_sha256 IS DISTINCT FROM ci.raw_json_sha256;
     """
 
     # Connect to the database
     df = execute_query(query)
+
     return df
 
 
-def transform_income_statements(raw_df):
+def transform_records(raw_df):
     """
     Transforms the raw income statements data to match the schema of core.income_statements.
     
@@ -42,10 +52,13 @@ def transform_income_statements(raw_df):
         data = raw_df.iloc[i]['raw_json']
 
         transformed_df.at[i, 'tic'] = raw_df.iloc[i]['tic']
+        transformed_df.at[i, 'calendar_year'] = raw_df.iloc[i]['calendar_year']
+        transformed_df.at[i, 'calendar_quarter'] = raw_df.iloc[i]['calendar_quarter']
+        transformed_df.at[i, 'earnings_date'] = raw_df.iloc[i]['earnings_date']
         transformed_df.at[i, 'fiscal_year'] = raw_df.iloc[i]['fiscal_year']
         transformed_df.at[i, 'fiscal_quarter'] = raw_df.iloc[i]['fiscal_quarter']
+        transformed_df.at[i, 'fiscal_date'] = raw_df.iloc[i]['fiscal_date']
         transformed_df.at[i, 'period'] = data.get('period', None)
-        transformed_df.at[i, 'earnings_date'] = data.get('date', None)
         transformed_df.at[i, 'filing_date'] = data.get('filingDate', None)
         transformed_df.at[i, 'accepted_date'] = data.get('acceptedDate', None)
         transformed_df.at[i, 'cik'] = data.get('cik', None)
@@ -91,7 +104,7 @@ def transform_income_statements(raw_df):
         transformed_df.at[i, 'raw_json'] = json.dumps(raw_df.iloc[i]['raw_json'])
         transformed_df.at[i, 'raw_json_sha256'] = raw_df.iloc[i]['raw_json_sha256']
 
-
+    transformed_df = transformed_df[transformed_df['fiscal_quarter'] != 0]
     return transformed_df
 
 
@@ -114,10 +127,10 @@ def main():
     Main function to orchestrate the ETL process for income statements.
     """
     # Step 1: Read raw income statements
-    raw_df = read_income_statements()
+    raw_df = read_records()
 
     # Step 2: Transform the data
-    transformed_df = transform_income_statements(raw_df)
+    transformed_df = transform_records(raw_df)
 
     # Step 3: Load the transformed data into core.income_statements
     load_income_statements(transformed_df)

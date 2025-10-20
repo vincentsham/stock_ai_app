@@ -76,8 +76,8 @@ if __name__ == "__main__":
     #             industry="Technology",
     #             sector="Consumer Electronics",
     #             company_description="Apple Inc. is a leading technology company known for its innovative products and services.",
-    #             fiscal_year=2025,
-    #             fiscal_quarter=2,
+    #             calendar_year=2025,
+    #             calendar_quarter=2,
     #             earnings_date="2025-10-28"
     #     )
 
@@ -88,8 +88,8 @@ if __name__ == "__main__":
     #             industry="Semiconductors",
     #             sector="Technology",
     #             company_description="NVIDIA Corporation is a global leader in AI computing.",
-    #             fiscal_year=2025,
-    #             fiscal_quarter=2,
+    #             calendar_year=2025,
+    #             calendar_quarter=2,
     #             earnings_date="2025-08-15"
     #         )
 
@@ -100,8 +100,8 @@ if __name__ == "__main__":
                 industry="Automotive",
                 sector="Consumer Discretionary",
                 company_description="Tesla, Inc. is a leading electric vehicle and clean energy company.",
-                fiscal_year=2025,
-                fiscal_quarter=2,
+                calendar_year=2025,
+                calendar_quarter=2,
                 earnings_date="2025-07-24"
             )
 

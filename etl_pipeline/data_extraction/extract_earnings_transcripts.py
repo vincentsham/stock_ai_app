@@ -24,37 +24,31 @@ def fetch_record(ticker, year, quarter):
         return None
 
 # Insert earnings transcript data into the database
-def insert_record(conn, data, tic, fiscal_year, fiscal_quarter, earnings_date, url=None):
+def insert_record(conn, data, tic, earnings_date, url=None):
     total_records = 0
     try:
         cursor = conn.cursor()
         query = """
         INSERT INTO raw.earnings_transcripts (
-            tic, fiscal_year, fiscal_quarter, earnings_date, 
-            transcript, transcript_sha256, source, 
-            raw_json, raw_json_sha256, updated_at
+            tic, earnings_date, source, 
+            raw_json, raw_json_sha256
         ) VALUES (
-            %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW()
+            %s, %s, %s, %s, %s
         )
-        ON CONFLICT (tic, fiscal_year, fiscal_quarter)
+        ON CONFLICT (tic, earnings_date)
         DO UPDATE SET
-            earnings_date = EXCLUDED.earnings_date,
-            transcript = EXCLUDED.transcript,
-            transcript_sha256 = EXCLUDED.transcript_sha256,
             source = EXCLUDED.source,
             raw_json = EXCLUDED.raw_json,
             raw_json_sha256 = EXCLUDED.raw_json_sha256,
             updated_at = NOW()
         WHERE
-            raw.earnings_transcripts.raw_json_sha256 IS DISTINCT FROM EXCLUDED.raw_json_sha256;
+            raw.earnings_transcripts.raw_json_sha256 <>EXCLUDED.raw_json_sha256;
         """
         cursor.execute(query, (
             tic,
-            fiscal_year,
-            fiscal_quarter,
             earnings_date,
-            data.get("transcript"),  # transcript text
-            hash_text(data.get("transcript")),  # SHA-256 hash of the transcript
+            # data.get("transcript"),  # transcript text
+            # hash_text(data.get("transcript")),  # SHA-256 hash of the transcript
             url,
             json.dumps(data),  # Serialize the raw_json field
             hash_dict(data),  # Compute SHA-256 hash of the entire payload
@@ -76,21 +70,21 @@ def lookup_record(conn, tic, earnings_date):
     try:
         cursor = conn.cursor()
         query = """
-        SELECT fiscal_year, fiscal_quarter, earnings_date
+        SELECT earnings_date
         FROM raw.earnings
         WHERE tic = %s AND ABS(earnings_date::DATE - %s::DATE) <= 10;
         """
         cursor.execute(query, (tic, earnings_date))
         result = cursor.fetchone()
         if result:
-            print(f"Found fiscal data for {tic} near {earnings_date}: FY{result[0]} Q{result[1]} on {result[2]}")
-            return result[0], result[1], result[2]  # fiscal_year, fiscal_quarter, earnings_date
+            print(f"Found fiscal data for {tic} near {earnings_date}:= {result[0]}")
+            return result[0]
         else:
             print(f"Found no fiscal data for {tic} near {earnings_date}")
-            return None, None, None
+            return None
     except Exception as e:
         print(f"Error fetching fiscal data for {tic} near {earnings_date}: {e}")
-        return None, None, None
+        return None
 
 if __name__ == "__main__":
     conn = connect_to_db()
@@ -107,11 +101,8 @@ if __name__ == "__main__":
                     data, url = fetch_record(tic, year, quarter)
                     if data:
                         earnings_date = data.get("date")
-                        fiscal_year, fiscal_quarter, earnings_date = lookup_record(conn, tic, earnings_date)
-                        if not fiscal_year or not fiscal_quarter:
-                            continue
-                        total_records += insert_record(conn, data, tic, fiscal_year, fiscal_quarter, earnings_date, url)
-                        # print(f"Inserted transcript for {tic} for Q{fiscal_quarter} {fiscal_year}")
+                        earnings_date = lookup_record(conn, tic, earnings_date)
+                        total_records += insert_record(conn, data, tic, earnings_date, url)
                     else:
                         print(f"No data found for {tic} for Q{quarter} {year}")
             print(f"For {tic}: Total records processed = {total_records}")  

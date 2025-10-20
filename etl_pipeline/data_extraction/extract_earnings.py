@@ -24,21 +24,22 @@ def fetch_records_fmp(tic):
 # Insert historical earnings data into the database
 def insert_records_fmp(conn, data, tic, url):
     try:
+
+        df = pd.DataFrame(data)
+        df["date"] = pd.to_datetime(df["date"])
+        # df = df[df["date"] >= pd.to_datetime("2010-01-01")]
         cursor = conn.cursor()
         query = """
         INSERT INTO raw.earnings (
-            tic, fiscal_year, fiscal_quarter, fiscal_date, earnings_date, session, 
-            eps, eps_estimated, revenue, revenue_estimated, price_before, price_after, 
-            source, raw_json, raw_json_sha256, updated_at
+            tic, earnings_date, fiscal_date,
+            session, eps, eps_estimated, revenue, revenue_estimated, 
+            price_before, price_after, source, raw_json, raw_json_sha256
         ) VALUES (
-            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW()
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
         )
-        ON CONFLICT (tic, fiscal_year, fiscal_quarter)
+        ON CONFLICT (tic, earnings_date)
         DO UPDATE SET
-            fiscal_year = EXCLUDED.fiscal_year,
-            fiscal_quarter = EXCLUDED.fiscal_quarter,
             fiscal_date = EXCLUDED.fiscal_date,
-            earnings_date = EXCLUDED.earnings_date,
             session = EXCLUDED.session,
             eps = EXCLUDED.eps,
             eps_estimated = EXCLUDED.eps_estimated,
@@ -51,46 +52,44 @@ def insert_records_fmp(conn, data, tic, url):
             raw_json_sha256 = EXCLUDED.raw_json_sha256,
             updated_at = NOW()
         WHERE 
-            raw.earnings.raw_json_sha256 IS DISTINCT FROM EXCLUDED.raw_json_sha256;
+            raw.earnings.raw_json_sha256 <> EXCLUDED.raw_json_sha256;
         """
         total_records = 0
-        for record in data:
-            fiscal_date = record.get("date")
-            fiscal_date = pd.to_datetime(fiscal_date) 
+        for i in range(len(df)):
+            # earnings_date = record.get("date")
+            # earnings_date = pd.to_datetime(earnings_date)
 
-            fiscal_year = fiscal_date.year
-            fiscal_month = fiscal_date.month
-            if fiscal_month in [3, 4, 5]:
-                fiscal_quarter = 1
-            elif fiscal_month in [6, 7, 8]:
-                fiscal_quarter = 2
-            elif fiscal_month in [9, 10, 11]:
-                fiscal_quarter = 3
-            elif fiscal_month in [12]:
-                fiscal_quarter = 4
-            elif fiscal_month in [1, 2]:
-                fiscal_quarter = 4
-                fiscal_year -= 1
-            else:
-                print(f"Unexpected fiscal date {fiscal_date} for ticker {tic}")
-                continue
+            # calendar_year = earnings_date.year
+            # calendar_month = earnings_date.month
+            # if calendar_month in [3, 4, 5]:
+            #     calendar_quarter = 1
+            # elif calendar_month in [6, 7, 8]:
+            #     calendar_quarter = 2
+            # elif calendar_month in [9, 10, 11]:
+            #     calendar_quarter = 3
+            # elif calendar_month in [12]:
+            #     calendar_quarter = 4
+            # elif calendar_month in [1, 2]:
+            #     calendar_quarter = 4
+            #     calendar_year -= 1
+            # else:
+            #     print(f"Unexpected earnings date {earnings_date} for ticker {tic}")
+            #     continue
 
             cursor.execute(query, (
                 tic,
-                fiscal_year,
-                fiscal_quarter,
+                df.iloc[i]["date"],
                 None,
-                record.get("date"),
                 None,
-                record.get("epsActual") if pd.notnull(record.get("epsActual")) else None,
-                record.get("epsEstimated") if pd.notnull(record.get("epsEstimated")) else None,
-                record.get("revenueActual") if pd.notnull(record.get("revenueActual")) else None,
-                record.get("revenueEstimated") if pd.notnull(record.get("revenueEstimated")) else None,
+                df.iloc[i].get("epsActual"),
+                df.iloc[i].get("epsEstimated"),
+                df.iloc[i].get("revenueActual"),
+                df.iloc[i].get("revenueEstimated"),
                 None,
                 None,
                 url,
-                json.dumps(record),
-                hash_dict(record)
+                json.dumps(data[i]),
+                hash_dict(data[i])
             ))
             total_records += cursor.rowcount
         conn.commit()
@@ -117,18 +116,15 @@ def insert_records_coincodex(conn, data, tic, url):
         cursor = conn.cursor()
         query = """
         INSERT INTO raw.earnings (
-            tic, fiscal_year, fiscal_quarter, fiscal_date, earnings_date, session, 
-            eps, eps_estimated, revenue, revenue_estimated, price_before, price_after, 
-            source, raw_json, raw_json_sha256, updated_at
+            tic, earnings_date, fiscal_date,
+            session, eps, eps_estimated, revenue, revenue_estimated, 
+            price_before, price_after, source, raw_json, raw_json_sha256
         ) VALUES (
-            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW()
+            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
         )
-        ON CONFLICT (tic, fiscal_year, fiscal_quarter)
+        ON CONFLICT (tic, earnings_date)
         DO UPDATE SET
-            fiscal_year = EXCLUDED.fiscal_year,
-            fiscal_quarter = EXCLUDED.fiscal_quarter,
             fiscal_date = EXCLUDED.fiscal_date,
-            earnings_date = EXCLUDED.earnings_date,
             session = EXCLUDED.session,
             eps = EXCLUDED.eps,
             eps_estimated = EXCLUDED.eps_estimated,
@@ -146,32 +142,10 @@ def insert_records_coincodex(conn, data, tic, url):
         """
         total_records = 0
         for record in data:
-            fiscal_date = record.get("fiscalDateEnding")
-            fiscal_date = pd.to_datetime(fiscal_date) 
-
-            fiscal_year = fiscal_date.year
-            fiscal_month = fiscal_date.month
-            if fiscal_month in [3, 4, 5]:
-                fiscal_quarter = 1
-            elif fiscal_month in [6, 7, 8]:
-                fiscal_quarter = 2
-            elif fiscal_month in [9, 10, 11]:
-                fiscal_quarter = 3
-            elif fiscal_month in [12]:
-                fiscal_quarter = 4
-            elif fiscal_month in [1, 2]:
-                fiscal_quarter = 4
-                fiscal_year -= 1
-            else:
-                print(f"Unexpected fiscal date {fiscal_date} for ticker {tic}")
-                continue
-
             cursor.execute(query, (
                 tic,
-                fiscal_year,
-                fiscal_quarter,
-                record.get("fiscalDateEnding"),
                 record.get("date"),
+                record.get("fiscalDateEnding"),
                 record.get("time") if pd.notnull(record.get("time")) else None,
                 record.get("eps") if pd.notnull(record.get("eps")) else None,
                 record.get("epsEstimated") if pd.notnull(record.get("epsEstimated")) else None,
@@ -199,7 +173,6 @@ def update_records_coincodex(conn, data, tic, url):
         UPDATE raw.earnings
         SET
             fiscal_date        = COALESCE(fiscal_date,        %s),
-            earnings_date      = COALESCE(earnings_date,      %s),
             session            = COALESCE(session,            %s),
             eps                = COALESCE(eps,                %s),
             eps_estimated      = COALESCE(eps_estimated,      %s),
@@ -208,33 +181,13 @@ def update_records_coincodex(conn, data, tic, url):
             price_before       = COALESCE(price_before,       %s),
             price_after        = COALESCE(price_after,        %s),
             updated_at         = NOW()
-        WHERE tic = %s AND fiscal_year = %s AND fiscal_quarter = %s;
+        WHERE tic = %s AND earnings_date = %s;
         """
         total_records = 0
         for record in data:
-            fiscal_date = record.get("fiscalDateEnding")
-            fiscal_date = pd.to_datetime(fiscal_date) 
-
-            fiscal_year = fiscal_date.year
-            fiscal_month = fiscal_date.month
-            if fiscal_month in [3, 4, 5]:
-                fiscal_quarter = 1
-            elif fiscal_month in [6, 7, 8]:
-                fiscal_quarter = 2
-            elif fiscal_month in [9, 10, 11]:
-                fiscal_quarter = 3
-            elif fiscal_month in [12]:
-                fiscal_quarter = 4
-            elif fiscal_month in [1, 2]:
-                fiscal_quarter = 4
-                fiscal_year -= 1
-            else:
-                print(f"Unexpected fiscal date {fiscal_date} for ticker {tic}")
-                continue
 
             cursor.execute(query, (
                 record.get("fiscalDateEnding"),
-                record.get("date"),
                 record.get("time") if pd.notnull(record.get("time")) else None,
                 record.get("eps") if pd.notnull(record.get("eps")) else None,
                 record.get("epsEstimated") if pd.notnull(record.get("epsEstimated")) else None,
@@ -243,8 +196,7 @@ def update_records_coincodex(conn, data, tic, url):
                 record.get("priceBefore") if pd.notnull(record.get("priceBefore")) else None,
                 record.get("priceAfter") if pd.notnull(record.get("priceAfter")) else None,
                 tic,
-                fiscal_year,
-                fiscal_quarter
+                record.get("date"),
             ))
             total_records += cursor.rowcount
         conn.commit()
@@ -265,9 +217,8 @@ if __name__ == "__main__":
             data, url = fetch_records_fmp(tic)
             total_records_fmp = insert_records_fmp(conn, data, tic, url)
             data, url = fetch_records_coincodex(tic, exchange)
-            total_records_coincodex = insert_records_coincodex(conn, data, tic, url)
+            # total_records_coincodex = insert_records_coincodex(conn, data, tic, url)
             total_updated_records_coincodex = update_records_coincodex(conn, data, tic, url)
-            total_records = (total_records_coincodex + total_records_fmp)
 
-            print(f"For {tic}: Total records processed - {total_records} = {total_records_fmp} (FMP) + {total_records_coincodex} (Coincodex); Updated {total_updated_records_coincodex} records (Coincodex)")
+            print(f"For {tic}: Total records processed - Insert/Update {total_records_fmp} (FMP) + Update {total_updated_records_coincodex} (Coincodex);")
         conn.close()

@@ -66,13 +66,74 @@ def table_creation(conn):
         print("Table 'news_analysis' created or already exists with composite primary key.")
 
 
+        # Create a table for earnings calendar data if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.earnings_calendar (
+            tic VARCHAR(10) NOT NULL,
+            calendar_year SMALLINT NOT NULL,
+            calendar_quarter SMALLINT NOT NULL,
+            earnings_date DATE,
+            fiscal_year SMALLINT,
+            fiscal_quarter SMALLINT,
+            fiscal_date DATE,
+            session VARCHAR(10),
+            updated_at            TIMESTAMPTZ DEFAULT now(),
+            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+        );
+        """)
+        print("Table 'earnings_calendar' created or already exists with composite primary key.")
+
+        # Create a table for historical earnings data if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.earnings (
+            tic VARCHAR(10) NOT NULL,
+            calendar_year SMALLINT NOT NULL,
+            calendar_quarter SMALLINT NOT NULL,
+            earnings_date DATE NOT NULL,
+            fiscal_date DATE,
+            session VARCHAR(10),
+            eps NUMERIC(10,4),
+            eps_estimated NUMERIC(10,4),
+            revenue NUMERIC(20,2),
+            revenue_estimated NUMERIC(20,2),
+            price_before NUMERIC(12,4),
+            price_after NUMERIC(12,4),
+            source                 VARCHAR(255),                  -- e.g., 'fmp', 'yahoo', etc.
+            raw_json               JSONB        NOT NULL,                 -- verbatim payload (optional but useful)
+            raw_json_sha256        CHAR(64)     NOT NULL,
+            updated_at            TIMESTAMPTZ DEFAULT now(),
+            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+        );
+        """)
+        print("Table 'earnings' created or already exists with composite primary key.")
+
+
+        # Create a table for historical earnings transcripts data if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.earnings_transcripts (
+            tic             VARCHAR(10)  NOT NULL,
+            calendar_year   SMALLINT     NOT NULL,
+            calendar_quarter SMALLINT    NOT NULL,
+            earnings_date   DATE         NOT NULL,
+            transcript      TEXT         NOT NULL,
+            transcript_sha256 CHAR(64)     NOT NULL,
+            source          VARCHAR(255),
+            raw_json        JSONB        NOT NULL,
+            raw_json_sha256 CHAR(64)     NOT NULL,
+            updated_at      TIMESTAMPTZ DEFAULT now(),
+            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+        );
+        """)
+        print("Table 'earnings_transcripts' created or already exists with composite primary key.")
+
+
         # Create a table for earnings transcript chunks if it does not exist
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.earnings_transcript_chunks (
             -- Transcript identity
             tic             VARCHAR(10) NOT NULL,
-            fiscal_year     INT NOT NULL,
-            fiscal_quarter  INT NOT NULL,
+            calendar_year   SMALLINT     NOT NULL,
+            calendar_quarter SMALLINT    NOT NULL,
             earnings_date   DATE,
 
             -- Sequential id within a single transcript (1..N)
@@ -87,7 +148,7 @@ def table_creation(conn):
 
             updated_at      TIMESTAMPTZ DEFAULT now(),
 
-            PRIMARY KEY (tic, fiscal_year, fiscal_quarter, chunk_id)
+            PRIMARY KEY (tic, calendar_year, calendar_quarter, chunk_id)
         );
         """)
         print("Table 'earnings_transcript_chunks' created or already exists with composite primary key.")
@@ -109,8 +170,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.earnings_transcript_embeddings (
             tic             VARCHAR(10) NOT NULL,
-            fiscal_year     INT NOT NULL,
-            fiscal_quarter  INT NOT NULL,
+            calendar_year   SMALLINT     NOT NULL,
+            calendar_quarter SMALLINT    NOT NULL,
             earnings_date   DATE,
 
             -- Sequential id within a single transcript (1..N)
@@ -124,9 +185,9 @@ def table_creation(conn):
 
             updated_at      TIMESTAMPTZ DEFAULT now(),
 
-            PRIMARY KEY (tic, fiscal_year, fiscal_quarter, chunk_id),
-            FOREIGN KEY (tic, fiscal_year, fiscal_quarter, chunk_id)
-                REFERENCES core.earnings_transcript_chunks (tic, fiscal_year, fiscal_quarter, chunk_id)
+            PRIMARY KEY (tic, calendar_year, calendar_quarter, chunk_id),
+            FOREIGN KEY (tic, calendar_year, calendar_quarter, chunk_id)
+                REFERENCES core.earnings_transcript_chunks (tic, calendar_year, calendar_quarter, chunk_id)
                 ON DELETE CASCADE
         );
         """)
@@ -146,8 +207,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.earnings_transcript_analysis (
             tic                     VARCHAR(10) NOT NULL,
-            fiscal_year             INT NOT NULL,
-            fiscal_quarter           INT NOT NULL,
+            calendar_year           SMALLINT     NOT NULL,
+            calendar_quarter        SMALLINT    NOT NULL,
 
             -- === Past analysis ===
             sentiment               SMALLINT,       -- -1, 0, 1
@@ -184,7 +245,7 @@ def table_creation(conn):
             transcript_sha256      TEXT NOT NULL,
             updated_at      TIMESTAMPTZ DEFAULT now(),
 
-            PRIMARY KEY (tic, fiscal_year, fiscal_quarter)
+            PRIMARY KEY (tic, calendar_year, calendar_quarter)
         );
         """)
         print("Table 'earnings_transcript_analysis' created or already exists with composite primary key.")
@@ -281,8 +342,8 @@ def table_creation(conn):
         CREATE TABLE IF NOT EXISTS core.earnings_metrics (
             -- Entity & period
             tic               VARCHAR(10) NOT NULL,
-            fiscal_year       INT         NOT NULL,
-            fiscal_quarter    SMALLINT    NOT NULL CHECK (fiscal_quarter BETWEEN 1 AND 4),
+            calendar_year       INT         NOT NULL,
+            calendar_quarter    SMALLINT    NOT NULL,
 
             -- Raw values / estimates
             eps               FLOAT,
@@ -344,7 +405,7 @@ def table_creation(conn):
             -- Bookkeeping
             updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-            PRIMARY KEY (tic, fiscal_year, fiscal_quarter)
+            PRIMARY KEY (tic, calendar_year, calendar_quarter)
         );
         """)
         print("Table 'earnings_metrics' created or already exists.")
@@ -354,10 +415,13 @@ def table_creation(conn):
         CREATE TABLE IF NOT EXISTS core.income_statements (
             -- Identity & period alignment
             tic                               VARCHAR(10)  NOT NULL,
-            fiscal_year                           SMALLINT     NOT NULL,
-            fiscal_quarter                        SMALLINT,                 -- 1–4 if quarterly; NULL if FY
-            period                                VARCHAR(10)  NOT NULL,    -- "Q1".."Q4", "FY" (as reported)
-            earnings_date                          DATE         NOT NULL,    -- period end date (company fiscal)
+            calendar_year                     SMALLINT     NOT NULL,
+            calendar_quarter                  SMALLINT     NOT NULL,
+            earnings_date                     DATE         NOT NULL,    -- period end date (company fiscal)
+            fiscal_year                       SMALLINT    NOT NULL,                 -- e.g., 2025
+            fiscal_quarter                    SMALLINT    NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
+            fiscal_date                       DATE       NOT NULL,
+            period                            VARCHAR(10)  NOT NULL,    -- "Q1".."Q4", "FY" (as reported)
 
             -- Filing / meta
             filing_date                           DATE,

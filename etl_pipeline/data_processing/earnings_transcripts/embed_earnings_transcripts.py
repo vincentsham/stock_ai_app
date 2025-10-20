@@ -21,13 +21,13 @@ def process_and_store_embeddings():
             cursor = conn.cursor()
             # Fetch chunks without embeddings
             cursor.execute("""
-                SELECT etc.tic, etc.fiscal_year, etc.fiscal_quarter, etc.earnings_date, 
+                SELECT etc.tic, etc.calendar_year, etc.calendar_quarter, etc.earnings_date, 
                        etc.chunk_id, etc.chunk, etc.chunk_sha256, etc.transcript_sha256
                 FROM core.earnings_transcript_chunks AS etc
                 LEFT JOIN core.earnings_transcript_embeddings AS e
                 ON etc.tic = e.tic
-                    AND etc.fiscal_year = e.fiscal_year
-                    AND etc.fiscal_quarter = e.fiscal_quarter
+                    AND etc.calendar_year = e.calendar_year
+                    AND etc.calendar_quarter = e.calendar_quarter
                     AND etc.chunk_id = e.chunk_id
                 WHERE e.chunk_sha256 IS NULL
                     OR e.chunk_sha256 <> etc.chunk_sha256
@@ -52,8 +52,8 @@ def process_and_store_embeddings():
 
                 for record, embedding in zip(batch, embeddings):
                     tic = record[0]
-                    fiscal_year = record[1]
-                    fiscal_quarter = record[2]
+                    calendar_year = record[1]
+                    calendar_quarter = record[2]
                     earnings_date = record[3]
                     chunk_id = record[4]
                     chunk_hash = record[6]
@@ -62,11 +62,11 @@ def process_and_store_embeddings():
                     # Insert embedding into the database
                     cursor.execute("""
                         INSERT INTO core.earnings_transcript_embeddings (
-                            tic, fiscal_year, fiscal_quarter, earnings_date, 
+                            tic, calendar_year, calendar_quarter, earnings_date, 
                             chunk_id, chunk_sha256, transcript_sha256, 
                             embedding, embedding_model, updated_at
                         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
-                        ON CONFLICT (tic, fiscal_year, fiscal_quarter, chunk_id) 
+                        ON CONFLICT (tic, calendar_year, calendar_quarter, chunk_id) 
                         DO UPDATE SET
                             earnings_date = EXCLUDED.earnings_date,
                             chunk_sha256 = EXCLUDED.chunk_sha256,
@@ -77,7 +77,7 @@ def process_and_store_embeddings():
                         WHERE core.earnings_transcript_embeddings.transcript_sha256 <> EXCLUDED.transcript_sha256
                             OR core.earnings_transcript_embeddings.chunk_sha256 <> EXCLUDED.chunk_sha256;
                     """, (
-                        tic, fiscal_year, fiscal_quarter, earnings_date, 
+                        tic, calendar_year, calendar_quarter, earnings_date, 
                         chunk_id, chunk_hash, transcript_hash, embedding, embedding_model_name
                     ))
                     total_records += cursor.rowcount

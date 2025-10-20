@@ -26,8 +26,8 @@ class CompanyInfo(TypedDict):
     Basic company and earnings information.
     """
     tic: str
-    fiscal_year: int
-    fiscal_quarter: int
+    calendar_year: int
+    calendar_quarter: int
     earnings_date: Optional[str] = None
     company_name: Optional[str] = None
     industry: Optional[str] = None
@@ -37,8 +37,8 @@ class CompanyInfo(TypedDict):
     @classmethod
     def create(cls, 
                tic: str,
-               fiscal_year: int,
-               fiscal_quarter: int,
+               calendar_year: int,
+               calendar_quarter: int,
                earnings_date: Optional[str] = None,
                company_name: Optional[str] = None,
                industry: Optional[str] = None,
@@ -46,8 +46,8 @@ class CompanyInfo(TypedDict):
                company_description: Optional[str] = None) -> CompanyInfo:
         return cls(
             tic=tic,
-            fiscal_year=fiscal_year,
-            fiscal_quarter=fiscal_quarter,
+            calendar_year=calendar_year,
+            calendar_quarter=calendar_quarter,
             earnings_date=earnings_date,
             company_name=company_name,
             industry=industry,
@@ -260,8 +260,8 @@ def merged_state_factory(
         industry: Optional[str],
         sector: Optional[str],
         company_description: Optional[str],
-        fiscal_year: int,
-        fiscal_quarter: int,
+        calendar_year: int,
+        calendar_quarter: int,
         earnings_date: Optional[str],
         top_k: int = 5,
 ) -> MergedState:
@@ -274,8 +274,8 @@ def merged_state_factory(
         industry=industry,
         sector=sector,
         company_description=company_description,
-        fiscal_year=fiscal_year,
-        fiscal_quarter=fiscal_quarter,
+        calendar_year=calendar_year,
+        calendar_quarter=calendar_quarter,
         earnings_date=earnings_date
     )
     past_retriever_state = RetrieverState.create(top_k=top_k, queries=PAST_PERFORMANCE_QUERIES)

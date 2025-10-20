@@ -51,15 +51,15 @@ def process_and_load_chunks():
         conn = connect_to_db()
         if conn:
             cursor = conn.cursor()
-            # Fetch records from raw.earnings_transcripts
+            # Fetch records from core.earnings_transcripts
             cursor.execute("""
-                SELECT et.tic, et.fiscal_year, et.fiscal_quarter, 
+                SELECT et.tic, et.calendar_year, et.calendar_quarter, 
                        et.earnings_date, et.transcript, et.transcript_sha256
-                FROM raw.earnings_transcripts AS et
+                FROM core.earnings_transcripts AS et
                 LEFT JOIN core.earnings_transcript_chunks AS etc
                 ON et.tic = etc.tic
-                    AND et.fiscal_year = etc.fiscal_year
-                    AND et.fiscal_quarter = etc.fiscal_quarter
+                    AND et.calendar_year = etc.calendar_year
+                    AND et.calendar_quarter = etc.calendar_quarter
                 WHERE et.transcript IS NOT NULL
                     AND (etc.transcript_sha256 IS NULL
                         OR et.transcript_sha256 <> etc.transcript_sha256);
@@ -68,8 +68,8 @@ def process_and_load_chunks():
             total_records = 0
             for record in records:
                 tic = record[0]
-                fiscal_year = record[1]
-                fiscal_quarter = record[2]
+                calendar_year = record[1]
+                calendar_quarter = record[2]
                 earnings_date = record[3]
                 transcript = record[4]
                 transcript_hash = record[5]
@@ -84,10 +84,10 @@ def process_and_load_chunks():
                     # Insert chunk into core.earnings_transcript_chunks
                     cursor.execute("""
                         INSERT INTO core.earnings_transcript_chunks (
-                            tic, fiscal_year, fiscal_quarter, earnings_date, 
+                            tic, calendar_year, calendar_quarter, earnings_date, 
                             chunk_id, chunk, token_count, chunk_sha256, transcript_sha256, updated_at
                         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
-                        ON CONFLICT (tic, fiscal_year, fiscal_quarter, chunk_id) 
+                        ON CONFLICT (tic, calendar_year, calendar_quarter, chunk_id) 
                         DO UPDATE SET
                             earnings_date = EXCLUDED.earnings_date,
                             chunk = EXCLUDED.chunk,
@@ -98,7 +98,7 @@ def process_and_load_chunks():
                         WHERE core.earnings_transcript_chunks.transcript_sha256 <> EXCLUDED.transcript_sha256
                             OR core.earnings_transcript_chunks.chunk_sha256 <> EXCLUDED.chunk_sha256;
                     """, (
-                        tic, fiscal_year, fiscal_quarter, earnings_date, 
+                        tic, calendar_year, calendar_quarter, earnings_date, 
                         chunk_id, chunk, len(enc.encode(chunk)), chunk_hash, transcript_hash
                     ))
                     total_records += cursor.rowcount

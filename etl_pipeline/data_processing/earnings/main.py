@@ -9,7 +9,7 @@ from etl_pipeline.utils import read_sql_query
 
 def read_earnings(conn, tic: str) -> pd.DataFrame:
     """
-    Fetch earnings data for a specific ticker from the raw.earnings table.
+    Fetch earnings data for a specific ticker from the core.earnings table.
 
     Args:
         conn: Database connection object.
@@ -20,13 +20,13 @@ def read_earnings(conn, tic: str) -> pd.DataFrame:
     """
 
     query = f"""
-        SELECT tic, fiscal_year, fiscal_quarter,
+        SELECT tic, calendar_year, calendar_quarter,
                eps, eps_estimated, revenue, revenue_estimated
-        FROM raw.earnings
+        FROM core.earnings
         WHERE tic = '{tic}' 
             AND eps IS NOT NULL 
             AND revenue IS NOT NULL
-        ORDER BY fiscal_year, fiscal_quarter;
+        ORDER BY calendar_year, calendar_quarter;
     """
     df = read_sql_query(query, conn)
     df['eps'] = pd.to_numeric(df['eps'], errors='coerce')
@@ -177,7 +177,7 @@ def main():
                 df = compute_surprise_metrics(df, prefix)
                 df = compute_growth_metrics(df, prefix)
                 df = compute_acceleration_metrics(df, prefix)
-            total_records = insert_records(conn, df, "core.earnings_metrics", ["tic", "fiscal_year", "fiscal_quarter"])
+            total_records = insert_records(conn, df, "core.earnings_metrics", ["tic", "calendar_year", "calendar_quarter"])
             print(f"Inserted/Updated {total_records} records into core.earnings_metrics for {tic}.")
         conn.close()
         # Display one record as a dictionary

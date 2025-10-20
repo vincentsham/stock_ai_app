@@ -66,17 +66,17 @@ def retriever(state: MergedState,
         sql = f"""
             SELECT
                 c.tic,
-                c.fiscal_year,
-                c.fiscal_quarter,
+                c.calendar_year,
+                c.calendar_quarter,
                 c.chunk_id,
                 c.chunk,
                 1 - (e.embedding <=> '{vec_str}'::vector) AS similarity
             FROM core.earnings_transcript_embeddings e
             JOIN core.earnings_transcript_chunks c
-            USING (tic, fiscal_year, fiscal_quarter, chunk_id)
+            USING (tic, calendar_year, calendar_quarter, chunk_id)
             WHERE c.tic = '{company_info["tic"]}' 
-                AND c.fiscal_year = {company_info["fiscal_year"]} 
-                AND c.fiscal_quarter = {company_info["fiscal_quarter"]}
+                AND c.calendar_year = {company_info["calendar_year"]} 
+                AND c.calendar_quarter = {company_info["calendar_quarter"]}
             ORDER BY e.embedding <=> '{vec_str}'::vector
             LIMIT {retriever["top_k"]};
         """
@@ -117,8 +117,8 @@ def analysis_node(state: MergedState,
         industry=company_info["industry"] or '',
         sector=company_info["sector"] or '',
         company_description=company_info["company_description"] or '',
-        fiscal_year=company_info["fiscal_year"] or '',
-        fiscal_quarter=company_info["fiscal_quarter"] or '',
+        calendar_year=company_info["calendar_year"] or '',
+        calendar_quarter=company_info["calendar_quarter"] or '',
         stage=type,
         context=context
     )
@@ -156,8 +156,8 @@ def queries_powered_by_llm(state: MergedState,
         industry=company_info["industry"] or '',
         sector=company_info["sector"] or '',
         company_description=company_info["company_description"] or '',
-        fiscal_year=company_info["fiscal_year"],
-        fiscal_quarter=company_info["fiscal_quarter"],
+        calendar_year=company_info["calendar_year"],
+        calendar_quarter=company_info["calendar_quarter"],
     )
     system_prompt = SystemMessage(content=STAGES[type]["query_gen_system_message"])
     ai_message = AIMessage(content=json.dumps(state.risk_analysis))

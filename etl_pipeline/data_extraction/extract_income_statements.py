@@ -29,11 +29,12 @@ def insert_records(data, tic, url, conn):
             for record in data:
                 fiscal_year = int(record.get("fiscalYear"))
                 fiscal_quarter = int(record.get("period")[1]) if record.get("period") != "FY" else 0
+                fiscal_date = record.get("date")  # Assuming the API provides a date field
                 cur.execute("""
                     INSERT INTO raw.income_statements (
-                        tic, fiscal_year, fiscal_quarter, source, 
+                        tic, fiscal_year, fiscal_quarter, fiscal_date, source, 
                         raw_json, raw_json_sha256, updated_at
-                    ) VALUES (%s, %s, %s, %s, %s, %s, NOW())
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, NOW())
                     ON CONFLICT (tic, fiscal_year, fiscal_quarter) 
                     DO UPDATE
                     SET source = EXCLUDED.source,
@@ -45,6 +46,7 @@ def insert_records(data, tic, url, conn):
                     tic,
                     fiscal_year,
                     fiscal_quarter,
+                    fiscal_date,
                     url,
                     json.dumps(record),  # raw JSON payload
                     hash_dict(record)
