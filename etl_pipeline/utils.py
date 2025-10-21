@@ -96,3 +96,30 @@ def convert_numpy_types(record):
                   float(value) if isinstance(value, np.floating) else
                   value)
             for key, value in record.items()}
+
+
+def calculate_streak(series: pd.Series, on_value=1) -> pd.Series:
+    """
+    Vectorized run-length of consecutive `on_value` up to each row.
+    Example: [1,1,0,1,1,1] -> [1,2,0,1,2,3]
+    NaN is treated as not-on.
+    """
+    s = series.eq(on_value).fillna(False).astype(int)
+    # group by breaks where s == 0, then cumulative count within each group
+    out = s.groupby((s == 0).cumsum()).cumsum()
+    # ensure zeros where the flag is off
+    out = out.where(s.astype(bool), 0)
+    return out
+
+
+def calculate_streak_pos_neg(series: pd.Series) -> pd.Series:
+    """
+    Vectorized run-length of consecutive `on_value` up to each row.
+    Example: [1,1,0,0,1,1,1] -> [1,2,-1,-2,1,2,3]
+    NaN is treated as not-on.
+    """
+    s = series.fillna(0).astype(int)
+    pos_streak = s.eq(1).groupby((s != 1).cumsum()).cumcount() + 1
+    neg_streak = s.eq(0).groupby((s != 0).cumsum()).cumcount() + 1
+    out = pos_streak.where(s.eq(1), -neg_streak)
+    return out
