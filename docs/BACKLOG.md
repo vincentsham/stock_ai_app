@@ -44,7 +44,6 @@ examples:
 | 19 | Feature | load balance sheets into core | High | Open |  |  |  |
 | 21 | Feature | load cash flows into core | High | Open |  |  |  |
 | 22 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
-| 24 | Feature | growth, stability, acceleration framework | High | Open |  |  |  |
 | 25 | Feature | revenue analysis | High | Open |  |  |  |
 | 26 | Feature | profitability analysis | High | Open |  |  |  |
 | 27 | Feature | efficiency analysis | High | Open |  |  |  |
@@ -94,6 +93,7 @@ examples:
 | 20 | Feature | load income statements into core | High | Close | feat_20 | 2025-10-18 | 2025-10-18 |
 | 23 | Miscellaneous | Add columns calendar year, quarter | High | Close | feat_23 | 2025-10-19 | 2025-10-19 |
 | 23 | Bugs | raw.earnings table - earnings date is not correct and may be remove fiscal date| High | Close | feat_23 | 2025-10-19 | 2025-10-19 |
+| 24 | Feature | growth, stability, acceleration framework | High | Close | feat_24 | 2025-10-20 | 2025-10-21 |
 | 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous | Create a md doc for source | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
