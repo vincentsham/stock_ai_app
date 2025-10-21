@@ -43,7 +43,7 @@ def compute_volatility_regime(df: pd.DataFrame, column: str) -> pd.DataFrame:
     # if volatility is high → Volatile
     # if volatility is low and drift < -0.02 → Structurally Deteriorating
 
-    def stability_regime(row):
+    def stability_regime(row: pd.Series) -> str:
         if row[volatility_flag_column] == 0:
             if row[outlier_flag_column] == 0:
                 if row[drift_column] < -0.02:

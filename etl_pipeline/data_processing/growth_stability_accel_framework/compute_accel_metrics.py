@@ -47,8 +47,8 @@ def compute_accel_regime(df: pd.DataFrame, column: str) -> pd.DataFrame:
     """
     Compute acceleration regime based on acceleration and volatility metrics.
     """
-    accel_column = f"{column}_accel"
-    volatility_flag_column = f"{column}_yoy_volatility_flag"
+    accel_count_column = f"{column}_accel_count_4q"
+    streak_length_column = f"{column}_accel_streak_length"  
     accel_regime_column = f"{column}_accel_regime"
 
 
@@ -60,8 +60,8 @@ def compute_accel_regime(df: pd.DataFrame, column: str) -> pd.DataFrame:
     # 4 if accel_count_4q < 2 → Deceleration
 
     df[accel_regime_column] = "Deceleration"
-    df.loc[(df[f"{column}_accel_count_4q"] >= 3) & (df[f"{column}_accel_streak_length"] >= 2), accel_regime_column] = "Sustained Acceleration"
-    df.loc[(df[f"{column}_accel_count_4q"] >= 3) & (df[f"{column}_accel_streak_length"] < 2), accel_regime_column] = "Choppy Acceleration"
-    df.loc[(df[f"{column}_accel_count_4q"] == 2) & (df[f"{column}_accel_streak_length"] == 2), accel_regime_column] = "Emerging Acceleration"
-    df.loc[(df[f"{column}_accel_count_4q"] == 2) & (df[f"{column}_accel_streak_length"] < 2), accel_regime_column] = "Unstable Momentum"
+    df.loc[(df[accel_count_column] >= 3) & (df[streak_length_column] >= 2), accel_regime_column] = "Sustained Acceleration"
+    df.loc[(df[accel_count_column] >= 3) & (df[streak_length_column] < 2), accel_regime_column] = "Choppy Acceleration"
+    df.loc[(df[accel_count_column] == 2) & (df[streak_length_column] == 2), accel_regime_column] = "Emerging Acceleration"
+    df.loc[(df[accel_count_column] == 2) & (df[streak_length_column] < 2), accel_regime_column] = "Unstable Momentum"
     return df

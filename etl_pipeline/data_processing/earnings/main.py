@@ -5,7 +5,7 @@ from typing import Dict
 from sklearn import metrics
 
 from server.database.utils import connect_to_db, insert_records
-from etl_pipeline.utils import read_sql_query
+from etl_pipeline.utils import read_sql_query, calculate_pct_change, calculate_streak
 
 def read_earnings(conn, tic: str) -> pd.DataFrame:
     """
@@ -37,58 +37,46 @@ def read_earnings(conn, tic: str) -> pd.DataFrame:
     return df
 
 
-def calculate_pct_change(current: float, previous: float) -> float:
-    if previous is None or previous == 0 or current is None:
-        return None
-    
-    pct_change = (current - previous) / max(abs(previous), 1e-6)
 
-    # Cap the percentage changewithin ±1000%
-    return max(min(pct_change, 10.0), -10.0)
-
-
-def classify_eps_phase(row: pd.Series) -> str:
+def classify_eps_regime(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Classify EPS phase based on the direction and sign transition of EPS.
+    Classify EPS regime based on the direction and sign transition of EPS.
 
     Args:
         df: DataFrame containing EPS and previous EPS data.
 
     Returns:
-        pd.Series: Series containing EPS phase classifications.
+        pd.Series: Series containing EPS regime classifications.
     """
+    
+    df['eps_lag1'] = df['eps'].shift(1)
+    column = "eps_regime"
 
-    eps, eps_prev = row['eps'], row['eps_lag1']
-    if pd.isnull(eps) or pd.isnull(eps_prev):
-        return 'unknown'
-    if eps_prev < 0 < eps:
-        return 'turnaround'
-    if eps_prev > 0 > eps:
-        return 'profit_to_loss'
-    if eps < 0 and eps_prev < 0 and eps > eps_prev:
-        return 'loss_narrowing'
-    if eps < 0 and eps_prev < 0 and eps < eps_prev:
-        return 'loss_widening'
-    if eps > 0 and eps_prev > 0 and eps > eps_prev:
-        return 'positive_growth'
-    if eps > 0 and eps_prev > 0 and eps < eps_prev:
-        return 'profit_decline'
-    if abs(eps - eps_prev) / max(abs(eps), abs(eps_prev), 1e-6) <= 0.05:
-        return 'flat_or_neutral'
-    return 'unknown'
+    def eps_regime_logic(row: pd.Series) -> str:
+        eps, eps_prev = row['eps'], row['eps_lag1']
+        if pd.isnull(eps) or pd.isnull(eps_prev):
+            return 'Unknown'
+        if eps_prev < 0 < eps:
+            return 'Turnaround'
+        if eps_prev > 0 > eps:
+            return 'Profit to Loss'
+        if eps < 0 and eps_prev < 0 and eps > eps_prev:
+            return 'Loss Narrowing'
+        if eps < 0 and eps_prev < 0 and eps < eps_prev:
+            return 'Loss Widening'
+        if eps > 0 and eps_prev > 0 and eps > eps_prev:
+            return 'Positive Growth'
+        if eps > 0 and eps_prev > 0 and eps < eps_prev:
+            return 'Profit Decline'
+        if abs(eps - eps_prev) / max(abs(eps), abs(eps_prev), 1e-6) <= 0.05:
+            return 'Flat'
+        return 'Unknown'
+    
+    df[column] = df.apply(eps_regime_logic, axis=1)
+    df.drop(columns=['eps_lag1'], inplace=True)
+    return df
 
-def calculate_streak(series: pd.Series, on_value=1) -> pd.Series:
-    """
-    Vectorized run-length of consecutive `on_value` up to each row.
-    Example: [1,1,0,1,1,1] -> [1,2,0,1,2,3]
-    NaN is treated as not-on.
-    """
-    s = series.eq(on_value).fillna(False).astype(int)
-    # group by breaks where s == 0, then cumulative count within each group
-    out = s.groupby((s == 0).cumsum()).cumsum()
-    # ensure zeros where the flag is off
-    out = out.where(s.astype(bool), 0)
-    return out
+
 
 def compute_surprise_metrics(df: pd.DataFrame, prefix: str) -> pd.DataFrame:
     
@@ -102,58 +90,73 @@ def compute_surprise_metrics(df: pd.DataFrame, prefix: str) -> pd.DataFrame:
     # Beat Streak Length
     df[f'{prefix}_beat_streak_length'] = calculate_streak(df[f'{prefix}_beat_flag'])
 
-    # Consistency (Volatility of Surprise)
-    df[f'{prefix}_consistency'] = df[f'{prefix}_surprise_pct'].rolling(window=4).std()
+    return df
+
+def compute_surprise_classification(df: pd.DataFrame, prefix: str) -> pd.DataFrame:
+    """
+    | **Range (surprise_pct)** | **Class** | **Meaning / Signal** |
+    |:--|:--|:--|
+    | ≥ **+10%** | **Major Beat** | Exceptional outperformance — significantly above expectations. |
+    | **+3% to +10%** | **Moderate Beat** | Clear upside surprise — strong positive signal. |
+    | **+1% to +3%** | **Slight Beat** | Mild outperformance — modest but positive result. |
+    | **−1% to +1%** | **In-Line** | Effectively met expectations — neutral, within noise tolerance. |
+    | **−5% to −1%** | **Slight Miss** | Small shortfall — mild underperformance. |
+    | ≤ **−5%** | **Major Miss** | Clear disappointment — significant underperformance. |
+    """
+
+    class_column = f'{prefix}_surprise_class'
+    surprise_column = f'{prefix}_surprise_pct'
+
+    def classification_logic(surprise: float) -> str:
+        if pd.isnull(surprise):
+            return 'Unknown'
+        if surprise >= 0.10:
+            return 'Major Beat'
+        elif 0.03 <= surprise < 0.10:
+            return 'Moderate Beat'
+        elif 0.01 <= surprise < 0.03:
+            return 'Slight Beat'
+        elif -0.01 < surprise < 0.01:
+            return 'In-Line'
+        elif -0.05 < surprise <= -0.01:
+            return 'Slight Miss'
+        elif surprise <= -0.05:
+            return 'Major Miss'
+        else:
+            return 'Unknown'
+    df[class_column] = df[surprise_column].apply(classification_logic)
 
     return df
 
-def compute_growth_metrics(df: pd.DataFrame, prefix: str) -> pd.DataFrame:
-    # Growth (QoQ)
-    df[f'{prefix}_lag1'] = df[f'{prefix}'].shift(1)
-    df[f'{prefix}_qoq_growth_pct'] = df.apply(lambda row: calculate_pct_change(row[f'{prefix}'], row[f'{prefix}_lag1']), axis=1)
+def compute_surprise_regime(df: pd.DataFrame, prefix: str) -> pd.DataFrame:
+    count_column = f'{prefix}_beat_count_4q'
+    streak_column = f'{prefix}_beat_streak_length'
+    regime_column = f'{prefix}_surprise_regime'
 
-
-    # Growth (YoY)
-    df[f'{prefix}_lag4'] = df[f'{prefix}'].shift(4)
-    df[f'{prefix}_yoy_growth_pct'] = df.apply(lambda row: calculate_pct_change(row[f'{prefix}'], row[f'{prefix}_lag4']), axis=1)
-
-    # Growth Flag
-    df[f'{prefix}_growth_flag'] = (df[f'{prefix}_yoy_growth_pct'] > 0).astype(int)
-    df[f'{prefix}_growth_count_4q'] = df[f'{prefix}_growth_flag'].fillna(0).rolling(window=4, min_periods=1).sum().astype(int)
-    # Growth Streak Length
-    df[f'{prefix}_growth_streak_length'] = calculate_streak(df[f'{prefix}_growth_flag'])
-
-    # Trend Strength
-    df[f'{prefix}_trend_strength'] = df[f'{prefix}_yoy_growth_pct'].rolling(window=4).mean()
-
-    # Consistency (Volatility of Growth)
-    df[f'{prefix}_consistency'] = df[f'{prefix}_yoy_growth_pct'].rolling(window=4).std()
-
-    # TTM Growth
-    df[f'{prefix}_ttm_lag4'] = df[f'{prefix}_ttm'].shift(4)
-    df[f'{prefix}_ttm_growth_pct'] = df.apply(lambda row: calculate_pct_change(row[f'{prefix}_ttm'], row[f'{prefix}_ttm_lag4']), axis=1)
-
-    df = df.drop(columns=[f'{prefix}_lag1', f'{prefix}_lag4', f'{prefix}_ttm_lag4'])
-
+    def regime_logic(row: pd.Series) -> str:
+        if pd.isnull(row[count_column]) or pd.isnull(row[streak_column]):
+            return 'Unknown'
+        count = row[count_column]
+        streak = row[streak_column]
+        
+        if count >= 3 and streak >= 3:
+            return 'Consistent Outperformer'
+        elif count >= 3 and 1 <= streak <= 2:
+            return 'Frequent Beater'
+        elif count == 3 and streak == 0:
+            return 'Broken Streak'
+        elif count == 2 and streak == 2:
+            return 'Emerging Beater'
+        elif count == 2 and streak < 2:
+            return 'Mixed Performance'
+        elif count <= 1 and streak <= 1:
+            return 'Consistent Miss'
+        else:
+            return 'Unknown'
+    df[regime_column] = df.apply(regime_logic, axis=1)
     return df
-
-def compute_acceleration_metrics(df: pd.DataFrame, prefix: str) -> pd.DataFrame:
-    # Acceleration
-    df[f'{prefix}_acceleration'] = df[f'{prefix}_yoy_growth_pct'].astype(float).diff().apply(lambda x: None if pd.isna(x) else x)
-
-    # TTM Acceleration
-    df[f'{prefix}_ttm_acceleration'] = df[f'{prefix}_ttm_growth_pct'].astype(float).diff().apply(lambda x: None if pd.isna(x) else x)
-
-    # Acceleration Flag
-    df[f'{prefix}_acceleration_flag'] = (df[f'{prefix}_acceleration'] > 0).astype(int)
-
-    # Acceleration Count (Last 4 Quarters)
-    df[f'{prefix}_acceleration_count_4q'] = df[f'{prefix}_acceleration_flag'].fillna(0).rolling(window=4, min_periods=1).sum().astype(int)
-
-    # Acceleration Streak Length
-    df[f'{prefix}_acceleration_streak_length'] = calculate_streak(df[f'{prefix}_acceleration_flag'])
-
-    return df
+        
+    
 
 
 
@@ -168,17 +171,16 @@ def main():
         for tic in tics:
             tic = tic[0]
             df = read_earnings(conn, tic)
+            df = classify_eps_regime(df)
 
-            df['eps_lag1'] = df['eps'].shift(1)
-            df['eps_phase'] = df.apply(classify_eps_phase, axis=1)
             for prefix in ['eps', 'revenue']:
-                df[f'pre_{prefix}_flag'] = ((df[prefix] > 0).rolling(window=4).sum() == 0).astype(int)
-                df[f'{prefix}_ttm'] = df[prefix].rolling(window=4).sum()
                 df = compute_surprise_metrics(df, prefix)
-                df = compute_growth_metrics(df, prefix)
-                df = compute_acceleration_metrics(df, prefix)
-            total_records = insert_records(conn, df, "core.earnings_metrics", ["tic", "calendar_year", "calendar_quarter"])
-            print(f"Inserted/Updated {total_records} records into core.earnings_metrics for {tic}.")
+                df = compute_surprise_classification(df, prefix)
+                df = compute_surprise_regime(df, prefix)
+
+ 
+            total_records = insert_records(conn, df, "core.earnings_analysis", ["tic", "calendar_year", "calendar_quarter"])
+            print(f"Inserted/Updated {total_records} records into core.earnings_analysis for {tic}.")
         conn.close()
         # Display one record as a dictionary
         # record = df.iloc[-1].to_dict()

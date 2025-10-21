@@ -46,18 +46,18 @@ def calculate_yoy_growth_flag(df: pd.DataFrame, column: str, score_regime: list[
     Calculate a boolean flag indicating whether year-over-year growth is positive for a specified column.
     """
     yoy_column = f"{column}_yoy_pct"
-    flag_column = f"{column}_yoy_growth_flag"
+    class_column = f"{column}_yoy_growth_class"
 
     # 0 if YoY growth < score_regime[0], (Deep contraction)
     # 1 if between score_regime[0] and score_regime[1], (Mild contraction)
     # 2 if between score_regime[1] and score_regime[2], (Moderate growth)
     # 3 if between score_regime[2] and score_regime[3], (Strong growth)
     # 4 if greater than or equal to score_regime[3], (Very strong growth)
-    df[flag_column] = "Deep contraction"
-    df.loc[(df[yoy_column] >= score_regime[0]), flag_column] = "Mild contraction"
-    df.loc[(df[yoy_column] >= score_regime[1]), flag_column] = "Moderate growth"
-    df.loc[(df[yoy_column] >= score_regime[2]), flag_column] = "Strong growth"
-    df.loc[(df[yoy_column] >= score_regime[3]), flag_column] = "Very strong growth"
+    df[class_column] = "Deep contraction"
+    df.loc[(df[yoy_column] >= score_regime[0]), class_column] = "Mild contraction"
+    df.loc[(df[yoy_column] >= score_regime[1]), class_column] = "Moderate growth"
+    df.loc[(df[yoy_column] >= score_regime[2]), class_column] = "Strong growth"
+    df.loc[(df[yoy_column] >= score_regime[3]), class_column] = "Very strong growth"
 
     return df
 

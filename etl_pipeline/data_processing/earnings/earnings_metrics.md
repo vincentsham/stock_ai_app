@@ -78,15 +78,15 @@ Describes direction and sign transition of EPS.
 
 ```sql
 CASE
-  WHEN eps IS NULL OR eps_prev IS NULL THEN 'unknown'
-  WHEN eps_prev < 0 AND eps > 0 THEN 'turnaround'
-  WHEN eps_prev > 0 AND eps < 0 THEN 'profit_to_loss'
-  WHEN eps < 0 AND eps_prev < 0 AND eps > eps_prev THEN 'loss_narrowing'
-  WHEN eps < 0 AND eps_prev < 0 AND eps < eps_prev THEN 'loss_widening'
-  WHEN eps > 0 AND eps_prev > 0 AND eps > eps_prev THEN 'positive_growth'
-  WHEN eps > 0 AND eps_prev > 0 AND eps < eps_prev THEN 'profit_decline'
-  WHEN ABS(eps - eps_prev) / GREATEST(ABS(eps), ABS(eps_prev), 1e-6) <= 0.05 THEN 'flat_or_neutral'
-  ELSE 'unknown'
+  WHEN eps IS NULL OR eps_prev IS NULL THEN 'Unknown'
+  WHEN eps_prev < 0 AND eps > 0 THEN 'Turnaround'
+  WHEN eps_prev > 0 AND eps < 0 THEN 'Profit to Loss'
+  WHEN eps < 0 AND eps_prev < 0 AND eps > eps_prev THEN 'Loss Narrowing'
+  WHEN eps < 0 AND eps_prev < 0 AND eps < eps_prev THEN 'Loss Widening'
+  WHEN eps > 0 AND eps_prev > 0 AND eps > eps_prev THEN 'Positive Growth'
+  WHEN eps > 0 AND eps_prev > 0 AND eps < eps_prev THEN 'Profit Decline'
+  WHEN ABS(eps - eps_prev) / GREATEST(ABS(eps), ABS(eps_prev), 1e-6) <= 0.05 THEN 'Flat'
+  ELSE 'Unknown'
 END
 ```
 
@@ -105,56 +105,29 @@ END
 
 ---
 
-### 📈 Growth Metrics
-| Metric | Description | Formula | Horizon |
+### **Beat Strength Classes**
+
+| **Range (surprise_pct)** | **Class** | **Meaning / Signal** |
+|:--|:--|:--|
+| ≥ **+10%** | **Major Beat** | Exceptional outperformance — significantly above expectations. |
+| **+3% to +10%** | **Moderate Beat** | Clear upside surprise — strong positive signal. |
+| **+1% to +3%** | **Slight Beat** | Mild outperformance — modest but positive result. |
+| **−1% to +1%** | **In-Line** | Effectively met expectations — neutral, within noise tolerance. |
+| **−5% to −1%** | **Slight Miss** | Small shortfall — mild underperformance. |
+| ≤ **−5%** | **Major Miss** | Clear disappointment — significant underperformance. |
+
+
+---
+
+
+### **Regime Rules**
+
+| **ID** | **Condition** | **Regime** | **Meaning / Signal** |
 |:--|:--|:--|:--|
-| `{prefix}_qoq_growth_pct` | QoQ growth (sign-safe) | `(x_t - x_t−1) / |x_t−1|` | Short-term |
-| `{prefix}_growth_flag` | 1 if QoQ growth > 0 | `(qoq_growth_pct > 0)::int` | Short-term |
-| `{prefix}_growth_count_4q` | Number of positive QoQ growths (4Q) | `SUM(growth_flag) OVER 4Q` | Medium-term |
-| `{prefix}_growth_streak_length` | Current streak of positive growth | `COUNT consecutive growth_flag = 1` | Medium-term |
-| `{prefix}_yoy_growth_pct` | YoY growth (vs. t−4) | Safe growth formula | Medium-term |
-| `{prefix}_trend_strength` | Mean YoY growth (smoothness) | `AVG(yoy_growth_pct) OVER 4Q` | Long-term |
-| `{prefix}_consistency` | Volatility of YoY growth | `STDDEV(yoy_growth_pct) OVER 4Q` | Long-term |
-| `{prefix}_ttm_growth_pct` | Trailing-12M growth | `(TTM_t − TTM_t−4) / |TTM_t−4|` | Long-term |
+| B1 | `beat_count_4q ≥ 3` **and** `beat_streak_length ≥ 3` | **Consistent Outperformer** | Continuous beats with stability — elite reliability. |
+| B2 | `beat_count_4q ≥ 3` **and** `beat_streak_length = 1–2` | **Frequent Beater** | Generally strong; occasional interruptions. |
+| B3 | `beat_count_4q = 3` **and** `beat_streak_length = 0` | **Broken Streak** | Strong track record but most recent quarter missed — cooling momentum. |
+| B4 | `beat_count_4q = 2` **and** `beat_streak_length = 2` | **Emerging Beater** | Recent back-to-back beats after mixed quarters — positive shift developing. |
+| B5 | `beat_count_4q = 2` **and** `beat_streak_length ≤ 1` | **Mixed Performance** | Alternating beats and misses — unclear signal. |
+| B6 | `beat_count_4q ≤ 1` **and** `beat_streak_length ≤ 1` | **Consistent Miss** | Persistent underperformance or early recovery attempt. |
 
----
-
-### ⚡ Acceleration Metrics
-| Metric | Description | Formula | Horizon |
-|:--|:--|:--|:--|
-| `{prefix}_acceleration` | Change in YoY growth | `Δ(yoy_growth_pct)` | Medium-term |
-| `{prefix}_ttm_acceleration` | Change in TTM growth | `Δ(ttm_growth_pct)` | Long-term |
-| `{prefix}_acceleration_flag` | 1 if growth improving | `(acceleration > 0)::int` | Medium-term |
-| `{prefix}_acceleration_count_4q` | Number of positive accelerations (4Q) | `SUM(acceleration_flag) OVER 4Q` | Medium-term |
-| `{prefix}_acceleration_streak_length` | Consecutive quarters of acceleration | `COUNT consecutive acceleration_flag = 1` | Long-term |
-
----
-
-### 💰 EPS Phase Metrics
-| Metric | Description | Formula / Rule | Horizon |
-|:--|:--|:--|:--|
-| `eps_phase` | EPS trend classification | EPS phase CASE logic | Short-term |
-
----
-
-## 🧠 Summary by Category
-
-| Category | Purpose |
-|:--|:--|
-| **Surprise & Beat Metrics** | Capture near-term performance vs expectations |
-| **Growth Metrics** | Measure operational momentum |
-| **Acceleration Metrics** | Identify turning points and regime changes |
-| **Consistency Metrics** | Quantify volatility and predictability |
-| **Trend & TTM Metrics** | Evaluate sustained direction over multiple quarters |
-| **EPS Phase** | Provide qualitative interpretation of earnings trajectory |
-
----
-
-## ✅ Design Rationale
-- **Sign-safe logic** handles negative or small denominators robustly  
-- **±200% cap** prevents extreme ratios from distorting analysis  
-- **5% tolerance** filters noise and minor deltas  
-- **Rolling 4Q windows** unify frequency treatment  
-- **Acceleration flags** isolate early signs of trend improvement  
-- **Categorical + quantitative metrics** integrate seamlessly into AI agent or scoring systems  
-- **Symmetric EPS/Revenue structure** allows uniform comparisons across profitability and sales dimensions  
