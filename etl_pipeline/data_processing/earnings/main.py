@@ -116,11 +116,13 @@ def compute_surprise_classification(df: pd.DataFrame, prefix: str) -> pd.DataFra
             return 'Moderate Beat'
         elif 0.01 <= surprise < 0.03:
             return 'Slight Beat'
-        elif -0.01 < surprise < 0.01:
-            return 'In-Line'
-        elif -0.05 < surprise <= -0.01:
+        elif 0.0 <= surprise < 0.01:
+            return 'In-Line (Positive)'
+        elif -0.01 <= surprise < 0.0:
+            return 'In-Line (Negative)'
+        elif -0.05 <= surprise < -0.01:
             return 'Slight Miss'
-        elif surprise <= -0.05:
+        elif surprise < -0.05:
             return 'Major Miss'
         else:
             return 'Unknown'
