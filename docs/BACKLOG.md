@@ -49,7 +49,8 @@ examples:
 | 27 | Feature | efficiency analysis | High | Open |  |  |  |
 | 28 | Feature | cash flow analysis | High | Open |  |  |  |
 | 29 | Feature | balance sheet analysis | High | Open |  |  |  |
-| 30 | Feature | analyst reports analysis extending to mid and long term comparison | High | Open |  |  |  |
+| 30 | Feature | surprise analysis | High | Open |  |  |  |
+| 31 | Feature | analyst reports analysis extending to mid and long term comparison | High | Open |  |  |  |
 | 1007 | Feature | Create and load raw tables in core | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
