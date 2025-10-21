@@ -123,3 +123,13 @@ def calculate_streak_pos_neg(series: pd.Series) -> pd.Series:
     neg_streak = s.eq(0).groupby((s != 0).cumsum()).cumcount() + 1
     out = pos_streak.where(s.eq(1), -neg_streak)
     return out
+
+
+def calculate_pct_change(current: float, previous: float) -> float:
+    if previous is None or previous == 0 or current is None:
+        return None
+    
+    pct_change = (current - previous) / max(abs(previous), 1e-6)
+
+    # Cap the percentage changewithin ±1000%
+    return max(min(pct_change, 10.0), -10.0)

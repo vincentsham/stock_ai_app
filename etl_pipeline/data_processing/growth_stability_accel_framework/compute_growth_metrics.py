@@ -1,5 +1,5 @@
 import pandas as pd
-from etl_pipeline.utils import calculate_streak
+from etl_pipeline.utils import calculate_streak, calculate_pct_change
 
 def calculate_yoy_growth(df: pd.DataFrame, column: str) -> pd.DataFrame:
     """
@@ -8,7 +8,7 @@ def calculate_yoy_growth(df: pd.DataFrame, column: str) -> pd.DataFrame:
     """
     column_name = f"{column}_yoy_pct"
     # Handle division by zero or NaNs for calculating YoY growth
-    df[column_name] = (df[column]/df[column].shift(4)) - 1
+    df[column_name] = calculate_pct_change(df[column], df[column].shift(4))
 
     flag_column = f"{column}_yoy_positive_flag"
     df[flag_column] = (df[column_name] > 0).astype(int)
