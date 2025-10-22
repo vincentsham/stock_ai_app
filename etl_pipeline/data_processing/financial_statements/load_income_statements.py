@@ -108,7 +108,7 @@ def transform_records(raw_df):
     return transformed_df
 
 
-def load_income_statements(transformed_df):
+def load_records(transformed_df):
     """
     Loads the transformed income statements data into the core.income_statements table.
 
@@ -133,7 +133,7 @@ def main():
     transformed_df = transform_records(raw_df)
 
     # Step 3: Load the transformed data into core.income_statements
-    load_income_statements(transformed_df)
+    load_records(transformed_df)
 
 if __name__ == "__main__":
     main()

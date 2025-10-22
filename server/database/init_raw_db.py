@@ -116,7 +116,7 @@ def table_creation(conn):
 
         # Create a table for cash flows if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS raw.cash_flows (
+        CREATE TABLE IF NOT EXISTS raw.cash_flow_statements (
             tic             VARCHAR(10)  NOT NULL,                 -- e.g., AAPL
             fiscal_year     SMALLINT          NOT NULL,                 -- e.g., 2025
             fiscal_quarter  SMALLINT          NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
@@ -128,7 +128,7 @@ def table_creation(conn):
             PRIMARY KEY (tic, fiscal_year, fiscal_quarter)
         );
         """)
-        print("Table 'cash_flows' created or already exists with composite primary key.")
+        print("Table 'cash_flow_statements' created or already exists with composite primary key.")
 
         # Create a table for balance sheets if it does not exist
         cursor.execute("""

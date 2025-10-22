@@ -30,7 +30,7 @@ def insert_records(data, tic, url, conn):
                 fiscal_quarter = int(record.get("period")[1]) if record.get("period") != "FY" else 0
                 fiscal_date = record.get("date")  # Assuming the API provides a date field
                 cur.execute("""
-                    INSERT INTO raw.cash_flows (
+                    INSERT INTO raw.cash_flow_statements (
                         tic, fiscal_year, fiscal_quarter, fiscal_date, source, 
                         raw_json, raw_json_sha256, updated_at
                     ) VALUES (%s, %s, %s, %s, %s, %s, %s, NOW())
@@ -40,7 +40,7 @@ def insert_records(data, tic, url, conn):
                         raw_json = EXCLUDED.raw_json,
                         raw_json_sha256 = EXCLUDED.raw_json_sha256,
                         updated_at = NOW()
-                    WHERE raw.cash_flows.raw_json_sha256 IS DISTINCT FROM EXCLUDED.raw_json_sha256;
+                    WHERE raw.cash_flow_statements.raw_json_sha256 IS DISTINCT FROM EXCLUDED.raw_json_sha256;
                 """, (
                     tic,
                     fiscal_year,

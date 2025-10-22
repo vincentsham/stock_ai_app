@@ -403,7 +403,7 @@ def table_creation(conn):
             cik                                   VARCHAR(20),
             reported_currency                     VARCHAR(10),
 
-            -- Key financials (from JSON; snake_cased)
+            -- Key financials 
             revenue                               BIGINT,
             cost_of_revenue                       BIGINT,
             gross_profit                          BIGINT,
@@ -452,6 +452,179 @@ def table_creation(conn):
         );
         """)
         print("Table 'income_statements' created or already exists with composite primary key.")
+
+
+       # Create a table for balance sheets if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.balance_sheets (
+            -- Identity & period alignment
+            tic                               VARCHAR(10)  NOT NULL,
+            calendar_year                     SMALLINT     NOT NULL,
+            calendar_quarter                  SMALLINT     NOT NULL,
+            earnings_date                     DATE         NOT NULL,    -- period end date (company fiscal)
+            fiscal_year                       SMALLINT    NOT NULL,                 -- e.g., 2025
+            fiscal_quarter                    SMALLINT    NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
+            fiscal_date                       DATE       NOT NULL,
+            period                            VARCHAR(10)  NOT NULL,    -- "Q1".."Q4", "FY" (as reported)
+
+            -- Filing / meta
+            filing_date                           DATE,
+            accepted_date                         TIMESTAMP,                -- raw feed is naive (no TZ)
+            cik                                   VARCHAR(20),
+            reported_currency                     VARCHAR(10), 
+
+            -- Assets
+            cash_and_cash_equivalents           BIGINT,
+            short_term_investments              BIGINT,
+            cash_and_short_term_investments     BIGINT,
+            net_receivables                     BIGINT,
+            accounts_receivables                BIGINT,
+            other_receivables                   BIGINT,
+            inventory                           BIGINT,
+            prepaids                            BIGINT,
+            other_current_assets                BIGINT,
+            total_current_assets                BIGINT,
+
+            property_plant_equipment_net        BIGINT,
+            goodwill                            BIGINT,
+            intangible_assets                   BIGINT,
+            goodwill_and_intangible_assets      BIGINT,
+            long_term_investments               BIGINT,
+            tax_assets                          BIGINT,
+            other_non_current_assets            BIGINT,
+            total_non_current_assets            BIGINT,
+            other_assets                        BIGINT,
+            total_assets                        BIGINT,
+
+            -- Liabilities
+            total_payables                      BIGINT,
+            account_payables                    BIGINT,
+            other_payables                      BIGINT,
+            accrued_expenses                    BIGINT,
+            short_term_debt                     BIGINT,
+            capital_lease_obligations_current   BIGINT,
+            tax_payables                        BIGINT,
+            deferred_revenue                    BIGINT,
+            other_current_liabilities           BIGINT,
+            total_current_liabilities           BIGINT,
+
+            long_term_debt                      BIGINT,
+            capital_lease_obligations_non_current   BIGINT,
+            deferred_revenue_non_current        BIGINT,
+            deferred_tax_liabilities_non_current BIGINT,
+            other_non_current_liabilities       BIGINT,
+            total_non_current_liabilities       BIGINT,
+
+            other_liabilities                   BIGINT,
+            capital_lease_obligations           BIGINT,
+            total_liabilities                   BIGINT,
+
+            -- Equity
+            treasury_stock                      BIGINT,
+            preferred_stock                     BIGINT,
+            common_stock                        BIGINT,
+            retained_earnings                   BIGINT,
+            additional_paid_in_capital          BIGINT,
+            accumulated_other_comprehensive_income_loss BIGINT,
+            other_total_stockholders_equity     BIGINT,
+            total_stockholders_equity           BIGINT,
+            total_equity                        BIGINT,
+            minority_interest                   BIGINT,
+            total_liabilities_and_total_equity  BIGINT,
+
+            -- Derived Totals
+            total_investments                   BIGINT,
+            total_debt                          BIGINT,
+            net_debt                            BIGINT,
+
+            -- Raw payload for traceability
+            raw_json                              JSONB        NOT NULL,
+            raw_json_sha256                       CHAR(64)     NOT NULL,
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (tic, fiscal_year, fiscal_quarter)
+        );
+        """)
+        print("Table 'balance_sheets' created or already exists with composite primary key.")
+
+
+       # Create a table for cash flow statements if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.cash_flow_statements (
+            -- Identity & period alignment
+            tic                               VARCHAR(10)  NOT NULL,
+            calendar_year                     SMALLINT     NOT NULL,
+            calendar_quarter                  SMALLINT     NOT NULL,
+            earnings_date                     DATE         NOT NULL,    -- period end date (company fiscal)
+            fiscal_year                       SMALLINT    NOT NULL,                 -- e.g., 2025
+            fiscal_quarter                    SMALLINT    NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
+            fiscal_date                       DATE       NOT NULL,
+            period                            VARCHAR(10)  NOT NULL,    -- "Q1".."Q4", "FY" (as reported)
+
+            -- Filing / meta
+            filing_date                           DATE,
+            accepted_date                         TIMESTAMP,                -- raw feed is naive (no TZ)
+            cik                                   VARCHAR(20),
+            reported_currency                     VARCHAR(10),
+
+            -- Operating Activities
+            net_income                              BIGINT,
+            depreciation_and_amortization           BIGINT,
+            deferred_income_tax                     BIGINT,
+            stock_based_compensation                BIGINT,
+            change_in_working_capital               BIGINT,
+            accounts_receivables                    BIGINT,
+            inventory                               BIGINT,
+            accounts_payables                       BIGINT,
+            other_working_capital                   BIGINT,
+            other_non_cash_items                    BIGINT,
+            net_cash_provided_by_operating_activities BIGINT,
+
+            -- Investing Activities
+            investments_in_property_plant_and_equipment  BIGINT,
+            acquisitions_net                         BIGINT,
+            purchases_of_investments                 BIGINT,
+            sales_maturities_of_investments          BIGINT,
+            other_investing_activities               BIGINT,
+            net_cash_provided_by_investing_activities BIGINT,
+
+            -- Financing Activities
+            net_debt_issuance                        BIGINT,
+            long_term_net_debt_issuance              BIGINT,
+            short_term_net_debt_issuance             BIGINT,
+            net_stock_issuance                       BIGINT,
+            net_common_stock_issuance                BIGINT,
+            common_stock_issuance                    BIGINT,
+            common_stock_repurchased                 BIGINT,
+            net_preferred_stock_issuance             BIGINT,
+            net_dividends_paid                       BIGINT,
+            common_dividends_paid                    BIGINT,
+            preferred_dividends_paid                 BIGINT,
+            other_financing_activities               BIGINT,
+            net_cash_provided_by_financing_activities BIGINT,
+
+            -- Cash & Reconciliation
+            effect_of_forex_changes_on_cash          BIGINT,
+            net_change_in_cash                       BIGINT,
+            cash_at_end_of_period                    BIGINT,
+            cash_at_beginning_of_period              BIGINT,
+
+            -- Derived / Analytical Metrics
+            operating_cash_flow                      BIGINT,
+            capital_expenditure                      BIGINT,
+            free_cash_flow                           BIGINT,
+            income_taxes_paid                        BIGINT,
+            interest_paid                            BIGINT,
+
+
+            -- Raw payload for traceability
+            raw_json                              JSONB        NOT NULL,
+            raw_json_sha256                       CHAR(64)     NOT NULL,
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (tic, fiscal_year, fiscal_quarter)
+        );
+        """)
+        print("Table 'cash_flow_statements' created or already exists with composite primary key.")
+
 
 
 
