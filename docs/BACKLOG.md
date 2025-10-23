@@ -44,7 +44,6 @@ examples:
 | 19 | Feature | cash flow analysis | High | Open |  |  |  |
 | 21 | Feature | balance sheet analysis | High | Open |  |  |  |
 | 22 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
-| 26 | Feature | profitability analysis | High | Open |  |  |  |
 | 27 | Feature | efficiency analysis | High | Open |  |  |  |
 | 31 | Feature | analyst reports analysis extending to mid and long term comparison | High | Open |  |  |  |
 | 1007 | Feature | Create and load raw tables in core | Medium | Open |  |  |  |
@@ -92,6 +91,7 @@ examples:
 | 23 | Bugs | raw.earnings table - earnings date is not correct and may be remove fiscal date| High | Close | feat_23 | 2025-10-19 | 2025-10-19 |
 | 24 | Feature | growth, stability, acceleration framework | High | Close | feat_24 | 2025-10-20 | 2025-10-21 |
 | 25 | Feature | revenue analysis | High | Close | feat_25 | 2025-10-22 | 2025-10-23 |
+| 26 | Feature | profitability analysis | High | Close | feat_26 | 2025-10-23 | 2025-10-23 |
 | 28 | Feature | load cash flows into core | High | Close | feat_28 | 2025-10-21 | 2025-10-22 |
 | 29 | Feature | load balance sheets into core | High | Close | feat_28 | 2025-10-21 | 2025-10-22 |
 | 30 | Feature | surprise analysis | High | Close | feat_30 | 2025-10-21 | 2025-10-21 |
