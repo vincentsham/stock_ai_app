@@ -1,5 +1,5 @@
-from server.database.utils import connect_to_db, insert_records
-from etl_pipeline.utils import read_sql_query, timestamp_to_trading_date, convert_numpy_types
+from server.database.utils import connect_to_db, insert_records, read_sql_query
+from etl_pipeline.utils import timestamp_to_trading_date, convert_numpy_types
 import pandas as pd
 import numpy as np
 from grade_mapping import get_mapping, classify_grade_embedding_similarity, ref_grade_list

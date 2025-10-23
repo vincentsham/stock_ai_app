@@ -1,10 +1,10 @@
 import time
 import pandas as pd
-from server.database.utils import connect_to_db
+from server.database.utils import connect_to_db, read_sql_query
 from states import CompanyProfileState
 from graph import create_graph
 from tqdm import tqdm
-from etl_pipeline.utils import read_sql_query
+
 
 def insert_records(data, conn):
     """Insert processed data into core.stock_profiles."""

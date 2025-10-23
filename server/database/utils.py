@@ -55,6 +55,18 @@ def execute_query(sql: str, params: Optional[dict] = None):
     finally:
         conn.close()
 
+def read_sql_query(query: str, conn) -> pd.DataFrame:
+    """Execute a SQL query and return the results as a pandas DataFrame."""
+    try:
+        with conn.cursor() as cur:
+            cur.execute(query)
+            rows = cur.fetchall()
+            columns = [desc[0] for desc in cur.description]
+            df = pd.DataFrame(rows, columns=columns)
+            return df
+    except Exception as e:
+        print(f"Error executing query: {e}")
+        raise e
 
 
 def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[]) -> int:

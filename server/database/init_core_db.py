@@ -626,6 +626,85 @@ def table_creation(conn):
         print("Table 'cash_flow_statements' created or already exists with composite primary key.")
 
 
+       # Create a table for revenue metrics if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.revenue_metrics (
+            -- Identity & period alignment
+            tic                               VARCHAR(10)  NOT NULL,
+            calendar_year                     SMALLINT     NOT NULL,
+            calendar_quarter                  SMALLINT     NOT NULL,
+
+            -- Revenue Metrics
+            revenue                        BIGINT,
+                       
+            -- Quarter-over-Quarter (QoQ) Growth Metrics           
+            revenue_qoq_growth_pct             FLOAT,
+            revenue_qoq_positive_flag        SMALLINT,
+            revenue_qoq_count_4q                SMALLINT,
+            revenue_qoq_streak_length           SMALLINT,
+            revenue_qoq_growth_class        VARCHAR(50),
+            revenue_qoq_growth_regime          VARCHAR(50), 
+                       
+            revenue_qoq_volatility_4q        FLOAT,
+            revenue_qoq_volatility_flag           SMALLINT,
+            revenue_qoq_growth_drift             FLOAT,
+            revenue_qoq_outlier_flag               SMALLINT,
+            revenue_qoq_stability_regime        VARCHAR(50),
+                       
+            revenue_qoq_accel                  FLOAT,
+            revenue_qoq_accel_count_4q             SMALLINT,  
+            revenue_qoq_accel_positive_flag        SMALLINT,
+            revenue_qoq_accel_streak_length           SMALLINT,
+            revenue_qoq_accel_regime              VARCHAR(50),
+
+            -- Year-over-Year (YoY) Growth Metrics           
+            revenue_yoy_growth_pct             FLOAT,
+            revenue_yoy_positive_flag        SMALLINT,
+            revenue_yoy_count_4q                SMALLINT,
+            revenue_yoy_streak_length           SMALLINT,
+            revenue_yoy_growth_class        VARCHAR(50),
+            revenue_yoy_growth_regime          VARCHAR(50),
+            
+            revenue_yoy_volatility_4q        FLOAT,
+            revenue_yoy_volatility_flag           SMALLINT,
+            revenue_yoy_growth_drift             FLOAT,
+            revenue_yoy_outlier_flag               SMALLINT,
+            revenue_yoy_stability_regime        VARCHAR(50),
+
+            revenue_yoy_accel                  FLOAT,
+            revenue_yoy_accel_count_4q             SMALLINT,  
+            revenue_yoy_accel_positive_flag        SMALLINT,
+            revenue_yoy_accel_streak_length           SMALLINT,
+            revenue_yoy_accel_regime              VARCHAR(50),
+            
+            -- TTM Growth Metrics
+            revenue_ttm_growth_pct             FLOAT,
+            revenue_ttm_positive_flag        SMALLINT,
+            revenue_ttm_count_4q                SMALLINT,
+            revenue_ttm_streak_length           SMALLINT,
+            revenue_ttm_growth_class        VARCHAR(50),
+            revenue_ttm_growth_regime          VARCHAR(50),
+
+            revenue_ttm_volatility_4q        FLOAT,
+            revenue_ttm_volatility_flag           SMALLINT,
+            revenue_ttm_growth_drift             FLOAT,
+            revenue_ttm_outlier_flag               SMALLINT,
+            revenue_ttm_stability_regime        VARCHAR(50),
+
+            revenue_ttm_accel                  FLOAT,
+            revenue_ttm_accel_count_4q             SMALLINT,
+            revenue_ttm_accel_positive_flag        SMALLINT,
+            revenue_ttm_accel_streak_length           SMALLINT,
+            revenue_ttm_accel_regime              VARCHAR(50),
+
+            raw_json_sha256                       CHAR(64)     NOT NULL,
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+        );
+        """)
+        print("Table 'revenue_metrics' created or already exists with composite primary key.")
+
+
 
 
 

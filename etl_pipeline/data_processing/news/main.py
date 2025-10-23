@@ -1,10 +1,10 @@
 import time
 import pandas as pd
-from server.database.utils import connect_to_db, insert_records
+from server.database.utils import connect_to_db, insert_records, read_sql_query
 from states import News
 from graph import create_graph
 from tqdm import tqdm  # Import tqdm for progress tracking
-from etl_pipeline.utils import read_sql_query
+
 
 
 def main():

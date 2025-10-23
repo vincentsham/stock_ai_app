@@ -4,8 +4,8 @@ from typing import Dict
 
 from sklearn import metrics
 
-from server.database.utils import connect_to_db, insert_records
-from etl_pipeline.utils import read_sql_query, calculate_pct_change, calculate_streak
+from server.database.utils import connect_to_db, insert_records, read_sql_query
+from etl_pipeline.utils import calculate_pct_change, calculate_streak
 
 def read_earnings(conn, tic: str) -> pd.DataFrame:
     """

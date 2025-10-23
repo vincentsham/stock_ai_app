@@ -42,18 +42,6 @@ def hash_text(text: str) -> str:
     return hashlib.sha256(text.encode('utf-8')).hexdigest()
 
 
-def read_sql_query(query: str, conn) -> pd.DataFrame:
-    """Execute a SQL query and return the results as a pandas DataFrame."""
-    try:
-        with conn.cursor() as cur:
-            cur.execute(query)
-            rows = cur.fetchall()
-            columns = [desc[0] for desc in cur.description]
-            df = pd.DataFrame(rows, columns=columns)
-            return df
-    except Exception as e:
-        print(f"Error executing query: {e}")
-        raise e
     
 def none_if_empty(val):
     return None if val == "" else val
@@ -101,14 +89,21 @@ def convert_numpy_types(record):
 def calculate_streak(series: pd.Series, on_value=1) -> pd.Series:
     """
     Vectorized run-length of consecutive `on_value` up to each row.
-    Example: [1,1,0,1,1,1] -> [1,2,0,1,2,3]
+    Example 1: [1,1,0,1,1,1] -> [1,2,0,1,2,3]
+    Example 2: [1,1,0,1,1, NaN] -> [1,2,0,1,2,NaN]
     NaN is treated as not-on.
     """
-    s = series.eq(on_value).fillna(False).astype(int)
+    # s = series.eq(on_value).astype('Int64')
+    # out = s.groupby((s != on_value).cumsum()).cumcount() + 1
+    # # Ensure zero remains 0, but NaN stays as NaN
+    # out = out.where(~s.isna(), np.nan).where(s.astype(bool), 0)
+    # return out
+    s = series.eq(on_value).fillna(False)
     # group by breaks where s == 0, then cumulative count within each group
     out = s.groupby((s == 0).cumsum()).cumsum()
     # ensure zeros where the flag is off
-    out = out.where(s.astype(bool), 0)
+    out = out.where((s > 0) | (s.isna()), 0)
+    out[series.isna()] = np.nan  # preserve NaNs from original series
     return out
 
 
