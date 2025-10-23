@@ -6,9 +6,9 @@ import pandas as pd
 
 def read_records(conn, tic: str) -> pd.DataFrame:
     query = f"""
-        SELECT e.tic, e.calendar_year, e.calendar_quarter, e.revenue, e.raw_json_sha256
+        SELECT e.tic, e.calendar_year, e.calendar_quarter, e.eps AS eps_diluted, e.raw_json_sha256
         FROM core.earnings as e
-        LEFT JOIN core.revenue_metrics as r 
+        LEFT JOIN core.eps_diluted_metrics as r 
         ON e.tic = r.tic
             AND e.calendar_year = r.calendar_year
             AND e.calendar_quarter = r.calendar_quarter
@@ -23,17 +23,17 @@ def read_records(conn, tic: str) -> pd.DataFrame:
 
 def transform_records(df: pd.DataFrame) -> pd.DataFrame:
     transformed_df = df.copy()
-    transformed_df['revenue_ttm'] = transformed_df['revenue'].rolling(window=4).sum()
-    transformed_df = compute_growth_metrics(transformed_df, column="revenue", score_regime=[-0.1, 0, 0.1, 0.3])
-    transformed_df = compute_stability_metrics(transformed_df, column="revenue", volatility_threshold=0.05)
-    transformed_df = compute_accel_metrics(transformed_df, column="revenue")
+    transformed_df['eps_diluted_ttm'] = transformed_df['eps_diluted'].rolling(window=4).sum()
+    transformed_df = compute_growth_metrics(transformed_df, column="eps_diluted", score_regime=[-0.1, 0, 0.1, 0.3])
+    transformed_df = compute_stability_metrics(transformed_df, column="eps_diluted", volatility_threshold=0.1)
+    transformed_df = compute_accel_metrics(transformed_df, column="eps_diluted")
     return transformed_df
 
 
 def load_records(transformed_df, conn):
 
-    # Insert records into core.revenue_metrics
-    total_records = insert_records(conn, transformed_df, 'core.revenue_metrics', ['tic', 'calendar_year', 'calendar_quarter'])
+    # Insert records into core.eps_diluted_metrics
+    total_records = insert_records(conn, transformed_df, 'core.eps_diluted_metrics', ['tic', 'calendar_year', 'calendar_quarter'])
     return total_records
 
 def main():

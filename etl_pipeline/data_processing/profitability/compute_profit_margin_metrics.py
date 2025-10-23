@@ -6,15 +6,15 @@ import pandas as pd
 
 def read_records(conn, tic: str) -> pd.DataFrame:
     query = f"""
-        SELECT e.tic, e.calendar_year, e.calendar_quarter, e.revenue, e.raw_json_sha256
-        FROM core.earnings as e
-        LEFT JOIN core.revenue_metrics as r 
-        ON e.tic = r.tic
-            AND e.calendar_year = r.calendar_year
-            AND e.calendar_quarter = r.calendar_quarter
-        WHERE e.tic = '{tic}'
-            AND (r.raw_json_sha256 IS NULL OR r.raw_json_sha256 <> e.raw_json_sha256)
-        ORDER BY e.tic, e.calendar_year, e.calendar_quarter;
+        SELECT i.tic, i.calendar_year, i.calendar_quarter, i.net_income, i.revenue, i.raw_json_sha256
+        FROM core.income_statements as i
+        LEFT JOIN core.profit_margin_metrics as r 
+        ON i.tic = r.tic
+            AND i.calendar_year = r.calendar_year
+            AND i.calendar_quarter = r.calendar_quarter
+        WHERE i.tic = '{tic}'
+            AND (r.raw_json_sha256 IS NULL OR r.raw_json_sha256 <> i.raw_json_sha256)
+        ORDER BY i.tic, i.calendar_year, i.calendar_quarter;
     """
     df = read_sql_query(query, conn)
     print(f"Records to process: {len(df)}")
@@ -23,17 +23,19 @@ def read_records(conn, tic: str) -> pd.DataFrame:
 
 def transform_records(df: pd.DataFrame) -> pd.DataFrame:
     transformed_df = df.copy()
-    transformed_df['revenue_ttm'] = transformed_df['revenue'].rolling(window=4).sum()
-    transformed_df = compute_growth_metrics(transformed_df, column="revenue", score_regime=[-0.1, 0, 0.1, 0.3])
-    transformed_df = compute_stability_metrics(transformed_df, column="revenue", volatility_threshold=0.05)
-    transformed_df = compute_accel_metrics(transformed_df, column="revenue")
+    transformed_df['profit_margin'] = transformed_df['net_income'] / transformed_df['revenue']
+    transformed_df['profit_margin_ttm'] = transformed_df['net_income'].rolling(window=4).sum()/ transformed_df['revenue'].rolling(window=4).sum()
+    transformed_df.drop(columns=['net_income', 'revenue'], inplace=True)
+    transformed_df = compute_growth_metrics(transformed_df, column="profit_margin", score_regime=[-0.1, 0, 0.1, 0.3])
+    transformed_df = compute_stability_metrics(transformed_df, column="profit_margin", volatility_threshold=0.03)
+    transformed_df = compute_accel_metrics(transformed_df, column="profit_margin")
     return transformed_df
 
 
 def load_records(transformed_df, conn):
 
-    # Insert records into core.revenue_metrics
-    total_records = insert_records(conn, transformed_df, 'core.revenue_metrics', ['tic', 'calendar_year', 'calendar_quarter'])
+    # Insert records into core.profit_margin_metrics
+    total_records = insert_records(conn, transformed_df, 'core.profit_margin_metrics', ['tic', 'calendar_year', 'calendar_quarter'])
     return total_records
 
 def main():

@@ -19,7 +19,6 @@ def calculate_growth(df: pd.DataFrame, column: str) -> pd.DataFrame:
 
     df[column_lag_1] = df[column].shift(1)
     df[column_lag_4] = df[column].shift(4)
-    df[column_ttm] = df[column].rolling(window=4).sum()
     df[column_ttm_lag_4] = df[column_ttm].shift(4)
 
 
@@ -28,7 +27,7 @@ def calculate_growth(df: pd.DataFrame, column: str) -> pd.DataFrame:
     df[column_qoq_name] = df.apply(lambda x: calculate_pct_change(x[column], x[column_lag_1]), axis=1)
     df[column_ttm_name] = df.apply(lambda x: calculate_pct_change(x[column_ttm], x[column_ttm_lag_4]), axis=1)
     # Drop intermediate columns
-    df.drop(columns=[column_lag_1, column_lag_4, column_ttm, column_ttm_lag_4], inplace=True)
+    df.drop(columns=[column_lag_1, column_lag_4, column_ttm_lag_4], inplace=True)
 
 
     # Create flags for positive growth; 1 if positive or zero, 0 if negative, NaN remains NaN
