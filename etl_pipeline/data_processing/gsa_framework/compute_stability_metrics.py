@@ -2,7 +2,7 @@ import pandas as pd
 from etl_pipeline.utils import calculate_streak
 import numpy as np
 
-def calculate_volatility(df: pd.DataFrame, column: str, threshold: float) -> pd.DataFrame:
+def calculate_volatility(df: pd.DataFrame, column: str, threshold: float, ttm: bool = True) -> pd.DataFrame:
     """
     Calculate the volatility of year-over-year growth for a specified column over a rolling window.
     """
@@ -32,19 +32,20 @@ def calculate_volatility(df: pd.DataFrame, column: str, threshold: float) -> pd.
     df[volatility_qoq_flag_column] = df[volatility_qoq_column].apply(lambda x: 0 if x < threshold else 1)
     df.loc[df[growth_qoq_column].isna(), volatility_qoq_flag_column] = np.nan
 
-    # Calculate rolling standard deviation of TTM growth over a 4-period window excluding the current period
-    df[volatility_ttm_column] = df[growth_ttm_column].shift(1).rolling(window=4).std()
-    df.loc[df[growth_ttm_column].isna(), volatility_ttm_column] = np.nan
-    # Assign volatility flag based on threshold
-    df[volatility_ttm_flag_column] = df[volatility_ttm_column].apply(lambda x: 0 if x < threshold/2 else 1)
-    df.loc[df[growth_ttm_column].isna(), volatility_ttm_flag_column] = np.nan
+    if ttm:
+        # Calculate rolling standard deviation of TTM growth over a 4-period window excluding the current period
+        df[volatility_ttm_column] = df[growth_ttm_column].shift(1).rolling(window=4).std()
+        df.loc[df[growth_ttm_column].isna(), volatility_ttm_column] = np.nan
+        # Assign volatility flag based on threshold
+        df[volatility_ttm_flag_column] = df[volatility_ttm_column].apply(lambda x: 0 if x < threshold/2 else 1)
+        df.loc[df[growth_ttm_column].isna(), volatility_ttm_flag_column] = np.nan
 
 
     return df
 
 
 
-def compute_volatility_regime(df: pd.DataFrame, column: str) -> pd.DataFrame:
+def compute_volatility_regime(df: pd.DataFrame, column: str, ttm: bool = True) -> pd.DataFrame:
     """
     Calculate the count of volatile periods for a specified column over the last 4 quarters.
     """
@@ -74,17 +75,14 @@ def compute_volatility_regime(df: pd.DataFrame, column: str) -> pd.DataFrame:
     df.loc[df[growth_yoy_column].isna(), drift_yoy_column] = np.nan
     df[drift_qoq_column] = df[growth_qoq_column].shift(1).rolling(window=4).mean()
     df.loc[df[growth_qoq_column].isna(), drift_qoq_column] = np.nan
-    df[drift_ttm_column] = df[growth_ttm_column].shift(1).rolling(window=4).mean()
-    df.loc[df[growth_ttm_column].isna(), drift_ttm_column] = np.nan
+
 
     # Identify outliers where the absolute drift exceeds the 1.5 * volatility
     df[outlier_yoy_flag_column] = df.apply(lambda x: 1 if abs(x[drift_yoy_column]) > 1.5 * x[volatility_yoy_column] else 0, axis=1)
     df[outlier_qoq_flag_column] = df.apply(lambda x: 1 if abs(x[drift_qoq_column]) > 1.5 * x[volatility_qoq_column] else 0, axis=1)
-    df[outlier_ttm_flag_column] = df.apply(lambda x: 1 if abs(x[drift_ttm_column]) > 1.5 * x[volatility_ttm_column] else 0, axis=1)
 
     df.loc[df[growth_yoy_column].isna(), outlier_yoy_flag_column] = np.nan
     df.loc[df[growth_qoq_column].isna(), outlier_qoq_flag_column] = np.nan
-    df.loc[df[growth_ttm_column].isna(), outlier_ttm_flag_column] = np.nan
 
 
     # Determine stability regime based on volatility and outlier flags
@@ -114,17 +112,23 @@ def compute_volatility_regime(df: pd.DataFrame, column: str) -> pd.DataFrame:
                                      get_stability_regime(row[volatility_qoq_flag_column], 
                                                           row[outlier_qoq_flag_column], 
                                                           row[drift_qoq_column]), axis=1)
-    df[regime_ttm_column] = df.apply(lambda row: 
-                                     get_stability_regime(row[volatility_ttm_flag_column], 
-                                                          row[outlier_ttm_flag_column], 
-                                                          row[drift_ttm_column]), axis=1)
+    
+    if ttm:
+        df[drift_ttm_column] = df[growth_ttm_column].shift(1).rolling(window=4).mean()
+        df.loc[df[growth_ttm_column].isna(), drift_ttm_column] = np.nan
+        df[outlier_ttm_flag_column] = df.apply(lambda x: 1 if abs(x[drift_ttm_column]) > 1.5 * x[volatility_ttm_column] else 0, axis=1)
+        df.loc[df[growth_ttm_column].isna(), outlier_ttm_flag_column] = np.nan
+        df[regime_ttm_column] = df.apply(lambda row: 
+                                        get_stability_regime(row[volatility_ttm_flag_column], 
+                                                            row[outlier_ttm_flag_column], 
+                                                            row[drift_ttm_column]), axis=1)
 
     return df
 
-def compute_stability_metrics(df: pd.DataFrame, column: str, volatility_threshold: float) -> pd.DataFrame:
+def compute_stability_metrics(df: pd.DataFrame, column: str, volatility_threshold: float, ttm: bool = True) -> pd.DataFrame:
     """
     Compute stability metrics for a specified column in the DataFrame.
     """
-    df = calculate_volatility(df, column, volatility_threshold)
-    df = compute_volatility_regime(df, column)
+    df = calculate_volatility(df, column, volatility_threshold, ttm=ttm)
+    df = compute_volatility_regime(df, column, ttm=ttm)
     return df
