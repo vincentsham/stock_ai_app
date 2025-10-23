@@ -41,8 +41,8 @@ examples:
 | 15 | Feature | Catalyst logic | High | Open |  |  |  |
 | 16 | Feature | uuid for some tables | High | Open |  |  |  |
 | 17 | Feature | integrate catalysts into news, analyst ratings and earnings | High | Open |  |  |  |
-| 19 | Feature | load balance sheets into core | High | Open |  |  |  |
-| 21 | Feature | load cash flows into core | High | Open |  |  |  |
+| 19 | Feature | cash flow analysis | High | Open |  |  |  |
+| 21 | Feature | balance sheet analysis | High | Open |  |  |  |
 | 22 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
 | 26 | Feature | profitability analysis | High | Open |  |  |  |
 | 27 | Feature | efficiency analysis | High | Open |  |  |  |
@@ -92,8 +92,8 @@ examples:
 | 23 | Bugs | raw.earnings table - earnings date is not correct and may be remove fiscal date| High | Close | feat_23 | 2025-10-19 | 2025-10-19 |
 | 24 | Feature | growth, stability, acceleration framework | High | Close | feat_24 | 2025-10-20 | 2025-10-21 |
 | 25 | Feature | revenue analysis | High | Close | feat_25 | 2025-10-22 | 2025-10-23 |
-| 28 | Feature | cash flow analysis | High | Close | feat_28 | 2025-10-21 | 2025-10-22 |
-| 29 | Feature | balance sheet analysis | High | Close | feat_28 | 2025-10-21 | 2025-10-22 |
+| 28 | Feature | load cash flows into core | High | Close | feat_28 | 2025-10-21 | 2025-10-22 |
+| 29 | Feature | load balance sheets into core | High | Close | feat_28 | 2025-10-21 | 2025-10-22 |
 | 30 | Feature | surprise analysis | High | Close | feat_30 | 2025-10-21 | 2025-10-21 |
 | 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
