@@ -356,6 +356,60 @@ def stock_price_statistics(df, start_date, end_date):
     return {"price_stats": price_stats}
 
 
+def transform_records(tic, conn, cursor, num_months, latest_date):
+    results = []
+
+    # Fetch data
+    ohlcv_data = read_ohlcv_data(tic, conn)
+    analyst_pts = read_analyst_pts(tic, conn)
+    analyst_grades = read_analyst_grades(tic, conn)
+
+    # Process data
+    analyst_pts = find_previous_pts(analyst_pts)
+
+    cursor.execute(f"SELECT date FROM raw.stock_ohlcv_daily WHERE tic = '{tic}';")
+    dates = cursor.fetchall()
+
+    for date in dates:
+        end_date = date[0]
+        start_date = (date[0] - pd.DateOffset(months=num_months)).date()
+
+        if start_date < latest_date:
+            continue  # Skip if start_date is before the latest_date threshold
+
+        pt_aggregations = {}
+        return_aggregations = {}
+        if not analyst_pts.empty:
+            pt_aggregations = aggregate_analyst_pts(analyst_pts, start_date, end_date)
+            return_aggregations = aggregate_analyst_returns(analyst_pts, start_date, end_date)
+        
+        grade_aggregations = {}
+        if not analyst_grades.empty:
+            grade_aggregations = aggregate_analyst_grades(analyst_grades, start_date, end_date)
+        price_aggregations = stock_price_statistics(ohlcv_data, start_date, end_date)
+
+        # Combine results
+        if analyst_pts.empty and analyst_grades.empty:
+            continue  # Skip if no data to aggregate
+
+        result = {
+            "tic": tic,
+            "start_date": start_date,
+            "end_date": end_date,
+            **pt_aggregations['pt_stats'],
+            **pt_aggregations['pt_actions'],
+            **grade_aggregations['grade_stats'],
+            **grade_aggregations['grade_actions'],
+            **return_aggregations['ret_stats'],
+            **return_aggregations['ret_actions'],
+            **price_aggregations['price_stats'],
+        }
+
+        results.append(result)
+    
+    df = pd.DataFrame(results)
+    return df
+
 def main():
     conn = connect_to_db()
     if conn:
@@ -363,68 +417,23 @@ def main():
         cursor.execute("SELECT tic FROM core.stock_profiles;")
         tic_list = cursor.fetchall()
 
+        # Control how far back to process data
         latest_date = (pd.Timestamp.today() - pd.Timedelta(days=365 * 2)).date()
 
 
         for tic in tic_list:
             tic = tic[0]
-            results = []
-
-            # Fetch data
-            ohlcv_data = read_ohlcv_data(tic, conn)
-            analyst_pts = read_analyst_pts(tic, conn)
-            analyst_grades = read_analyst_grades(tic, conn)
-
-            # Process data
-            analyst_pts = find_previous_pts(analyst_pts)
-
-
-            cursor.execute(f"SELECT date FROM raw.stock_ohlcv_daily WHERE tic = '{tic}';")
-            dates = cursor.fetchall()
-
-            for date in dates:
-                end_date = date[0]
-                start_date = date[0] - pd.Timedelta(days=30)
-
-                if start_date < latest_date:
-                    continue  # Skip if start_date is before the latest_date threshold
-
-                pt_aggregations = {}
-                return_aggregations = {}
-                if not analyst_pts.empty:
-                    pt_aggregations = aggregate_analyst_pts(analyst_pts, start_date, end_date)
-                    return_aggregations = aggregate_analyst_returns(analyst_pts, start_date, end_date)
-                
-                grade_aggregations = {}
-                if not analyst_grades.empty:
-                    grade_aggregations = aggregate_analyst_grades(analyst_grades, start_date, end_date)
-                price_aggregations = stock_price_statistics(ohlcv_data, start_date, end_date)
-
-                # Combine results
-                if analyst_pts.empty and analyst_grades.empty:
-                    continue  # Skip if no data to aggregate
-
-                result = {
-                    "tic": tic,
-                    "start_date": start_date,
-                    "end_date": end_date,
-                    **pt_aggregations['pt_stats'],
-                    **pt_aggregations['pt_actions'],
-                    **grade_aggregations['grade_stats'],
-                    **grade_aggregations['grade_actions'],
-                    **return_aggregations['ret_stats'],
-                    **return_aggregations['ret_actions'],
-                    **price_aggregations['price_stats'],
-                }
-
-                results.append(result)
-            
-            df = pd.DataFrame(results)
+            df = transform_records(tic, conn, cursor, 1, latest_date)
             total_records = insert_records(conn, df, "core.analyst_rating_monthly_summary", ["tic", "start_date", "end_date"])
+            print(f"Processed {total_records} monthly records for {tic}")
 
-    
-            print(f"Processed {total_records} records for {tic}")
-            # print(f"Processed {len(results)} records for {tic}")
+            df = transform_records(tic, conn, cursor, 3, latest_date)
+            total_records = insert_records(conn, df, "core.analyst_rating_quarterly_summary", ["tic", "start_date", "end_date"])
+            print(f"Processed {total_records} quarterly records for {tic}")
+
+            df = transform_records(tic, conn, cursor, 12, latest_date)
+            total_records = insert_records(conn, df, "core.analyst_rating_yearly_summary", ["tic", "start_date", "end_date"])
+            print(f"Processed {total_records} yearly records for {tic}")
 
         conn.close()
 

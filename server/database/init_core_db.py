@@ -338,6 +338,151 @@ def table_creation(conn):
         """)
         print("Table 'analyst_rating_monthly_summary' created or already exists.")
 
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.analyst_rating_quarterly_summary (
+            tic               VARCHAR(10)   NOT NULL,
+            start_date        DATE          NOT NULL,
+            end_date          DATE          NOT NULL,
+
+            -- ---- Price Target (pt_) statistics ----
+            pt_count          INTEGER       DEFAULT 0,
+            pt_high           FLOAT,
+            pt_low            FLOAT,
+            pt_p25            FLOAT,
+            pt_median         FLOAT,
+            pt_p75            FLOAT,
+            pt_mean           FLOAT,
+            pt_stddev         FLOAT,
+            pt_dispersion     FLOAT,
+
+            pt_upgrade_n      INTEGER       DEFAULT 0,
+            pt_downgrade_n    INTEGER       DEFAULT 0,
+            pt_reiterate_n    INTEGER       DEFAULT 0,
+            pt_init_n         INTEGER       DEFAULT 0,
+
+            -- ---- Grade statistics ----
+            grade_count       INTEGER       DEFAULT 0,
+            grade_buy_n       INTEGER       DEFAULT 0,
+            grade_hold_n      INTEGER       DEFAULT 0,
+            grade_sell_n      INTEGER       DEFAULT 0,
+            grade_buy_ratio   FLOAT,
+            grade_hold_ratio  FLOAT,
+            grade_sell_ratio  FLOAT,
+            grade_balance     FLOAT,
+
+            grade_upgrade_n   INTEGER       DEFAULT 0,
+            grade_downgrade_n INTEGER       DEFAULT 0,
+            grade_reiterate_n INTEGER       DEFAULT 0,
+            grade_init_n      INTEGER       DEFAULT 0,
+
+            -- ---- Implied return statistics ----
+            ret_mean          FLOAT,
+            ret_median        FLOAT,
+            ret_p25           FLOAT,
+            ret_p75           FLOAT,
+            ret_stddev        FLOAT,
+            ret_dispersion    FLOAT,
+            ret_high          FLOAT,
+            ret_low           FLOAT,
+
+            ret_upgrade_n     INTEGER       DEFAULT 0,
+            ret_downgrade_n   INTEGER       DEFAULT 0,
+            ret_reiterate_n   INTEGER       DEFAULT 0,
+            ret_init_n        INTEGER       DEFAULT 0,
+
+            -- ---- Price statistics ----
+            price_start       FLOAT,
+            price_end         FLOAT,
+            price_high        FLOAT,
+            price_low         FLOAT,
+            price_p25         FLOAT,
+            price_median      FLOAT,
+            price_p75         FLOAT,
+            price_mean        FLOAT,
+            price_stddev      FLOAT,
+
+            updated_at        TIMESTAMPTZ DEFAULT NOW(),
+
+            PRIMARY KEY (tic, start_date, end_date)
+        );
+        """)
+        print("Table 'analyst_rating_quarterly_summary' created or already exists.")
+
+
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.analyst_rating_yearly_summary (
+            tic               VARCHAR(10)   NOT NULL,
+            start_date        DATE          NOT NULL,
+            end_date          DATE          NOT NULL,
+
+            -- ---- Price Target (pt_) statistics ----
+            pt_count          INTEGER       DEFAULT 0,
+            pt_high           FLOAT,
+            pt_low            FLOAT,
+            pt_p25            FLOAT,
+            pt_median         FLOAT,
+            pt_p75            FLOAT,
+            pt_mean           FLOAT,
+            pt_stddev         FLOAT,
+            pt_dispersion     FLOAT,
+
+            pt_upgrade_n      INTEGER       DEFAULT 0,
+            pt_downgrade_n    INTEGER       DEFAULT 0,
+            pt_reiterate_n    INTEGER       DEFAULT 0,
+            pt_init_n         INTEGER       DEFAULT 0,
+
+            -- ---- Grade statistics ----
+            grade_count       INTEGER       DEFAULT 0,
+            grade_buy_n       INTEGER       DEFAULT 0,
+            grade_hold_n      INTEGER       DEFAULT 0,
+            grade_sell_n      INTEGER       DEFAULT 0,
+            grade_buy_ratio   FLOAT,
+            grade_hold_ratio  FLOAT,
+            grade_sell_ratio  FLOAT,
+            grade_balance     FLOAT,
+
+            grade_upgrade_n   INTEGER       DEFAULT 0,
+            grade_downgrade_n INTEGER       DEFAULT 0,
+            grade_reiterate_n INTEGER       DEFAULT 0,
+            grade_init_n      INTEGER       DEFAULT 0,
+
+            -- ---- Implied return statistics ----
+            ret_mean          FLOAT,
+            ret_median        FLOAT,
+            ret_p25           FLOAT,
+            ret_p75           FLOAT,
+            ret_stddev        FLOAT,
+            ret_dispersion    FLOAT,
+            ret_high          FLOAT,
+            ret_low           FLOAT,
+
+            ret_upgrade_n     INTEGER       DEFAULT 0,
+            ret_downgrade_n   INTEGER       DEFAULT 0,
+            ret_reiterate_n   INTEGER       DEFAULT 0,
+            ret_init_n        INTEGER       DEFAULT 0,
+
+            -- ---- Price statistics ----
+            price_start       FLOAT,
+            price_end         FLOAT,
+            price_high        FLOAT,
+            price_low         FLOAT,
+            price_p25         FLOAT,
+            price_median      FLOAT,
+            price_p75         FLOAT,
+            price_mean        FLOAT,
+            price_stddev      FLOAT,
+
+            updated_at        TIMESTAMPTZ DEFAULT NOW(),
+
+            PRIMARY KEY (tic, start_date, end_date)
+        );
+        """)
+        print("Table 'analyst_rating_yearly_summary' created or already exists.")
+
+
+
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.earnings_analysis (
             -- Entity & period
