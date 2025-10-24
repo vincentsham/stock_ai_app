@@ -46,6 +46,7 @@ examples:
 | 1007 | Feature | Create and load raw tables in core | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
+| 1011 | Miscellaneous | Reference table for the text of categorical columns in metrics | Medium | Open |  |  |  |
 | 10001 | Feature | Transfer Tables that has text to Pinecone | Low | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
