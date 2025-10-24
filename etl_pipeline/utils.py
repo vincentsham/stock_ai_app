@@ -121,7 +121,7 @@ def calculate_streak_pos_neg(series: pd.Series) -> pd.Series:
 
 
 def calculate_pct_change(current: float, previous: float) -> float:
-    if previous is None or previous == 0 or current is None:
+    if previous is None or current is None:
         return None
     
     pct_change = (current - previous) / max(abs(previous), 1e-6)

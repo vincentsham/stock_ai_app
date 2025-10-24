@@ -1069,6 +1069,328 @@ def table_creation(conn):
         print("Table 'roic_metrics' created or already exists with composite primary key.")
 
 
+       # Create a table for Current Ratio (CR) metrics if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.cr_metrics (
+            -- Identity & period alignment
+            tic                               VARCHAR(10)  NOT NULL,
+            calendar_year                     SMALLINT     NOT NULL,
+            calendar_quarter                  SMALLINT     NOT NULL,
+
+            -- EPS Metrics
+            cr                           FLOAT,
+            cr_ttm                       FLOAT,
+                       
+            -- Quarter-over-Quarter (QoQ) Growth Metrics           
+            cr_qoq_growth_pct          FLOAT,
+            cr_qoq_positive_flag        SMALLINT,
+            cr_qoq_count_4q                SMALLINT,
+            cr_qoq_streak_length           SMALLINT,
+            cr_qoq_growth_class        VARCHAR(50),
+            cr_qoq_growth_regime          VARCHAR(50), 
+                       
+            cr_qoq_volatility_4q        FLOAT,
+            cr_qoq_volatility_flag           SMALLINT,
+            cr_qoq_growth_drift             FLOAT,
+            cr_qoq_outlier_flag               SMALLINT,
+            cr_qoq_stability_regime        VARCHAR(50),
+                       
+            cr_qoq_accel                  FLOAT,
+            cr_qoq_accel_count_4q             SMALLINT,  
+            cr_qoq_accel_positive_flag        SMALLINT,
+            cr_qoq_accel_streak_length           SMALLINT,
+            cr_qoq_accel_regime              VARCHAR(50),
+
+            -- Year-over-Year (YoY) Growth Metrics           
+            cr_yoy_growth_pct             FLOAT,
+            cr_yoy_positive_flag        SMALLINT,
+            cr_yoy_count_4q                SMALLINT,
+            cr_yoy_streak_length           SMALLINT,
+            cr_yoy_growth_class        VARCHAR(50),
+            cr_yoy_growth_regime          VARCHAR(50),
+            
+            cr_yoy_volatility_4q        FLOAT,
+            cr_yoy_volatility_flag           SMALLINT,
+            cr_yoy_growth_drift             FLOAT,
+            cr_yoy_outlier_flag               SMALLINT,
+            cr_yoy_stability_regime        VARCHAR(50),
+
+            cr_yoy_accel                  FLOAT,
+            cr_yoy_accel_count_4q             SMALLINT,  
+            cr_yoy_accel_positive_flag        SMALLINT,
+            cr_yoy_accel_streak_length           SMALLINT,
+            cr_yoy_accel_regime              VARCHAR(50),
+            
+            -- TTM Growth Metrics
+            cr_ttm_growth_pct             FLOAT,
+            cr_ttm_positive_flag        SMALLINT,
+            cr_ttm_count_4q                SMALLINT,
+            cr_ttm_streak_length           SMALLINT,
+            cr_ttm_growth_class        VARCHAR(50),
+            cr_ttm_growth_regime          VARCHAR(50),
+
+            cr_ttm_volatility_4q        FLOAT,
+            cr_ttm_volatility_flag           SMALLINT,
+            cr_ttm_growth_drift             FLOAT,
+            cr_ttm_outlier_flag               SMALLINT,
+            cr_ttm_stability_regime        VARCHAR(50),
+
+            cr_ttm_accel                  FLOAT,
+            cr_ttm_accel_count_4q             SMALLINT,
+            cr_ttm_accel_positive_flag        SMALLINT,
+            cr_ttm_accel_streak_length           SMALLINT,
+            cr_ttm_accel_regime              VARCHAR(50),
+
+            raw_json_sha256                       CHAR(64)     NOT NULL,
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+        );
+        """)
+        print("Table 'cr_metrics' created or already exists with composite primary key.")
+
+
+
+       # Create a table for Debt to Equity Ratio (DER) metrics if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.der_metrics (
+            -- Identity & period alignment
+            tic                               VARCHAR(10)  NOT NULL,
+            calendar_year                     SMALLINT     NOT NULL,
+            calendar_quarter                  SMALLINT     NOT NULL,
+
+            -- EPS Metrics
+            der                           FLOAT,
+            der_ttm                       FLOAT,
+                       
+            -- Quarter-over-Quarter (QoQ) Growth Metrics           
+            der_qoq_growth_pct          FLOAT,
+            der_qoq_positive_flag        SMALLINT,
+            der_qoq_count_4q                SMALLINT,
+            der_qoq_streak_length           SMALLINT,
+            der_qoq_growth_class        VARCHAR(50),
+            der_qoq_growth_regime          VARCHAR(50), 
+                       
+            der_qoq_volatility_4q        FLOAT,
+            der_qoq_volatility_flag           SMALLINT,
+            der_qoq_growth_drift             FLOAT,
+            der_qoq_outlier_flag               SMALLINT,
+            der_qoq_stability_regime        VARCHAR(50),
+                       
+            der_qoq_accel                  FLOAT,
+            der_qoq_accel_count_4q             SMALLINT,  
+            der_qoq_accel_positive_flag        SMALLINT,
+            der_qoq_accel_streak_length           SMALLINT,
+            der_qoq_accel_regime              VARCHAR(50),
+
+            -- Year-over-Year (YoY) Growth Metrics           
+            der_yoy_growth_pct             FLOAT,
+            der_yoy_positive_flag        SMALLINT,
+            der_yoy_count_4q                SMALLINT,
+            der_yoy_streak_length           SMALLINT,
+            der_yoy_growth_class        VARCHAR(50),
+            der_yoy_growth_regime          VARCHAR(50),
+            
+            der_yoy_volatility_4q        FLOAT,
+            der_yoy_volatility_flag           SMALLINT,
+            der_yoy_growth_drift             FLOAT,
+            der_yoy_outlier_flag               SMALLINT,
+            der_yoy_stability_regime        VARCHAR(50),
+
+            der_yoy_accel                  FLOAT,
+            der_yoy_accel_count_4q             SMALLINT,  
+            der_yoy_accel_positive_flag        SMALLINT,
+            der_yoy_accel_streak_length           SMALLINT,
+            der_yoy_accel_regime              VARCHAR(50),
+            
+            -- TTM Growth Metrics
+            der_ttm_growth_pct             FLOAT,
+            der_ttm_positive_flag        SMALLINT,
+            der_ttm_count_4q                SMALLINT,
+            der_ttm_streak_length           SMALLINT,
+            der_ttm_growth_class        VARCHAR(50),
+            der_ttm_growth_regime          VARCHAR(50),
+
+            der_ttm_volatility_4q        FLOAT,
+            der_ttm_volatility_flag           SMALLINT,
+            der_ttm_growth_drift             FLOAT,
+            der_ttm_outlier_flag               SMALLINT,
+            der_ttm_stability_regime        VARCHAR(50),
+
+            der_ttm_accel                  FLOAT,
+            der_ttm_accel_count_4q             SMALLINT,
+            der_ttm_accel_positive_flag        SMALLINT,
+            der_ttm_accel_streak_length           SMALLINT,
+            der_ttm_accel_regime              VARCHAR(50),
+
+            raw_json_sha256                       CHAR(64)     NOT NULL,
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+        );
+        """)
+        print("Table 'der_metrics' created or already exists with composite primary key.")
+
+
+
+       # Create a table for Interest Coverage Ratio (ICR) metrics if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.icr_metrics (
+            -- Identity & period alignment
+            tic                               VARCHAR(10)  NOT NULL,
+            calendar_year                     SMALLINT     NOT NULL,
+            calendar_quarter                  SMALLINT     NOT NULL,
+
+            -- EPS Metrics
+            icr                           FLOAT,
+            icr_ttm                       FLOAT,
+                       
+            -- Quarter-over-Quarter (QoQ) Growth Metrics           
+            icr_qoq_growth_pct          FLOAT,
+            icr_qoq_positive_flag        SMALLINT,
+            icr_qoq_count_4q                SMALLINT,
+            icr_qoq_streak_length           SMALLINT,
+            icr_qoq_growth_class        VARCHAR(50),
+            icr_qoq_growth_regime          VARCHAR(50), 
+                       
+            icr_qoq_volatility_4q        FLOAT,
+            icr_qoq_volatility_flag           SMALLINT,
+            icr_qoq_growth_drift             FLOAT,
+            icr_qoq_outlier_flag               SMALLINT,
+            icr_qoq_stability_regime        VARCHAR(50),
+                       
+            icr_qoq_accel                  FLOAT,
+            icr_qoq_accel_count_4q             SMALLINT,  
+            icr_qoq_accel_positive_flag        SMALLINT,
+            icr_qoq_accel_streak_length           SMALLINT,
+            icr_qoq_accel_regime              VARCHAR(50),
+
+            -- Year-over-Year (YoY) Growth Metrics           
+            icr_yoy_growth_pct             FLOAT,
+            icr_yoy_positive_flag        SMALLINT,
+            icr_yoy_count_4q                SMALLINT,
+            icr_yoy_streak_length           SMALLINT,
+            icr_yoy_growth_class        VARCHAR(50),
+            icr_yoy_growth_regime          VARCHAR(50),
+            
+            icr_yoy_volatility_4q        FLOAT,
+            icr_yoy_volatility_flag           SMALLINT,
+            icr_yoy_growth_drift             FLOAT,
+            icr_yoy_outlier_flag               SMALLINT,
+            icr_yoy_stability_regime        VARCHAR(50),
+
+            icr_yoy_accel                  FLOAT,
+            icr_yoy_accel_count_4q             SMALLINT,  
+            icr_yoy_accel_positive_flag        SMALLINT,
+            icr_yoy_accel_streak_length           SMALLINT,
+            icr_yoy_accel_regime              VARCHAR(50),
+            
+            -- TTM Growth Metrics
+            icr_ttm_growth_pct             FLOAT,
+            icr_ttm_positive_flag        SMALLINT,
+            icr_ttm_count_4q                SMALLINT,
+            icr_ttm_streak_length           SMALLINT,
+            icr_ttm_growth_class        VARCHAR(50),
+            icr_ttm_growth_regime          VARCHAR(50),
+
+            icr_ttm_volatility_4q        FLOAT,
+            icr_ttm_volatility_flag           SMALLINT,
+            icr_ttm_growth_drift             FLOAT,
+            icr_ttm_outlier_flag               SMALLINT,
+            icr_ttm_stability_regime        VARCHAR(50),
+
+            icr_ttm_accel                  FLOAT,
+            icr_ttm_accel_count_4q             SMALLINT,
+            icr_ttm_accel_positive_flag        SMALLINT,
+            icr_ttm_accel_streak_length           SMALLINT,
+            icr_ttm_accel_regime              VARCHAR(50),
+
+            raw_json_sha256                       CHAR(64)     NOT NULL,
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+        );
+        """)
+        print("Table 'icr_metrics' created or already exists with composite primary key.")
+
+
+
+       # Create a table for Net Debt / EBITDA metrics if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.net_debt_to_ebitda_metrics (
+            -- Identity & period alignment
+            tic                               VARCHAR(10)  NOT NULL,
+            calendar_year                     SMALLINT     NOT NULL,
+            calendar_quarter                  SMALLINT     NOT NULL,
+
+            -- EPS Metrics
+            net_debt_to_ebitda                           FLOAT,
+            net_debt_to_ebitda_ttm                       FLOAT,
+                       
+            -- Quarter-over-Quarter (QoQ) Growth Metrics           
+            net_debt_to_ebitda_qoq_growth_pct          FLOAT,
+            net_debt_to_ebitda_qoq_positive_flag        SMALLINT,
+            net_debt_to_ebitda_qoq_count_4q                SMALLINT,
+            net_debt_to_ebitda_qoq_streak_length           SMALLINT,
+            net_debt_to_ebitda_qoq_growth_class        VARCHAR(50),
+            net_debt_to_ebitda_qoq_growth_regime          VARCHAR(50), 
+                       
+            net_debt_to_ebitda_qoq_volatility_4q        FLOAT,
+            net_debt_to_ebitda_qoq_volatility_flag           SMALLINT,
+            net_debt_to_ebitda_qoq_growth_drift             FLOAT,
+            net_debt_to_ebitda_qoq_outlier_flag               SMALLINT,
+            net_debt_to_ebitda_qoq_stability_regime        VARCHAR(50),
+                       
+            net_debt_to_ebitda_qoq_accel                  FLOAT,
+            net_debt_to_ebitda_qoq_accel_count_4q             SMALLINT,  
+            net_debt_to_ebitda_qoq_accel_positive_flag        SMALLINT,
+            net_debt_to_ebitda_qoq_accel_streak_length           SMALLINT,
+            net_debt_to_ebitda_qoq_accel_regime              VARCHAR(50),
+
+            -- Year-over-Year (YoY) Growth Metrics           
+            net_debt_to_ebitda_yoy_growth_pct             FLOAT,
+            net_debt_to_ebitda_yoy_positive_flag        SMALLINT,
+            net_debt_to_ebitda_yoy_count_4q                SMALLINT,
+            net_debt_to_ebitda_yoy_streak_length           SMALLINT,
+            net_debt_to_ebitda_yoy_growth_class        VARCHAR(50),
+            net_debt_to_ebitda_yoy_growth_regime          VARCHAR(50),
+            
+            net_debt_to_ebitda_yoy_volatility_4q        FLOAT,
+            net_debt_to_ebitda_yoy_volatility_flag           SMALLINT,
+            net_debt_to_ebitda_yoy_growth_drift             FLOAT,
+            net_debt_to_ebitda_yoy_outlier_flag               SMALLINT,
+            net_debt_to_ebitda_yoy_stability_regime        VARCHAR(50),
+
+            net_debt_to_ebitda_yoy_accel                  FLOAT,
+            net_debt_to_ebitda_yoy_accel_count_4q             SMALLINT,  
+            net_debt_to_ebitda_yoy_accel_positive_flag        SMALLINT,
+            net_debt_to_ebitda_yoy_accel_streak_length           SMALLINT,
+            net_debt_to_ebitda_yoy_accel_regime              VARCHAR(50),
+            
+            -- TTM Growth Metrics
+            net_debt_to_ebitda_ttm_growth_pct             FLOAT,
+            net_debt_to_ebitda_ttm_positive_flag        SMALLINT,
+            net_debt_to_ebitda_ttm_count_4q                SMALLINT,
+            net_debt_to_ebitda_ttm_streak_length           SMALLINT,
+            net_debt_to_ebitda_ttm_growth_class        VARCHAR(50),
+            net_debt_to_ebitda_ttm_growth_regime          VARCHAR(50),
+
+            net_debt_to_ebitda_ttm_volatility_4q        FLOAT,
+            net_debt_to_ebitda_ttm_volatility_flag           SMALLINT,
+            net_debt_to_ebitda_ttm_growth_drift             FLOAT,
+            net_debt_to_ebitda_ttm_outlier_flag               SMALLINT,
+            net_debt_to_ebitda_ttm_stability_regime        VARCHAR(50),
+
+            net_debt_to_ebitda_ttm_accel                  FLOAT,
+            net_debt_to_ebitda_ttm_accel_count_4q             SMALLINT,
+            net_debt_to_ebitda_ttm_accel_positive_flag        SMALLINT,
+            net_debt_to_ebitda_ttm_accel_streak_length           SMALLINT,
+            net_debt_to_ebitda_ttm_accel_regime              VARCHAR(50),
+
+            raw_json_sha256                       CHAR(64)     NOT NULL,
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+        );
+        """)
+        print("Table 'net_debt_to_ebitda_metrics' created or already exists with composite primary key.")
+
 
         conn.commit()
         
