@@ -751,6 +751,85 @@ def table_creation(conn):
         print("Table 'capex_metrics' created or already exists with composite primary key.")
 
 
+       # Create a table for Cash Conversion Ratio (CCR) metrics if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.ccr_metrics (
+            -- Identity & period alignment
+            tic                               VARCHAR(10)  NOT NULL,
+            calendar_year                     SMALLINT     NOT NULL,
+            calendar_quarter                  SMALLINT     NOT NULL,
+
+            -- EPS Metrics
+            ccr                           FLOAT,
+            ccr_ttm                       FLOAT,
+                       
+            -- Quarter-over-Quarter (QoQ) Growth Metrics           
+            ccr_qoq_growth_pct          FLOAT,
+            ccr_qoq_positive_flag        SMALLINT,
+            ccr_qoq_count_4q                SMALLINT,
+            ccr_qoq_streak_length           SMALLINT,
+            ccr_qoq_growth_class        VARCHAR(50),
+            ccr_qoq_growth_regime          VARCHAR(50), 
+                       
+            ccr_qoq_volatility_4q        FLOAT,
+            ccr_qoq_volatility_flag           SMALLINT,
+            ccr_qoq_growth_drift             FLOAT,
+            ccr_qoq_outlier_flag               SMALLINT,
+            ccr_qoq_stability_regime        VARCHAR(50),
+                       
+            ccr_qoq_accel                  FLOAT,
+            ccr_qoq_accel_count_4q             SMALLINT,  
+            ccr_qoq_accel_positive_flag        SMALLINT,
+            ccr_qoq_accel_streak_length           SMALLINT,
+            ccr_qoq_accel_regime              VARCHAR(50),
+
+            -- Year-over-Year (YoY) Growth Metrics           
+            ccr_yoy_growth_pct             FLOAT,
+            ccr_yoy_positive_flag        SMALLINT,
+            ccr_yoy_count_4q                SMALLINT,
+            ccr_yoy_streak_length           SMALLINT,
+            ccr_yoy_growth_class        VARCHAR(50),
+            ccr_yoy_growth_regime          VARCHAR(50),
+            
+            ccr_yoy_volatility_4q        FLOAT,
+            ccr_yoy_volatility_flag           SMALLINT,
+            ccr_yoy_growth_drift             FLOAT,
+            ccr_yoy_outlier_flag               SMALLINT,
+            ccr_yoy_stability_regime        VARCHAR(50),
+
+            ccr_yoy_accel                  FLOAT,
+            ccr_yoy_accel_count_4q             SMALLINT,  
+            ccr_yoy_accel_positive_flag        SMALLINT,
+            ccr_yoy_accel_streak_length           SMALLINT,
+            ccr_yoy_accel_regime              VARCHAR(50),
+            
+            -- TTM Growth Metrics
+            ccr_ttm_growth_pct             FLOAT,
+            ccr_ttm_positive_flag        SMALLINT,
+            ccr_ttm_count_4q                SMALLINT,
+            ccr_ttm_streak_length           SMALLINT,
+            ccr_ttm_growth_class        VARCHAR(50),
+            ccr_ttm_growth_regime          VARCHAR(50),
+
+            ccr_ttm_volatility_4q        FLOAT,
+            ccr_ttm_volatility_flag           SMALLINT,
+            ccr_ttm_growth_drift             FLOAT,
+            ccr_ttm_outlier_flag               SMALLINT,
+            ccr_ttm_stability_regime        VARCHAR(50),
+
+            ccr_ttm_accel                  FLOAT,
+            ccr_ttm_accel_count_4q             SMALLINT,
+            ccr_ttm_accel_positive_flag        SMALLINT,
+            ccr_ttm_accel_streak_length           SMALLINT,
+            ccr_ttm_accel_regime              VARCHAR(50),
+
+            raw_json_sha256                       CHAR(64)     NOT NULL,
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+        );
+        """)
+        print("Table 'ccr_metrics' created or already exists with composite primary key.")
+
 
 
         conn.commit()
