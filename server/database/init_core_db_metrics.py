@@ -830,6 +830,244 @@ def table_creation(conn):
         """)
         print("Table 'ccr_metrics' created or already exists with composite primary key.")
 
+       # Create a table for Return on Assets (ROA) metrics if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.roa_metrics (
+            -- Identity & period alignment
+            tic                               VARCHAR(10)  NOT NULL,
+            calendar_year                     SMALLINT     NOT NULL,
+            calendar_quarter                  SMALLINT     NOT NULL,
+
+            -- EPS Metrics
+            roa                           FLOAT,
+            roa_ttm                       FLOAT,
+                       
+            -- Quarter-over-Quarter (QoQ) Growth Metrics           
+            roa_qoq_growth_pct          FLOAT,
+            roa_qoq_positive_flag        SMALLINT,
+            roa_qoq_count_4q                SMALLINT,
+            roa_qoq_streak_length           SMALLINT,
+            roa_qoq_growth_class        VARCHAR(50),
+            roa_qoq_growth_regime          VARCHAR(50), 
+                       
+            roa_qoq_volatility_4q        FLOAT,
+            roa_qoq_volatility_flag           SMALLINT,
+            roa_qoq_growth_drift             FLOAT,
+            roa_qoq_outlier_flag               SMALLINT,
+            roa_qoq_stability_regime        VARCHAR(50),
+                       
+            roa_qoq_accel                  FLOAT,
+            roa_qoq_accel_count_4q             SMALLINT,  
+            roa_qoq_accel_positive_flag        SMALLINT,
+            roa_qoq_accel_streak_length           SMALLINT,
+            roa_qoq_accel_regime              VARCHAR(50),
+
+            -- Year-over-Year (YoY) Growth Metrics           
+            roa_yoy_growth_pct             FLOAT,
+            roa_yoy_positive_flag        SMALLINT,
+            roa_yoy_count_4q                SMALLINT,
+            roa_yoy_streak_length           SMALLINT,
+            roa_yoy_growth_class        VARCHAR(50),
+            roa_yoy_growth_regime          VARCHAR(50),
+            
+            roa_yoy_volatility_4q        FLOAT,
+            roa_yoy_volatility_flag           SMALLINT,
+            roa_yoy_growth_drift             FLOAT,
+            roa_yoy_outlier_flag               SMALLINT,
+            roa_yoy_stability_regime        VARCHAR(50),
+
+            roa_yoy_accel                  FLOAT,
+            roa_yoy_accel_count_4q             SMALLINT,  
+            roa_yoy_accel_positive_flag        SMALLINT,
+            roa_yoy_accel_streak_length           SMALLINT,
+            roa_yoy_accel_regime              VARCHAR(50),
+            
+            -- TTM Growth Metrics
+            roa_ttm_growth_pct             FLOAT,
+            roa_ttm_positive_flag        SMALLINT,
+            roa_ttm_count_4q                SMALLINT,
+            roa_ttm_streak_length           SMALLINT,
+            roa_ttm_growth_class        VARCHAR(50),
+            roa_ttm_growth_regime          VARCHAR(50),
+
+            roa_ttm_volatility_4q        FLOAT,
+            roa_ttm_volatility_flag           SMALLINT,
+            roa_ttm_growth_drift             FLOAT,
+            roa_ttm_outlier_flag               SMALLINT,
+            roa_ttm_stability_regime        VARCHAR(50),
+
+            roa_ttm_accel                  FLOAT,
+            roa_ttm_accel_count_4q             SMALLINT,
+            roa_ttm_accel_positive_flag        SMALLINT,
+            roa_ttm_accel_streak_length           SMALLINT,
+            roa_ttm_accel_regime              VARCHAR(50),
+
+            raw_json_sha256                       CHAR(64)     NOT NULL,
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+        );
+        """)
+        print("Table 'roa_metrics' created or already exists with composite primary key.")
+
+       # Create a table for Return on Equity (ROE) metrics if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.roe_metrics (
+            -- Identity & period alignment
+            tic                               VARCHAR(10)  NOT NULL,
+            calendar_year                     SMALLINT     NOT NULL,
+            calendar_quarter                  SMALLINT     NOT NULL,
+
+            -- EPS Metrics
+            roe                           FLOAT,
+            roe_ttm                       FLOAT,
+                       
+            -- Quarter-over-Quarter (QoQ) Growth Metrics           
+            roe_qoq_growth_pct          FLOAT,
+            roe_qoq_positive_flag        SMALLINT,
+            roe_qoq_count_4q                SMALLINT,
+            roe_qoq_streak_length           SMALLINT,
+            roe_qoq_growth_class        VARCHAR(50),
+            roe_qoq_growth_regime          VARCHAR(50), 
+                       
+            roe_qoq_volatility_4q        FLOAT,
+            roe_qoq_volatility_flag           SMALLINT,
+            roe_qoq_growth_drift             FLOAT,
+            roe_qoq_outlier_flag               SMALLINT,
+            roe_qoq_stability_regime        VARCHAR(50),
+                       
+            roe_qoq_accel                  FLOAT,
+            roe_qoq_accel_count_4q             SMALLINT,  
+            roe_qoq_accel_positive_flag        SMALLINT,
+            roe_qoq_accel_streak_length           SMALLINT,
+            roe_qoq_accel_regime              VARCHAR(50),
+
+            -- Year-over-Year (YoY) Growth Metrics           
+            roe_yoy_growth_pct             FLOAT,
+            roe_yoy_positive_flag        SMALLINT,
+            roe_yoy_count_4q                SMALLINT,
+            roe_yoy_streak_length           SMALLINT,
+            roe_yoy_growth_class        VARCHAR(50),
+            roe_yoy_growth_regime          VARCHAR(50),
+            
+            roe_yoy_volatility_4q        FLOAT,
+            roe_yoy_volatility_flag           SMALLINT,
+            roe_yoy_growth_drift             FLOAT,
+            roe_yoy_outlier_flag               SMALLINT,
+            roe_yoy_stability_regime        VARCHAR(50),
+
+            roe_yoy_accel                  FLOAT,
+            roe_yoy_accel_count_4q             SMALLINT,  
+            roe_yoy_accel_positive_flag        SMALLINT,
+            roe_yoy_accel_streak_length           SMALLINT,
+            roe_yoy_accel_regime              VARCHAR(50),
+            
+            -- TTM Growth Metrics
+            roe_ttm_growth_pct             FLOAT,
+            roe_ttm_positive_flag        SMALLINT,
+            roe_ttm_count_4q                SMALLINT,
+            roe_ttm_streak_length           SMALLINT,
+            roe_ttm_growth_class        VARCHAR(50),
+            roe_ttm_growth_regime          VARCHAR(50),
+
+            roe_ttm_volatility_4q        FLOAT,
+            roe_ttm_volatility_flag           SMALLINT,
+            roe_ttm_growth_drift             FLOAT,
+            roe_ttm_outlier_flag               SMALLINT,
+            roe_ttm_stability_regime        VARCHAR(50),
+
+            roe_ttm_accel                  FLOAT,
+            roe_ttm_accel_count_4q             SMALLINT,
+            roe_ttm_accel_positive_flag        SMALLINT,
+            roe_ttm_accel_streak_length           SMALLINT,
+            roe_ttm_accel_regime              VARCHAR(50),
+
+            raw_json_sha256                       CHAR(64)     NOT NULL,
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+        );
+        """)
+        print("Table 'roe_metrics' created or already exists with composite primary key.")
+
+
+       # Create a table for Return on Invested Capital (ROIC) metrics if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.roic_metrics (
+            -- Identity & period alignment
+            tic                               VARCHAR(10)  NOT NULL,
+            calendar_year                     SMALLINT     NOT NULL,
+            calendar_quarter                  SMALLINT     NOT NULL,
+
+            -- EPS Metrics
+            roic                           FLOAT,
+            roic_ttm                       FLOAT,
+                       
+            -- Quarter-over-Quarter (QoQ) Growth Metrics           
+            roic_qoq_growth_pct          FLOAT,
+            roic_qoq_positive_flag        SMALLINT,
+            roic_qoq_count_4q                SMALLINT,
+            roic_qoq_streak_length           SMALLINT,
+            roic_qoq_growth_class        VARCHAR(50),
+            roic_qoq_growth_regime          VARCHAR(50), 
+                       
+            roic_qoq_volatility_4q        FLOAT,
+            roic_qoq_volatility_flag           SMALLINT,
+            roic_qoq_growth_drift             FLOAT,
+            roic_qoq_outlier_flag               SMALLINT,
+            roic_qoq_stability_regime        VARCHAR(50),
+                       
+            roic_qoq_accel                  FLOAT,
+            roic_qoq_accel_count_4q             SMALLINT,  
+            roic_qoq_accel_positive_flag        SMALLINT,
+            roic_qoq_accel_streak_length           SMALLINT,
+            roic_qoq_accel_regime              VARCHAR(50),
+
+            -- Year-over-Year (YoY) Growth Metrics           
+            roic_yoy_growth_pct             FLOAT,
+            roic_yoy_positive_flag        SMALLINT,
+            roic_yoy_count_4q                SMALLINT,
+            roic_yoy_streak_length           SMALLINT,
+            roic_yoy_growth_class        VARCHAR(50),
+            roic_yoy_growth_regime          VARCHAR(50),
+            
+            roic_yoy_volatility_4q        FLOAT,
+            roic_yoy_volatility_flag           SMALLINT,
+            roic_yoy_growth_drift             FLOAT,
+            roic_yoy_outlier_flag               SMALLINT,
+            roic_yoy_stability_regime        VARCHAR(50),
+
+            roic_yoy_accel                  FLOAT,
+            roic_yoy_accel_count_4q             SMALLINT,  
+            roic_yoy_accel_positive_flag        SMALLINT,
+            roic_yoy_accel_streak_length           SMALLINT,
+            roic_yoy_accel_regime              VARCHAR(50),
+            
+            -- TTM Growth Metrics
+            roic_ttm_growth_pct             FLOAT,
+            roic_ttm_positive_flag        SMALLINT,
+            roic_ttm_count_4q                SMALLINT,
+            roic_ttm_streak_length           SMALLINT,
+            roic_ttm_growth_class        VARCHAR(50),
+            roic_ttm_growth_regime          VARCHAR(50),
+
+            roic_ttm_volatility_4q        FLOAT,
+            roic_ttm_volatility_flag           SMALLINT,
+            roic_ttm_growth_drift             FLOAT,
+            roic_ttm_outlier_flag               SMALLINT,
+            roic_ttm_stability_regime        VARCHAR(50),
+
+            roic_ttm_accel                  FLOAT,
+            roic_ttm_accel_count_4q             SMALLINT,
+            roic_ttm_accel_positive_flag        SMALLINT,
+            roic_ttm_accel_streak_length           SMALLINT,
+            roic_ttm_accel_regime              VARCHAR(50),
+
+            raw_json_sha256                       CHAR(64)     NOT NULL,
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+        );
+        """)
+        print("Table 'roic_metrics' created or already exists with composite primary key.")
+
 
 
         conn.commit()
