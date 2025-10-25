@@ -1,4 +1,4 @@
-# AI Stock Intelligence System  
+# AI Stock Intelligence System (Work in Progress)
 **Author:** Vincent Sham  
 **Project:** Multi-Agent AI Framework for Comprehensive Stock Analysis  
 
