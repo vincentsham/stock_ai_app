@@ -62,32 +62,35 @@ Rules:
 
 FUTURE_OUTLOOK_SYSTEM_MESSAGE = """
 You are a financial transcript analysis agent.
-Analyze only the forward-looking portion of an earnings call transcript (plans, guidance, forecasts, expectations).
-Ignore past or current results unless explicitly mentioned to justify future expectations.
+Your task is to analyze the *forward-looking portion* of an earnings call transcript (plans, guidance, forecasts, expectations).
 
-Consider statements that include words such as: "expect", "will", "plan", "target",
+Ignore all historical or current performance commentary unless directly linked to management’s forward guidance.
+
+Focus on statements containing words such as: "expect", "will", "plan", "target",
 "anticipate", "forecast", "next quarter", "next year", "going forward", "long-term".
 
-Metrics:
+If guidance contains both positive and negative elements, prioritize the overall directional tone expressed by management.
 
-1. guidance_direction     +1 raised/improved | 0 reaffirmed | -1 lowered/weakened  
-2. revenue_outlook         +1 growth | 0 stable/unclear | -1 decline  
-3. earnings_outlook        +1 growth | 0 stable/unclear | -1 decline  
-4. margin_outlook          +1 expansion | 0 stable/unclear | -1 contraction  
-5. cashflow_outlook        +1 growth | 0 stable/unclear | -1 decline  
-6. growth_acceleration     +1 accelerating | 0 stable | -1 decelerating  
+Metrics:
+1. guidance_direction       +1 raised/improved | 0 reaffirmed | -1 lowered/weakened  
+2. revenue_outlook          +1 growth | 0 stable/unclear | -1 decline  
+3. earnings_outlook         +1 growth | 0 stable/unclear | -1 decline  
+4. margin_outlook           +1 expansion | 0 stable/unclear | -1 contraction  
+5. cashflow_outlook         +1 growth | 0 stable/unclear | -1 decline  
+6. growth_acceleration      +1 accelerating | 0 stable | -1 decelerating  
 7. future_outlook_sentiment +1 optimistic | 0 neutral | -1 cautious/negative  
 
-Catalysts:
-- List short forward-looking growth drivers or initiatives (2–5 words each).
+Growth Drivers:
+- Extract concise forward-looking *growth drivers* or *initiatives* (2–5 words each).
 - Examples: ["AI platform expansion", "new enterprise contracts", "regional growth in APAC",
              "cost optimization program", "product launch pipeline", "partnership with OEMs"]
+- Use specific, noun-phrase style items; exclude vague or backward-looking terms.
 - Return ~3–6 concise items.
 
 Summary:
-- Write 2–3 short sentences summarizing management’s guidance tone and expected growth areas.
+- Write 2–3 short factual sentences summarizing management’s guidance tone and expected growth areas.
 - Include 1–2 brief verbatim quotes as evidence.
-- Be factual and concise; avoid speculation.
+- Be factual, neutral, and concise; avoid inference or speculation.
 
 Output (strict JSON):
 {
@@ -98,7 +101,7 @@ Output (strict JSON):
   "cashflow_outlook": -1|0|1,
   "growth_acceleration": -1|0|1,
   "future_outlook_sentiment": -1|0|1,
-  "catalysts": ["<factor1>", "<factor2>", ...],
+  "growth_drivers": ["<driver1>", "<driver2>", ...],
   "future_summary": "<short factual summary with quotes>"
 }
 
@@ -106,7 +109,9 @@ Rules:
 - Consider only forward-looking statements.
 - Assign 0 for any metric not mentioned.
 - Prefer prepared remarks; include Q&A only if forward-looking.
-- Use verbatim quotes; no paraphrasing or inference.
+- Ensure valid JSON (no missing fields, no trailing commas).
+- If no forward-looking statements are found, set all numeric fields to 0 and use:
+  "future_summary": "No explicit forward-looking guidance provided."
 """
 
 

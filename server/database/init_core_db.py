@@ -224,7 +224,7 @@ def table_creation(conn):
             cashflow_outlook        SMALLINT,       -- -1, 0, 1
             growth_acceleration     SMALLINT,       -- -1, 0, 1
             future_outlook_sentiment SMALLINT,      -- -1, 0, 1
-            catalysts               TEXT[] NOT NULL DEFAULT '{}',
+            growth_drivers               TEXT[] NOT NULL DEFAULT '{}',
             future_summary          TEXT,
 
             -- === Risk analysis ===

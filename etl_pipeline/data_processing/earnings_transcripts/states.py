@@ -128,7 +128,7 @@ class FutureState(TypedDict):
         "cashflow_outlook": -1|0|1,
         "growth_acceleration": -1|0|1,
         "future_outlook_sentiment": -1|0|1,
-        "catalysts": ["<factor1>", "<factor2>", ...],
+        "growth_drivers": ["<factor1>", "<factor2>", ...],
         "future_summary": "<short factual summary with quotes>"
     }
     """
@@ -139,7 +139,7 @@ class FutureState(TypedDict):
     cashflow_outlook: Optional[Tri] = None
     growth_acceleration: Optional[Tri] = None
     future_outlook_sentiment: Optional[Tri] = None
-    catalysts: List[str] = []
+    growth_drivers: List[str] = []
     future_summary: Optional[str] = None
 
     @classmethod
@@ -151,7 +151,7 @@ class FutureState(TypedDict):
                cashflow_outlook: Optional[Tri] = None,
                growth_acceleration: Optional[Tri] = None,
                future_outlook_sentiment: Optional[Tri] = None,
-               catalysts: List[str] = [],
+               growth_drivers: List[str] = [],
                future_summary: Optional[str] = None) -> FutureState:
         return cls(
             guidance_direction=guidance_direction,
@@ -161,7 +161,7 @@ class FutureState(TypedDict):
             cashflow_outlook=cashflow_outlook,
             growth_acceleration=growth_acceleration,
             future_outlook_sentiment=future_outlook_sentiment,
-            catalysts=catalysts,
+            growth_drivers=growth_drivers,
             future_summary=future_summary
         )
 

@@ -70,7 +70,7 @@ def main():
                     "cashflow_outlook": final_state.get("future_analysis", {}).get("cashflow_outlook"),
                     "growth_acceleration": final_state.get("future_analysis", {}).get("growth_acceleration"),
                     "future_outlook_sentiment": final_state.get("future_analysis", {}).get("sentiment"),
-                    "catalysts": final_state.get("future_analysis", {}).get("catalysts"),
+                    "growth_drivers": final_state.get("future_analysis", {}).get("growth_drivers"),
                     "future_summary": final_state.get("future_analysis", {}).get("future_summary"),
                     "risk_mentioned": final_state.get("risk_analysis", {}).get("risk_mentioned"),
                     "risk_impact": final_state.get("risk_analysis", {}).get("risk_impact"),

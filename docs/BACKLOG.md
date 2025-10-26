@@ -45,7 +45,7 @@ examples:
 | 1007 | Miscellaneous | Reference table for the text of categorical columns in metrics | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
-| 10001 | |  | Low | Open |  |  |  |
+| 10001 | Miscellaneous | Improve earnings transcript prompt | Low | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
 | 10004 | Miscellaneous | Create psql partition logic | Low | Open |  |  |  |
