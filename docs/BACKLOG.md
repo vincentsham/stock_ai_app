@@ -42,15 +42,15 @@ examples:
 | 16 | Feature | uuid for some tables | High | Open |  |  |  |
 | 17 | Feature | integrate catalysts into news, analyst ratings and earnings | High | Open |  |  |  |
 | 27 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
-| 31 | Feature | analyst reports analysis extending to mid and long term comparison | High | Open |  |  |  |
-| 1007 | Feature | Create and load raw tables in core | Medium | Open |  |  |  |
+| 1007 | Miscellaneous | Reference table for the text of categorical columns in metrics | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
-| 1011 | Miscellaneous | Reference table for the text of categorical columns in metrics | Medium | Open |  |  |  |
-| 10001 | Feature | Transfer Tables that has text to Pinecone | Low | Open |  |  |  |
+| 10001 | |  | Low | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
 | 10004 | Miscellaneous | Create psql partition logic | Low | Open |  |  |  |
+| 10005 | | | Low | Open |  |  |  |
+| 10006 | | | Low | Open |  |  |  |
 </div>
 
 
@@ -96,6 +96,7 @@ examples:
 | 28 | Feature | load cash flows into core | High | Close | feat_28 | 2025-10-21 | 2025-10-22 |
 | 29 | Feature | load balance sheets into core | High | Close | feat_28 | 2025-10-21 | 2025-10-22 |
 | 30 | Feature | surprise analysis | High | Close | feat_30 | 2025-10-21 | 2025-10-21 |
+| 31 | Feature | analyst reports analysis extending to mid and long term comparison | High | Close | feat_31 | 2025-10-24 | 2025-10-24 |
 | 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous | Create a md doc for source | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
