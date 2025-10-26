@@ -45,7 +45,6 @@ examples:
 | 1007 | Miscellaneous | Reference table for the text of categorical columns in metrics | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
-| 10001 | Miscellaneous | Improve earnings transcript prompt | Low | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
 | 10004 | Miscellaneous | Create psql partition logic | Low | Open |  |  |  |
@@ -105,5 +104,6 @@ examples:
 | 1005 | Technical | Make sure no dup records in news on (tic, title) | Medium | Close | tech_1006 | 2025-10-09 | 2025-10-09 |
 | 1006 | Technical | Improve news ai agent prompt | Medium | Close | tech_1006 | 2025-10-09 | 2025-10-09 |
 | 1010 | Miscellaneous | refactor the insert records function | Medium | Close | misc_1010 | 2025-10-18 | 2025-10-18 |
+| 10001 | Miscellaneous | Improve earnings transcript prompt | Low | Close | misc_10001 | 2025-10-26 | 2025-10-26 |
 | 10007 | Miscellaneous | Update the earnings transcipt instruction doc | Low | Close | misc_10007 | 2025-10-10 | 2025-10-10 |
 </div>
