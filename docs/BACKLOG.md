@@ -78,8 +78,8 @@ examples:
 | 10 | Feature | Create an advanced ai agent to analyze earnings transcripts | High | Close | feature_10 | 2025-10-08 | 2025-10-09 |
 | 11 | Feature | Create a data processing task to process the company profile | High | Close | feat_11 | 2025-10-11 | 2025-10-11 |
 | 12 | Feature | Extend the earnings transcript ai agent to analyze how company handle the risk | High | Close | feat_12 | 2025-10-09 | 2025-10-10 |
-| 13 | Feature | Create Table - Earnings Transcript Analysis | Medium | Close | feat_13 | 2025-10-11 | 2025-10-11 |
-| 13 | Feature | Create and load data into earnings_transcript_analysis | Medium | Close | feat_13 | 2025-10-11 | 2025-10-11 |
+| 13 | Feature | Create Table - Earnings Transcript Analysis | High | Close | feat_13 | 2025-10-11 | 2025-10-11 |
+| 13 | Feature | Create and load data into earnings_transcript_analysis | High | Close | feat_13 | 2025-10-11 | 2025-10-11 |
 | 14 | Feature | Create a data processing job for analyzing analyst ratings | High | Close | feat_14 | 2025-10-15 | 2025-10-16 |
 | 16 | Feature | uuid for some tables | High | Close | feat_16 | 2025-10-25 | 2025-10-27 |
 | 18 | Feature | A job for earnings metrics | High | Close | feat_18 | 2025-10-16 | 2025-10-16 |
