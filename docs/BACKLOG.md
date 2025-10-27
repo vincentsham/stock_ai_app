@@ -81,7 +81,7 @@ examples:
 | 13 | Feature | Create Table - Earnings Transcript Analysis | Medium | Close | feat_13 | 2025-10-11 | 2025-10-11 |
 | 13 | Feature | Create and load data into earnings_transcript_analysis | Medium | Close | feat_13 | 2025-10-11 | 2025-10-11 |
 | 14 | Feature | Create a data processing job for analyzing analyst ratings | High | Close | feat_14 | 2025-10-15 | 2025-10-16 |
-| 16 | Feature | uuid for some tables | High | Close | feat_16 | 2025-10-26 | 2025-10-27 |
+| 16 | Feature | uuid for some tables | High | Close | feat_16 | 2025-10-25 | 2025-10-27 |
 | 18 | Feature | A job for earnings metrics | High | Close | feat_18 | 2025-10-16 | 2025-10-16 |
 | 19 | Feature | cash flow analysis | High | Close | feat_19 | 2025-10-23 | 2025-10-23 |
 | 20 | Feature | load income statements into core | High | Close | feat_20 | 2025-10-18 | 2025-10-18 |
