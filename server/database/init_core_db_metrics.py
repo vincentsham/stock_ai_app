@@ -20,11 +20,290 @@ def table_creation(conn):
         cursor.execute("""CREATE SCHEMA IF NOT EXISTS core;""")
         print("Schema 'core' created or already exists.")
 
+        # Ensure the pgcrypto extension is available
+        cursor.execute("CREATE EXTENSION IF NOT EXISTS pgcrypto;")
+        print("Extension 'pgcrypto' created or already exists.")
+
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.earnings_metrics (
+            -- Entity & period
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
+            tic               VARCHAR(10) NOT NULL,
+            calendar_year       INT         NOT NULL,
+            calendar_quarter    SMALLINT    NOT NULL,
+
+            -- Raw values / estimates
+            eps               FLOAT,
+            eps_estimated     FLOAT,
+            revenue           FLOAT,
+            revenue_estimated FLOAT,
+                       
+
+            -- EPS regime
+            eps_regime         VARCHAR(50),
+
+            -- EPS surprise / beats
+            eps_surprise_pct               FLOAT,
+            eps_beat_flag                  SMALLINT,
+            eps_beat_count_4q              SMALLINT,
+            eps_beat_streak_length         SMALLINT,
+
+            -- EPS surprise classification
+            eps_surprise_class    VARCHAR(50),
+            eps_surprise_regime            VARCHAR(50),
+
+            -- Revenue surprise / beats
+            revenue_surprise_pct               FLOAT,
+            revenue_beat_flag                  SMALLINT,
+            revenue_beat_count_4q              SMALLINT,
+            revenue_beat_streak_length         SMALLINT,
+
+            -- Revenue surprise classification
+            revenue_surprise_class    VARCHAR(50),
+            revenue_surprise_regime            VARCHAR(50), 
+                       
+
+            -- Bookkeeping
+            raw_json_sha256   CHAR(64)    NOT NULL,
+            updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+            UNIQUE (tic, calendar_year, calendar_quarter),
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.earnings (event_id)
+                ON DELETE CASCADE
+        );
+        """)
+        print("Table 'earnings_metrics' created or already exists.")
+
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.analyst_rating_monthly_summary (
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            tic               VARCHAR(10)   NOT NULL,
+            start_date        DATE          NOT NULL,
+            end_date          DATE          NOT NULL,
+
+            -- ---- Price Target (pt_) statistics ----
+            pt_count          INTEGER       DEFAULT 0,
+            pt_high           FLOAT,
+            pt_low            FLOAT,
+            pt_p25            FLOAT,
+            pt_median         FLOAT,
+            pt_p75            FLOAT,
+            pt_mean           FLOAT,
+            pt_stddev         FLOAT,
+            pt_dispersion     FLOAT,
+
+            pt_upgrade_n      INTEGER       DEFAULT 0,
+            pt_downgrade_n    INTEGER       DEFAULT 0,
+            pt_reiterate_n    INTEGER       DEFAULT 0,
+            pt_init_n         INTEGER       DEFAULT 0,
+
+            -- ---- Grade statistics ----
+            grade_count       INTEGER       DEFAULT 0,
+            grade_buy_n       INTEGER       DEFAULT 0,
+            grade_hold_n      INTEGER       DEFAULT 0,
+            grade_sell_n      INTEGER       DEFAULT 0,
+            grade_buy_ratio   FLOAT,
+            grade_hold_ratio  FLOAT,
+            grade_sell_ratio  FLOAT,
+            grade_balance     FLOAT,
+
+            grade_upgrade_n   INTEGER       DEFAULT 0,
+            grade_downgrade_n INTEGER       DEFAULT 0,
+            grade_reiterate_n INTEGER       DEFAULT 0,
+            grade_init_n      INTEGER       DEFAULT 0,
+
+            -- ---- Implied return statistics ----
+            ret_mean          FLOAT,
+            ret_median        FLOAT,
+            ret_p25           FLOAT,
+            ret_p75           FLOAT,
+            ret_stddev        FLOAT,
+            ret_dispersion    FLOAT,
+            ret_high          FLOAT,
+            ret_low           FLOAT,
+
+            ret_upgrade_n     INTEGER       DEFAULT 0,
+            ret_downgrade_n   INTEGER       DEFAULT 0,
+            ret_reiterate_n   INTEGER       DEFAULT 0,
+            ret_init_n        INTEGER       DEFAULT 0,
+
+            -- ---- Price statistics ----
+            price_start       FLOAT,
+            price_end         FLOAT,
+            price_high        FLOAT,
+            price_low         FLOAT,
+            price_p25         FLOAT,
+            price_median      FLOAT,
+            price_p75         FLOAT,
+            price_mean        FLOAT,
+            price_stddev      FLOAT,
+
+            updated_at        TIMESTAMPTZ DEFAULT NOW(),
+
+            UNIQUE (tic, end_date)
+        );
+        """)
+        print("Table 'analyst_rating_monthly_summary' created or already exists.")
+
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.analyst_rating_quarterly_summary (
+            inferences_id      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            tic               VARCHAR(10)   NOT NULL,
+            start_date        DATE          NOT NULL,
+            end_date          DATE          NOT NULL,
+
+            -- ---- Price Target (pt_) statistics ----
+            pt_count          INTEGER       DEFAULT 0,
+            pt_high           FLOAT,
+            pt_low            FLOAT,
+            pt_p25            FLOAT,
+            pt_median         FLOAT,
+            pt_p75            FLOAT,
+            pt_mean           FLOAT,
+            pt_stddev         FLOAT,
+            pt_dispersion     FLOAT,
+
+            pt_upgrade_n      INTEGER       DEFAULT 0,
+            pt_downgrade_n    INTEGER       DEFAULT 0,
+            pt_reiterate_n    INTEGER       DEFAULT 0,
+            pt_init_n         INTEGER       DEFAULT 0,
+
+            -- ---- Grade statistics ----
+            grade_count       INTEGER       DEFAULT 0,
+            grade_buy_n       INTEGER       DEFAULT 0,
+            grade_hold_n      INTEGER       DEFAULT 0,
+            grade_sell_n      INTEGER       DEFAULT 0,
+            grade_buy_ratio   FLOAT,
+            grade_hold_ratio  FLOAT,
+            grade_sell_ratio  FLOAT,
+            grade_balance     FLOAT,
+
+            grade_upgrade_n   INTEGER       DEFAULT 0,
+            grade_downgrade_n INTEGER       DEFAULT 0,
+            grade_reiterate_n INTEGER       DEFAULT 0,
+            grade_init_n      INTEGER       DEFAULT 0,
+
+            -- ---- Implied return statistics ----
+            ret_mean          FLOAT,
+            ret_median        FLOAT,
+            ret_p25           FLOAT,
+            ret_p75           FLOAT,
+            ret_stddev        FLOAT,
+            ret_dispersion    FLOAT,
+            ret_high          FLOAT,
+            ret_low           FLOAT,
+
+            ret_upgrade_n     INTEGER       DEFAULT 0,
+            ret_downgrade_n   INTEGER       DEFAULT 0,
+            ret_reiterate_n   INTEGER       DEFAULT 0,
+            ret_init_n        INTEGER       DEFAULT 0,
+
+            -- ---- Price statistics ----
+            price_start       FLOAT,
+            price_end         FLOAT,
+            price_high        FLOAT,
+            price_low         FLOAT,
+            price_p25         FLOAT,
+            price_median      FLOAT,
+            price_p75         FLOAT,
+            price_mean        FLOAT,
+            price_stddev      FLOAT,
+
+            updated_at        TIMESTAMPTZ DEFAULT NOW(),
+
+            UNIQUE (tic, end_date)
+        );
+        """)
+        print("Table 'analyst_rating_quarterly_summary' created or already exists.")
+
+
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.analyst_rating_yearly_summary (
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            tic               VARCHAR(10)   NOT NULL,
+            start_date        DATE          NOT NULL,
+            end_date          DATE          NOT NULL,
+
+            -- ---- Price Target (pt_) statistics ----
+            pt_count          INTEGER       DEFAULT 0,
+            pt_high           FLOAT,
+            pt_low            FLOAT,
+            pt_p25            FLOAT,
+            pt_median         FLOAT,
+            pt_p75            FLOAT,
+            pt_mean           FLOAT,
+            pt_stddev         FLOAT,
+            pt_dispersion     FLOAT,
+
+            pt_upgrade_n      INTEGER       DEFAULT 0,
+            pt_downgrade_n    INTEGER       DEFAULT 0,
+            pt_reiterate_n    INTEGER       DEFAULT 0,
+            pt_init_n         INTEGER       DEFAULT 0,
+
+            -- ---- Grade statistics ----
+            grade_count       INTEGER       DEFAULT 0,
+            grade_buy_n       INTEGER       DEFAULT 0,
+            grade_hold_n      INTEGER       DEFAULT 0,
+            grade_sell_n      INTEGER       DEFAULT 0,
+            grade_buy_ratio   FLOAT,
+            grade_hold_ratio  FLOAT,
+            grade_sell_ratio  FLOAT,
+            grade_balance     FLOAT,
+
+            grade_upgrade_n   INTEGER       DEFAULT 0,
+            grade_downgrade_n INTEGER       DEFAULT 0,
+            grade_reiterate_n INTEGER       DEFAULT 0,
+            grade_init_n      INTEGER       DEFAULT 0,
+
+            -- ---- Implied return statistics ----
+            ret_mean          FLOAT,
+            ret_median        FLOAT,
+            ret_p25           FLOAT,
+            ret_p75           FLOAT,
+            ret_stddev        FLOAT,
+            ret_dispersion    FLOAT,
+            ret_high          FLOAT,
+            ret_low           FLOAT,
+
+            ret_upgrade_n     INTEGER       DEFAULT 0,
+            ret_downgrade_n   INTEGER       DEFAULT 0,
+            ret_reiterate_n   INTEGER       DEFAULT 0,
+            ret_init_n        INTEGER       DEFAULT 0,
+
+            -- ---- Price statistics ----
+            price_start       FLOAT,
+            price_end         FLOAT,
+            price_high        FLOAT,
+            price_low         FLOAT,
+            price_p25         FLOAT,
+            price_median      FLOAT,
+            price_p75         FLOAT,
+            price_mean        FLOAT,
+            price_stddev      FLOAT,
+
+            updated_at        TIMESTAMPTZ DEFAULT NOW(),
+
+            UNIQUE (tic, end_date)
+        );
+        """)
+        print("Table 'analyst_rating_yearly_summary' created or already exists.")
+
+
+
 
        # Create a table for revenue metrics if it does not exist
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.revenue_metrics (
             -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
             calendar_year                     SMALLINT     NOT NULL,
             calendar_quarter                  SMALLINT     NOT NULL,
@@ -95,7 +374,12 @@ def table_creation(conn):
 
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+
+            UNIQUE (tic, calendar_year, calendar_quarter),
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.earnings (event_id)
+                ON DELETE CASCADE
         );
         """)
         print("Table 'revenue_metrics' created or already exists with composite primary key.")
@@ -106,6 +390,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.eps_diluted_metrics (
             -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
             calendar_year                     SMALLINT     NOT NULL,
             calendar_quarter                  SMALLINT     NOT NULL,
@@ -176,7 +462,12 @@ def table_creation(conn):
 
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+                       
+            UNIQUE (tic, calendar_year, calendar_quarter),
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.earnings (event_id)
+                ON DELETE CASCADE
         );
         """)
         print("Table 'eps_diluted_metrics' created or already exists with composite primary key.")
@@ -188,6 +479,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.gross_profit_metrics (
             -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
             calendar_year                     SMALLINT     NOT NULL,
             calendar_quarter                  SMALLINT     NOT NULL,
@@ -258,7 +551,12 @@ def table_creation(conn):
 
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+                       
+            UNIQUE (tic, calendar_year, calendar_quarter),
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.income_statements (event_id)
+                ON DELETE CASCADE
         );
         """)
         print("Table 'gross_profit_metrics' created or already exists with composite primary key.")
@@ -269,6 +567,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.ebit_metrics (
             -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
             calendar_year                     SMALLINT     NOT NULL,
             calendar_quarter                  SMALLINT     NOT NULL,
@@ -339,7 +639,12 @@ def table_creation(conn):
 
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+
+            UNIQUE (tic, calendar_year, calendar_quarter),
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.income_statements (event_id)
+                ON DELETE CASCADE
         );
         """)
         print("Table 'ebit_metrics' created or already exists with composite primary key.")
@@ -350,6 +655,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.profit_margin_metrics (
             -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
             calendar_year                     SMALLINT     NOT NULL,
             calendar_quarter                  SMALLINT     NOT NULL,
@@ -420,7 +727,12 @@ def table_creation(conn):
 
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+            
+            UNIQUE (tic, calendar_year, calendar_quarter),           
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.income_statements (event_id)
+                ON DELETE CASCADE
         );
         """)
         print("Table 'profit_margin_metrics' created or already exists with composite primary key.")
@@ -430,6 +742,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.ocf_metrics (
             -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
             calendar_year                     SMALLINT     NOT NULL,
             calendar_quarter                  SMALLINT     NOT NULL,
@@ -500,7 +814,12 @@ def table_creation(conn):
 
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+            
+            UNIQUE (tic, calendar_year, calendar_quarter),           
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.cash_flow_statements (event_id)
+                ON DELETE CASCADE
         );
         """)
         print("Table 'ocf_metrics' created or already exists with composite primary key.")
@@ -511,6 +830,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.fcf_metrics (
             -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
             calendar_year                     SMALLINT     NOT NULL,
             calendar_quarter                  SMALLINT     NOT NULL,
@@ -581,7 +902,12 @@ def table_creation(conn):
 
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+            
+            UNIQUE (tic, calendar_year, calendar_quarter),           
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.cash_flow_statements (event_id)
+                ON DELETE CASCADE
         );
         """)
         print("Table 'fcf_metrics' created or already exists with composite primary key.")
@@ -593,6 +919,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.fcf_margin_metrics (
             -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
             calendar_year                     SMALLINT     NOT NULL,
             calendar_quarter                  SMALLINT     NOT NULL,
@@ -663,7 +991,12 @@ def table_creation(conn):
 
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+            
+            UNIQUE (tic, calendar_year, calendar_quarter),           
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.cash_flow_statements (event_id)
+                ON DELETE CASCADE
         );
         """)
         print("Table 'fcf_margin_metrics' created or already exists with composite primary key.")
@@ -675,6 +1008,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.capex_metrics (
             -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
             calendar_year                     SMALLINT     NOT NULL,
             calendar_quarter                  SMALLINT     NOT NULL,
@@ -745,7 +1080,12 @@ def table_creation(conn):
 
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+            
+            UNIQUE (tic, calendar_year, calendar_quarter),           
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.cash_flow_statements (event_id)
+                ON DELETE CASCADE
         );
         """)
         print("Table 'capex_metrics' created or already exists with composite primary key.")
@@ -755,6 +1095,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.ccr_metrics (
             -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
             calendar_year                     SMALLINT     NOT NULL,
             calendar_quarter                  SMALLINT     NOT NULL,
@@ -825,7 +1167,12 @@ def table_creation(conn):
 
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+            
+            UNIQUE (tic, calendar_year, calendar_quarter),           
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.cash_flow_statements (event_id)
+                ON DELETE CASCADE
         );
         """)
         print("Table 'ccr_metrics' created or already exists with composite primary key.")
@@ -834,6 +1181,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.roa_metrics (
             -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
             calendar_year                     SMALLINT     NOT NULL,
             calendar_quarter                  SMALLINT     NOT NULL,
@@ -904,7 +1253,12 @@ def table_creation(conn):
 
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+            
+            UNIQUE (tic, calendar_year, calendar_quarter),           
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.balance_sheets (event_id)
+                ON DELETE CASCADE
         );
         """)
         print("Table 'roa_metrics' created or already exists with composite primary key.")
@@ -913,6 +1267,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.roe_metrics (
             -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
             calendar_year                     SMALLINT     NOT NULL,
             calendar_quarter                  SMALLINT     NOT NULL,
@@ -983,7 +1339,12 @@ def table_creation(conn):
 
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+            
+            UNIQUE (tic, calendar_year, calendar_quarter),           
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.balance_sheets (event_id)
+                ON DELETE CASCADE
         );
         """)
         print("Table 'roe_metrics' created or already exists with composite primary key.")
@@ -993,6 +1354,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.roic_metrics (
             -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
             calendar_year                     SMALLINT     NOT NULL,
             calendar_quarter                  SMALLINT     NOT NULL,
@@ -1063,7 +1426,12 @@ def table_creation(conn):
 
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+            
+            UNIQUE (tic, calendar_year, calendar_quarter),           
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.balance_sheets (event_id)
+                ON DELETE CASCADE
         );
         """)
         print("Table 'roic_metrics' created or already exists with composite primary key.")
@@ -1073,6 +1441,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.cr_metrics (
             -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
             calendar_year                     SMALLINT     NOT NULL,
             calendar_quarter                  SMALLINT     NOT NULL,
@@ -1143,7 +1513,12 @@ def table_creation(conn):
 
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+            
+            UNIQUE (tic, calendar_year, calendar_quarter),
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.balance_sheets (event_id)
+                ON DELETE CASCADE
         );
         """)
         print("Table 'cr_metrics' created or already exists with composite primary key.")
@@ -1154,6 +1529,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.der_metrics (
             -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
             calendar_year                     SMALLINT     NOT NULL,
             calendar_quarter                  SMALLINT     NOT NULL,
@@ -1224,7 +1601,12 @@ def table_creation(conn):
 
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+            
+            UNIQUE (tic, calendar_year, calendar_quarter),           
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.balance_sheets (event_id)
+                ON DELETE CASCADE
         );
         """)
         print("Table 'der_metrics' created or already exists with composite primary key.")
@@ -1235,6 +1617,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.icr_metrics (
             -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
             calendar_year                     SMALLINT     NOT NULL,
             calendar_quarter                  SMALLINT     NOT NULL,
@@ -1305,7 +1689,12 @@ def table_creation(conn):
 
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+            
+            UNIQUE (tic, calendar_year, calendar_quarter),           
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.income_statements (event_id)
+                ON DELETE CASCADE
         );
         """)
         print("Table 'icr_metrics' created or already exists with composite primary key.")
@@ -1316,6 +1705,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.net_debt_to_ebitda_metrics (
             -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
             calendar_year                     SMALLINT     NOT NULL,
             calendar_quarter                  SMALLINT     NOT NULL,
@@ -1386,10 +1777,17 @@ def table_creation(conn):
 
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            PRIMARY KEY (tic, calendar_year, calendar_quarter)
+            
+            UNIQUE (tic, calendar_year, calendar_quarter),           
+            UNIQUE (event_id),
+            FOREIGN KEY (event_id)
+                REFERENCES core.balance_sheets (event_id)
+                ON DELETE CASCADE
         );
         """)
         print("Table 'net_debt_to_ebitda_metrics' created or already exists with composite primary key.")
+
+
 
 
         conn.commit()

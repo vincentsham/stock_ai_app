@@ -150,11 +150,6 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS raw.news (
             tic             VARCHAR(10) NOT NULL,              -- stock ticker
-            published_at  TIMESTAMP   NOT NULL,              -- from API publishedDate
-            publisher       TEXT,
-            title           TEXT NOT NULL,
-            site            TEXT,
-            content         TEXT,
             url             TEXT NOT NULL,
             source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
@@ -167,20 +162,12 @@ def table_creation(conn):
         print("Table 'news' created or already exists with composite primary key.")
 
 
+
+
         # Create a table for analyst price targets data if it does not exist
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS raw.analyst_price_targets (
             tic               varchar(10) NOT NULL,
-            published_at      timestamp NOT NULL,
-            title        text,
-            site    text,
-                       
-            analyst_name      text,
-            company   text,
-            price_target      numeric(12,2),
-            adj_price_target  numeric(12,2),
-            price_when_posted numeric(12,4),
-
             url              text NOT NULL,
             source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
@@ -196,16 +183,6 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS raw.analyst_grades (
             tic               varchar(10) NOT NULL,
-            published_at      timestamp NOT NULL,
-            title        text,
-            site    text,
-                       
-            company           text,
-            new_grade         text,
-            previous_grade    text,
-            action            text,
-            price_when_posted numeric(12,4),
-
             url               text NOT NULL,
             source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
