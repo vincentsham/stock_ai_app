@@ -24,6 +24,102 @@ def table_creation(conn):
         cursor.execute("CREATE EXTENSION IF NOT EXISTS pgcrypto;")
         print("Extension 'pgcrypto' created or already exists.")
 
+        # Ensure the vector extension is available
+        cursor.execute("CREATE EXTENSION IF NOT EXISTS vector;")
+        print("Extension 'vector' created or already exists.")
+        
+
+
+
+        # Create a table for news chunks if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.news_chunks (
+            -- News article identity
+            tic             VARCHAR(10) NOT NULL,
+            published_at  TIMESTAMP   NOT NULL,  
+            url             TEXT NOT NULL,
+                       
+            event_id         UUID NOT NULL,
+            chunk_id        INT NOT NULL,
+
+            -- Chunk content
+            chunk           TEXT NOT NULL,
+            token_count     INT NOT NULL,
+
+            chunk_sha256    CHAR(64)  NOT NULL,
+            raw_json_sha256   CHAR(64)  NOT NULL,
+
+            updated_at      TIMESTAMPTZ DEFAULT now(),
+
+            -- Keys
+            PRIMARY KEY (event_id, chunk_id),
+
+            UNIQUE (tic, url, chunk_id),
+
+            -- Enforce parent relationship
+            FOREIGN KEY (event_id)
+                REFERENCES core.news (event_id)
+                ON DELETE CASCADE
+        );
+        """)
+        print("Table 'news_chunks' created or already exists with unique constraint.")
+
+        # Create a full-text index for keyword/BM25 search
+        cursor.execute("""
+        CREATE INDEX IF NOT EXISTS idx_core_news_chunks_tsv
+          ON core.news_chunks
+          USING GIN (to_tsvector('english', chunk));
+        """)
+        print("Index 'idx_core_news_chunks_tsv' created or already exists.")
+
+
+
+        # Create a table for news embeddings if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.news_embeddings (
+            tic             VARCHAR(10) NOT NULL,
+            published_at  TIMESTAMP   NOT NULL,  
+            url             TEXT NOT NULL,
+
+            -- Sequential id within a single transcript (1..N)
+            event_id         UUID NOT NULL,
+            chunk_id        INT NOT NULL,
+            chunk_sha256    CHAR(64)  NOT NULL,
+            raw_json_sha256 CHAR(64) NOT NULL,
+                       
+            -- Embedding vector
+            embedding       VECTOR(1536) NOT NULL,
+            embedding_model TEXT NOT NULL,
+
+            updated_at      TIMESTAMPTZ DEFAULT now(),
+
+            PRIMARY KEY (event_id, chunk_id),
+
+            UNIQUE (tic, url, chunk_id),
+
+            FOREIGN KEY (event_id)
+                REFERENCES core.news (event_id)
+                ON DELETE CASCADE,
+            FOREIGN KEY (event_id, chunk_id)
+                REFERENCES core.news_chunks (event_id, chunk_id)
+                ON DELETE CASCADE
+        );
+        """)
+        print("Table 'news_embeddings' created or already exists with composite primary key.")
+
+
+
+        # Create an HNSW index for the embeddings
+        cursor.execute("""
+        CREATE INDEX IF NOT EXISTS idx_core_news_embeddings_vec_hnsw
+          ON core.news_embeddings
+          USING hnsw (embedding vector_cosine_ops)
+          WITH (m = 16, ef_construction = 200);
+        """)
+        print("Index 'idx_core_news_embeddings_vec_hnsw' created or already exists.")
+
+
+
 
 
         # Create a table for news analysis if it does not exist
@@ -102,10 +198,7 @@ def table_creation(conn):
         print("Index 'idx_core_earnings_transcripts_chunks_tsv' created or already exists.")
 
 
-        # Ensure the vector extension is available
-        cursor.execute("CREATE EXTENSION IF NOT EXISTS vector;")
-        print("Extension 'vector' created or already exists.")
-        
+
         # Create a table for earnings transcript embeddings if it does not exist
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.earnings_transcript_embeddings (
@@ -150,8 +243,6 @@ def table_creation(conn):
           WITH (m = 16, ef_construction = 200);
         """)
         print("Index 'idx_core_earnings_transcript_embeddings_vec_hnsw' created or already exists.")
-
-
 
 
         # Create a table for earnings transcript analysis if it does not exist
@@ -207,6 +298,71 @@ def table_creation(conn):
         );
         """)
         print("Table 'earnings_transcript_analysis' created or already exists with unique constraint.")
+
+
+
+        # Create a table for catalyst master if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.catalyst_master (
+            catalyst_id      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            tic              VARCHAR(10),
+            date             DATE,
+            catalyst_type    VARCHAR(64),
+            title            TEXT,
+            summary          TEXT,
+            evidence         TEXT,
+            state  VARCHAR(20),
+            sentiment        SMALLINT,
+            time_horizon     SMALLINT,
+            impact_magnitude SMALLINT,
+            certainty        VARCHAR(20),
+            impact_area      VARCHAR(32),
+
+            mention_count    INTEGER DEFAULT 1,
+            event_ids        TEXT[] DEFAULT '{}',
+            created_at       TIMESTAMPTZ DEFAULT now(),
+            updated_at       TIMESTAMPTZ DEFAULT now()
+        );
+        """)
+        print("Table 'catalyst_master' created or already exists with unique constraint.")
+
+
+
+
+        # Create a table for catalyst versions if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.catalyst_versions (
+            event_id         UUID NOT NULL,
+            chunk_id         INT NOT NULL,
+            catalyst_id      UUID NOT NULL REFERENCES core.catalyst_master(catalyst_id)
+                            ON DELETE CASCADE,
+
+            tic              VARCHAR(10),
+            date             DATE,
+            catalyst_type    VARCHAR(64),
+            title            TEXT,
+            summary          TEXT,
+            evidence         TEXT,
+            state  VARCHAR(20),
+            sentiment        SMALLINT,
+            time_horizon     SMALLINT,
+            impact_magnitude SMALLINT,
+            certainty        VARCHAR(20),
+            impact_area      VARCHAR(32),
+
+            ingestion_batch  VARCHAR(10),
+            source_type      VARCHAR(20),
+            source           TEXT,
+            url              TEXT,
+
+            raw_json_sha256 CHAR(64)     NOT NULL,
+            updated_at    TIMESTAMPTZ DEFAULT now(),
+                       
+            PRIMARY KEY (event_id, chunk_id, catalyst_id)
+        );
+        """)
+        print("Table 'catalyst_versions' created or already exists with unique constraint.")
+
 
 
 

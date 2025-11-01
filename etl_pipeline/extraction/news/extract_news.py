@@ -40,7 +40,7 @@ def insert_news(data, tic, source_url, conn):
                     """, (
                     tic,
                     record.get("url"),
-                    record.get("source"),
+                    source_url,
                     json.dumps(record),  # raw JSON payload
                     hash_dict(record)
                 ))

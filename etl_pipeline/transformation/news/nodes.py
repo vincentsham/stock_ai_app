@@ -1,6 +1,5 @@
 from states import News
 from prompts import STAGE1_PROMPT, STAGE2_PROMPT, STAGE1_SYSTEM_MESSAGE, STAGE2_SYSTEM_MESSAGE
-from langchain_openai import ChatOpenAI
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
 from etl_pipeline.utils import run_llm
 from dotenv import load_dotenv
@@ -81,7 +80,3 @@ def stage2(state: News) -> dict:
         "sentiment": sentiment
     }
 
-
-if __name__ == "__main__":
-    llm = ChatOpenAI(model="gpt-4o", temperature=0)
-    print(llm.invoke("Hello"))

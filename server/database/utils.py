@@ -69,7 +69,7 @@ def read_sql_query(query: str, conn) -> pd.DataFrame:
         raise e
 
 
-def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[]) -> int:
+def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[], updated_at: bool = True) -> int:
     """
     Fast and minimal insert/upsert using psycopg cursor.execute with tuples.
     """
@@ -83,8 +83,12 @@ def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[]) 
     if keys:
         update_sql = f"""
         ON CONFLICT ({keys})
-        DO UPDATE SET {updates}, updated_at = NOW();
+        DO UPDATE SET {updates}
         """
+        if updated_at:
+            update_sql += ", updated_at = NOW();"
+        else:
+            update_sql += ";"
     else:
         update_sql = "ON CONFLICT DO NOTHING;"
 
@@ -106,11 +110,11 @@ def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[]) 
         
     except Exception as e:
         conn.rollback()
-        print(f"Error inserting earnings metrics: {e}")
+        print(f"Error inserting records: {e}")
         return 0
 
 
-def insert_record(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[]) -> int:
+def insert_record(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[], updated_at: bool = True) -> int:
     """
     Fast and minimal insert/upsert using psycopg cursor.execute with tuples.
     """
@@ -124,8 +128,12 @@ def insert_record(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[]) -
     if keys:
         update_sql = f"""
         ON CONFLICT ({keys})
-        DO UPDATE SET {updates}, updated_at = NOW();
+        DO UPDATE SET {updates}
         """
+        if updated_at:
+            update_sql += ", updated_at = NOW();"
+        else:
+            update_sql += ";"
     else:
         update_sql = "ON CONFLICT DO NOTHING;"
 
@@ -145,7 +153,7 @@ def insert_record(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[]) -
         
     except Exception as e:
         conn.rollback()
-        print(f"Error inserting earnings metrics: {e}")
+        print(f"Error inserting record: {e}")
         return 0
 
     

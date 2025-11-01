@@ -10,12 +10,15 @@ class Tri(IntEnum):
     NEU = 0
     POS = 1
 
-class Horizon(IntEnum):
+class TimeHorizon(IntEnum):
     SHORT = 0
     MID = 1
     LONG = 2
 
-Binary01 = conint(ge=0, le=1)  # 0 or 1
+class Binary(IntEnum):
+    NO = 0
+    YES = 1
+
 
 
 
@@ -98,14 +101,14 @@ class PastState(BaseModel):
     }
     """
     sentiment: Optional[Tri] = None
-    durability: Optional[Horizon] = None
+    durability: Optional[TimeHorizon] = None
     performance_factors: List[str] = []
     past_summary: Optional[str] = None
 
     @classmethod
     def create(cls,
                sentiment: Optional[Tri] = None,
-               durability: Optional[Horizon] = None,
+               durability: Optional[TimeHorizon] = None,
                performance_factors: Optional[List[str]] = [],
                past_summary: Optional[str] = None) -> PastState:
         return cls(
@@ -180,17 +183,17 @@ class RiskState(TypedDict):
         "risk_summary": "<2–3 concise sentences with quotes>"
     }
     """
-    risk_mentioned: Optional[Binary01] = None
+    risk_mentioned: Optional[Binary] = None
     risk_impact: Optional[Tri] = None
-    risk_time_horizon: Optional[Horizon] = None
+    risk_time_horizon: Optional[TimeHorizon] = None
     risk_factors: List[str] = []
     risk_summary: Optional[str] = None
 
     @classmethod
     def create(cls,
-               risk_mentioned: Optional[Binary01] = None,
+               risk_mentioned: Optional[Binary] = None,
                risk_impact: Optional[Tri] = None,
-               risk_time_horizon: Optional[Horizon] = None,
+               risk_time_horizon: Optional[TimeHorizon] = None,
                risk_factors: List[str] = [],
                risk_summary: Optional[str] = None) -> RiskState:
         return cls(
@@ -215,17 +218,17 @@ class RiskResponseState(TypedDict):
     "mitigation_summary": "<2–3 concise sentences with quotes>"
     }
     """
-    mitigation_mentioned: Optional[Binary01] = None
+    mitigation_mentioned: Optional[Binary] = None
     mitigation_effectiveness: Optional[Tri] = None
-    mitigation_time_horizon: Optional[Horizon] = None
+    mitigation_time_horizon: Optional[TimeHorizon] = None
     mitigation_actions: List[str] = []
     mitigation_summary: Optional[str] = None
 
     @classmethod
     def create(cls,
-               mitigation_mentioned: Optional[Binary01] = None,
+               mitigation_mentioned: Optional[Binary] = None,
                mitigation_effectiveness: Optional[Tri] = None,
-               mitigation_time_horizon: Optional[Horizon] = None,
+               mitigation_time_horizon: Optional[TimeHorizon] = None,
                mitigation_actions: List[str] = [],
                mitigation_summary: Optional[str] = None) -> RiskResponseState:
         return cls(

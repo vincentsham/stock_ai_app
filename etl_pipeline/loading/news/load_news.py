@@ -1,6 +1,15 @@
 import pandas as pd
 import json
 from server.database.utils import connect_to_db, insert_records, execute_query
+import tiktoken
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+
+enc = tiktoken.get_encoding("cl100k_base")
+
+# Function to chunk text
+def tok_len(s: str) -> int:
+    return len(enc.encode(s))
 
 
 def read_records():
@@ -58,9 +67,9 @@ def transform_records(raw_df):
         transformed_df.at[i, 'tic'] = raw_df.iloc[i]['tic']
         transformed_df.at[i, 'published_at'] = data.get('publishedDate', None)
         transformed_df.at[i, 'publisher'] = data.get('publisher', None)
-        transformed_df.at[i, 'title'] = data.get('title', None)
+        transformed_df.at[i, 'title'] = chunk_content(data.get('title', None))
         transformed_df.at[i, 'site'] = data.get('site', None)
-        transformed_df.at[i, 'content'] = data.get('text', None)
+        transformed_df.at[i, 'content'] = chunk_content(data.get('text', None))
         transformed_df.at[i, 'url'] = raw_df.iloc[i]['url']
         transformed_df.at[i, 'source'] = raw_df.iloc[i]['source']
 
@@ -68,6 +77,39 @@ def transform_records(raw_df):
         transformed_df.at[i, 'raw_json_sha256'] = raw_df.iloc[i]['raw_json_sha256']
 
     return transformed_df
+
+# chunk the content to less than 300 tokens if needed
+def chunk_content(text: str, max_tokens: int = 300) -> list[str]:
+    """
+    Chunks the input text into smaller segments based on the max_tokens limit.
+
+    Args:
+        text (str): The input text to be chunked.
+        max_tokens (int): Maximum number of tokens allowed per chunk.
+
+    Returns:
+        list[str]: List of text chunks.
+    """
+    if text is None or tok_len(text) <= max_tokens:
+        return text
+
+    text_splitter = RecursiveCharacterTextSplitter(
+        separators=[
+            r"(?<=\n)\s*",     # split after newlines
+            r"(?<=\.)\s+",     # split after a period
+            r" ",              # fallback word-level
+            r""                # fallback char-level
+        ],
+        is_separator_regex=True,
+        chunk_size=max_tokens,
+        chunk_overlap=50,
+        length_function=tok_len,
+        keep_separator=True,
+    )
+
+    chunks = text_splitter.split_text(text)
+    return chunks[0]
+
 
 
 def load_records(transformed_df):
