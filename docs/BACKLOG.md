@@ -38,9 +38,8 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-| 15 | Feature | Catalyst logic | High | Open |  |  |  |
-| 17 | Feature | integrate catalysts into news, analyst ratings and earnings | High | Open |  |  |  |
-| 27 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
+| 17 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
+| 27 |  |  | High | Open |  |  |  |
 | 1007 | Miscellaneous | Reference table for the text of categorical columns in metrics | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
@@ -81,6 +80,7 @@ examples:
 | 13 | Feature | Create Table - Earnings Transcript Analysis | High | Close | feat_13 | 2025-10-11 | 2025-10-11 |
 | 13 | Feature | Create and load data into earnings_transcript_analysis | High | Close | feat_13 | 2025-10-11 | 2025-10-11 |
 | 14 | Feature | Create a data processing job for analyzing analyst ratings | High | Close | feat_14 | 2025-10-15 | 2025-10-16 |
+| 15 | Feature | Catalyst logic | High | Close | feat_15 | 2025-10-28 | 2025-11-01 |
 | 16 | Feature | uuid for some tables | High | Close | feat_16 | 2025-10-25 | 2025-10-27 |
 | 18 | Feature | A job for earnings metrics | High | Close | feat_18 | 2025-10-16 | 2025-10-16 |
 | 19 | Feature | cash flow analysis | High | Close | feat_19 | 2025-10-23 | 2025-10-23 |
