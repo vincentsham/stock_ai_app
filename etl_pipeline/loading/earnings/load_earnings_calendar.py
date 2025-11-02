@@ -21,6 +21,37 @@ def read_earnings_records(tic):
     df = execute_query(query)
     return df
 
+def filter_complete_years(df, tic):
+    """
+    Filters the earnings DataFrame to only include complete years (4 earnings per year),
+    except for the most recent year which can have up to 4 earnings.   
+    Args:
+        df (pd.DataFrame): DataFrame containing earnings data.
+    Returns:
+        pd.DataFrame: Filtered DataFrame with complete years only.
+    """
+    years = []
+    df = df.copy()
+    df['year'] = pd.to_datetime(df['earnings_date']).dt.year
+    # Group by year and count the number of earnings per year
+    earnings_per_year = df.groupby('year').size()
+    earnings_per_year = earnings_per_year.sort_index(ascending=False)
+    # Check if any year has not exactly 4 earnings except the most latest year
+    latest_year = earnings_per_year.index.max()
+    earliest_year = earnings_per_year.index.min()
+    for year, count in earnings_per_year.items():
+        if (year != latest_year and count == 4)\
+            or (year == latest_year and count <= 4)\
+            or (year == earliest_year and count <= 4):
+            years.append(year)
+        else:
+            print(f"{tic} - Year {year} has {count} earnings records, expected 4.")
+            break
+
+    df = df[df['year'].isin(years)]
+    df.drop(columns=['year'], inplace=True)
+    return df
+
 def read_income_statements_records(tic):
     """
     Reads data from the raw.income_statements table and returns it as a pandas DataFrame.
@@ -33,6 +64,7 @@ def read_income_statements_records(tic):
         fiscal_date
     FROM raw.income_statements 
     WHERE tic = '{tic}' 
+        AND fiscal_quarter != 0
     ORDER BY fiscal_date DESC;
     """
     # Connect to the database
@@ -143,6 +175,44 @@ def get_calendar_year_quarter(date):
         calendar_year -= 1
     return calendar_year, calendar_quarter
 
+# def transform_earnings_records(tic):
+#     """
+#     Transforms the raw earnings data to match the schema of core.earnings.
+    
+#     Args:
+#         raw_df (pd.DataFrame): DataFrame containing raw earnings data.
+#     Returns:
+#         pd.DataFrame: Transformed DataFrame matching core.earnings schema.
+#     """
+    
+#     earnings_df = read_earnings_records(tic)
+#     output = {"tic": [], "calendar_year": [], "calendar_quarter": [], 
+#               "earnings_date": [], "fiscal_date": [], "session": []}
+#     calendar_year, calendar_quarter = get_calendar_year_quarter(earnings_df['earnings_date'].iloc[0])
+
+#     for i in range(len(earnings_df)):
+#         _calendar_year, _calendar_quarter = get_calendar_year_quarter(earnings_df['earnings_date'].iloc[i])
+#         if _calendar_year != calendar_year or _calendar_quarter != calendar_quarter:
+#             print(f"{tic} - Mismatch in calculated calendar year/quarter for earnings date {earnings_df['earnings_date'].iloc[i]}: "
+#                   f"{_calendar_year}/{_calendar_quarter} vs {calendar_year}/{calendar_quarter}")
+#             break
+#         output['tic'].append(tic)
+#         output['calendar_year'].append(calendar_year)
+#         output['calendar_quarter'].append(calendar_quarter)
+#         output['earnings_date'].append(pd.to_datetime(earnings_df['earnings_date'].iloc[i]))
+#         output['fiscal_date'].append(pd.to_datetime(earnings_df['fiscal_date'].iloc[i]))
+#         output['session'].append(earnings_df['session'].iloc[i])
+
+#         calendar_quarter -= 1
+#         if calendar_quarter < 1:
+#             calendar_quarter = 4
+#             calendar_year -= 1
+
+#     output = pd.DataFrame(output)
+#     output['fiscal_year'], output['fiscal_quarter'] = None, None
+#     return output
+
+
 def transform_earnings_records(tic):
     """
     Transforms the raw earnings data to match the schema of core.earnings.
@@ -152,18 +222,17 @@ def transform_earnings_records(tic):
     Returns:
         pd.DataFrame: Transformed DataFrame matching core.earnings schema.
     """
-    
+    print(f"Transforming earnings records for {tic}...")
     earnings_df = read_earnings_records(tic)
+    earnings_df = filter_complete_years(earnings_df, tic)
+
     output = {"tic": [], "calendar_year": [], "calendar_quarter": [], 
               "earnings_date": [], "fiscal_date": [], "session": []}
+    
+    earnings_df = earnings_df.sort_values(by='earnings_date', ascending=False).reset_index(drop=True)
     calendar_year, calendar_quarter = get_calendar_year_quarter(earnings_df['earnings_date'].iloc[0])
-
+    
     for i in range(len(earnings_df)):
-        _calendar_year, _calendar_quarter = get_calendar_year_quarter(earnings_df['earnings_date'].iloc[i])
-        if _calendar_year != calendar_year or _calendar_quarter != calendar_quarter:
-            print(f"{tic} - Mismatch in calculated calendar year/quarter for earnings date {earnings_df['earnings_date'].iloc[i]}: "
-                  f"{_calendar_year}/{_calendar_quarter} vs {calendar_year}/{calendar_quarter}")
-            break
         output['tic'].append(tic)
         output['calendar_year'].append(calendar_year)
         output['calendar_quarter'].append(calendar_quarter)
@@ -191,6 +260,8 @@ def transform_income_statements_records(tic):
         pd.DataFrame: Transformed DataFrame matching core.earnings schema.
     """
     income_statements_df = read_income_statements_records(tic)
+    income_statements_df = income_statements_df.sort_values(by=['fiscal_year', 'fiscal_quarter'], 
+                                                            ascending=[False, False]).reset_index(drop=True)   
     fiscal_to_calendar_fn = get_calendar_year_quarter_fn(tic)
     income_statements_df['calendar_year'], income_statements_df['calendar_quarter'] \
         = zip(*income_statements_df.apply(
