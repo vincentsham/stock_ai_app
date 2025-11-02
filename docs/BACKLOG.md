@@ -46,7 +46,6 @@ examples:
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
 | 10004 | Miscellaneous | Create psql partition logic | Low | Open |  |  |  |
 | 10005 | Miscellaneous | Improve the speed of news ai agent (async + concurrent) | Low | Open |  |  |  |
-| 10006 | Technical | Add a validation for earnings calendar | Low | Open |  |  |  |
 </div>
 
 
@@ -105,5 +104,6 @@ examples:
 | 1006 | Technical | Improve news ai agent prompt | Medium | Close | tech_1006 | 2025-10-09 | 2025-10-09 |
 | 1010 | Miscellaneous | refactor the insert records function | Medium | Close | misc_1010 | 2025-10-18 | 2025-10-18 |
 | 10001 | Miscellaneous | Improve earnings transcript prompt | Low | Close | misc_10001 | 2025-10-26 | 2025-10-26 |
+| 10006 | Technical | Add a validation for earnings calendar | Low | Close | tech_10006 | 2025-11-02 | 2025-11-02 |
 | 10007 | Miscellaneous | Update the earnings transcipt instruction doc | Low | Close | misc_10007 | 2025-10-10 | 2025-10-10 |
 </div>
