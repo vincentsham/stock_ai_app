@@ -46,7 +46,7 @@ examples:
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
 | 10004 | Miscellaneous | Create psql partition logic | Low | Open |  |  |  |
 | 10005 | Miscellaneous | Improve the speed of news ai agent (async + concurrent) | Low | Open |  |  |  |
-| 10006 | | | Low | Open |  |  |  |
+| 10006 | Technical | Add a validation for earnings calendar | Low | Open |  |  |  |
 </div>
 
 
