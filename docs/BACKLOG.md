@@ -39,13 +39,14 @@ examples:
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 27 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
-| 1007 | Miscellaneous | Reference table for the text of categorical columns in metrics | Medium | Open |  |  |  |
+| 1007 | Feature | Compute more metrics (e.g. ebita) | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
 | 10004 | Miscellaneous | Create psql partition logic | Low | Open |  |  |  |
-| 10005 | Miscellaneous | Improve the speed of news ai agent (async + concurrent) | Low | Open |  |  |  |
+| 10005 | Technical | Improve the speed of news ai agent (async + concurrent) | Low | Open |  |  |  |
+| 10008 | Miscellaneous | Reference table for the text of categorical columns in metrics | Low | Open |  |  |  |
 </div>
 
 
