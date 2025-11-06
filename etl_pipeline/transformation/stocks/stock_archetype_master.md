@@ -1,4 +1,4 @@
-# 📘 Stock Archetype Master — Version 18
+# 📘 Stock Archetype Master
 
 This document defines the **Layer-1 (L1) archetypes** used in the stock type classification system, updated to reflect the refined Version 16 framework. It follows the structure of the original Archetype Master document while incorporating the simplified logic and lifecycle consistency of the new system.
 
