@@ -1,259 +1,108 @@
-# 📘 Stock Archetype Master — Refined Lifecycle Framework with Classification Logics
+# 📘 Stock Archetype Master — Version 18
 
-This document defines the **core Layer-1 archetypes** used in the stock type classification system, along with their **logical detection rules** for AI-based classification.
-
-Each archetype represents a distinct **phase in the corporate lifecycle**, capturing how a company allocates capital, manages growth, and transitions between strategic regimes.
+This document defines the **Layer-1 (L1) archetypes** used in the stock type classification system, updated to reflect the refined Version 16 framework. It follows the structure of the original Archetype Master document while incorporating the simplified logic and lifecycle consistency of the new system.
 
 ---
 
-## 🧭 Core Archetypes (9-Phase Framework)
+## 🧭 1. Purpose
+Stock archetypes establish the **foundational classification** for how companies should be analyzed, benchmarked, and scored.  
+They represent the **core financial and behavioral identities** of companies within your multi-agent AI stock analysis system.
 
-| **#** | **Archetype** | **Phase Keyword** | **Definition (Strategic Posture)** | **Behavioral Focus** | **Example Companies** |
-|:--:|:--|:--|:--|:--|:--|
-| **1** | **Speculative / Story-Driven** | *Optionality* | Early-stage or theme-driven firms valued mainly on future narratives rather than proven business models. | Narrative momentum, pre-commercial validation, investor hype. | C3.ai, QuantumScape, early clean-tech. |
-| **2** | **Pre-Profit** | *Validation* | Companies building or proving product-market fit; focus on innovation and user scaling, not profits. | Heavy R&D, marketing, and fundraising. | Rivian, Unity, early biotech. |
-| **3** | **Hypergrowth** | *Dominance* | Proven models scaling explosively to capture market share; reinvestment prioritized over profits. | Aggressive expansion, network effects, category leadership. | Snowflake, Datadog, Monday.com, early CrowdStrike. |
-| **4** | **Sustainable Growth** | *Execution* | Profitable, efficient scaling with predictable growth and reinvestment discipline; includes breakout and quality compounders. | Operational leverage, reinvestment, capital return balance. | Palantir (2024), Robinhood (2024), Microsoft, Salesforce. |
-| **5** | **Transformational Growth** | *Re-Ignition* | Mature companies reigniting growth through strategic pivots or innovation (e.g., AI, new product cycles). | R&D investment, product relaunch, platform transitions. | Meta, AMD, Netflix (ads), Microsoft (AI). |
-| **6** | **Value / Reassessment** | *Recognition* | Fundamentally sound but undervalued companies being re-rated due to improving performance or sentiment. | EPS/margin recovery, multiple expansion, yield support. | Pfizer, Citi, HPQ, Alibaba. |
-| **7** | **Income & Defensive** | *Preservation* | Low-growth, cash-generative firms prioritizing dividends and resilience over expansion. | Dividend stability, conservative balance sheets. | Coca-Cola, Verizon, Walmart, Procter & Gamble. |
-| **8** | **Turnaround / Recovery** | *Repair* | Companies executing a structured plan to restore profitability and credibility after decline. | Margin recovery, operational resets, leadership change. | Intel, Disney, Boeing, Peloton. |
-| **9** | **Crisis / Distressed** | *Survival* | Firms facing solvency or liquidity challenges, restructuring to survive. | Cost cuts, asset sales, debt renegotiation. | WeWork, Bed Bath & Beyond, Evergrande. |
+Each archetype determines which performance dimensions—growth, stability, or cyclicality—should be emphasized in the scoring model.  
+Together, they form the backbone of the **Growth – Stability – Acceleration** framework and guide both peer comparison and lifecycle tracking.
 
 ---
 
-## 🔄 Lifecycle Flow (with Turnaround Loopback)
-
+## 🔄 2. Lifecycle Flow (Updated)
 ```
-          ┌───────────────────────┐
-          │   Speculative / Story │
-          └────────────┬──────────┘
-                       ↓
-                 Pre-Profit
-                       ↓
-                 Hypergrowth
-                       ↓
-              Sustainable Growth
-                       ↓
-            Transformational Growth
-                       ↓
-             Value / Reassessment
-                       ↓
-             Income & Defensive
-                       ↓
-                 Crisis / Distressed
-                       ↑
-                       │
-              Turnaround / Recovery
-                       │
-                       └──────────────→ (returns to Sustainable Growth)
+Pre-Profit → Hypergrowth → Sustainable Growth → Accelerating Growth
+       ↓
+Mature / Steady → Defensive / Low-Beta → Cyclical
+       ↓
+Decline / Distressed → Turnaround / Recovery → Sustainable Growth
 ```
+This flow represents a company’s typical financial evolution—from early-stage risk to sustained maturity, through downturns and back into recovery.
 
 ---
 
-# 🧠 Archetype Classification Logics
+## 🧱 3. Core Archetype Reference Table
 
-Each section below defines **detection criteria**, **signals**, and **pseudocode logic** for automated archetype inference.
-
----
-
-## 1. Speculative / Story-Driven
-
-**Intent:** Valued on *potential*, not *performance.*
-
-**Signals:**
-- Minimal or volatile revenue
-- Negative EPS and OCF
-- Narrative-heavy transcripts (“plan”, “expect”, “pilot”, “regulatory approval”)
-- High catalyst intensity, low revenue impact
-
-**Logic:**
-```python
-if revenue_ttm < MIN_REVENUE or product_stage == "pre-commercial":
-    if eps_ttm < 0 and ocf_ttm < 0:
-        archetypes.add(("Speculative / Story-Driven", 0.85))
-```
+| **#** | **Archetype** | **Definition (Strategic Posture)** | **Primary Signals** | **Example Companies** |
+|:--:|:--|:--|:--|:--|
+| **1** | **Pre-Profit** | Early-stage companies still loss-making but scaling rapidly. | `eps_ttm < 0` or `ocf_ttm < 0` | Rivian, Unity, early Snowflake |
+| **2** | **Hypergrowth** | Companies expanding explosively, prioritizing market share over profit. | `revenue_yoy_ttm ≥ 0.35` and `reinvestment_ratio ≥ 0.3` | Snowflake, Datadog, Shopify (2020–2021) |
+| **3** | **Sustainable Growth** | Profitable firms maintaining efficient double-digit growth. | `revenue_yoy_ttm ≥ 0.10` and `(eps_ttm > 0 or ocf_ttm > 0)` | Microsoft, Salesforce, Apple (2023–2024) |
+| **4** | **Accelerating Growth** | Growth rate itself is improving; momentum is rising. | `(revenue_yoy_ttm ≥ 0.10)` and `(accel_yoy_ttm > 0 and accel_yoy_ttm_prev > 0)` | Palantir (2024), NVIDIA (2023–24), Meta (2023) |
+| **5** | **Mature / Steady** | Stable, profitable phase with modest growth; efficient and predictable. | `(0 ≤ revenue_yoy_ttm < 0.10)` and `(eps_ttm > 0 or ocf_ttm > 0)` | Apple (2024), PepsiCo, Visa, McDonald’s, Cisco |
+| **6** | **Defensive / Low-Beta** | Cash-positive, low-volatility companies with steady performance. | `(beta_2y ≤ 0.8)` and `(ocf_ttm > 0)` and `(revenue_yoy_ttm ≥ 0)` | Procter & Gamble, Coca-Cola, J&J, Walmart |
+| **7** | **Cyclical** | Businesses with repeated up-down demand and margin cycles. | `count_sign_changes(revenue_yoy_8q) ≥ 2` or `count_sign_changes(operating_margin_growth_8q) ≥ 2` | Caterpillar, ExxonMobil, Delta, Micron, Ford |
+| **8** | **Decline / Distressed** | Firms facing structural deterioration or financial stress. | `(revenue_yoy_ttm < 0)` and `((ocf_ttm < 0) or (operating_margin_growth_ttm < 0))` | IBM, 3M, Peloton, WeWork |
+| **9** | **Turnaround / Recovery** | Returning to growth and profitability after decline. | `(revenue_yoy_ttm > 0)` and `(ocf_ttm > 0 or eps_ttm > 0)` and `(ocf_ttm_4qago < 0 or revenue_yoy_ttm_4qago < 0)` | Intel (2024), Disney (2024), Boeing (2024) |
 
 ---
 
-## 2. Pre-Profit
-
-**Intent:** Building and validating, not yet profitable.
-
-**Signals:**
-- Recurring revenue but loss-making
-- R&D or S&M very high
-- Reinvestment-led expansion
-
-**Logic:**
-```python
-if revenue_ttm >= MIN_REVENUE and (eps_ttm < 0 or ocf_ttm < 0):
-    if growth_trend == "stable_or_up":
-        archetypes.add(("Pre-Profit", 0.8))
-```
-
----
-
-## 3. Hypergrowth
-
-**Intent:** Scaling at maximum speed; efficiency optional.
-
-**Signals:**
-- Sequential revenue acceleration
-- High reinvestment (R&D + S&M)
-- Rapid market capture
-- Profitability improving but volatile
-
-**Logic:**
-```python
-if growth_trend == "accelerating" and profitability_stable is False:
-    if reinvestment_ratio > REINVEST_HIGH:
-        archetypes.add(("Hypergrowth", 0.85))
-```
-
----
-
-## 4. Sustainable Growth
-
-**Intent:** Profitable, steady growth with efficient scaling.
-
-**Signals:**
-- Positive EPS and OCF
-- Stable or improving margins
-- Balanced reinvestment and capital returns
-
-**Logic:**
-```python
-if (eps_ttm > 0 or ocf_ttm > 0) and margin_trend in ("flat","up"):
-    if not in_restructuring:
-        archetypes.add(("Sustainable Growth", 0.9))
-```
-
----
-
-## 5. Transformational Growth
-
-**Intent:** Mature company launching a new growth cycle.
-
-**Signals:**
-- Core business stable
-- New vector (product/tech/pivot) drives acceleration
-- Strategic language: “pivot”, “AI-first”, “platform shift”
-
-**Logic:**
-```python
-if base_archetype == "Sustainable Growth" and new_segment_growth >> total_growth:
-    if transcript_has(["pivot","AI","new product","reaccelerate"]):
-        archetypes.add(("Transformational Growth", 0.75))
-```
-
----
-
-## 6. Value / Reassessment
-
-**Intent:** Solid fundamentals, undervalued by market.
-
-**Signals:**
-- Low relative valuation (P/E, EV/EBITDA, P/S)
-- Improving fundamentals
-- Buyback/divestiture catalysts
-
-**Logic:**
-```python
-if valuation_is_low and fundamentals_stable_or_improving:
-    archetypes.add(("Value / Reassessment", 0.7))
-```
-
----
-
-## 7. Income & Defensive
-
-**Intent:** Stable, yield-oriented, defensive posture.
-
-**Signals:**
-- Dividend policy or payout ratio high
-- Low volatility
-- Cash flow stability
-
-**Logic:**
-```python
-if payout_policy == "dividend" and growth_is_low and earnings_vol_low:
-    archetypes.add(("Income & Defensive", 0.85))
-```
-
----
-
-## 8. Turnaround / Recovery
-
-**Intent:** Actively fixing execution or financial structure.
-
-**Signals:**
-- Decline → stabilization → early recovery
-- Restructuring actions or new leadership
-- Margin/OCF trends improving from trough
-
-**Logic:**
-```python
-if performance_was_declining and now_improving and has_restructuring_actions:
-    archetypes.add(("Turnaround / Recovery", 0.9))
-```
-
----
-
-## 9. Crisis / Distressed
-
-**Intent:** Immediate solvency or liquidity threat.
-
-**Signals:**
-- Negative OCF + high leverage
-- Low cash runway
-- Debt covenant breaches / emergency financing
-
-**Logic:**
-```python
-if liquidity_risk or solvency_risk:
-    archetypes = [("Crisis / Distressed", 1.0)]
-```
-
----
-
-## ⚙️ Classification Orchestration (Node Logic)
+## ⚙️ 4. Archetype Logic Overview
+Each archetype is detected through a combination of **quantitative signals** (revenue, EPS, OCF, margins, beta) and **trend patterns** (acceleration, sign changes).  
+Below are the simplified detection forms derived from Version 16.
 
 ```python
-archetypes = []
+# Pre-Profit
+if (eps_ttm < 0) or (ocf_ttm < 0):
+    classify("Pre-Profit")
 
-check_crisis(...)
-check_turnaround(...)
-check_pre_profit(...)
-check_hypergrowth(...)
-check_sustainable(...)
-check_transformational(...)
-check_value(...)
-check_income_defensive(...)
-check_speculative(...)
+# Hypergrowth
+if (revenue_yoy_ttm >= 0.35) and (reinvestment_ratio >= 0.3):
+    classify("Hypergrowth")
 
-archetypes = sorted(archetypes, key=lambda x: x[1], reverse=True)
-return archetypes
+# Sustainable Growth
+if (revenue_yoy_ttm >= 0.10) and (eps_ttm > 0 or ocf_ttm > 0):
+    classify("Sustainable Growth")
+
+# Accelerating Growth
+if (revenue_yoy_ttm >= 0.10) and (accel_yoy_ttm > 0) and (accel_yoy_ttm_prev > 0):
+    if (eps_ttm > 0 or ocf_ttm > 0):
+        classify("Accelerating Growth")
+
+# Mature / Steady
+if (0 <= revenue_yoy_ttm < 0.10) and (eps_ttm > 0 or ocf_ttm > 0):
+    classify("Mature / Steady")
+
+# Defensive / Low-Beta
+if (beta_2y <= 0.8) and (ocf_ttm > 0) and (revenue_yoy_ttm >= 0):
+    classify("Defensive / Low-Beta")
+
+# Cyclical
+if (count_sign_changes(revenue_yoy_8q) >= 2) or (count_sign_changes(operating_margin_growth_8q) >= 2):
+    classify("Cyclical")
+
+# Decline / Distressed
+if (revenue_yoy_ttm < 0) and ((ocf_ttm < 0) or (operating_margin_growth_ttm < 0)):
+    classify("Decline / Distressed")
+
+# Turnaround / Recovery
+if (revenue_yoy_ttm > 0) and (ocf_ttm > 0 or eps_ttm > 0) and (ocf_ttm_4qago < 0 or revenue_yoy_ttm_4qago < 0):
+    classify("Turnaround / Recovery")
 ```
-
-**Priority Order:**
-1. Crisis overrides all  
-2. Turnaround requires decline + fix evidence  
-3. Structural stage (Pre-Profit → Hypergrowth → Sustainable)  
-4. Overlays (Transformational, Value, Income)  
 
 ---
 
-### ✅ Framework Highlights
+## 📊 5. Lifecycle Usage Notes
+* Archetypes define **financial regime context** — they determine which metrics (growth, margin, volatility) the model should emphasize.
+* Companies may hold **multiple overlapping archetypes** temporarily (e.g., *Accelerating Growth + Cyclical*).
+* Archetypes evolve sequentially but reversals are common; the full transition chain provides interpretability for lifecycle analysis.
+* L2 subtypes and L3 tags extend interpretability but are documented separately.
 
-| **Feature** | **Benefit** |
+---
+
+## 🧩 6. Example Lifecycle Transitions
+| Company | Transition Pattern |
 |:--|:--|
-| **Logic-first structure** | Enables consistent and explainable AI classification. |
-| **Confidence weighting** | Allows multi-archetype blending by probability. |
-| **Sequential evaluation** | Models corporate evolution naturally. |
-| **Practical signals** | Combines metrics + transcripts + catalysts. |
-| **Complete coverage** | Works across all market sectors and stages. |
+| **Palantir** | Pre-Profit → Sustainable Growth → Accelerating Growth |
+| **Apple** | Sustainable Growth → Mature / Steady → Defensive / Low-Beta |
+| **NVIDIA** | Sustainable Growth → Accelerating Growth → Cyclical |
+| **Intel** | Decline / Distressed → Turnaround / Recovery → Sustainable Growth |
 
 ---
 
-### © Vincent Sham — Stock AI Agent Project (2025)
+**© Vincent Sham — AI Agent for Stock Analysis (2025)**
+
