@@ -30,7 +30,7 @@ This flow represents a company’s typical financial evolution—from early-stag
 | **#** | **Archetype** | **Definition (Strategic Posture)** | **Primary Signals** | **Example Companies** |
 |:--:|:--|:--|:--|:--|
 | **1** | **Pre-Profit** | Early-stage companies still loss-making but scaling rapidly. | `eps_ttm < 0` or `ocf_ttm < 0` | Rivian, Unity, early Snowflake |
-| **2** | **Hypergrowth** | Companies expanding explosively, prioritizing market share over profit. | `revenue_yoy_ttm ≥ 0.35` and `reinvestment_ratio ≥ 0.3` | Snowflake, Datadog, Shopify (2020–2021) |
+| **2** | **Hypergrowth** | Companies expanding explosively, prioritizing market share over profit. | `revenue_yoy_ttm ≥ 0.35` | Snowflake, Datadog, Shopify (2020–2021) |
 | **3** | **Sustainable Growth** | Profitable firms maintaining efficient double-digit growth. | `revenue_yoy_ttm ≥ 0.10` and `(eps_ttm > 0 or ocf_ttm > 0)` | Microsoft, Salesforce, Apple (2023–2024) |
 | **4** | **Accelerating Growth** | Growth rate itself is improving; momentum is rising. | `(revenue_yoy_ttm ≥ 0.10)` and `(accel_yoy_ttm > 0 and accel_yoy_ttm_prev > 0)` | Palantir (2024), NVIDIA (2023–24), Meta (2023) |
 | **5** | **Mature / Steady** | Stable, profitable phase with modest growth; efficient and predictable. | `(0 ≤ revenue_yoy_ttm < 0.10)` and `(eps_ttm > 0 or ocf_ttm > 0)` | Apple (2024), PepsiCo, Visa, McDonald’s, Cisco |
@@ -51,7 +51,7 @@ if (eps_ttm < 0) or (ocf_ttm < 0):
     classify("Pre-Profit")
 
 # Hypergrowth
-if (revenue_yoy_ttm >= 0.35) and (reinvestment_ratio >= 0.3):
+if (revenue_yoy_ttm >= 0.35):
     classify("Hypergrowth")
 
 # Sustainable Growth

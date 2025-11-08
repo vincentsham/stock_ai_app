@@ -1,72 +1,165 @@
-# 📘 Stock Subtype Master Table
+# 📘 Stock Subtype Master — Merged Version 5
 
-This document defines the **Layer-2 subtypes** that extend the core Archetypes (L1).  
-Subtypes provide more granular distinctions for how a company behaves within its archetype — based on business model, growth stage, or strategic positioning.
-
----
-
-## 🧩 Subtype Reference Table
-
-| **Archetype (L1)** | **Subtype (L2)** | **Definition / Distinguishing Features** | **Primary Signals** | **Example Companies** |
-|:--|:--|:--|:--|:--|
-| **Pre-Profit** | **Pre-Revenue** | Product in R&D or prototype stage, little to no revenue yet. | Revenue_TTM < $5M; R&D/Revenue undefined or extreme; high cash burn. | Neuralink, QuantumScape, early biotech IPOs. |
-|  | **R&D-Led** | Research-driven model focused on innovation and IP creation. | R&D/Revenue ≥ 50%; catalysts around trials or patents. | Moderna (early stage), CRISPR Therapeutics. |
-|  | **Scale-Up** | Rapid revenue growth but still loss-making; expanding infrastructure. | Revenue_YoY ≥ 30%; margins negative; strong catalyst activity. | Rivian, Snowflake, Unity. |
-|  | **Venture-Stage Platform** | Network-effect or marketplace early scaling; not yet monetized efficiently. | Rapid user growth; CAC/LTV ratio improving; high narrative tone. | Reddit (pre-IPO), Discord, early-stage SaaS. |
-| **Emerging Growth** | **Breakeven Transition** | Nearing profitability with expanding margins and OCF turning positive. | EPS_TTM ≈ 0; Margin_Trend_4Q > 0; OCF > 0 for 2+ quarters. | Palantir, ZoomInfo, Pinterest. |
-|  | **Operational Leverage** | Revenue growth outpacing cost growth; operating leverage emerging. | Revenue ↑; SG&A/Revenue ↓; EPS accelerating. | Shopify (2024), Datadog. |
-|  | **Early Profit Expansion** | First stage of sustainable profit generation with reinvestment. | EPS > 0; FCF near 0; CapEx ↑; ROIC rising. | Roku, Toast, Coupang. |
-| **Sustainable Growth** | **Sustained Compounder** | Consistent double-digit growth and high returns on capital. | Revenue_CAGR_3Y ≥ 15%; ROIC ≥ 15%; low EPS volatility. | Microsoft, ServiceNow, Adobe. |
-|  | **Reinvestment-Heavy Growth** | Reinvesting aggressively for long-term TAM expansion. | Reinvestment_Rate ≥ 0.4; CapEx/R&D ↑; FCF low. | Amazon (AWS cycle), Tesla. |
-|  | **Platform Expansion** | Extending core platform into adjacent verticals. | New segments contributing >20% incremental revenue. | Salesforce (Data Cloud), Nvidia (AI compute). |
-| **Mature / Quality Compounder** | **High-Margin Compounder** | Margin leader with consistent FCF conversion and low volatility. | Gross_Margin ≥ 50%; FCF_Margin ≥ 20%; ROIC ≥ 15%. | Visa, Apple, L’Oréal. |
-|  | **Steady Performer** | Predictable earnings and moderate capital return. | EPS_Volatility ≤ 10%; Dividend_Yield 1–3%. | PepsiCo, Nestlé. |
-|  | **Capital Return Leader** | Prioritizing buybacks over growth investment. | Share count ↓ ≥ 2% YoY; FCF_Payout ≥ 0.7. | Home Depot, Oracle. |
-| **Re-Growth / Re-Acceleration** | **Product Cycle Revival** | New product line or refresh drives revenue/EPS acceleration. | Revenue_Accel_4Q ≥ 2; positive guidance. | AMD (AI GPU cycle), Apple (Vision Pro). |
-|  | **Strategic Pivot** | Business model transformation or tech adoption boosts growth. | New keywords: “AI,” “Cloud,” “Subscription.” | Microsoft (Copilot), Meta (AI ads). |
-|  | **Efficiency-Driven Growth** | Margin and EPS expansion via cost optimization. | Margin_Trend_4Q ↑; EPS_Accel_4Q ≥ 2; OCF ↑. | Meta (2023), Intel (2025 pivot). |
-| **Turnaround / Recovery** | **Restructuring Phase** | Cost cutting, divestitures, or leadership overhaul. | Opex ↓; “restructuring” catalysts; new CEO. | Disney, Boeing, Peloton. |
-|  | **Operational Recovery** | Stabilizing operations and restoring profitability. | EPS_YoY ↑; OCF ↑; Margin_Trend > 0. | Intel (2024–2025), Ford (EV refocus). |
-|  | **Sentiment Recovery** | Market perception improving ahead of fundamentals. | Analyst_PT_Upgrades ↑; news sentiment ↑. | PayPal, AT&T. |
-| **Value / Reassessment** | **Deep Value** | Severely undervalued relative to fundamentals. | P/E < 10; EV/EBITDA < 6; strong balance sheet. | Citi, BP, Alibaba. |
-|  | **Quality Value** | Strong profitability but low valuation multiples. | ROIC ≥ 15%; P/E < sector median. | Intel, Oracle. |
-|  | **Income-Value Hybrid** | Combines dividend yield with undervaluation potential. | Dividend_Yield 3–5%; stable EPS. | Verizon, IBM. |
-|  | **Re-Rating Candidate** | Market-driven multiple expansion ahead of EPS growth. | P/E expanding; analyst upgrades; mild EPS ↑. | Pfizer, Alibaba (2024). |
-| **Income / Dividend** | **Dividend Aristocrat** | 10+ years of consecutive dividend increases. | Dividend_Streak ≥ 10 years; low volatility. | Johnson & Johnson, Coca-Cola. |
-|  | **High-Yield Stable** | High dividend yield with strong FCF coverage. | Dividend_Yield ≥ 5%; FCF_Coverage ≥ 1.5×. | Altria, Realty Income. |
-|  | **Buyback-Focused** | Prioritizes repurchases over dividends. | Share count ↓ ≥ 3% YoY; low payout ratio. | Apple, Oracle. |
-| **Cyclical / Capital-Intensive** | **Commodity-Linked** | Performance driven by commodity prices. | Sector: Energy/Materials; EBITDA–price correlation > 0.8. | ExxonMobil, Rio Tinto. |
-|  | **Industrial Cycle** | CapEx-driven business with inventory cycles. | CapEx/Revenue cyclical; WorkingCapital swings. | Caterpillar, 3M. |
-|  | **Financial / Rate-Sensitive** | Dependent on interest rate or credit spreads. | Sector: Banks, REITs; NIM correlated with Fed Funds. | JPMorgan, Blackstone, Schwab. |
-| **Event-Driven / Special Situation** | **M&A Target** | Potential acquisition or merger activity. | “acquisition,” “merger,” “offer” keywords. | Activision Blizzard, Splunk. |
-|  | **Spin-Off / Split** | Unlocking value via divestiture or separation. | “spinoff,” “split,” “IPO” catalysts. | GE (GE Vernova/GE Aerospace), Kenvue. |
-|  | **Regulatory / Legal Resolution** | Driven by policy change or litigation outcome. | “settlement,” “approval,” “ban.” | Meta (FTC), Illumina. |
-| **Defensive / Low-Beta** | **Staple Defensive** | Essential consumer demand with low cyclicality. | Beta ≤ 0.7; Revenue_YoY < 5%. | P&G, PepsiCo, Costco. |
-|  | **Utility Defensive** | Regulated, predictable cash flows. | Sector: Utilities; EPS growth 2–4%. | Duke Energy, NextEra. |
-|  | **Healthcare Defensive** | Stable long-term demand across cycles. | Sector: Healthcare; low earnings volatility. | Abbott, Johnson & Johnson. |
-| **Speculative / Story-Driven** | **Thematic Momentum** | Narrative-based sectors (AI, EVs, green energy, etc.). | News/topic ratio ≥ 0.4; catalysts frequent. | C3.ai, Plug Power, DraftKings. |
-|  | **Early-Tech Explorer** | Commercializing unproven technology. | R&D/Revenue ≥ 40%; EPS < 0. | QuantumScape, Rigetti, IonQ. |
-|  | **Hype-Cycle Peak** | Valuation extreme, sentiment overheated. | P/S > 30; negative FCF; news volume spike. | Nikola, Beyond Meat. |
-| **Crisis / Distressed** | **Liquidity Crisis** | Insufficient cash runway or refinancing risk. | Cash/OCF < 1 year; short-term debt ↑. | WeWork, Bed Bath & Beyond. |
-|  | **Operational Collapse** | Core operations deteriorating sharply. | Revenue ↓ > 20%; OCF/FCF deeply negative. | Lordstown Motors, Peloton (2022). |
-|  | **Balance Sheet Distress** | Debt burden unsustainable; solvency risk. | Interest_Coverage < 1.0; Leverage > 5×. | Evergrande, Rite Aid. |
+This document consolidates all **Layer-2 (L2) subtype definitions** across major archetypes in the Stock Type Classification Framework, now updated to include the new **High Alpha** archetype and its subtypes.
 
 ---
 
-### 🧠 Design Notes
+## 🧩 1. Pre-Profit
+```python
+if (eps_ttm < 0) or (ocf_ttm < 0):
+    classify("Pre-Profit")
+```
 
-- Each archetype has **2–4 subtypes** capturing strategic or structural variation.  
-- Subtypes refine **analysis weighting and peer benchmarking**.  
-- Transitions can be tracked longitudinally, e.g.  
-  ```
-  R&D-Led → Scale-Up → Breakeven Transition → Sustainable Compounder
-  ```  
-- Suggested schema columns:
-  ```sql
-  subtype_code TEXT,
-  subtype_name TEXT,
-  subtype_confidence NUMERIC(4,3)
-  ```
-- Subtype inference combines **quantitative metrics** and **qualitative language signals** (e.g., “AI pivot,” “restructuring,” “spinoff,” etc.).
+### Subtypes
+| **#** | **Subtype** | **Definition** | **Logic (Simplified)** |
+|:--:|:--|:--|:--|
+| 1 | **Pre-Revenue / Concept Stage** | Minimal or no revenue, focused on product or technology development. | `if revenue_ttm < 5000000:` |
+| 2 | **R&D-Led** | Majority of expenses in research and development. | `if r_and_d_to_revenue >= 0.5:` |
+| 3 | **Scale-Up / Early Commercialization** | Revenue accelerating with high reinvestment. | `if revenue_yoy_ttm > 0.25 and reinvestment_ratio >= 0.25:` |
+| 4 | **Market-Share Expansion** | Spending heavily on marketing and customer acquisition. | `if s_and_m_to_revenue >= 0.4:` |
+| 5 | **Speculative / Story-Driven** | Valuation based on long-term narrative, not fundamentals. | `if narrative_intensity >= 0.6:` |
 
 ---
+
+## 🚀 2. Hypergrowth
+```python
+if revenue_yoy_ttm >= 0.35:
+    classify("Hypergrowth")
+```
+
+### Subtypes
+| **#** | **Subtype** | **Definition** | **Logic (Simplified)** |
+|:--:|:--|:--|:--|
+| 1 | **Efficient Hypergrowth** | Revenue growth with improving margins. | `if operating_margin_growth_ttm > 0:` |
+| 2 | **Reinvestment-Heavy Hypergrowth** | Aggressive reinvestment for market share. | `if reinvestment_ratio >= 0.5:` |
+| 3 | **Frontier / Technology Hypergrowth** | R&D intensity drives expansion. | `if r_and_d_to_revenue >= 0.4:` |
+| 4 | **High-Margin Hypergrowth** | Sustained high gross/operating margins. | `if operating_margin_ttm > 0.25:` |
+| 5 | **Platform Hypergrowth** | Multi-product or ecosystem-based expansion. | `if platform_revenue_share >= 0.4:` |
+
+---
+
+## 📈 3. Sustainable Growth
+```python
+if (revenue_yoy_ttm >= 0.10) and (eps_ttm > 0 or ocf_ttm > 0):
+    classify("Sustainable Growth")
+```
+
+### Subtypes
+| **#** | **Subtype** | **Definition** | **Logic (Simplified)** |
+|:--:|:--|:--|:--|
+| 1 | **Operational Optimization** | Profitable growth with improving margins or operating leverage. | `if operating_margin_growth_ttm > 0 or ocf_yoy_ttm > 0:` |
+| 2 | **Quality Compounder** | High return on equity/capital with efficient scaling. | `if roe_ttm >= 0.15 or roic_ttm >= 0.10:` |
+| 3 | **Steady Performer** | Predictable margins and revenue stability. | `if revenue_vol_8q <= 0.05 and -0.01 <= operating_margin_growth_ttm <= 0.01:` |
+| 4 | **Cash Flow Expansion** | Consistent YoY growth in OCF over multiple quarters. | `if ocf_yoy_ttm > 0 and ocf_yoy_streak_4q >= 3:` |
+
+---
+
+## ⚡ 4. Accelerating Growth
+```python
+if (revenue_yoy_ttm >= 0.10) and (accel_yoy_ttm > 0) and (accel_yoy_ttm_prev > 0):
+    if (eps_ttm > 0 or ocf_ttm > 0):
+        classify("Accelerating Growth")
+```
+
+### Subtypes
+| **#** | **Subtype** | **Definition** | **Logic (Simplified)** |
+|:--:|:--|:--|:--|
+| 1 | **Margin Acceleration** | Multi-period improvement in operating margins. | `if (operating_margin_growth_ttm > 0) and (operating_margin_growth_ttm > operating_margin_growth_ttm_1qago) and (operating_margin_growth_ttm_1qago > operating_margin_growth_ttm_2qago):` |
+| 2 | **Cash Flow Acceleration** | OCF growth rate improving for at least 3 consecutive quarters. | `if (ocf_yoy_ttm > 0) and (ocf_yoy_ttm > ocf_yoy_ttm_1qago) and (ocf_yoy_ttm_1qago > ocf_yoy_ttm_2qago):` |
+| 3 | **Profit Acceleration** | EPS growth improving sequentially across 3 periods. | `if (eps_yoy_ttm > 0) and (eps_yoy_ttm > eps_yoy_ttm_1qago) and (eps_yoy_ttm_1qago > eps_yoy_ttm_2qago):` |
+| 4 | **Catalyst-Driven Acceleration** | Acceleration linked to identifiable catalysts (e.g. product or guidance). | `if catalyst_intensity >= 0.5:` |
+
+---
+
+## 💼 5. Mature / Steady
+```python
+if (0 <= revenue_yoy_ttm < 0.10) and (eps_ttm > 0 or ocf_ttm > 0):
+    classify("Mature / Steady")
+```
+
+### Subtypes
+| **#** | **Subtype** | **Definition** | **Logic (Simplified)** |
+|:--:|:--|:--|:--|
+| 1 | **Cash Flow Stability** | Consistent positive OCF with low volatility. | `if ocf_vol_8q <= 0.05:` |
+| 2 | **Margin Preservation** | Flat to slightly rising margins under low growth. | `if -0.01 <= operating_margin_growth_ttm <= 0.02:` |
+| 3 | **Efficiency Maintainer** | Strong capital returns with low variance in efficiency. | `if roe_vol_8q <= 0.03 and roic_ttm >= 0.10:` |
+
+---
+
+## 🛡️ 6. Defensive / Low-Beta
+```python
+if (beta_2y <= 0.8) and (ocf_ttm > 0) and (revenue_yoy_ttm >= 0):
+    classify("Defensive / Low-Beta")
+```
+
+### Subtypes
+| **#** | **Subtype** | **Definition** | **Logic (Simplified)** |
+|:--:|:--|:--|:--|
+| 1 | **Essential Consumer / Utility Defensive** | Non-discretionary demand from staples, healthcare, or utilities. | `if sector in ('Consumer Staples','Utilities','Healthcare'):` |
+
+---
+
+## 💰 7. Dividend / Buyback
+```python
+if (dividend_yield + buyback_yield) >= 0.04:
+    classify("Dividend / Buyback")
+```
+
+### Definition
+Companies that **return 4% or more of their market value to shareholders** annually through **dividends and/or share repurchases**.  
+This archetype identifies firms that prioritize **capital return discipline** over reinvestment or expansion.
+
+---
+
+## 💎 8. High Alpha
+```python
+if (alpha_12m > 0.05) and (sharpe_ratio_12m >= 1.0):
+    classify("High Alpha")
+```
+
+### Subtypes
+| **#** | **Subtype** | **Definition** | **Logic (Simplified)** | **Example Companies** |
+|:--:|:--|:--|:--|:--|
+| 1 | **Revenue Alpha** | Alpha driven by exceptional top-line growth or reacceleration vs peers. | `if revenue_yoy_ttm > (sector_avg_revenue_yoy + 0.10):` | Super Micro, Palantir, Snowflake |
+| 2 | **EPS Alpha** | Alpha led by strong or accelerating earnings growth. | `if eps_yoy_ttm > 0.15 or eps_accel_4q > 0:` | Nvidia, Apple, Meta |
+| 3 | **Catalyst Alpha** | Outperformance linked to identifiable catalysts such as guidance raises or new product cycles. | `if catalyst_intensity >= 0.5:` | AMD, Meta, Tesla |
+| 4 | **Sentiment Alpha** | Alpha driven by narrative or investor sentiment improvement. | `if sentiment_trend_4q > 0 and eps_yoy_ttm <= 0:` | Palantir, C3.ai |
+| 5 | **Momentum Alpha** | Sustained price momentum and risk-adjusted outperformance. | `if price_momentum_12m >= 0.15 and sharpe_ratio_12m >= 1.0:` | Nvidia, Tesla |
+| 6 | **Recovery Alpha** | Alpha generated during early rebound after prior underperformance. | `if alpha_12m > 0 and alpha_24m < 0:` | Meta (2023), Disney (2024) |
+
+---
+
+## 📉 9. Decline / Distressed
+```python
+if (revenue_yoy_ttm < 0) and ((ocf_ttm < 0) or (operating_margin_growth_ttm < 0)):
+    classify("Decline / Distressed")
+```
+
+### Subtypes
+| **#** | **Subtype** | **Definition** | **Logic (Simplified)** |
+|:--:|:--|:--|:--|
+| 1 | **Revenue Decline** | Multi-quarter contraction in revenue. | `if revenue_yoy_streak_4q < 0:` |
+| 2 | **Margin Erosion** | Sequential decline in margins. | `if operating_margin_growth_ttm < 0:` |
+| 3 | **Cash Burn** | Negative OCF over multiple quarters. | `if ocf_streak_4q < 0:` |
+| 4 | **Debt Pressure / Overleveraged** | Leverage increasing or coverage deteriorating. | `if net_debt_to_ebitda_ttm > 4.0 or interest_coverage_ttm < 2.0:` |
+
+---
+
+## 🔁 10. Turnaround / Recovery
+```python
+if (revenue_yoy_ttm > 0) and (ocf_ttm > 0 or eps_ttm > 0) and (ocf_ttm_4qago < 0 or revenue_yoy_ttm_4qago < 0):
+    classify("Turnaround / Recovery")
+```
+
+### Subtypes
+| **#** | **Subtype** | **Definition** | **Logic (Simplified)** |
+|:--:|:--|:--|:--|
+| 1 | **Revenue Recovery** | Growth turns positive after a contraction phase. | `if revenue_yoy_ttm > 0 and revenue_yoy_ttm_4qago < 0:` |
+| 2 | **Profitability Turnaround** | EPS or OCF shifts from negative to positive. | `if (eps_ttm > 0 or ocf_ttm > 0) and (eps_ttm_4qago < 0 or ocf_ttm_4qago < 0):` |
+| 3 | **Margin Recovery** | Margins recovering after erosion. | `if operating_margin_growth_ttm > 0 and operating_margin_growth_ttm_4qago < 0:` |
+| 4 | **Sentiment / Catalyst Re-Rating** | Market sentiment or catalysts signal structural fix. | `if sentiment_trend_4q > 0 or catalyst_intensity >= 0.5:` |
+
+---
+
+**© Vincent Sham — AI Agent for Stock Analysis (2025)**
+
