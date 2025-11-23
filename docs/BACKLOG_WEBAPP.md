@@ -38,7 +38,10 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-|  |  |  |  |  |  |  |  |
+| 2 | Feature | Main App Shell (Layout structure) | High | Open | | | |
+| 3 | Feature | Header Component | High | Open | | | |
+| 4 | Feature | Footer Component | High | Open | | | |
+| 5 | Technical | App Routing Setup | High | Open | | | |
 </div>
 
 
