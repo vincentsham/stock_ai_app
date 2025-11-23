@@ -1,5 +1,5 @@
 from states import PastState, FutureState, RiskState, RiskResponseState, MergedState
-from server.database.utils import execute_query
+from database.utils import execute_query
 from etl_pipeline.utils import run_llm
 from typing import Literal, Optional, Union
 from prompts import PAST_PERFORMANCE_SYSTEM_MESSAGE, FUTURE_OUTLOOK_SYSTEM_MESSAGE, \

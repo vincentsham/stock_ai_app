@@ -1,6 +1,6 @@
 import requests
 from psycopg import connect
-from server.database.utils import connect_to_db
+from database.utils import connect_to_db
 import os
 import datetime
 import time

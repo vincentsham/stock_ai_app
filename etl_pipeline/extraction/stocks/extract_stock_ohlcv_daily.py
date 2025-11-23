@@ -1,6 +1,6 @@
 import yfinance as yf
 import psycopg as pg
-from server.database.utils import connect_to_db
+from database.utils import connect_to_db
 import pandas as pd
 
 # Fetch stock data from yfinance

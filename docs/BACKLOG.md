@@ -47,6 +47,7 @@ examples:
 | 10004 | Miscellaneous | Create psql partition logic | Low | Open |  |  |  |
 | 10005 | Technical | Improve the speed of news ai agent (async + concurrent) | Low | Open |  |  |  |
 | 10008 | Miscellaneous | Reference table for the text of categorical columns in metrics | Low | Open |  |  |  |
+| 10009 | Miscellaneous | Fix folder structure | Low | Open |  |  |  |
 </div>
 
 

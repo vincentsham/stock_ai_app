@@ -1,7 +1,7 @@
 import yfinance as yf
 from psycopg import connect
 from psycopg.errors import UniqueViolation
-from server.database.utils import connect_to_db
+from database.utils import connect_to_db
 import json
 from etl_pipeline.utils import hash_dict
 

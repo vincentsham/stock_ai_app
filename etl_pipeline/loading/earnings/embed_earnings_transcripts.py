@@ -1,5 +1,5 @@
 import os
-from server.database.utils import connect_to_db
+from database.utils import connect_to_db
 from dotenv import load_dotenv
 from langchain_openai import OpenAIEmbeddings
 from tqdm import tqdm

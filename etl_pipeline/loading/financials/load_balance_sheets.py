@@ -1,6 +1,6 @@
 import pandas as pd
 import json
-from server.database.utils import connect_to_db, insert_records, execute_query
+from database.utils import connect_to_db, insert_records, execute_query
 
 
 def read_records():

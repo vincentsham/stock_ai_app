@@ -1,4 +1,4 @@
-from server.database.utils import connect_to_db, insert_records, read_sql_query
+from database.utils import connect_to_db, insert_records, read_sql_query
 from etl_pipeline.utils import timestamp_to_trading_date, convert_numpy_types
 import pandas as pd
 import numpy as np

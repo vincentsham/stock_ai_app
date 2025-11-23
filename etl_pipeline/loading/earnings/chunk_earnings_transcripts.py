@@ -1,4 +1,4 @@
-from server.database.utils import connect_to_db
+from database.utils import connect_to_db
 from etl_pipeline.utils import hash_dict, hash_text
 import tiktoken
 from langchain.text_splitter import RecursiveCharacterTextSplitter

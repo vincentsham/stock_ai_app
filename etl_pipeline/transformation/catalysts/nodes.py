@@ -1,5 +1,5 @@
 import uuid
-from server.database.utils import execute_query
+from database.utils import execute_query
 from langchain_openai import OpenAIEmbeddings
 from dotenv import load_dotenv
 from typing import Literal, Optional, Union

@@ -1,4 +1,4 @@
-from server.database.utils import connect_to_db, execute_query, insert_records, read_sql_query
+from database.utils import connect_to_db, execute_query, insert_records, read_sql_query
 from etl_pipeline.transformation.financials.gsa_framework.compute_growth_metrics import compute_growth_metrics 
 from etl_pipeline.transformation.financials.gsa_framework.compute_stability_metrics import compute_stability_metrics
 from etl_pipeline.transformation.financials.gsa_framework.compute_accel_metrics import compute_accel_metrics 

@@ -1,7 +1,7 @@
 import requests
 from psycopg import connect
 from etl_pipeline.utils import hash_dict, hash_text
-from server.database.utils import connect_to_db
+from database.utils import connect_to_db
 import os
 import pandas as pd
 import json

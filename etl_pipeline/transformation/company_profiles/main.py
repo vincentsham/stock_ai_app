@@ -1,6 +1,6 @@
 import time
 import pandas as pd
-from server.database.utils import connect_to_db, read_sql_query
+from database.utils import connect_to_db, read_sql_query
 from states import CompanyProfileState
 from graph import create_graph
 from tqdm import tqdm

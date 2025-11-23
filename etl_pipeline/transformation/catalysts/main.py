@@ -1,7 +1,7 @@
 import time
 from typing_extensions import Literal
 import pandas as pd
-from server.database.utils import connect_to_db, insert_records, read_sql_query
+from database.utils import connect_to_db, insert_records, read_sql_query
 from states import catalyst_session_factory
 from graph import create_graph
 from tqdm import tqdm
