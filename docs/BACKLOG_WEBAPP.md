@@ -42,6 +42,11 @@ examples:
 | 3 | Feature | Header Component | High | Open | | | |
 | 4 | Feature | Footer Component | High | Open | | | |
 | 5 | Technical | App Routing Setup | High | Open | | | |
+| 10001 | Technical | Create Twitter Card Image (1200x600px) | Low | Open | | 2025-11-25 | |
+| 10002 | Technical | Create Open Graph Image (1200x630px) | Low | Open | | 2025-11-25 | |
+| 10003 | Technical | Create Apple Touch Icon (180x180px) | Low | Open | | 2025-11-25 | |
+| 10004 | Technical | Create robots.txt file | Low | Open | | 2025-11-25 | |
+| 10005 | Technical | Add Google Search Console Verification | Low | Open | | 2025-11-25 | |
 </div>
 
 
