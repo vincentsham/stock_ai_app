@@ -38,15 +38,12 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-| 2 | Feature | Main App Shell (Layout structure) | High | Open | | | |
-| 3 | Feature | Header Component | High | Open | | | |
-| 4 | Feature | Footer Component | High | Open | | | |
 | 5 | Technical | App Routing Setup | High | Open | | | |
-| 10001 | Technical | Create Twitter Card Image (1200x600px) | Low | Open | | 2025-11-25 | |
-| 10002 | Technical | Create Open Graph Image (1200x630px) | Low | Open | | 2025-11-25 | |
-| 10003 | Technical | Create Apple Touch Icon (180x180px) | Low | Open | | 2025-11-25 | |
-| 10004 | Technical | Create robots.txt file | Low | Open | | 2025-11-25 | |
-| 10005 | Technical | Add Google Search Console Verification | Low | Open | | 2025-11-25 | |
+| 10001 | Technical | Create Twitter Card Image (1200x600px) | Low | Open | | | |
+| 10002 | Technical | Create Open Graph Image (1200x630px) | Low | Open | | | |
+| 10003 | Technical | Create Apple Touch Icon (180x180px) | Low | Open | | | |
+| 10004 | Technical | Create robots.txt file | Low | Open | | | |
+| 10005 | Technical | Add Google Search Console Verification | Low | Open | | | |
 </div>
 
 
@@ -57,4 +54,7 @@ examples:
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 1 | Feature | Initial set up | High | Close | w_feat_1 | 2025-11-23 | 2025-11-23 |
+| 2 | Feature | Main App Shell (Layout structure) | High | Close | w_feat_2 | 2025-11-25 | 2025-11-26 |
+| 3 | Feature | Header Component | High | Close | w_feat_2 | 2025-11-25 | 2025-11-26 |
+| 4 | Feature | Footer Component | High | Close | w_feat_2 | 2025-11-25 | 2025-11-26 |
 </div>

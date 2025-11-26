@@ -277,7 +277,19 @@
   }
 
   .header-wrapper {
-    @apply flex justify-between items-start px-6 py-4 text-gray-500;
+    @apply flex justify-between items-start px-4 py-4 text-gray-500;
+  }
+
+  .footer {
+    @apply w-full bg-gray-800 border-t border-gray-700/50 mt-12 py-6 text-gray-500 text-sm;
+  }
+  
+  .footer-container {
+    @apply container mx-auto px-4 md:px-6 lg:px-8;
+  }
+
+  .footer-disclaimer {
+    @apply text-center leading-relaxed italic px-4 py-2 mb-4 bg-gray-700/30 rounded-lg;
   }
 
   .auth-layout {
