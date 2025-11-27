@@ -6,7 +6,7 @@ import SearchBar from "@/components/SearchBar";
 const Header = async () => {
 
     return (
-        <header className="sticky top-0 header">
+        <header className="header">
             <div className="container header-wrapper">
                 {/* LEFT: Logo */}
                 <Link href="/" className="flex-shrink-0 flex justify-start mr-4">
