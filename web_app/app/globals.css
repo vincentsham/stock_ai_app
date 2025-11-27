@@ -284,8 +284,8 @@
     @apply w-full bg-gray-800 border-t border-gray-700/50 mt-12 py-6 text-gray-500 text-sm;
   }
   
-  .footer-container {
-    @apply container mx-auto px-4 md:px-6 lg:px-8;
+  .footer-wrapper {
+    @apply mx-auto px-4 md:px-6 lg:px-8;
   }
 
   .footer-disclaimer {

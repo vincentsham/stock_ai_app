@@ -38,7 +38,9 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-| 6 | Technical | App Routing Setup | High | Open | | | |
+| 7 | Feature | Search bar | High | Open | | | |
+| 1001 | Technical | Set up constant like Disclaimer | Medium | Open | | | |
+| 1002 | Technical | Set up interface | Medium | Open | | | |
 | 10001 | Technical | Create Twitter Card Image (1200x600px) | Low | Open | | | |
 | 10002 | Technical | Create Open Graph Image (1200x630px) | Low | Open | | | |
 | 10003 | Technical | Create Apple Touch Icon (180x180px) | Low | Open | | | |
@@ -58,4 +60,5 @@ examples:
 | 3 | Feature | Header Component | High | Close | w_feat_2 | 2025-11-25 | 2025-11-26 |
 | 4 | Feature | Footer Component | High | Close | w_feat_2 | 2025-11-25 | 2025-11-26 |
 | 5 | Feature | Logos and Icons | High | Close | w_feat_2 | 2025-11-25 | 2025-11-26 |
+| 6 | Feature | Stock page set up | High | Open | w_feat_6 | 2025-11-26 | 2025-11-27 |
 </div>

@@ -1,3 +1,5 @@
+import { DISCLAIMER_TEXT } from '@/lib/constants';
+
 /**
  * Footer component displaying application information and the mandatory AI disclaimer.
  * It uses the 'container' utility class for centered content and consistent styling 
@@ -8,16 +10,14 @@ const Footer = () => {
   const disclaimerText = (
     <>
       <strong className="text-yellow-400">Critical Disclaimer:</strong> 
-      This is for informational purposes only, not financial advice. 
-      Be aware: The AI system may occasionally generate incorrect or incomplete information. 
-      Invest responsibly and conduct your own due diligence.
+      {DISCLAIMER_TEXT}
     </>
   );
 
   
   return (
-    <footer className="sticky bottom-0 footer">
-      <div className="footer-container">
+    <footer className="footer">
+      <div className="footer-wrapper">
         
         {/* Disclaimer (Full Width) */}
         <div className="footer-disclaimer">
