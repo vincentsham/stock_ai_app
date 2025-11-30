@@ -1,8 +1,5 @@
 import { Pool } from 'pg';
-import dotenv from 'dotenv';
-import path from 'path';
-
-dotenv.config({ path: path.resolve(__dirname, '../../../.env')});
+import '@/lib/loadEnv';
 
 // 1. Configure the pool with environment variables
 const pool = new Pool({
