@@ -38,7 +38,7 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-| 7 | Feature | Search bar | High | Open | | | |
+| 8 | Feature | Catalyst on stock page | High | Open |  | | |
 | 1001 | Technical | Set up constant like Disclaimer | Medium | Open | | | |
 | 1002 | Technical | Set up interface | Medium | Open | | | |
 | 10001 | Technical | Create Twitter Card Image (1200x600px) | Low | Open | | | |
@@ -60,5 +60,6 @@ examples:
 | 3 | Feature | Header Component | High | Close | w_feat_2 | 2025-11-25 | 2025-11-26 |
 | 4 | Feature | Footer Component | High | Close | w_feat_2 | 2025-11-25 | 2025-11-26 |
 | 5 | Feature | Logos and Icons | High | Close | w_feat_2 | 2025-11-25 | 2025-11-26 |
-| 6 | Feature | Stock page set up | High | Open | w_feat_6 | 2025-11-26 | 2025-11-27 |
+| 6 | Feature | Stock page set up | High | Close | w_feat_6 | 2025-11-26 | 2025-11-27 |
+| 7 | Feature | Search bar | High | Close | w_feat_7 | 2025-11-28 | 2025-11-29 |
 </div>
