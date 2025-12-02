@@ -1,11 +1,9 @@
+// types/global.d.ts
 declare global {
-    type StockProfile = {
-        tic: string;
-        name: string;
-        exchange: string;
-        sector: string;
-        industry: string;
-    };
+  interface Window {
+    userLocale?: string;
+  }
 }
 
+// required for global augmentation
 export {};
