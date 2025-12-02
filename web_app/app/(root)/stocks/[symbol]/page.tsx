@@ -3,6 +3,8 @@ import {
     SYMBOL_CHART_WIDGET_CONFIG
  } from '@/lib/tradingview/configs';
 import TradingViewWidget from '@/components/TradingViewWidget';
+import { CatalystsSection } from '@/components/CatalystsSection';
+import { searchCatalysts } from '@/lib/db/catalystQueries';
 
 interface PageParams {
     params: {
@@ -26,6 +28,10 @@ const StockPage = async ({ params }: PageParams) => {
                 scriptUrl={`${scriptUrl}symbol-overview.js`}
                 config={SYMBOL_CHART_WIDGET_CONFIG(symbol, 400)}
                 height={400}
+            />
+
+            <CatalystsSection 
+                tic={symbol} 
             />
 
         </div>

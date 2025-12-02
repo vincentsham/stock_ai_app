@@ -2,6 +2,7 @@
 'use server';
 import pool from '@/lib/db/utils';
 import { cache } from 'react';
+import { StockProfile } from '@/types';
 
 const STOCK_SEARCH_QUERY = `
   SELECT tic, name, exchange, sector, industry

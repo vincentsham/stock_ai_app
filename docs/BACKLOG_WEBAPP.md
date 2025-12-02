@@ -38,9 +38,10 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-| 8 | Feature | Catalyst on stock page | High | Open |  | | |
-| 1001 | Technical | Set up constant like Disclaimer | Medium | Open | | | |
-| 1002 | Technical | Set up interface | Medium | Open | | | |
+| 9 | Feature | Search bar key Enter for the first item | High | Open |  | | |
+| 10 | Feature | News Tab | High | Open | | | |
+| 1001 |  |  | Medium | Open | | | |
+| 1002 |  |  | Medium | Open | | | |
 | 10001 | Technical | Create Twitter Card Image (1200x600px) | Low | Open | | | |
 | 10002 | Technical | Create Open Graph Image (1200x630px) | Low | Open | | | |
 | 10003 | Technical | Create Apple Touch Icon (180x180px) | Low | Open | | | |
@@ -62,4 +63,5 @@ examples:
 | 5 | Feature | Logos and Icons | High | Close | w_feat_2 | 2025-11-25 | 2025-11-26 |
 | 6 | Feature | Stock page set up | High | Close | w_feat_6 | 2025-11-26 | 2025-11-27 |
 | 7 | Feature | Search bar | High | Close | w_feat_7 | 2025-11-28 | 2025-11-29 |
+| 8 | Feature | Catalyst on stock page | High | Close | w_feat_8 | 2025-11-30 | 2025-12-02 |
 </div>

@@ -15,8 +15,9 @@ import {
 
 import { useDebounce } from "@/hooks/useDebounce"
 import { useState, useEffect } from "react"
-import { searchStocks } from "@/lib/db/queries"
+import { searchStocks } from "@/lib/db/stockQueries"
 import Link from "next/link";
+import { StockProfile } from "@/types";
 
 const SearchBar = () => {
   const [searching, setSearching] = useState(false);
