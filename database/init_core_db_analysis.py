@@ -310,7 +310,6 @@ def table_creation(conn):
             catalyst_type    VARCHAR(64),
             title            TEXT,
             summary          TEXT,
-            evidence         TEXT,
             state  VARCHAR(20),
             sentiment        SMALLINT,
             time_horizon     SMALLINT,
@@ -349,6 +348,9 @@ def table_creation(conn):
             impact_magnitude SMALLINT,
             certainty        VARCHAR(20),
             impact_area      VARCHAR(32),
+                       
+            is_valid         SMALLINT,
+            rejection_reason TEXT,
 
             ingestion_batch  VARCHAR(10),
             source_type      VARCHAR(20),

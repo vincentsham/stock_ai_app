@@ -3,7 +3,7 @@ from langgraph.graph import StateGraph
 from langgraph.types import Command
 from typing import Literal
 import time  # Import the time module for timing
-from nodes import (retriever_node, stage1_node, stage2_node,
+from nodes import (retriever_node, stage1_node, stage2_node, stage3_node,
                    current_catalysts_retriever_node)
 from states import CatalystSession, catalyst_session_factory
 
@@ -19,6 +19,7 @@ def create_graph() -> StateGraph:
     graph.add_node("current_catalysts_retriever_node", current_catalysts_retriever_node)
     graph.add_node("stage1_node", stage1_node)
     graph.add_node("stage2_node", stage2_node)
+    graph.add_node("stage3_node", stage3_node)
 
     def no_retrieval(state: CatalystSession) -> str:
         if len(state.catalysts) == 0:
@@ -31,7 +32,8 @@ def create_graph() -> StateGraph:
     graph.add_conditional_edges("retriever_node", no_retrieval)
     graph.add_edge("current_catalysts_retriever_node", "stage1_node")
     graph.add_edge("stage1_node", "stage2_node")
-    graph.add_edge("stage2_node", END)
+    graph.add_edge("stage2_node", "stage3_node")
+    graph.add_edge("stage3_node", END)
 
     return graph
 

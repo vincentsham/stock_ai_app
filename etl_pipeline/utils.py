@@ -10,7 +10,7 @@ import numpy as np
 
 load_dotenv()
 
-llm = ChatOpenAI(model=os.getenv("OPENAI_LLM_MODEL"), temperature=0)
+llm = ChatOpenAI(model=os.getenv("OPENAI_LLM_MODEL"))
 
 def run_llm(messages: list[BaseMessage]) -> dict:
     """Interact with the LLM using a system message and a human prompt."""

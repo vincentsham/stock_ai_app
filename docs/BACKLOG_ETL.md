@@ -39,10 +39,12 @@ examples:
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 27 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
-| 28 | Miscellaneous | Catalyst Logic needs to be improved. e.g. each quote can be assigned one catalyst only. | High | Open |  |  |  |
+| 32 | Miscellaneous | Catalyst Logic needs to be improved. e.g. each quote can be assigned one catalyst only. | High | Open |  |  |  |
 | 1007 | Feature | Compute more metrics (e.g. ebita) | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
+| 1010 | Feature | Only extract a limit number of existing Catalysts or Archive the old catalysts | Medium | Open |  |  |  |
+| 1011 | Feature | Create DataMart Table for catalyst section | Medium | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
 | 10004 | Miscellaneous | Create psql partition logic | Low | Open |  |  |  |

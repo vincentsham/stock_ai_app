@@ -47,12 +47,13 @@ QUERY = {
 
 columns = {
     "catalyst_master": ['catalyst_id', 'tic', 'date', 'catalyst_type', 'title', 'summary',
-                                         'evidence', 'state', 'sentiment', 'time_horizon','impact_magnitude', 
+                                         'state', 'sentiment', 'time_horizon','impact_magnitude', 
                                          'certainty', 'impact_area', 'mention_count', 'event_ids',
                                          'created_at', 'updated_at'],
     "catalyst_versions": ['event_id', 'chunk_id', 'catalyst_id', 'tic', 'date', 'catalyst_type', 'title', 'summary',
                                          'evidence', 'state', 'sentiment', 'time_horizon','impact_magnitude', 
-                                         'certainty', 'impact_area', 'ingestion_batch', 'source_type', 'source', 
+                                         'certainty', 'impact_area', 'is_valid', 'rejection_reason', 
+                                         'ingestion_batch', 'source_type', 'source', 
                                          'url', 'raw_json_sha256', 'updated_at']
 }
 
@@ -82,7 +83,7 @@ def update_master(conn, df: pd.DataFrame):
         raise ValueError("No existing records found for the provided catalyst_ids.")
 
     # Step 2: Extract the latest record for each catalyst_id based on both date DESC and updated_at DESC
-    existing_df = existing_df.sort_values(by=['catalyst_id', 'updated_at'], ascending=[True, False])
+    existing_df = existing_df.sort_values(by=['catalyst_id', 'date', 'updated_at'], ascending=[True, False, False])
     latest_records = existing_df.groupby('catalyst_id').first().reset_index()
 
     # Step 3: Count how many records for mention_count and make a list of urls grouped by catalyst_id
@@ -114,7 +115,8 @@ def get_catalyst_id_list(conn, tic: str, catalyst_type: str) -> list:
 
 
 def main(type: Literal["news", "earnings_transcript"] = "news",
-         frequency: Literal["daily", "monthly", "quarterly"] = "monthly"):
+         frequency: Literal["daily", "monthly", "quarterly"] = "monthly",
+         top_k: int = 3):
     # Connect to the database
     conn = connect_to_db()
     if conn:
@@ -140,7 +142,7 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
                     calendar_month=row['month'],
                     source_type=type,
                     catalyst_type=catalyst_type,
-                    top_k=3
+                    top_k=top_k,
                 ))
 
     # Create and compile the graph
@@ -175,6 +177,8 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
                         "impact_magnitude": catalyst.candidate.impact_magnitude,
                         "certainty": catalyst.candidate.certainty,
                         "impact_area": catalyst.candidate.impact_area,
+                        "is_valid": catalyst.candidate.is_valid,
+                        "rejection_reason": catalyst.candidate.rejection_reason,
                         "ingestion_batch": frequency,
                         "source_type": final_state.get("query_params", {}).source_type,
                         "source": catalyst.chunk.source,
@@ -193,18 +197,22 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
                 _total_existing_records = 0
                 _total_updated_master_records = 0
                 if len(df[df["state"] == "announced"]) > 0:
+
                     new_records = df[df["state"] == "announced"].copy()
-                    new_records['mention_count'] = 1
-                    new_records['event_ids'] = new_records['event_id'].apply(lambda x: [x] if pd.notna(x) else [])
                     new_records['created_at'] = datetime.now(timezone.utc)
                     new_records['updated_at'] = new_records['created_at']
-
+                    new_records['mention_count'] = new_records['is_valid']
+                    new_records['event_ids'] = new_records.apply(
+                                                    lambda row: [row['event_id']] if row['is_valid'] == 1 else [],
+                                                    axis=1,
+                                                )
                     insert_records(conn, 
                                 new_records[columns['catalyst_master']], 
                                 "core.catalyst_master")
                     _total_new_records = insert_records(conn, 
                                 new_records[columns['catalyst_versions']],
                                 "core.catalyst_versions")
+
                     total_new_records += _total_new_records
 
                 catalyst_id_list = get_catalyst_id_list(conn, 
@@ -220,7 +228,7 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
                                 keys=['event_id', 'chunk_id', 'catalyst_id'],
                                 updated_at=False)
                     total_existing_records += _total_existing_records
-                    _total_updated_master_records = update_master(conn, existing_records)
+                    _total_updated_master_records = update_master(conn, existing_records[existing_records['is_valid'] == 1])
                     total_updated_master_records += _total_updated_master_records
                 print(f"{final_state.get('company_info', {}).tic}: Total records processed: {len(processed_data)}, "
                       f"New records inserted: {_total_new_records}, Existing records updated: {_total_existing_records}, "
@@ -242,5 +250,5 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
     return
 
 if __name__ == "__main__":
-    main("earnings_transcript", "quarterly")
-    main("news", "monthly")
+    main("earnings_transcript", "quarterly", top_k=1)
+    main("news", "monthly", top_k=1)

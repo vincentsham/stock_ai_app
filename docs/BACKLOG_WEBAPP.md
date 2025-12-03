@@ -39,7 +39,7 @@ examples:
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 9 | Feature | Search bar key Enter for the first item | High | Open |  | | |
-| 10 | Feature | News Tab | High | Open | | | |
+| 10 | Feature | Earnings Tab | High | Open | | | |
 | 1001 |  |  | Medium | Open | | | |
 | 1002 |  |  | Medium | Open | | | |
 | 10001 | Technical | Create Twitter Card Image (1200x600px) | Low | Open | | | |

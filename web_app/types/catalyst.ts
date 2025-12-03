@@ -6,7 +6,6 @@ export type Catalyst = {
   catalyst_type: string;
   title: string;
   summary: string;
-  evidence: string;
   state: string;
   sentiment: number;
   time_horizon: number;

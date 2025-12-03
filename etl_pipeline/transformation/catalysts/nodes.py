@@ -3,14 +3,57 @@ from database.utils import execute_query
 from langchain_openai import OpenAIEmbeddings
 from dotenv import load_dotenv
 from typing import Literal, Optional, Union
-from prompts import CATALYST_QUERIES, STAGE1_HUMAN_PROMPT, STAGE2_HUMAN_PROMPT, STAGE1_SYSTEM_MESSAGE, STAGE2_SYSTEM_MESSAGE
+from prompts import CATALYST_QUERIES, STAGE1_HUMAN_PROMPT, STAGE2_HUMAN_PROMPT, \
+    STAGE1_SYSTEM_MESSAGE, STAGE2_SYSTEM_MESSAGE, STAGE3_HUMAN_PROMPT, STAGE3_SYSTEM_MESSAGE
 from states import CatalystSession, CatalystContext, Catalyst, catalyst_session_factory
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
 from etl_pipeline.utils import run_llm
 import json
 load_dotenv()
 
+# Helper function to build SQL query
+def get_sql_query(source_type: str, tic: str, calendar_year: int, calendar_quarter: Optional[int], 
+                  calendar_month: Optional[int], vec_str: str, top_k: int = 3) -> str:
+    if source_type == "earnings_transcript":
+        sql = f"""
+            SELECT
+            c.tic, t.earnings_date AS date, c.event_id, c.chunk_id, c.chunk,
+            1 - (e.embedding <=> '{vec_str}'::vector)   AS cosine_sim,
+            t.source, NULL AS url, t.raw_json_sha256
+            FROM core.earnings_transcript_chunks  AS c
+            JOIN core.earnings_transcript_embeddings AS e
+            ON c.event_id = e.event_id AND c.chunk_id = e.chunk_id
+            JOIN core.earnings_transcripts AS t
+            ON c.event_id = t.event_id
+            WHERE c.tic = '{tic}' 
+                AND c.calendar_year = {calendar_year}
+                AND c.calendar_quarter = {calendar_quarter}
+                AND (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.3
+            ORDER BY cosine_sim DESC
+            LIMIT {top_k};
+        """
+    elif source_type == "news":
+        sql = f"""
+            SELECT
+            c.tic, c.published_at::DATE as date, c.event_id, c.chunk_id, c.chunk,
+            1 - (e.embedding <=> '{vec_str}'::vector)  AS cosine_sim,
+            n.source, n.url, n.raw_json_sha256
+            FROM core.news_chunks  AS c
+            JOIN core.news_embeddings AS e
+            ON c.event_id = e.event_id AND c.chunk_id = e.chunk_id
+            JOIN core.news AS n
+            ON c.event_id = n.event_id
+            WHERE c.tic = '{tic}' 
+                AND EXTRACT(YEAR FROM c.published_at) = {calendar_year}
+                AND EXTRACT(MONTH FROM c.published_at) = {calendar_month}
+                AND (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.3
+            ORDER BY cosine_sim DESC
+            LIMIT {top_k};
+        """
+    else:
+        raise ValueError(f"Unsupported source_type: {source_type}") 
 
+    return sql
 
 
 # Retriever Node
@@ -78,7 +121,7 @@ def current_catalysts_retriever_node(state: CatalystSession) -> dict:
     catalyst_type = state.query_params.catalyst_type
 
     sql = f"""
-        SELECT catalyst_id, catalyst_type, state, title, summary, evidence, time_horizon,
+        SELECT catalyst_id, catalyst_type, state, title, summary, time_horizon,
                certainty, impact_area, sentiment, impact_magnitude
         FROM core.catalyst_master
         WHERE tic = '{tic}' AND catalyst_type = '{catalyst_type}';
@@ -98,7 +141,6 @@ def current_catalysts_retriever_node(state: CatalystSession) -> dict:
             state=results.iloc[i]['state'],
             title=results.iloc[i]['title'],
             summary=results.iloc[i]['summary'],
-            evidence=results.iloc[i]['evidence'],
             time_horizon=results.iloc[i]['time_horizon'],
             certainty=results.iloc[i]['certainty'],
             impact_area=results.iloc[i]['impact_area'],
@@ -107,49 +149,6 @@ def current_catalysts_retriever_node(state: CatalystSession) -> dict:
         )
         current_catalysts.append(catalyst)
     return {"current_catalysts": current_catalysts} 
-
-def get_sql_query(source_type: str, tic: str, calendar_year: int, calendar_quarter: Optional[int], 
-                  calendar_month: Optional[int], vec_str: str, top_k: int = 3) -> str:
-    if source_type == "earnings_transcript":
-        sql = f"""
-            SELECT
-            c.tic, t.earnings_date AS date, c.event_id, c.chunk_id, c.chunk,
-            1 - (e.embedding <=> '{vec_str}'::vector)   AS cosine_sim,
-            t.source, NULL AS url, t.raw_json_sha256
-            FROM core.earnings_transcript_chunks  AS c
-            JOIN core.earnings_transcript_embeddings AS e
-            ON c.event_id = e.event_id AND c.chunk_id = e.chunk_id
-            JOIN core.earnings_transcripts AS t
-            ON c.event_id = t.event_id
-            WHERE c.tic = '{tic}' 
-                AND c.calendar_year = {calendar_year}
-                AND c.calendar_quarter = {calendar_quarter}
-                AND (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.3
-            ORDER BY cosine_sim DESC
-            LIMIT {top_k};
-        """
-    elif source_type == "news":
-        sql = f"""
-            SELECT
-            c.tic, c.published_at::DATE as date, c.event_id, c.chunk_id, c.chunk,
-            1 - (e.embedding <=> '{vec_str}'::vector)  AS cosine_sim,
-            n.source, n.url, n.raw_json_sha256
-            FROM core.news_chunks  AS c
-            JOIN core.news_embeddings AS e
-            ON c.event_id = e.event_id AND c.chunk_id = e.chunk_id
-            JOIN core.news AS n
-            ON c.event_id = n.event_id
-            WHERE c.tic = '{tic}' 
-                AND EXTRACT(YEAR FROM c.published_at) = {calendar_year}
-                AND EXTRACT(MONTH FROM c.published_at) = {calendar_month}
-                AND (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.3
-            ORDER BY cosine_sim DESC
-            LIMIT {top_k};
-        """
-    else:
-        raise ValueError(f"Unsupported source_type: {source_type}") 
-
-    return sql
 
 
 def stage1_node(state: CatalystSession) -> dict:
@@ -190,6 +189,7 @@ def stage1_node(state: CatalystSession) -> dict:
             is_catalyst=is_cat_val,
             rationale=llm_dict.get("rationale", "")[:200],  # hard cap, just in case
             catalyst_type=catalyst_type,
+            evidence=llm_dict.get("evidence", ""),
         )
 
         # write back
@@ -214,7 +214,7 @@ def stage2_node(state: CatalystSession) -> dict:
 
         catalyst_type = ctx.chunk.catalyst_type
         retrieval_query = ctx.chunk.retrieval_query
-        content = ctx.chunk.content
+        evidence = cand.evidence
         rationale = cand.rationale
 
         # send REAL json to the model
@@ -225,7 +225,7 @@ def stage2_node(state: CatalystSession) -> dict:
             company_info=json.dumps(state.company_info.model_dump(), ensure_ascii=False),
             catalyst_type=catalyst_type,
             retrieval_query=retrieval_query,
-            content=content,
+            evidence=evidence,
             rationale=rationale,
             current_catalysts_json=json.dumps(current_catalysts_json, ensure_ascii=False),
         )
@@ -262,6 +262,48 @@ def stage2_node(state: CatalystSession) -> dict:
                 if existing_cat.catalyst_id == stage2_catalyst.catalyst_id:
                     state.current_catalysts[i] = stage2_catalyst
                     break
+        updated_contexts.append(ctx)
+
+    return {"catalysts": updated_contexts}
+
+
+
+
+def stage3_node(state: CatalystSession) -> dict:
+    updated_contexts = []
+    for ctx in state.catalysts:  # ctx is a CatalystContext
+        cand = ctx.candidate
+        content = ctx.chunk.content
+
+        human_prompt = STAGE3_HUMAN_PROMPT.format(
+            chunk_text=content,
+            stage2_json_output=json.dumps(cand.model_dump(), ensure_ascii=False),
+        )
+        system_prompt = SystemMessage(content=STAGE3_SYSTEM_MESSAGE)
+        messages = [system_prompt, HumanMessage(content=human_prompt)]
+
+        # 1) call LLM
+        llm_raw = run_llm(messages).content
+
+        # 2) parse json
+        llm_dict = json.loads(llm_raw)
+        is_valid = llm_dict.get("is_valid", 1)
+        rejection_reason = llm_dict.get("rejection_reason", None)
+
+        # if is_valid == 0:
+        #     continue  # skip invalid catalysts
+
+        cand.is_valid = is_valid
+        cand.rejection_reason = rejection_reason
+
+        # 3) VALIDATE with your Pydantic Catalyst
+        #    this is the part that will raise if sentiment="positive" but model wants IntEnum
+        stage3_catalyst = Catalyst.model_validate({
+            **cand.model_dump()
+        })
+
+        # 4) write back to context
+        ctx.candidate = stage3_catalyst
         updated_contexts.append(ctx)
 
     return {"catalysts": updated_contexts}
