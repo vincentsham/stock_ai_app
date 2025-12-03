@@ -10,7 +10,7 @@ enc = tiktoken.get_encoding("cl100k_base")
 def tok_len(s: str) -> int:
     return len(enc.encode(s))
 
-def chunk_text(text, max_tokens=512, overlap_tokens=50):
+def chunk_text(text, max_tokens=512, overlap_tokens=0):
     text_splitter = RecursiveCharacterTextSplitter(
         separators=[
             r"(?<=\n)\s*",     # split after newlines
@@ -75,7 +75,7 @@ def process_and_load_chunks():
                 transcript = record[5]
                 transcript_hash = record[6]
 
-                chunks = chunk_text(transcript, max_tokens=512, overlap_tokens=512//10)
+                chunks = chunk_text(transcript, max_tokens=512, overlap_tokens=0)
                 
                 # Chunk the transcript
                 for chunk_id, chunk in enumerate(chunks):

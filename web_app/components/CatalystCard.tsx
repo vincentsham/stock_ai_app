@@ -8,6 +8,24 @@ interface CatalystCardProps {
   catalyst: Catalyst;
 }
 
+const ensureDoubleQuotes = (str: string) =>{
+  str = str.trim();
+
+  // If wrapped in single quotes → convert to double quotes
+  if (str.startsWith("'") && str.endsWith("'")) {
+    return `"${str.slice(1, -1)}"`;
+  }
+
+  // If already wrapped in double quotes → return as-is
+  if (str.startsWith('"') && str.endsWith('"')) {
+    return str;
+  }
+
+  // Otherwise wrap in double quotes
+  return `"${str}"`;
+}
+
+
 export const CatalystCard: React.FC<CatalystCardProps> = ({ catalyst }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -110,7 +128,7 @@ export const CatalystCard: React.FC<CatalystCardProps> = ({ catalyst }) => {
                         key={`catalyst-${catalyst.catalyst_id}-evidence-${index}`}
                         className="mb-2 last:mb-0 text-xs text-gray-400"
                         >
-                        <span className="italic">"{item}"</span>
+                        <span className="italic">{ensureDoubleQuotes(item)}</span>
                         {<a
                             href={url}
                             target="_blank"
@@ -126,7 +144,7 @@ export const CatalystCard: React.FC<CatalystCardProps> = ({ catalyst }) => {
                 </ul>
               ) : (
                 <p className="text-xs text-gray-400 italic">
-                  {catalyst.evidence ? `"${catalyst.evidence}"` : 'No evidence provided.'}
+                  No evidence provided.
                 </p>
               )}
             </div>

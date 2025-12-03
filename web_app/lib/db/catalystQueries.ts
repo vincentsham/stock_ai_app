@@ -9,6 +9,7 @@ const CATALYST_SEARCH_QUERY = `
     WITH catalyst_events AS (
         SELECT
             cv.event_id,
+            cv.catalyst_id,
             cv.evidence,
             COALESCE(
                 CASE
@@ -26,7 +27,7 @@ const CATALYST_SEARCH_QUERY = `
             WHERE tic = $1
         ) AS et
             ON cv.event_id = et.event_id
-        WHERE cv.tic = $1
+        WHERE cv.is_valid = 1 AND cv.tic = $1
     )
     SELECT
         cm.*,
@@ -40,10 +41,10 @@ const CATALYST_SEARCH_QUERY = `
             array_agg(ce.evidence ORDER BY ce.event_id)    AS evidences,
             array_agg(ce.url ORDER BY ce.event_id)   AS urls
         FROM catalyst_events AS ce
-        WHERE ce.event_id::text = ANY(cm.event_ids)
+        WHERE ce.catalyst_id = cm.catalyst_id AND ce.event_id::text = ANY(cm.event_ids)
     ) AS ev ON TRUE
-    WHERE cm.tic = $1 AND (cm.sentiment = 1 OR cm.sentiment = -1)
-    ORDER BY date DESC, impact_magnitude DESC, updated_at DESC, event_ids DESC
+    WHERE cm.tic = $1 AND cm.mention_count > 0 AND (cm.sentiment = 1 OR cm.sentiment = -1)
+    ORDER BY date DESC, impact_magnitude DESC, updated_at DESC, catalyst_id DESC
     LIMIT $2 OFFSET $3;
   `;
 
@@ -51,6 +52,7 @@ const CATALYST_SEARCH_QUERY_BULL = `
     WITH catalyst_events AS (
         SELECT
             cv.event_id,
+            cv.catalyst_id,
             cv.evidence,
             COALESCE(
                 CASE
@@ -68,7 +70,7 @@ const CATALYST_SEARCH_QUERY_BULL = `
             WHERE tic = $1
         ) AS et
             ON cv.event_id = et.event_id
-        WHERE cv.tic = $1
+        WHERE cv.is_valid = 1 AND cv.tic = $1
     )
     SELECT
         cm.*,
@@ -82,10 +84,10 @@ const CATALYST_SEARCH_QUERY_BULL = `
             array_agg(ce.evidence ORDER BY ce.event_id)    AS evidences,
             array_agg(ce.url ORDER BY ce.event_id)   AS urls
         FROM catalyst_events AS ce
-        WHERE ce.event_id::text = ANY(cm.event_ids)
+        WHERE ce.catalyst_id = cm.catalyst_id AND ce.event_id::text = ANY(cm.event_ids)
     ) AS ev ON TRUE
-    WHERE cm.tic = $1 AND cm.sentiment = 1
-    ORDER BY date DESC, impact_magnitude DESC, updated_at DESC, event_ids DESC
+    WHERE cm.tic = $1 AND cm.mention_count > 0 AND cm.sentiment = 1
+    ORDER BY date DESC, impact_magnitude DESC, updated_at DESC, catalyst_id DESC
     LIMIT $2 OFFSET $3;
   `;
 
@@ -93,6 +95,7 @@ const CATALYST_SEARCH_QUERY_BEAR =  `
     WITH catalyst_events AS (
         SELECT
             cv.event_id,
+            cv.catalyst_id,
             cv.evidence,
             COALESCE(
                 CASE
@@ -110,7 +113,7 @@ const CATALYST_SEARCH_QUERY_BEAR =  `
             WHERE tic = $1
         ) AS et
             ON cv.event_id = et.event_id
-        WHERE cv.tic = $1
+        WHERE cv.is_valid = 1 AND cv.tic = $1
     )
     SELECT
         cm.*,
@@ -124,26 +127,26 @@ const CATALYST_SEARCH_QUERY_BEAR =  `
             array_agg(ce.evidence ORDER BY ce.event_id)    AS evidences,
             array_agg(ce.url ORDER BY ce.event_id)   AS urls
         FROM catalyst_events AS ce
-        WHERE ce.event_id::text = ANY(cm.event_ids)
+        WHERE ce.catalyst_id = cm.catalyst_id AND ce.event_id::text = ANY(cm.event_ids)
     ) AS ev ON TRUE
-    WHERE cm.tic = $1 AND cm.sentiment = -1
-    ORDER BY date DESC, impact_magnitude DESC, updated_at DESC, event_ids DESC
+    WHERE cm.tic = $1 AND cm.mention_count > 0 AND cm.sentiment = -1
+    ORDER BY date DESC, impact_magnitude DESC, updated_at DESC, catalyst_id DESC
     LIMIT $2 OFFSET $3;
   `;
 
 const CATALYST_COUNT_QUERY = `
     SELECT COUNT(*) FROM core.catalyst_master
-    WHERE tic = $1 AND (sentiment = 1 OR sentiment = -1);
+    WHERE tic = $1 AND mention_count > 0 AND (sentiment = 1 OR sentiment = -1);
   `;
 
 const CATALYST_COUNT_QUERY_BULL = `
     SELECT COUNT(*) FROM core.catalyst_master
-    WHERE tic = $1 AND sentiment = 1;
+    WHERE tic = $1 AND mention_count > 0 AND sentiment = 1;
   `;
 
 const CATALYST_COUNT_QUERY_BEAR = `
     SELECT COUNT(*) FROM core.catalyst_master
-    WHERE tic = $1 AND sentiment = -1;
+    WHERE tic = $1 AND mention_count > 0 AND sentiment = -1;
   `;
 
 const searchCatalysts = cache(async (tic: string, page: number, limit: number, sentiment?: number): Promise<Catalyst[]> => {
@@ -168,7 +171,6 @@ const searchCatalysts = cache(async (tic: string, page: number, limit: number, s
         catalyst_type: row.catalyst_type,
         title: row.title,
         summary: row.summary,
-        evidence: row.evidence,
         state: row.state,
         sentiment: row.sentiment,
         time_horizon: row.time_horizon,

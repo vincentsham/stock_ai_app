@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field
+import math
+from pydantic import BaseModel, Field, ConfigDict, field_validator
 from typing import List, Optional, Literal
 from enum import IntEnum
 
@@ -50,6 +51,7 @@ class Binary(IntEnum):
 
 # ---- Core catalyst payload ----
 class Catalyst(BaseModel):
+    model_config = ConfigDict(use_enum_values=True)
     # Stage 1
     is_catalyst: Optional[Binary] = Field(
         None, description="Indicates if the chunk is a catalyst for the given type"
@@ -95,6 +97,25 @@ class Catalyst(BaseModel):
         None, description="Magnitude of the catalyst impact"
     )
 
+    is_valid: Optional[Binary] = Field(
+        None, description="Indicates if the catalyst passed validation checks"
+    )
+
+    rejection_reason: Optional[str] = Field(
+        None, description="Reason for rejection if the catalyst is not valid"
+    )
+
+    @field_validator("time_horizon", "impact_magnitude", mode="before")
+    def _nan_to_none(cls, value):
+        if value is None:
+            return value
+        try:
+            if math.isnan(value):
+                return None
+        except TypeError:
+            pass
+        return value
+
     @classmethod
     def init(cls) -> "Catalyst":
         return cls()
@@ -115,6 +136,8 @@ class Catalyst(BaseModel):
         impact_area: Optional[ImpactArea] = None,
         sentiment: Optional[Tri] = None,
         impact_magnitude: Optional[Tri] = None,
+        is_valid: Optional[Binary] = None,
+        rejection_reason: Optional[str] = None,
     ) -> "Catalyst":
         return cls(
             is_catalyst=is_catalyst,
@@ -130,6 +153,8 @@ class Catalyst(BaseModel):
             impact_area=impact_area,
             sentiment=sentiment,
             impact_magnitude=impact_magnitude,
+            is_valid=is_valid,
+            rejection_reason=rejection_reason,
         )
 
 
