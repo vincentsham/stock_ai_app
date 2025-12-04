@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { CatalystsSection } from './CatalystsSection';
-import { EarningsSection } from './EarningsSection';
-import { AnalystsSection } from './AnalystsSection';
+import { CatalystSection } from './CatalystSection';
+import { EarningsCallSection } from './EarningsCallSection';
+import { AnalystSection } from './AnalystSection';
 import { MetricsSection } from './MetricsSection';
-import { Zap, DollarSign, Users, BarChart3 } from 'lucide-react';
+import { Zap, DollarSign, Calendar, Users, BarChart3 } from 'lucide-react';
 
 export const CustomSection: React.FC<{ tic: string }> = ({ tic }) => {
   const [activeTab, setActiveTab] = useState<'catalysts' | 'earnings' | 'analysts' | 'metrics'>('catalysts');
@@ -33,8 +33,8 @@ export const CustomSection: React.FC<{ tic: string }> = ({ tic }) => {
               : 'border-transparent text-gray-400 hover:text-gray-200'
           }`}
         >
-          <DollarSign size={16} />
-          Earnings
+          <Calendar size={16} />
+          Earnings Calls
         </button>
         <button
           onClick={() => setActiveTab('analysts')}
@@ -62,9 +62,9 @@ export const CustomSection: React.FC<{ tic: string }> = ({ tic }) => {
 
       {/* Content Area */}
       <div>
-        {activeTab === 'catalysts' && <CatalystsSection tic={tic} />}
-        {activeTab === 'earnings' && <EarningsSection />}
-        {activeTab === 'analysts' && <AnalystsSection />}
+        {activeTab === 'catalysts' && <CatalystSection tic={tic} />}
+        {activeTab === 'earnings' && <EarningsCallSection tic={tic} />}
+        {activeTab === 'analysts' && <AnalystSection />}
         {activeTab === 'metrics' && <MetricsSection />}
       </div>
     </div>

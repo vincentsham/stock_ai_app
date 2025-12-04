@@ -7,7 +7,7 @@ import { TrendingUp, TrendingDown, Info, Loader2, ChevronDown} from 'lucide-reac
 import { searchCatalysts, countCatalysts} from "@/lib/db/catalystQueries";
 
 
-export const CatalystsSection: React.FC<{ tic: string }> = ( {tic} ) => {
+export const CatalystSection: React.FC<{ tic: string }> = ( {tic} ) => {
     const [catalystsBull, setCatalystsBull] = useState<Catalyst[]>([]);
     const [catalystsBear, setCatalystsBear] = useState<Catalyst[]>([]);
 
