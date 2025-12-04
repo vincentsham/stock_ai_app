@@ -38,7 +38,7 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-| 1001 | Feature | Search bar key Enter for the first item | Medium | Open |  | | |
+| 1001 | Feature | Search bar key Enter for selecting the first item | Medium | Open |  | | |
 | 1002 |  |  | Medium | Open | | | |
 | 10001 | Technical | Create Twitter Card Image (1200x600px) | Low | Open | | | |
 | 10002 | Technical | Create Open Graph Image (1200x630px) | Low | Open | | | |

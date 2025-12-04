@@ -7,19 +7,20 @@ import {
 import {
   Command,
   CommandEmpty,
-  CommandGroup,
   CommandInput,
-  CommandItem,
   CommandList,
 } from "@/components/ui/command"
 
 import { useDebounce } from "@/hooks/useDebounce"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { searchStocks } from "@/lib/db/stockQueries"
 import Link from "next/link";
 import { StockProfile } from "@/types";
+import type { KeyboardEvent } from "react"
+import { useRouter } from "next/navigation"
 
 const SearchBar = () => {
+  const router = useRouter();
   const [searching, setSearching] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,7 +38,7 @@ const SearchBar = () => {
     }
   }
 
-  const debouncedSearch = useDebounce(handleSearch, 500);
+  const debouncedSearch = useDebounce(handleSearch, 400);
 
   useEffect(() => {
     if(!searchTerm.trim()) return setSearching(false);
@@ -46,12 +47,27 @@ const SearchBar = () => {
     debouncedSearch();
   }, [searchTerm]);
 
-  const handleSelectStock = () => {
+  const handleSelectStock = useCallback(() => {
     setSearching(false);
     setLoading(false);
     setSearchTerm("");
     setStocks([]);
-  }
+  }, []);
+
+  const handleEnterKey = useCallback((event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== "Enter" || loading || stocks.length === 0) {
+      return;
+    }
+
+    event.preventDefault();
+    const [firstStock] = stocks;
+    if (!firstStock) {
+      return;
+    }
+
+    handleSelectStock();
+    router.push(`/stocks/${firstStock.tic}`);
+  }, [handleSelectStock, loading, router, stocks]);
 
   return (
     <Command className="group rounded-lg border shadow-md md:min-w-[450px]">
@@ -59,7 +75,7 @@ const SearchBar = () => {
         placeholder="Search for a stock by symbol or name..."
       /> */}
       <div className="search-field">
-          <CommandInput value={searchTerm} onValueChange={setSearchTerm} placeholder="Search for a stock by symbol or name..." className="search-input" />
+          <CommandInput value={searchTerm} onValueChange={setSearchTerm} placeholder="Search for a stock by symbol or name..." className="search-input" onKeyDown={handleEnterKey} />
           {searching && loading && <Loader2 className="search-loader" />}
       </div>
 
@@ -98,26 +114,6 @@ const SearchBar = () => {
           ) : null
         }
       </CommandList>
-
-
-
-      {/* <CommandList className="hidden group-focus-within:block">
-        <CommandEmpty>No results found.</CommandEmpty>
-        <CommandGroup heading="Suggestions">
-          <CommandItem>
-            <TrendingUp className="mr-2 h-4 w-4" />
-            <span>AAPL</span>
-          </CommandItem>
-          <CommandItem>
-            <TrendingUp className="mr-2 h-4 w-4" />
-            <span>NVDA</span>
-          </CommandItem>
-          <CommandItem>
-            <TrendingUp className="mr-2 h-4 w-4" />
-            <span>TSLA</span>
-          </CommandItem>
-        </CommandGroup>
-      </CommandList> */}
     </Command>
   )
 }
