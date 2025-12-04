@@ -7,7 +7,7 @@ import { TrendingUp, TrendingDown, Info, Loader2, ChevronDown} from 'lucide-reac
 import { searchCatalysts, countCatalysts} from "@/lib/db/catalystQueries";
 
 
-export const CatalystsSection = ( {tic}: {tic: string} ) => {
+export const CatalystsSection: React.FC<{ tic: string }> = ( {tic} ) => {
     const [catalystsBull, setCatalystsBull] = useState<Catalyst[]>([]);
     const [catalystsBear, setCatalystsBear] = useState<Catalyst[]>([]);
 
@@ -101,7 +101,7 @@ export const CatalystsSection = ( {tic}: {tic: string} ) => {
 
 
     return (
-        <div className="w-full mt-8 bg-[#0c0e15] border border-gray-800 rounded-xl p-6">
+        <>
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
                 Market Catalysts
@@ -258,6 +258,6 @@ export const CatalystsSection = ( {tic}: {tic: string} ) => {
                     )
                 )}
             </div>
-        </div>
+        </>
     );
 };
