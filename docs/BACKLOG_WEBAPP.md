@@ -38,7 +38,6 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-| 9 | Feature | Custom Section with Navbar | High | Open | w_feat_9 | 2025-12-04 | 2025-12-04 |
 | 10 | Feature | Earnings Tab | High | Open | | | |
 | 1001 | Feature | Search bar key Enter for the first item | Medium | Open |  | | |
 | 1002 |  |  | Medium | Open | | | |
@@ -64,4 +63,5 @@ examples:
 | 6 | Feature | Stock page set up | High | Close | w_feat_6 | 2025-11-26 | 2025-11-27 |
 | 7 | Feature | Search bar | High | Close | w_feat_7 | 2025-11-28 | 2025-11-29 |
 | 8 | Feature | Catalyst on stock page | High | Close | w_feat_8 | 2025-11-30 | 2025-12-02 |
+| 9 | Feature | Custom Section with Navbar | High | Close | w_feat_9 | 2025-12-04 | 2025-12-04 |
 </div>
