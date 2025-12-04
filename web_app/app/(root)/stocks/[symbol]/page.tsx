@@ -3,8 +3,7 @@ import {
     SYMBOL_CHART_WIDGET_CONFIG
  } from '@/lib/tradingview/configs';
 import TradingViewWidget from '@/components/TradingViewWidget';
-import { CatalystsSection } from '@/components/CatalystsSection';
-import { searchCatalysts } from '@/lib/db/catalystQueries';
+import { CustomSection } from '@/components/CustomSection';
 
 interface PageParams {
     params: {
@@ -30,7 +29,7 @@ const StockPage = async ({ params }: PageParams) => {
                 height={400}
             />
 
-            <CatalystsSection 
+            <CustomSection 
                 tic={symbol} 
             />
 
