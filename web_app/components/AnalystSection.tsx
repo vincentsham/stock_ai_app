@@ -2,7 +2,7 @@
 
 import { Users } from 'lucide-react';
 
-export const AnalystsSection = () => {
+export const AnalystSection = () => {
   return (
     <div className="min-h-[400px] flex flex-col items-center justify-center text-gray-500 animate-slide-up-fade" style={{ animationDuration: '0.4s' }}>
       <div className="w-16 h-16 bg-gray-800/50 rounded-full flex items-center justify-center mb-4 border border-gray-700">
