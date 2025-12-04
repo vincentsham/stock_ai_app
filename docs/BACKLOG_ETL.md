@@ -39,7 +39,6 @@ examples:
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 27 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
-| 32 | Miscellaneous | Catalyst Logic needs to be improved. e.g. each quote can be assigned one catalyst only. | High | Open |  |  |  |
 | 1007 | Feature | Compute more metrics (e.g. ebita) | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
@@ -100,6 +99,7 @@ examples:
 | 29 | Feature | load balance sheets into core | High | Close | feat_28 | 2025-10-21 | 2025-10-22 |
 | 30 | Feature | surprise analysis | High | Close | feat_30 | 2025-10-21 | 2025-10-21 |
 | 31 | Feature | analyst reports analysis extending to mid and long term comparison | High | Close | feat_31 | 2025-10-24 | 2025-10-24 |
+| 32 | Feature | Catalyst Logic needs to be improved. e.g. each quote can be assigned one catalyst only. | High | Close | feat_32 | 2025-12-02 | 2025-12-03 |
 | 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous | Create a md doc for source | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
