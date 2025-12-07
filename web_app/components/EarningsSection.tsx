@@ -79,19 +79,19 @@ export const EarningsSection: React.FC<{ tic: string }> = ({ tic }) => {
               {/* Legend */}
               <div className="flex gap-4 text-[10px] uppercase font-bold tracking-wider bg-[#111218] px-3 py-2 rounded-lg border border-gray-800 w-fit">
                 <div className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-[#10b981]"></div>
+                    <div className="w-2 h-2 rounded-full border-2 border-[#10b981] bg-transparent"></div>
                     <span className="text-gray-400">Beat</span>
                 </div>
                   <div className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-[#3b82f6]"></div>
+                    <div className="w-2 h-2 rounded-full border-2 border-[#3b82f6] bg-transparent"></div>
                     <span className="text-gray-400">In-Line</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-[#f43f5e]"></div>
+                    <div className="w-2 h-2 rounded-full border-2 border-[#f43f5e] bg-transparent"></div>
                     <span className="text-gray-400">Miss</span>
                 </div>
                 <div className="flex items-center gap-1.5 border-l border-gray-700 pl-3 ml-1">
-                    <div className="w-2 h-2 rounded-full bg-[#64748b]"></div>
+                    <div className="w-2 h-2 rounded-full border-2 border-[#64748b] bg-transparent"></div>
                     <span className="text-gray-400">Estimate</span>
                 </div>
               </div>

@@ -85,9 +85,9 @@ const CustomizedActiveDot = (props: any) => {
   return (
     <g>
         {/* Outer Glow/Halo */}
-        <circle cx={cx} cy={cy} r={10} fill={color} fillOpacity={0.2} />
+        <circle cx={cx} cy={cy} r={9} fill={color} fillOpacity={0.5} />
         {/* Main Active Dot */}
-        <circle cx={cx} cy={cy} r={6} fill={color} stroke="#0c0e15" strokeWidth={2} />
+        <circle cx={cx} cy={cy} r={4} fill={color} stroke="#0c0e15" strokeWidth={2} />
     </g>
   );
 };
