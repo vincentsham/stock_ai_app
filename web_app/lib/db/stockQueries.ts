@@ -23,7 +23,7 @@ const searchStocks = cache(async (query: string): Promise<StockProfile[]> => {
     const result = await client.query<StockProfile>(STOCK_SEARCH_QUERY, [searchQuery]);
 
     // 2. Map results (omitted for brevity)
-    const mapped = result.rows.map((row) => ({
+    const mapped = result.rows.map((row: StockProfile) => ({
       tic: row.tic,
       name: row.name,
       exchange: row.exchange,

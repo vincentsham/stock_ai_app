@@ -161,9 +161,11 @@ def compute_growth_regime(df: pd.DataFrame, column: str, ttm: bool = True) -> pd
         elif value_count >= 3 and 1 <= value_streak < 3:
             return "developing expansion"
         elif value_count >= 3 and value_streak == 0:
-            return "break the streak"
+            return "broken growth streak"
+        elif value_count == 2 and value_streak == 2:
+            return "emerging growth"
         elif value_count == 2:
-            return "volatile transition"
+            return "volatile growth"
         elif value_count == 1 and value_streak == 1:
             return "tentative turnaround"
         elif value_count <= 1 and value_streak == 0:

@@ -38,6 +38,7 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
+| 11 | Feature | Earnings Session | High | Close | w_feat_11 | 2025-12-05 |  |
 | 1002 |  |  | Medium | Open | | | |
 | 10001 | Technical | Create Twitter Card Image (1200x600px) | Low | Open | | | |
 | 10002 | Technical | Create Open Graph Image (1200x630px) | Low | Open | | | |
@@ -62,6 +63,6 @@ examples:
 | 7 | Feature | Search bar | High | Close | w_feat_7 | 2025-11-28 | 2025-11-29 |
 | 8 | Feature | Catalyst on stock page | High | Close | w_feat_8 | 2025-11-30 | 2025-12-02 |
 | 9 | Feature | Custom Section with Navbar | High | Close | w_feat_9 | 2025-12-04 | 2025-12-04 |
-| 10 | Feature | Earnings Call Tab | High | Close | w_feat_10 | 2025-12-04 | 2025-12-04 |
+| 10 | Feature | Earnings Call Session | High | Close | w_feat_10 | 2025-12-04 | 2025-12-04 |
 | 1001 | Feature | Search bar key Enter for selecting the first item | Medium | Close | w_feat_1001 | 2025-12-04 | 2025-12-04 |
 </div>
