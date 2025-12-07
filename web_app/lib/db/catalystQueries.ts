@@ -164,7 +164,7 @@ const searchCatalysts = cache(async (tic: string, page: number, limit: number, s
     const result = await client.query<Catalyst>(query, [tic.trim().toUpperCase(), limit, offset]);
 
     // 2. Map results (omitted for brevity)
-    const mapped = result.rows.map((row) => ({
+    const mapped = result.rows.map((row: Catalyst) => ({
         catalyst_id: row.catalyst_id,
         tic: row.tic,
         date: row.date,

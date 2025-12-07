@@ -112,16 +112,16 @@ def compute_accel_regime(df: pd.DataFrame, column: str, ttm: bool = True) -> pd.
             elif streak_length >= 1:
                 return "choppy acceleration"
             else:
-                return "break the streak"
+                return "broken acceleration streak"
         elif accel_count == 2:
             if streak_length == 2:
                 return "emerging acceleration"
             else:
                 return "unstable momentum"
         elif accel_count == 1 and streak_length == 1:
-            return "unstable momentum"
+            return "broken deceleration streak"
         else:
-            return "deceleration"
+            return "persistent deceleration"
 
     df[accel_yoy_regime_column] = df.apply(lambda row:
                                            accel_regime_logic(row[accel_yoy_count_column], row[streak_yoy_length_column]), axis=1)

@@ -152,7 +152,7 @@ def compute_surprise_regime(df: pd.DataFrame, prefix: str) -> pd.DataFrame:
         elif count >= 3 and 1 <= streak <= 2:
             return 'frequent beat'
         elif count == 3 and streak == 0:
-            return 'broken streak'
+            return 'broken beat streak'
         elif count == 2 and streak == 2:
             return 'emerging beat'
         elif count == 2 and streak < 2:

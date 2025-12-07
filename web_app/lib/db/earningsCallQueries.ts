@@ -5,11 +5,11 @@ import { cache } from 'react';
 import { EarningsCallAnalysis } from '@/types';
 
 const EARNINGS_CALL_SEARCH_QUERY = `
-  SELECT eta.*, et.earnings_date
-  FROM core.earnings_transcript_analysis eta
-  JOIN core.earnings_transcripts et 
-  ON eta.event_id = et.event_id
-  WHERE eta.tic = $1;
+    SELECT eta.*, et.earnings_date
+    FROM core.earnings_transcript_analysis eta
+    JOIN core.earnings_transcripts et 
+    ON eta.event_id = et.event_id
+    WHERE eta.tic = $1;
 `;
 
 const searchEarningsCalls = cache(async (tic: string): Promise<EarningsCallAnalysis[]> => {
@@ -21,7 +21,7 @@ const searchEarningsCalls = cache(async (tic: string): Promise<EarningsCallAnaly
     const result = await client.query<EarningsCallAnalysis>(EARNINGS_CALL_SEARCH_QUERY, [tic.trim().toUpperCase()]);
 
     // 2. Map results (omitted for brevity)
-    const mapped = result.rows.map((row) => ({
+    const mapped = result.rows.map((row: EarningsCallAnalysis) => ({
       inference_id: row.inference_id,
       event_id: row.event_id,
       tic: row.tic,
