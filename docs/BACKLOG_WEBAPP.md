@@ -39,12 +39,12 @@ examples:
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 13 | Feature | Metrics Session | High | Open | w_feat_13 | | |
-| 1002 |  |  | Medium | Open | | | |
 | 10001 | Technical | Create Twitter Card Image (1200x600px) | Low | Open | | | |
 | 10002 | Technical | Create Open Graph Image (1200x630px) | Low | Open | | | |
 | 10003 | Technical | Create Apple Touch Icon (180x180px) | Low | Open | | | |
 | 10004 | Technical | Create robots.txt file | Low | Open | | | |
 | 10005 | Technical | Add Google Search Console Verification | Low | Open | | | |
+| 10006 | Feature | Collaspe all the extensions when the tab is inactive | Low | Open | | | |
 </div>
 
 
@@ -67,4 +67,5 @@ examples:
 | 11 | Feature | Earnings Session | High | Close | w_feat_11 | 2025-12-05 | 2025-12-07 |
 | 12 | Feature | Analysts Session | High | Close | w_feat_12 | 2025-12-07 | 2025-12-09 |
 | 1001 | Feature | Search bar key Enter for selecting the first item | Medium | Close | w_feat_1001 | 2025-12-04 | 2025-12-04 |
+| 1002 | Feature | Fix the flickering by hidden the inactive tabs | Medium | Close | w_feat_1002 |2025-12-09 | 2025-12-09 |
 </div>
