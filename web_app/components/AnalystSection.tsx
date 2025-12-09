@@ -1,17 +1,56 @@
 'use client';
 
+import { useState, useMemo, useEffect } from 'react';
 import { Users } from 'lucide-react';
+import { AnalystPTGraph } from './AnalystPTGraph';
+import { AnalystGradeCard } from './AnalystGradeCard';
+import { AnalystPTCard } from './AnalystPTCard';
+import { AnalystAnalysis } from '@/types';
+import { searchAnalystAnalysis } from '@/lib/db/analystQueries';
 
-export const AnalystSection = () => {
-  return (
-    <div className="min-h-[400px] flex flex-col items-center justify-center text-gray-500 animate-slide-up-fade" style={{ animationDuration: '0.4s' }}>
-      <div className="w-16 h-16 bg-gray-800/50 rounded-full flex items-center justify-center mb-4 border border-gray-700">
-        <Users size={32} className="text-gray-400" />
-      </div>
-      <h3 className="text-xl font-bold text-gray-300 mb-2">Analyst Ratings</h3>
-      <p className="max-w-md text-center text-sm">
-        Consensus ratings, price targets, and analyst coverage breakdown will be displayed here.
-      </p>
-    </div>
-  );
+
+export const AnalystSection: React.FC<{ tic: string }> = ({ tic }) => {
+    const [analystData, setAnalystData] = useState<AnalystAnalysis[]>([]);
+    
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await searchAnalystAnalysis(tic);
+            setAnalystData(data);
+        };
+        fetchData();
+    }, [tic]);
+
+
+    return (
+        analystData.length && (
+        <div className="animate-slide-up-fade" style={{ animationDuration: '0.4s' }}>
+          {/* Main Section Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <Users size={16}/>
+                Analyst Analysis
+                {/* <span className="text-xs font-normal text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full border border-gray-700">
+                    AI Generated
+                </span> */}
+            </h2>
+            {/* <div className="text-xs text-gray-500 flex items-center gap-1">
+                <Users size={12}/>
+                <span>Consensus & Targets</span>
+            </div> */}
+          </div>
+
+          {/* Top Cards Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <AnalystGradeCard data={analystData[0]}/>
+            <AnalystPTCard data={analystData[0]}/>
+          </div>
+
+          {/* Graph Container */}
+          <div className="bg-[#111218] p-5 rounded-xl border border-gray-800 hover:border-gray-700 transition-colors">
+            <AnalystPTGraph data={analystData} />
+          </div>
+        </div>
+    ))
 };
+
+

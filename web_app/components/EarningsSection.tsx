@@ -12,6 +12,7 @@ import { EARNINGS_TAG_METADATA } from '@/lib/constants';
 export const EarningsSection: React.FC<{ tic: string }> = ({ tic }) => {
     const [isMounted, setIsMounted] = useState(false);
     const [earningsData, setEarningsData] = useState<Earnings[]>([]);
+    const [chartData, setChartData] = useState<(Earnings & { name: string })[]>([]);
     const [earningsRegimes, setEarningsRegimes] = useState<EarningsRegime | null>(null);
     const [epsRegimes, setEPSRegimes] = useState<EPSRegime | null>(null);
     const [revenueRegimes, setRevenueRegimes] = useState<RevenueRegime | null>(null);
@@ -20,6 +21,11 @@ export const EarningsSection: React.FC<{ tic: string }> = ({ tic }) => {
         const fetchData = async () => {
             const data = await searchEarnings(tic);
             setEarningsData(data);
+            const dataWithNames = data.slice(-9).map(item => ({
+              name: `${item.calendar_year.toString().slice(-2)}Q${item.calendar_quarter}`,
+              ...item,
+            }));
+            setChartData(dataWithNames);
             const earningsRegimes = await searchEarningsRegimes(tic);
             setEarningsRegimes(earningsRegimes);
             const epsRegimes = await searchEPSRegimes(tic);
@@ -35,20 +41,6 @@ export const EarningsSection: React.FC<{ tic: string }> = ({ tic }) => {
       setIsMounted(true);
     }, []);
 
-    // Process data for charts
-    const chartData = useMemo(() => {
-      // Slice to show the last 9 quarters (2 years + 1 future quarter)
-      // const sortedEarningsData = [...earningsData].sort((a, b) => {
-      //   if (a.tic !== b.tic) return a.tic.localeCompare(b.tic);
-      //   if (a.calendar_year !== b.calendar_year) return a.calendar_year - b.calendar_year;
-      //   return a.calendar_quarter - b.calendar_quarter;
-      // });
-      return earningsData.slice(-9).map(item => ({
-        // Format as YYQ# (e.g., 23Q4)
-        name: `${item.calendar_year.toString().slice(-2)}Q${item.calendar_quarter}`,
-        ...item,
-      }));
-    }, [earningsData]);
 
     if (!isMounted) {
       return (
@@ -65,6 +57,7 @@ export const EarningsSection: React.FC<{ tic: string }> = ({ tic }) => {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
               <div>
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                  <DollarSign size={16}/>
                   Earnings History
                   {/* <span className="text-xs font-normal text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full border border-gray-700">
                       Quarterly vs Est

@@ -77,7 +77,7 @@ export const CustomSection: React.FC<{ tic: string }> = ({ tic }) => {
         {activeTab === 'catalysts' && <CatalystSection tic={tic} />}
         {activeTab === 'earnings' && <EarningsSection tic={tic} />}
         {activeTab === 'earningsCalls' && <EarningsCallSection tic={tic} />}
-        {activeTab === 'analysts' && <AnalystSection />}
+        {activeTab === 'analysts' && <AnalystSection tic={tic} />}
         {activeTab === 'metrics' && <MetricsSection />}
       </div>
     </div>
