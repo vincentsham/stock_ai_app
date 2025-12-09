@@ -74,11 +74,21 @@ export const CustomSection: React.FC<{ tic: string }> = ({ tic }) => {
 
       {/* Content Area */}
       <div>
-        {activeTab === 'catalysts' && <CatalystSection tic={tic} />}
-        {activeTab === 'earnings' && <EarningsSection tic={tic} />}
-        {activeTab === 'earningsCalls' && <EarningsCallSection tic={tic} />}
-        {activeTab === 'analysts' && <AnalystSection tic={tic} />}
-        {activeTab === 'metrics' && <MetricsSection />}
+        <div className={activeTab === 'catalysts' ? 'block' : 'hidden'}>
+          <CatalystSection tic={tic} />
+        </div>
+        <div className={activeTab === 'earnings' ? 'block' : 'hidden'}>
+          <EarningsSection tic={tic} />
+        </div>
+        <div className={activeTab === 'earningsCalls' ? 'block' : 'hidden'}>
+          <EarningsCallSection tic={tic} />
+        </div>
+        <div className={activeTab === 'analysts' ? 'block' : 'hidden'}>
+          <AnalystSection tic={tic} />
+        </div>
+        <div className={activeTab === 'metrics' ? 'block' : 'hidden'}>
+          <MetricsSection />
+        </div>
       </div>
     </div>
   );
