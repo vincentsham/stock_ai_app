@@ -24,7 +24,7 @@ export const AnalystPTCard: React.FC<{ data: AnalystAnalysis }> = ({ data }) => 
                     
                     {/* Tooltip Content */}
                     <div className="absolute right-0 top-6 w-48 bg-[#1f2937] border border-gray-700 rounded-lg shadow-xl p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none group-hover:pointer-events-auto">
-                        <div className="text-[10px] uppercase font-bold text-gray-500 mb-2 pb-1 border-b border-gray-700">Analyst PT Actions (past 365d)</div>
+                        <div className="text-[10px] uppercase font-bold text-gray-500 mb-2 pb-1 border-b border-gray-700"><div>Analyst PT Actions</div> <div>(past 365d)</div></div>
                         <div className="space-y-1.5">
                             <div className="flex justify-between items-center">
                                 <span className="text-xs text-emerald-400 font-medium">PT Raise</span>
