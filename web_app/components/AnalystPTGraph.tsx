@@ -161,7 +161,7 @@ export const AnalystPTGraph: React.FC<{ data: AnalystAnalysis[] }> = ({ data }) 
               <span className="text-gray-400">Low</span>
            </div>
            <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 bg-indigo-500/40 rounded-sm"></div>
+            <div className="w-3 h-3 bg-[#6366f1ff]/40"></div>
               <span className="text-gray-400">Consensus</span>
            </div>
         </div>
@@ -175,7 +175,7 @@ export const AnalystPTGraph: React.FC<{ data: AnalystAnalysis[] }> = ({ data }) 
             >
             <defs>
                 <linearGradient id="colorConsensus" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4}/>
+                <stop offset="5%" stopColor="#6366f1ff" stopOpacity={0.4}/>
                 <stop offset="95%" stopColor="#6366f1" stopOpacity={0.1}/>
                 </linearGradient>
                 <linearGradient id="colorRange" x1="0" y1="0" x2="0" y2="1">

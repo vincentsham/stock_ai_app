@@ -15,7 +15,7 @@ export const AnalystPTCard: React.FC<{ data: AnalystAnalysis }> = ({ data }) => 
             <div className="mb-2 relative z-10 flex justify-between items-start">
                 <div>
                     <h3 className="text-gray-100 font-bold text-lg">Analyst Price Targets</h3>
-                    <p className="text-xs text-gray-500">(12-month forecast)</p>
+                    <p className="text-xs text-gray-500">(12-month price forecasts)</p>
                 </div>
 
                 {/* Tooltip Trigger */}
@@ -39,8 +39,8 @@ export const AnalystPTCard: React.FC<{ data: AnalystAnalysis }> = ({ data }) => 
                                 <span className="text-sm font-mono font-bold text-rose-400">{data.pt_downgrade_n}</span>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span className="text-xs text-blue-400 font-medium">PT Init</span>
-                                <span className="text-sm font-mono font-bold text-blue-400">{data.pt_init_n}</span>
+                                <span className="text-xs text-gray-400 font-medium">PT Init</span>
+                                <span className="text-sm font-mono font-bold text-gray-400">{data.pt_init_n}</span>
                             </div>
                         </div>
                     </div>
@@ -63,12 +63,12 @@ export const AnalystPTCard: React.FC<{ data: AnalystAnalysis }> = ({ data }) => 
                             <span className="text-red-500 text-lg font-mono font-semibold">${data.pt_low}</span>
                         </div>
                         <div className="flex flex-col gap-0.5">
-                            <span className="text-blue-500 text-[10px] font-bold uppercase">25th %</span>
-                            <span className="text-blue-500 text-lg font-mono font-semibold">${data.pt_p25}</span>
+                            <span className="text-[#6366f1ff] text-[10px] font-bold uppercase">25th %</span>
+                            <span className="text-[#6366f1ff] text-lg font-mono font-semibold">${data.pt_p25}</span>
                         </div>
                         <div className="flex flex-col gap-0.5">
-                            <span className="text-blue-500 text-[10px] font-bold uppercase">75th %</span>
-                            <span className="text-blue-500 text-lg font-mono font-semibold">${data.pt_p75}</span>
+                            <span className="text-[#6366f1ff] text-[10px] font-bold uppercase">75th %</span>
+                            <span className="text-[#6366f1ff] text-lg font-mono font-semibold">${data.pt_p75}</span>
                         </div>
                         <div className="flex flex-col gap-0.5">
                             <span className="text-emerald-500 text-[10px] font-bold uppercase">High</span>

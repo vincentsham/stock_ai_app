@@ -88,8 +88,8 @@ export const AnalystGradeCard: React.FC<{ data: AnalystAnalysis }> = ({ data }) 
                                 <span className="text-sm font-mono font-bold text-rose-400">{data.grade_downgrade_n}</span>
                             </div>
                             <div className="flex justify-between items-center">
-                                <span className="text-xs text-blue-400 font-medium">Grade Init</span>
-                                <span className="text-sm font-mono font-bold text-blue-400">{data.grade_init_n}</span>
+                                <span className="text-xs text-gray-400 font-medium">Grade Init</span>
+                                <span className="text-sm font-mono font-bold text-gray-400">{data.grade_init_n}</span>
                             </div>
                         </div>
                     </div>
