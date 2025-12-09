@@ -103,13 +103,18 @@ export const CatalystSection: React.FC<{ tic: string }> = ( {tic} ) => {
     return (
         <>
             <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                    <Zap size={16}/>
-                    Catalyst Events
-                {/* <span className="text-xs font-normal text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full border border-gray-700">
-                    AI Generated
-                </span> */}
-                </h2>
+                <div>
+                    <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                        <Zap size={16}/>
+                        Catalyst Events
+                    {/* <span className="text-xs font-normal text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full border border-gray-700">
+                        AI Generated
+                    </span> */}
+                    </h2>
+                    <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                        Events ranked by recency and potential market impact
+                    </div>
+                </div>
                 {/* <div className="text-xs text-gray-500 flex items-center gap-1">
                     <Info size={12}/>
                     <span>Sorted by Impact & Recency</span>

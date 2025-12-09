@@ -64,7 +64,6 @@ export const EarningsSection: React.FC<{ tic: string }> = ({ tic }) => {
                   </span> */}
                 </h2>
                 <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
-                  <Activity size={12}/>
                   <span>Last 8 Quarters + Next Quarter Estimate</span>
                 </div>
               </div>
@@ -83,7 +82,7 @@ export const EarningsSection: React.FC<{ tic: string }> = ({ tic }) => {
                     <div className="w-2 h-2 rounded-full border-2 border-[#f43f5e] bg-transparent"></div>
                     <span className="text-gray-400">Miss</span>
                 </div>
-                <div className="flex items-center gap-1.5 border-l border-gray-700 pl-3 ml-1">
+                <div className="flex items-center gap-1.5">
                     <div className="w-2 h-2 rounded-full border-2 border-[#64748b] bg-transparent"></div>
                     <span className="text-gray-400">Estimate</span>
                 </div>

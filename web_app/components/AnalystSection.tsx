@@ -26,17 +26,18 @@ export const AnalystSection: React.FC<{ tic: string }> = ({ tic }) => {
         <div className="animate-slide-up-fade" style={{ animationDuration: '0.4s' }}>
           {/* Main Section Header */}
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <Users size={16}/>
-                Analyst Analysis
-                {/* <span className="text-xs font-normal text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full border border-gray-700">
-                    AI Generated
-                </span> */}
-            </h2>
-            {/* <div className="text-xs text-gray-500 flex items-center gap-1">
-                <Users size={12}/>
-                <span>Consensus & Targets</span>
-            </div> */}
+            <div>
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                  <Users size={16}/>
+                  Analyst Analysis
+                  {/* <span className="text-xs font-normal text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full border border-gray-700">
+                      AI Generated
+                  </span> */}
+              </h2>
+              <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                  Aggregated ratings & 12-month price forecasts from Wall Street analysts
+              </div>
+            </div>
           </div>
 
           {/* Top Cards Section */}

@@ -27,16 +27,17 @@ export const EarningsCallSection: React.FC<{ tic: string }> = ( {tic} ) => {
     return (
       <div className="animate-slide-up-fade" style={{ animationDuration: '0.4s' }}>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <Calendar size={16}/>
-                Earnings Call Analysis
-                {/* <span className="text-xs font-normal text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full border border-gray-700">
-                    AI Generated
-                </span> */}
-            </h2>
-            <div className="text-xs text-gray-500 flex items-center gap-1">
-                <Calendar size={12}/>
-                <span>Last {sortedEarnings.length} Quarters</span>
+            <div>
+                <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                    <Calendar size={16}/>
+                    Earnings Call Analysis
+                    {/* <span className="text-xs font-normal text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full border border-gray-700">
+                        AI Generated
+                    </span> */}
+                </h2>
+                <div className="text-xs text-gray-500 flex items-center gap-1">
+                    Key takeaways from last {sortedEarnings.length} earnings calls
+                </div>
             </div>
           </div>
 
