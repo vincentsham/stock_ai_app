@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Catalyst } from '@/types';
 import { CatalystCard } from './CatalystCard';
-import { TrendingUp, TrendingDown, Info, Loader2, ChevronDown} from 'lucide-react';
+import { Zap, TrendingUp, TrendingDown, Info, Loader2, ChevronDown} from 'lucide-react';
 import { searchCatalysts, countCatalysts} from "@/lib/db/catalystQueries";
 
 
@@ -104,7 +104,8 @@ export const CatalystSection: React.FC<{ tic: string }> = ( {tic} ) => {
         <>
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                Market Catalysts
+                    <Zap size={16}/>
+                    Catalyst Events
                 {/* <span className="text-xs font-normal text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full border border-gray-700">
                     AI Generated
                 </span> */}

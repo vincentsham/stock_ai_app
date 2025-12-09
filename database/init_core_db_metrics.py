@@ -127,11 +127,6 @@ def table_creation(conn):
             ret_high          FLOAT,
             ret_low           FLOAT,
 
-            ret_upgrade_n     INTEGER       DEFAULT 0,
-            ret_downgrade_n   INTEGER       DEFAULT 0,
-            ret_reiterate_n   INTEGER       DEFAULT 0,
-            ret_init_n        INTEGER       DEFAULT 0,
-
             -- ---- Price statistics ----
             price_start       FLOAT,
             price_end         FLOAT,
@@ -198,11 +193,6 @@ def table_creation(conn):
             ret_dispersion    FLOAT,
             ret_high          FLOAT,
             ret_low           FLOAT,
-
-            ret_upgrade_n     INTEGER       DEFAULT 0,
-            ret_downgrade_n   INTEGER       DEFAULT 0,
-            ret_reiterate_n   INTEGER       DEFAULT 0,
-            ret_init_n        INTEGER       DEFAULT 0,
 
             -- ---- Price statistics ----
             price_start       FLOAT,
@@ -271,11 +261,6 @@ def table_creation(conn):
             ret_dispersion    FLOAT,
             ret_high          FLOAT,
             ret_low           FLOAT,
-
-            ret_upgrade_n     INTEGER       DEFAULT 0,
-            ret_downgrade_n   INTEGER       DEFAULT 0,
-            ret_reiterate_n   INTEGER       DEFAULT 0,
-            ret_init_n        INTEGER       DEFAULT 0,
 
             -- ---- Price statistics ----
             price_start       FLOAT,

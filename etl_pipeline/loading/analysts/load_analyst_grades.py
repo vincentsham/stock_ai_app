@@ -110,16 +110,20 @@ def normalize_analyst_grades(df):
         df['previous_grade_normalized'] = df['previous_grade'].apply(lambda x: grade_mapping.get(x, (None, None, None, None))[0])
         df['new_grade_value'] = df['new_grade'].apply(lambda x: grade_mapping.get(x, (None, None, None, None))[1])
         df['previous_grade_value'] = df['previous_grade'].apply(lambda x: grade_mapping.get(x, (None, None, None, None))[1])
+    
     def get_action(row):
-        if row['previous_grade_value'] is not None:
-            if row['new_grade_value'] < row['previous_grade_value']:
+        if row['previous_grade_value'] is None or pd.isna(row['previous_grade_value']):
+            return 'initialize'
+        elif pd.notna(row['new_grade_value']) and pd.notna(row['previous_grade_value']):
+            if row['new_grade_value'] > row['previous_grade_value']:
                 return 'upgrade'
-            elif row['new_grade_value'] > row['previous_grade_value']:
+            elif row['new_grade_value'] < row['previous_grade_value']:
                 return 'downgrade'
             else:
                 return 'reiterate'
         else:
             return 'initialize'
+        
         return None
     
     df['action_normalized'] = df.apply(get_action, axis=1)

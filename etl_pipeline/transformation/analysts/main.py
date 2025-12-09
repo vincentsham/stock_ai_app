@@ -26,6 +26,17 @@ def read_analyst_pts(tic, conn):
     df = read_sql_query(query, conn)
     return df
 
+def read_analyst_grades(tic, conn):
+    query = f"""
+        SELECT tic, published_at::timestamp AT TIME ZONE 'America/New_York' AS published_at, 
+                title, site, company, 
+                new_grade, previous_grade, action, price_when_posted
+        FROM core.analyst_grades
+        WHERE tic = '{tic}';
+    """
+    df = read_sql_query(query, conn)
+
+    return df
 
 def find_previous_pts(df):
     """
@@ -67,10 +78,10 @@ def find_previous_pts(df):
     df.loc[:, 'pt'] = df['adj_price_target'].fillna(df['price_target'])
     # Sort so shift() is deterministic (tie-break with url)
 
-    df = df.sort_values(['tic', 'analyst_name', 'published_at'])
+    df = df.sort_values(['tic', 'analyst_name', 'company', 'published_at'])
 
     # Previous PT within (tic, analyst); include 'company' too if you want stricter scoping
-    grp_cols = ['tic', 'analyst_name']
+    grp_cols = ['tic', 'analyst_name', 'company']
     df.loc[:, 'prev_pt'] = df.groupby(grp_cols, sort=False)['pt'].shift(1)
     df.loc[:, 'prev_price_when_posted'] = df.groupby(grp_cols, sort=False)['price_when_posted'].shift(1)
     df.loc[:, 'prev_published_at'] = df.groupby(grp_cols, sort=False)['published_at'].shift(1)
@@ -89,18 +100,6 @@ def find_previous_pts(df):
     df = df.sort_values(['tic', 'published_at'])
     return df
 
-
-def read_analyst_grades(tic, conn):
-    query = f"""
-        SELECT tic, published_at::timestamp AT TIME ZONE 'America/New_York' AS published_at, 
-                title, site, company, 
-                new_grade, previous_grade, action, price_when_posted
-        FROM core.analyst_grades
-        WHERE tic = '{tic}';
-    """
-    df = read_sql_query(query, conn)
-
-    return df
 
 
 def aggregate_analyst_pts(df, start_date, end_date):
@@ -134,6 +133,9 @@ def aggregate_analyst_pts(df, start_date, end_date):
     df = df.copy()  # Ensure we are working on a copy
     df.loc[:, 'trading_date'] = df['published_at'].apply(timestamp_to_trading_date)
     df = df[(df['trading_date'] <= end_date) & (df['trading_date'] > start_date)]
+
+    # Only get the most updated pt based on analyst_name and company
+    df = df.sort_values('published_at').groupby(['analyst_name', 'company'], as_index=False).last()
 
     df.loc[:, 'pt'] = df['pt'].astype(float)
     pt_stats = {
@@ -189,22 +191,32 @@ def aggregate_analyst_grades(df, start_date, end_date):
     df.loc[:, 'trading_date'] = df['published_at'].apply(timestamp_to_trading_date)
     df = df[(df['trading_date'] <= end_date) & (df['trading_date'] > start_date)]
 
+    # Only get the most updated pt based on company
+    _df = df.sort_values('published_at').groupby(['company'], as_index=False).last()
+
     grade_stats = {
-        "grade_count": len(df),
-        "grade_buy_n": (df['new_grade'] == 1).sum(),
-        "grade_hold_n": (df['new_grade'] == 0).sum(),
-        "grade_sell_n": (df['new_grade'] == -1).sum(),
-        "grade_buy_ratio": (df['new_grade'] == 1).sum() / len(df) if len(df) > 0 else 0,
-        "grade_hold_ratio": (df['new_grade'] == 0).sum() / len(df) if len(df) > 0 else 0,
-        "grade_sell_ratio": (df['new_grade'] == -1).sum() / len(df) if len(df) > 0 else 0,
-        "grade_balance": (df['new_grade'].sum() / len(df) if len(df) > 0 else 0)
+        "grade_count": len(_df),
+        "grade_buy_n": (_df['new_grade'] == 1).sum(),
+        "grade_hold_n": (_df['new_grade'] == 0).sum(),
+        "grade_sell_n": (_df['new_grade'] == -1).sum(),
+        "grade_buy_ratio": (_df['new_grade'] == 1).sum() / len(_df) if len(_df) > 0 else 0,
+        "grade_hold_ratio": (_df['new_grade'] == 0).sum() / len(_df) if len(_df) > 0 else 0,
+        "grade_sell_ratio": (_df['new_grade'] == -1).sum() / len(_df) if len(_df) > 0 else 0,
+        "grade_balance": (_df['new_grade'].sum() / len(_df) if len(_df) > 0 else 0)
     }
 
+
+    df.loc[:, 'action_code'] = df['action'].apply(lambda x: {'upgrade': 2, 'downgrade': 2, 'reiterate': 1, 'initialize': 0}.get(x, np.nan))
+    # if pd.to_datetime(end_date) == pd.Timestamp('2025-09-02'):
+    #     print("Debug: End date is 2025-09-02")
+    #     import pdb; pdb.set_trace()
+    _df = df.sort_values(['action_code', 'published_at']).groupby(['company'], as_index=False).last()
+
     grade_actions = {
-        "grade_upgrade_n": (df['action'] == 'upgrade').sum(),
-        "grade_downgrade_n": (df['action'] == 'downgrade').sum(),
-        "grade_reiterate_n": (df['action'] == 'reiterate').sum(),
-        "grade_init_n": (df['action'] == 'initialize').sum()
+        "grade_upgrade_n": (_df['action'] == 'upgrade').sum(),
+        "grade_downgrade_n": (_df['action'] == 'downgrade').sum(),
+        "grade_reiterate_n": (_df['action'] == 'reiterate').sum(),
+        "grade_init_n": (_df['action'] == 'initialize').sum()
     }
 
     return {"grade_stats": grade_stats, "grade_actions": grade_actions}
@@ -249,6 +261,9 @@ def aggregate_analyst_returns(df, start_date, end_date):
     df.loc[:, 'trading_date'] = df['published_at'].apply(timestamp_to_trading_date)
     df = df[(df['trading_date'] <= end_date) & (df['trading_date'] > start_date)]
 
+    # Only get the most updated pt based on analyst_name and company
+    df = df.sort_values('published_at').groupby(['company'], as_index=False).last()
+
     df.loc[:, 'implied_return'] = (df['pt'] / df['price_when_posted']) - 1
     df.loc[:, 'implied_return'] = df['implied_return'].astype(float)
     return_stats = {
@@ -262,17 +277,7 @@ def aggregate_analyst_returns(df, start_date, end_date):
         "ret_low": df['implied_return'].min()
     }
 
-    # Compute return changes vs previous note per analyst
-    df.loc[:, 'price_when_posted'] = df['price_when_posted'].astype(float)
-    df.loc[:, 'return_delta'] = df['implied_return'] - df['implied_return'].shift(1)
-    return_actions = {
-        "ret_upgrade_n": (df['return_delta'] > df['price_when_posted'].std()).sum(),
-        "ret_downgrade_n": (df['return_delta'] < -df['price_when_posted'].std()).sum(),
-        "ret_reiterate_n": ((df['return_delta'] <= df['price_when_posted'].std()) & (df['return_delta'] >= -df['price_when_posted'].std())).sum(),
-        "ret_init_n": df['return_delta'].isna().sum()
-    }
-
-    return {"ret_stats": return_stats, "ret_actions": return_actions}
+    return {"ret_stats": return_stats}
 
 
 def stock_price_statistics(df, start_date, end_date):
@@ -337,8 +342,7 @@ def transform_records(tic, conn, cursor, num_months, latest_date):
     ohlcv_data = read_ohlcv_data(tic, conn)
     analyst_pts = read_analyst_pts(tic, conn)
     analyst_grades = read_analyst_grades(tic, conn)
-
-    # Process data
+    
     analyst_pts = find_previous_pts(analyst_pts)
 
     cursor.execute(f"SELECT date FROM raw.stock_ohlcv_daily WHERE tic = '{tic}';")
@@ -375,7 +379,6 @@ def transform_records(tic, conn, cursor, num_months, latest_date):
             **grade_aggregations['grade_stats'],
             **grade_aggregations['grade_actions'],
             **return_aggregations['ret_stats'],
-            **return_aggregations['ret_actions'],
             **price_aggregations['price_stats'],
         }
 

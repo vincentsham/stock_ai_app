@@ -16,21 +16,21 @@ const StockPage = async ({ params }: PageParams) => {
     const scriptUrl = `https://s3.tradingview.com/external-embedding/embed-widget-`;
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 mx-0 md:mx-10 lg:mx-20 xl:mx-40">
             <TradingViewWidget
-                scriptUrl={`${scriptUrl}symbol-info.js`}
-                config={SYMBOL_INFO_WIDGET_CONFIG(symbol, 150)}
-                height={150}
+            scriptUrl={`${scriptUrl}symbol-info.js`}
+            config={SYMBOL_INFO_WIDGET_CONFIG(symbol, 150)}
+            height={150}
             />
 
             <TradingViewWidget
-                scriptUrl={`${scriptUrl}symbol-overview.js`}
-                config={SYMBOL_CHART_WIDGET_CONFIG(symbol, 400)}
-                height={400}
+            scriptUrl={`${scriptUrl}symbol-overview.js`}
+            config={SYMBOL_CHART_WIDGET_CONFIG(symbol, 400)}
+            height={400}
             />
 
             <CustomSection 
-                tic={symbol} 
+            tic={symbol} 
             />
 
         </div>
