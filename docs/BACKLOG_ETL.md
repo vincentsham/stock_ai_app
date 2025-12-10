@@ -45,7 +45,6 @@ examples:
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
 | 1010 | Feature | Only extract a limit number of existing Catalysts or Archive the old catalysts | Medium | Open |  |  |  |
 | 1011 | Feature | Create DataMart Table for catalyst section | Medium | Open |  |  |  |
-| 1012 | Miscellaneous | Modify Metrics table column name | Medium | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
 | 10004 | Miscellaneous | Create psql partition logic | Low | Open |  |  |  |
@@ -110,6 +109,7 @@ examples:
 | 1005 | Technical | Make sure no dup records in news on (tic, title) | Medium | Close | tech_1006 | 2025-10-09 | 2025-10-09 |
 | 1006 | Technical | Improve news ai agent prompt | Medium | Close | tech_1006 | 2025-10-09 | 2025-10-09 |
 | 1010 | Miscellaneous | refactor the insert records function | Medium | Close | misc_1010 | 2025-10-18 | 2025-10-18 |
+| 1012 | Miscellaneous | Modify Metrics table column name | Medium | Close | misc_1012 | 2025-12-10 | 2025-12-10 |
 | 10001 | Miscellaneous | Improve earnings transcript prompt | Low | Close | misc_10001 | 2025-10-26 | 2025-10-26 |
 | 10006 | Technical | Add a validation for earnings calendar | Low | Close | tech_10006 | 2025-11-02 | 2025-11-02 |
 | 10007 | Miscellaneous | Update the earnings transcipt instruction doc | Low | Close | misc_10007 | 2025-10-10 | 2025-10-10 |
