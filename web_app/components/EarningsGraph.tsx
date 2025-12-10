@@ -1,5 +1,6 @@
 'use client';
 
+import { Earnings } from '@/types';
 import {
   LineChart,
   Line,
@@ -173,7 +174,7 @@ const CustomTooltip = ({ active, payload, label, type }: any) => {
 };
 
 interface EarningsGraphProps {
-    data: any[];
+    data: Earnings[];
     metric: 'eps' | 'revenue';
 }
 
@@ -237,6 +238,30 @@ export const EarningsGraph: React.FC<EarningsGraphProps> = ({ data, metric }) =>
           />
         </LineChart>
       </ResponsiveContainer>
+    </div>
+  );
+};
+
+
+export const EarningsLegend: React.FC = () => {
+  return (
+    <div className="flex gap-4 text-[10px] uppercase font-bold tracking-wider bg-[#111218] px-3 py-2 rounded-lg border border-gray-800 w-full justify-center md:justify-end">
+      <div className="flex items-center gap-1.5">
+          <div className="w-2 h-2 rounded-full border-2 border-[#10b981] bg-transparent"></div>
+          <span className="text-gray-400">Beat</span>
+      </div>
+      <div className="flex items-center gap-1.5">
+          <div className="w-2 h-2 rounded-full border-2 border-[#3b82f6] bg-transparent"></div>
+          <span className="text-gray-400">In-Line</span>
+      </div>
+      <div className="flex items-center gap-1.5">
+          <div className="w-2 h-2 rounded-full border-2 border-[#f43f5e] bg-transparent"></div>
+          <span className="text-gray-400">Miss</span>
+      </div>
+      <div className="flex items-center gap-1.5">
+          <div className="w-2 h-2 rounded-full border-2 border-[#64748b] bg-transparent"></div>
+          <span className="text-gray-400">Estimate</span>
+      </div>
     </div>
   );
 };

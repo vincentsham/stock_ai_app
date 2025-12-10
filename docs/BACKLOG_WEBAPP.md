@@ -38,7 +38,8 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-| 13 | Feature | Metrics Session | High | Open | w_feat_13 | | |
+| 13 | Feature | Add the growth and acceleration graph on Earnings session | High | Open | w_feat_13 | | |
+| 14 | Feature | Metrics Session | High | Open | w_feat_14 | | |
 | 10001 | Technical | Create Twitter Card Image (1200x600px) | Low | Open | | | |
 | 10002 | Technical | Create Open Graph Image (1200x630px) | Low | Open | | | |
 | 10003 | Technical | Create Apple Touch Icon (180x180px) | Low | Open | | | |
