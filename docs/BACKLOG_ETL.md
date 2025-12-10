@@ -45,6 +45,7 @@ examples:
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
 | 1010 | Feature | Only extract a limit number of existing Catalysts or Archive the old catalysts | Medium | Open |  |  |  |
 | 1011 | Feature | Create DataMart Table for catalyst section | Medium | Open |  |  |  |
+| 1012 | Miscellaneous | Modify Metrics table column name | Medium | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
 | 10004 | Miscellaneous | Create psql partition logic | Low | Open |  |  |  |

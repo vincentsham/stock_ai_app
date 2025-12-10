@@ -45,7 +45,7 @@ def table_creation(conn):
             eps_regime         VARCHAR(50),
 
             -- EPS surprise / beats
-            eps_surprise_pct               FLOAT,
+            eps_surprise               FLOAT,
             eps_beat_flag                  SMALLINT,
             eps_beat_count_4q              SMALLINT,
             eps_beat_streak_length         SMALLINT,
@@ -55,7 +55,7 @@ def table_creation(conn):
             eps_surprise_regime            VARCHAR(50),
 
             -- Revenue surprise / beats
-            revenue_surprise_pct               FLOAT,
+            revenue_surprise               FLOAT,
             revenue_beat_flag                  SMALLINT,
             revenue_beat_count_4q              SMALLINT,
             revenue_beat_streak_length         SMALLINT,
@@ -298,7 +298,7 @@ def table_creation(conn):
             revenue_ttm                        BIGINT,
                        
             -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            revenue_qoq_growth_pct             FLOAT,
+            revenue_qoq_growth             FLOAT,
             revenue_qoq_positive_flag        SMALLINT,
             revenue_qoq_count_4q                SMALLINT,
             revenue_qoq_streak_length           SMALLINT,
@@ -318,7 +318,7 @@ def table_creation(conn):
             revenue_qoq_accel_regime              VARCHAR(50),
 
             -- Year-over-Year (YoY) Growth Metrics           
-            revenue_yoy_growth_pct             FLOAT,
+            revenue_yoy_growth             FLOAT,
             revenue_yoy_positive_flag        SMALLINT,
             revenue_yoy_count_4q                SMALLINT,
             revenue_yoy_streak_length           SMALLINT,
@@ -338,7 +338,7 @@ def table_creation(conn):
             revenue_yoy_accel_regime              VARCHAR(50),
             
             -- TTM Growth Metrics
-            revenue_ttm_growth_pct             FLOAT,
+            revenue_ttm_growth             FLOAT,
             revenue_ttm_positive_flag        SMALLINT,
             revenue_ttm_count_4q                SMALLINT,
             revenue_ttm_streak_length           SMALLINT,
@@ -386,7 +386,7 @@ def table_creation(conn):
             eps_diluted_ttm                       NUMERIC(10,2),
                        
             -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            eps_diluted_qoq_growth_pct             FLOAT,
+            eps_diluted_qoq_growth             FLOAT,
             eps_diluted_qoq_positive_flag        SMALLINT,
             eps_diluted_qoq_count_4q                SMALLINT,
             eps_diluted_qoq_streak_length           SMALLINT,
@@ -406,7 +406,7 @@ def table_creation(conn):
             eps_diluted_qoq_accel_regime              VARCHAR(50),
 
             -- Year-over-Year (YoY) Growth Metrics           
-            eps_diluted_yoy_growth_pct             FLOAT,
+            eps_diluted_yoy_growth             FLOAT,
             eps_diluted_yoy_positive_flag        SMALLINT,
             eps_diluted_yoy_count_4q                SMALLINT,
             eps_diluted_yoy_streak_length           SMALLINT,
@@ -426,7 +426,7 @@ def table_creation(conn):
             eps_diluted_yoy_accel_regime              VARCHAR(50),
             
             -- TTM Growth Metrics
-            eps_diluted_ttm_growth_pct             FLOAT,
+            eps_diluted_ttm_growth             FLOAT,
             eps_diluted_ttm_positive_flag        SMALLINT,
             eps_diluted_ttm_count_4q                SMALLINT,
             eps_diluted_ttm_streak_length           SMALLINT,
@@ -475,7 +475,7 @@ def table_creation(conn):
             gross_profit_ttm                       BIGINT,
                        
             -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            gross_profit_qoq_growth_pct             FLOAT,
+            gross_profit_qoq_growth             FLOAT,
             gross_profit_qoq_positive_flag        SMALLINT,
             gross_profit_qoq_count_4q                SMALLINT,
             gross_profit_qoq_streak_length           SMALLINT,
@@ -495,7 +495,7 @@ def table_creation(conn):
             gross_profit_qoq_accel_regime              VARCHAR(50),
 
             -- Year-over-Year (YoY) Growth Metrics           
-            gross_profit_yoy_growth_pct             FLOAT,
+            gross_profit_yoy_growth             FLOAT,
             gross_profit_yoy_positive_flag        SMALLINT,
             gross_profit_yoy_count_4q                SMALLINT,
             gross_profit_yoy_streak_length           SMALLINT,
@@ -515,7 +515,7 @@ def table_creation(conn):
             gross_profit_yoy_accel_regime              VARCHAR(50),
             
             -- TTM Growth Metrics
-            gross_profit_ttm_growth_pct             FLOAT,
+            gross_profit_ttm_growth             FLOAT,
             gross_profit_ttm_positive_flag        SMALLINT,
             gross_profit_ttm_count_4q                SMALLINT,
             gross_profit_ttm_streak_length           SMALLINT,
@@ -563,7 +563,7 @@ def table_creation(conn):
             ebit_ttm                       BIGINT,
                        
             -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            ebit_qoq_growth_pct             FLOAT,
+            ebit_qoq_growth             FLOAT,
             ebit_qoq_positive_flag        SMALLINT,
             ebit_qoq_count_4q                SMALLINT,
             ebit_qoq_streak_length           SMALLINT,
@@ -583,7 +583,7 @@ def table_creation(conn):
             ebit_qoq_accel_regime              VARCHAR(50),
 
             -- Year-over-Year (YoY) Growth Metrics           
-            ebit_yoy_growth_pct             FLOAT,
+            ebit_yoy_growth             FLOAT,
             ebit_yoy_positive_flag        SMALLINT,
             ebit_yoy_count_4q                SMALLINT,
             ebit_yoy_streak_length           SMALLINT,
@@ -603,7 +603,7 @@ def table_creation(conn):
             ebit_yoy_accel_regime              VARCHAR(50),
             
             -- TTM Growth Metrics
-            ebit_ttm_growth_pct             FLOAT,
+            ebit_ttm_growth             FLOAT,
             ebit_ttm_positive_flag        SMALLINT,
             ebit_ttm_count_4q                SMALLINT,
             ebit_ttm_streak_length           SMALLINT,
@@ -651,7 +651,7 @@ def table_creation(conn):
             profit_margin_ttm                       FLOAT,
                        
             -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            profit_margin_qoq_growth_pct             FLOAT,
+            profit_margin_qoq_growth             FLOAT,
             profit_margin_qoq_positive_flag        SMALLINT,
             profit_margin_qoq_count_4q                SMALLINT,
             profit_margin_qoq_streak_length           SMALLINT,
@@ -671,7 +671,7 @@ def table_creation(conn):
             profit_margin_qoq_accel_regime              VARCHAR(50),
 
             -- Year-over-Year (YoY) Growth Metrics           
-            profit_margin_yoy_growth_pct             FLOAT,
+            profit_margin_yoy_growth             FLOAT,
             profit_margin_yoy_positive_flag        SMALLINT,
             profit_margin_yoy_count_4q                SMALLINT,
             profit_margin_yoy_streak_length           SMALLINT,
@@ -691,7 +691,7 @@ def table_creation(conn):
             profit_margin_yoy_accel_regime              VARCHAR(50),
             
             -- TTM Growth Metrics
-            profit_margin_ttm_growth_pct             FLOAT,
+            profit_margin_ttm_growth             FLOAT,
             profit_margin_ttm_positive_flag        SMALLINT,
             profit_margin_ttm_count_4q                SMALLINT,
             profit_margin_ttm_streak_length           SMALLINT,
@@ -738,7 +738,7 @@ def table_creation(conn):
             ocf_ttm                       BIGINT,
                        
             -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            ocf_qoq_growth_pct             FLOAT,
+            ocf_qoq_growth             FLOAT,
             ocf_qoq_positive_flag        SMALLINT,
             ocf_qoq_count_4q                SMALLINT,
             ocf_qoq_streak_length           SMALLINT,
@@ -758,7 +758,7 @@ def table_creation(conn):
             ocf_qoq_accel_regime              VARCHAR(50),
 
             -- Year-over-Year (YoY) Growth Metrics           
-            ocf_yoy_growth_pct             FLOAT,
+            ocf_yoy_growth             FLOAT,
             ocf_yoy_positive_flag        SMALLINT,
             ocf_yoy_count_4q                SMALLINT,
             ocf_yoy_streak_length           SMALLINT,
@@ -778,7 +778,7 @@ def table_creation(conn):
             ocf_yoy_accel_regime              VARCHAR(50),
             
             -- TTM Growth Metrics
-            ocf_ttm_growth_pct             FLOAT,
+            ocf_ttm_growth             FLOAT,
             ocf_ttm_positive_flag        SMALLINT,
             ocf_ttm_count_4q                SMALLINT,
             ocf_ttm_streak_length           SMALLINT,
@@ -826,7 +826,7 @@ def table_creation(conn):
             fcf_ttm                       BIGINT,
                        
             -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            fcf_qoq_growth_pct             FLOAT,
+            fcf_qoq_growth             FLOAT,
             fcf_qoq_positive_flag        SMALLINT,
             fcf_qoq_count_4q                SMALLINT,
             fcf_qoq_streak_length           SMALLINT,
@@ -846,7 +846,7 @@ def table_creation(conn):
             fcf_qoq_accel_regime              VARCHAR(50),
 
             -- Year-over-Year (YoY) Growth Metrics           
-            fcf_yoy_growth_pct             FLOAT,
+            fcf_yoy_growth             FLOAT,
             fcf_yoy_positive_flag        SMALLINT,
             fcf_yoy_count_4q                SMALLINT,
             fcf_yoy_streak_length           SMALLINT,
@@ -866,7 +866,7 @@ def table_creation(conn):
             fcf_yoy_accel_regime              VARCHAR(50),
             
             -- TTM Growth Metrics
-            fcf_ttm_growth_pct             FLOAT,
+            fcf_ttm_growth             FLOAT,
             fcf_ttm_positive_flag        SMALLINT,
             fcf_ttm_count_4q                SMALLINT,
             fcf_ttm_streak_length           SMALLINT,
@@ -915,7 +915,7 @@ def table_creation(conn):
             fcf_margin_ttm                       FLOAT,
                        
             -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            fcf_margin_qoq_growth_pct          FLOAT,
+            fcf_margin_qoq_growth          FLOAT,
             fcf_margin_qoq_positive_flag        SMALLINT,
             fcf_margin_qoq_count_4q                SMALLINT,
             fcf_margin_qoq_streak_length           SMALLINT,
@@ -935,7 +935,7 @@ def table_creation(conn):
             fcf_margin_qoq_accel_regime              VARCHAR(50),
 
             -- Year-over-Year (YoY) Growth Metrics           
-            fcf_margin_yoy_growth_pct             FLOAT,
+            fcf_margin_yoy_growth             FLOAT,
             fcf_margin_yoy_positive_flag        SMALLINT,
             fcf_margin_yoy_count_4q                SMALLINT,
             fcf_margin_yoy_streak_length           SMALLINT,
@@ -955,7 +955,7 @@ def table_creation(conn):
             fcf_margin_yoy_accel_regime              VARCHAR(50),
             
             -- TTM Growth Metrics
-            fcf_margin_ttm_growth_pct             FLOAT,
+            fcf_margin_ttm_growth             FLOAT,
             fcf_margin_ttm_positive_flag        SMALLINT,
             fcf_margin_ttm_count_4q                SMALLINT,
             fcf_margin_ttm_streak_length           SMALLINT,
@@ -1004,7 +1004,7 @@ def table_creation(conn):
             capex_ttm                       BIGINT,
                        
             -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            capex_qoq_growth_pct          FLOAT,
+            capex_qoq_growth          FLOAT,
             capex_qoq_positive_flag        SMALLINT,
             capex_qoq_count_4q                SMALLINT,
             capex_qoq_streak_length           SMALLINT,
@@ -1024,7 +1024,7 @@ def table_creation(conn):
             capex_qoq_accel_regime              VARCHAR(50),
 
             -- Year-over-Year (YoY) Growth Metrics           
-            capex_yoy_growth_pct             FLOAT,
+            capex_yoy_growth             FLOAT,
             capex_yoy_positive_flag        SMALLINT,
             capex_yoy_count_4q                SMALLINT,
             capex_yoy_streak_length           SMALLINT,
@@ -1044,7 +1044,7 @@ def table_creation(conn):
             capex_yoy_accel_regime              VARCHAR(50),
             
             -- TTM Growth Metrics
-            capex_ttm_growth_pct             FLOAT,
+            capex_ttm_growth             FLOAT,
             capex_ttm_positive_flag        SMALLINT,
             capex_ttm_count_4q                SMALLINT,
             capex_ttm_streak_length           SMALLINT,
@@ -1091,7 +1091,7 @@ def table_creation(conn):
             ccr_ttm                       FLOAT,
                        
             -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            ccr_qoq_growth_pct          FLOAT,
+            ccr_qoq_growth          FLOAT,
             ccr_qoq_positive_flag        SMALLINT,
             ccr_qoq_count_4q                SMALLINT,
             ccr_qoq_streak_length           SMALLINT,
@@ -1111,7 +1111,7 @@ def table_creation(conn):
             ccr_qoq_accel_regime              VARCHAR(50),
 
             -- Year-over-Year (YoY) Growth Metrics           
-            ccr_yoy_growth_pct             FLOAT,
+            ccr_yoy_growth             FLOAT,
             ccr_yoy_positive_flag        SMALLINT,
             ccr_yoy_count_4q                SMALLINT,
             ccr_yoy_streak_length           SMALLINT,
@@ -1131,7 +1131,7 @@ def table_creation(conn):
             ccr_yoy_accel_regime              VARCHAR(50),
             
             -- TTM Growth Metrics
-            ccr_ttm_growth_pct             FLOAT,
+            ccr_ttm_growth             FLOAT,
             ccr_ttm_positive_flag        SMALLINT,
             ccr_ttm_count_4q                SMALLINT,
             ccr_ttm_streak_length           SMALLINT,
@@ -1177,7 +1177,7 @@ def table_creation(conn):
             roa_ttm                       FLOAT,
                        
             -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            roa_qoq_growth_pct          FLOAT,
+            roa_qoq_growth          FLOAT,
             roa_qoq_positive_flag        SMALLINT,
             roa_qoq_count_4q                SMALLINT,
             roa_qoq_streak_length           SMALLINT,
@@ -1197,7 +1197,7 @@ def table_creation(conn):
             roa_qoq_accel_regime              VARCHAR(50),
 
             -- Year-over-Year (YoY) Growth Metrics           
-            roa_yoy_growth_pct             FLOAT,
+            roa_yoy_growth             FLOAT,
             roa_yoy_positive_flag        SMALLINT,
             roa_yoy_count_4q                SMALLINT,
             roa_yoy_streak_length           SMALLINT,
@@ -1217,7 +1217,7 @@ def table_creation(conn):
             roa_yoy_accel_regime              VARCHAR(50),
             
             -- TTM Growth Metrics
-            roa_ttm_growth_pct             FLOAT,
+            roa_ttm_growth             FLOAT,
             roa_ttm_positive_flag        SMALLINT,
             roa_ttm_count_4q                SMALLINT,
             roa_ttm_streak_length           SMALLINT,
@@ -1263,7 +1263,7 @@ def table_creation(conn):
             roe_ttm                       FLOAT,
                        
             -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            roe_qoq_growth_pct          FLOAT,
+            roe_qoq_growth          FLOAT,
             roe_qoq_positive_flag        SMALLINT,
             roe_qoq_count_4q                SMALLINT,
             roe_qoq_streak_length           SMALLINT,
@@ -1283,7 +1283,7 @@ def table_creation(conn):
             roe_qoq_accel_regime              VARCHAR(50),
 
             -- Year-over-Year (YoY) Growth Metrics           
-            roe_yoy_growth_pct             FLOAT,
+            roe_yoy_growth             FLOAT,
             roe_yoy_positive_flag        SMALLINT,
             roe_yoy_count_4q                SMALLINT,
             roe_yoy_streak_length           SMALLINT,
@@ -1303,7 +1303,7 @@ def table_creation(conn):
             roe_yoy_accel_regime              VARCHAR(50),
             
             -- TTM Growth Metrics
-            roe_ttm_growth_pct             FLOAT,
+            roe_ttm_growth             FLOAT,
             roe_ttm_positive_flag        SMALLINT,
             roe_ttm_count_4q                SMALLINT,
             roe_ttm_streak_length           SMALLINT,
@@ -1350,7 +1350,7 @@ def table_creation(conn):
             roic_ttm                       FLOAT,
                        
             -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            roic_qoq_growth_pct          FLOAT,
+            roic_qoq_growth          FLOAT,
             roic_qoq_positive_flag        SMALLINT,
             roic_qoq_count_4q                SMALLINT,
             roic_qoq_streak_length           SMALLINT,
@@ -1370,7 +1370,7 @@ def table_creation(conn):
             roic_qoq_accel_regime              VARCHAR(50),
 
             -- Year-over-Year (YoY) Growth Metrics           
-            roic_yoy_growth_pct             FLOAT,
+            roic_yoy_growth             FLOAT,
             roic_yoy_positive_flag        SMALLINT,
             roic_yoy_count_4q                SMALLINT,
             roic_yoy_streak_length           SMALLINT,
@@ -1390,7 +1390,7 @@ def table_creation(conn):
             roic_yoy_accel_regime              VARCHAR(50),
             
             -- TTM Growth Metrics
-            roic_ttm_growth_pct             FLOAT,
+            roic_ttm_growth             FLOAT,
             roic_ttm_positive_flag        SMALLINT,
             roic_ttm_count_4q                SMALLINT,
             roic_ttm_streak_length           SMALLINT,
@@ -1437,7 +1437,7 @@ def table_creation(conn):
             cr_ttm                       FLOAT,
                        
             -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            cr_qoq_growth_pct          FLOAT,
+            cr_qoq_growth          FLOAT,
             cr_qoq_positive_flag        SMALLINT,
             cr_qoq_count_4q                SMALLINT,
             cr_qoq_streak_length           SMALLINT,
@@ -1457,7 +1457,7 @@ def table_creation(conn):
             cr_qoq_accel_regime              VARCHAR(50),
 
             -- Year-over-Year (YoY) Growth Metrics           
-            cr_yoy_growth_pct             FLOAT,
+            cr_yoy_growth             FLOAT,
             cr_yoy_positive_flag        SMALLINT,
             cr_yoy_count_4q                SMALLINT,
             cr_yoy_streak_length           SMALLINT,
@@ -1477,7 +1477,7 @@ def table_creation(conn):
             cr_yoy_accel_regime              VARCHAR(50),
             
             -- TTM Growth Metrics
-            cr_ttm_growth_pct             FLOAT,
+            cr_ttm_growth             FLOAT,
             cr_ttm_positive_flag        SMALLINT,
             cr_ttm_count_4q                SMALLINT,
             cr_ttm_streak_length           SMALLINT,
@@ -1525,7 +1525,7 @@ def table_creation(conn):
             der_ttm                       FLOAT,
                        
             -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            der_qoq_growth_pct          FLOAT,
+            der_qoq_growth          FLOAT,
             der_qoq_positive_flag        SMALLINT,
             der_qoq_count_4q                SMALLINT,
             der_qoq_streak_length           SMALLINT,
@@ -1545,7 +1545,7 @@ def table_creation(conn):
             der_qoq_accel_regime              VARCHAR(50),
 
             -- Year-over-Year (YoY) Growth Metrics           
-            der_yoy_growth_pct             FLOAT,
+            der_yoy_growth             FLOAT,
             der_yoy_positive_flag        SMALLINT,
             der_yoy_count_4q                SMALLINT,
             der_yoy_streak_length           SMALLINT,
@@ -1565,7 +1565,7 @@ def table_creation(conn):
             der_yoy_accel_regime              VARCHAR(50),
             
             -- TTM Growth Metrics
-            der_ttm_growth_pct             FLOAT,
+            der_ttm_growth             FLOAT,
             der_ttm_positive_flag        SMALLINT,
             der_ttm_count_4q                SMALLINT,
             der_ttm_streak_length           SMALLINT,
@@ -1613,7 +1613,7 @@ def table_creation(conn):
             icr_ttm                       FLOAT,
                        
             -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            icr_qoq_growth_pct          FLOAT,
+            icr_qoq_growth          FLOAT,
             icr_qoq_positive_flag        SMALLINT,
             icr_qoq_count_4q                SMALLINT,
             icr_qoq_streak_length           SMALLINT,
@@ -1633,7 +1633,7 @@ def table_creation(conn):
             icr_qoq_accel_regime              VARCHAR(50),
 
             -- Year-over-Year (YoY) Growth Metrics           
-            icr_yoy_growth_pct             FLOAT,
+            icr_yoy_growth             FLOAT,
             icr_yoy_positive_flag        SMALLINT,
             icr_yoy_count_4q                SMALLINT,
             icr_yoy_streak_length           SMALLINT,
@@ -1653,7 +1653,7 @@ def table_creation(conn):
             icr_yoy_accel_regime              VARCHAR(50),
             
             -- TTM Growth Metrics
-            icr_ttm_growth_pct             FLOAT,
+            icr_ttm_growth             FLOAT,
             icr_ttm_positive_flag        SMALLINT,
             icr_ttm_count_4q                SMALLINT,
             icr_ttm_streak_length           SMALLINT,
@@ -1701,7 +1701,7 @@ def table_creation(conn):
             net_debt_to_ebitda_ttm                       FLOAT,
                        
             -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            net_debt_to_ebitda_qoq_growth_pct          FLOAT,
+            net_debt_to_ebitda_qoq_growth          FLOAT,
             net_debt_to_ebitda_qoq_positive_flag        SMALLINT,
             net_debt_to_ebitda_qoq_count_4q                SMALLINT,
             net_debt_to_ebitda_qoq_streak_length           SMALLINT,
@@ -1721,7 +1721,7 @@ def table_creation(conn):
             net_debt_to_ebitda_qoq_accel_regime              VARCHAR(50),
 
             -- Year-over-Year (YoY) Growth Metrics           
-            net_debt_to_ebitda_yoy_growth_pct             FLOAT,
+            net_debt_to_ebitda_yoy_growth             FLOAT,
             net_debt_to_ebitda_yoy_positive_flag        SMALLINT,
             net_debt_to_ebitda_yoy_count_4q                SMALLINT,
             net_debt_to_ebitda_yoy_streak_length           SMALLINT,
@@ -1741,7 +1741,7 @@ def table_creation(conn):
             net_debt_to_ebitda_yoy_accel_regime              VARCHAR(50),
             
             -- TTM Growth Metrics
-            net_debt_to_ebitda_ttm_growth_pct             FLOAT,
+            net_debt_to_ebitda_ttm_growth             FLOAT,
             net_debt_to_ebitda_ttm_positive_flag        SMALLINT,
             net_debt_to_ebitda_ttm_count_4q                SMALLINT,
             net_debt_to_ebitda_ttm_streak_length           SMALLINT,

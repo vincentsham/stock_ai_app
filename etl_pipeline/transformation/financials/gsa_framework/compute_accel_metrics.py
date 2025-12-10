@@ -6,11 +6,11 @@ def calculate_acceleration(df: pd.DataFrame, column: str, ttm: bool = True) -> p
     """
     Calculate the difference of year-over-year growth percentages to determine acceleration.
     """
-    growth_yoy_name = f"{column}_yoy_growth_pct"
+    growth_yoy_name = f"{column}_yoy_growth"
     accel_yoy_column = f"{column}_yoy_accel"
-    growth_qoq_name = f"{column}_qoq_growth_pct"
+    growth_qoq_name = f"{column}_qoq_growth"
     accel_qoq_column = f"{column}_qoq_accel"
-    growth_ttm_name = f"{column}_ttm_growth_pct"
+    growth_ttm_name = f"{column}_ttm_growth"
     accel_ttm_column = f"{column}_ttm_accel"
 
     df[accel_yoy_column] = df[growth_yoy_name].astype(float) - df[growth_yoy_name].shift(1).astype(float)

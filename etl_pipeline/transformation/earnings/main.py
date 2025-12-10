@@ -5,7 +5,7 @@ from typing import Dict
 from sklearn import metrics
 
 from database.utils import connect_to_db, insert_records, read_sql_query
-from etl_pipeline.utils import calculate_pct_change, calculate_streak
+from etl_pipeline.utils import calculate_capped_rate, calculate_streak
 
 def read_earnings(conn, tic: str) -> pd.DataFrame:
     """
@@ -87,10 +87,10 @@ def classify_eps_regime(df: pd.DataFrame) -> pd.DataFrame:
 def compute_surprise_metrics(df: pd.DataFrame, prefix: str) -> pd.DataFrame:
     
     # Surprise Percentage
-    df[f'{prefix}_surprise_pct'] = df.apply(lambda row: calculate_pct_change(row[f'{prefix}'], row[f'{prefix}_estimated']), axis=1)
+    df[f'{prefix}_surprise'] = df.apply(lambda row: calculate_capped_rate(row[f'{prefix}'], row[f'{prefix}_estimated']), axis=1)
 
     # Beat Count (Last 4 Quarters)
-    df[f'{prefix}_beat_flag'] = (df[f'{prefix}_surprise_pct'] > 0).astype(int)
+    df[f'{prefix}_beat_flag'] = (df[f'{prefix}_surprise'] > 0).astype(int)
     df[f'{prefix}_beat_count_4q'] = df[f'{prefix}_beat_flag'].fillna(0).rolling(window=4, min_periods=1).sum().astype(int)
     
     # Beat Streak Length
@@ -100,7 +100,7 @@ def compute_surprise_metrics(df: pd.DataFrame, prefix: str) -> pd.DataFrame:
 
 def compute_surprise_classification(df: pd.DataFrame, prefix: str) -> pd.DataFrame:
     """
-    | **Range (surprise_pct)** | **Class** | **Meaning / Signal** |
+    | **Range (surprise)** | **Class** | **Meaning / Signal** |
     |:--|:--|:--|
     | ≥ **+10%** | **Major Beat** | Exceptional outperformance — significantly above expectations. |
     | **+3% to +10%** | **Moderate Beat** | Clear upside surprise — strong positive signal. |
@@ -111,7 +111,7 @@ def compute_surprise_classification(df: pd.DataFrame, prefix: str) -> pd.DataFra
     """
 
     class_column = f'{prefix}_surprise_class'
-    surprise_column = f'{prefix}_surprise_pct'
+    surprise_column = f'{prefix}_surprise'
 
     def classification_logic(surprise: float) -> str:
         if pd.isnull(surprise):

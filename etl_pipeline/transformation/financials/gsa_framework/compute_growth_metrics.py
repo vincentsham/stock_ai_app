@@ -1,5 +1,5 @@
 import pandas as pd
-from etl_pipeline.utils import calculate_streak, calculate_pct_change
+from etl_pipeline.utils import calculate_streak, calculate_capped_rate
 import numpy as np
 
 def calculate_growth(df: pd.DataFrame, column: str, ttm: bool = True) -> pd.DataFrame:
@@ -9,9 +9,9 @@ def calculate_growth(df: pd.DataFrame, column: str, ttm: bool = True) -> pd.Data
     """
 
     
-    column_yoy_name = f"{column}_yoy_growth_pct"
-    column_qoq_name = f"{column}_qoq_growth_pct"
-    column_ttm_name = f"{column}_ttm_growth_pct"
+    column_yoy_name = f"{column}_yoy_growth"
+    column_qoq_name = f"{column}_qoq_growth"
+    column_ttm_name = f"{column}_ttm_growth"
     column_lag_1 = f"{column}_lag_1"
     column_lag_4 = f"{column}_lag_4"
     column_ttm = f"{column}_ttm"
@@ -23,8 +23,8 @@ def calculate_growth(df: pd.DataFrame, column: str, ttm: bool = True) -> pd.Data
 
 
     # Handle division by zero or NaNs for calculating YoY growth
-    df[column_yoy_name] = df.apply(lambda x: calculate_pct_change(x[column], x[column_lag_4]), axis=1)
-    df[column_qoq_name] = df.apply(lambda x: calculate_pct_change(x[column], x[column_lag_1]), axis=1)
+    df[column_yoy_name] = df.apply(lambda x: calculate_capped_rate(x[column], x[column_lag_4]), axis=1)
+    df[column_qoq_name] = df.apply(lambda x: calculate_capped_rate(x[column], x[column_lag_1]), axis=1)
     
     # Drop intermediate columns
     df.drop(columns=[column_lag_1, column_lag_4], inplace=True)
@@ -47,7 +47,7 @@ def calculate_growth(df: pd.DataFrame, column: str, ttm: bool = True) -> pd.Data
 
     if ttm:
         df[column_ttm_lag_4] = df[column_ttm].shift(4)
-        df[column_ttm_name] = df.apply(lambda x: calculate_pct_change(x[column_ttm], x[column_ttm_lag_4]), axis=1)
+        df[column_ttm_name] = df.apply(lambda x: calculate_capped_rate(x[column_ttm], x[column_ttm_lag_4]), axis=1)
         df.drop(columns=[column_ttm_lag_4], inplace=True)
         flag_ttm_column = f"{column}_ttm_positive_flag"
         df[flag_ttm_column] = df[column_ttm_name].apply(get_positive_flag)
@@ -101,11 +101,11 @@ def calculate_yoy_growth_flag(df: pd.DataFrame, column: str, score_regime: list[
     """
     Calculate a boolean flag indicating whether year-over-year growth is positive for a specified column.
     """
-    column_yoy_name = f"{column}_yoy_growth_pct"
+    column_yoy_name = f"{column}_yoy_growth"
     class_yoy_column = f"{column}_yoy_growth_class"
-    column_qoq_name = f"{column}_qoq_growth_pct"
+    column_qoq_name = f"{column}_qoq_growth"
     class_qoq_column = f"{column}_qoq_growth_class"
-    column_ttm_name = f"{column}_ttm_growth_pct"
+    column_ttm_name = f"{column}_ttm_growth"
     class_ttm_column = f"{column}_ttm_growth_class"
 
     # 0 if YoY growth < score_regime[0], (Deep contraction)
