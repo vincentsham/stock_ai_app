@@ -5,8 +5,12 @@ export type Earnings = {
     calendar_quarter: number;
     eps: number;
     eps_estimated: number;
+    eps_yoy_growth: number;
+    eps_yoy_acceleration: number;
     revenue: number;
     revenue_estimated: number;
+    revenue_yoy_growth: number;
+    revenue_yoy_acceleration: number;
 };
 
 export type EarningsRegime = {

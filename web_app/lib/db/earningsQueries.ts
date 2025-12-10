@@ -7,12 +7,22 @@ import { Earnings, EarningsRegime, EPSRegime, RevenueRegime } from '@/types';
 const EARNINGS_SEARCH_QUERY = `
     SELECT *
     FROM (
-        SELECT 
-            tic, calendar_year, calendar_quarter, 
-            eps, eps_estimated, revenue, revenue_estimated 
-        FROM core.earnings 
-        WHERE tic = $1 AND eps_estimated IS NOT NULL 
-        ORDER BY tic, calendar_year DESC, calendar_quarter DESC 
+        SELECT e.tic, e.calendar_year, e.calendar_quarter, e.earnings_date, 
+              e.eps, e.eps_estimated, 
+              edm.eps_diluted_yoy_growth_pct AS eps_yoy_growth, edm.eps_diluted_yoy_accel AS eps_yoy_acceleration,
+              e.revenue, e.revenue_estimated, 
+              rm.revenue_yoy_growth_pct AS revenue_yoy_growth, rm.revenue_yoy_accel AS revenue_yoy_acceleration
+        FROM core.earnings AS e
+        LEFT JOIN core.eps_diluted_metrics AS edm
+        ON e.tic = edm.tic 
+          AND e.calendar_year = edm.calendar_year
+          AND e.calendar_quarter = edm.calendar_quarter
+        LEFT JOIN core.revenue_metrics AS rm
+        ON e.tic = rm.tic
+          AND e.calendar_year = rm.calendar_year
+          AND e.calendar_quarter = rm.calendar_quarter
+        WHERE e.tic = $1 AND e.eps_estimated IS NOT NULL
+        ORDER BY e.calendar_year DESC, e.calendar_quarter DESC
         LIMIT 9) AS subquery
     ORDER BY calendar_year ASC, calendar_quarter ASC;
 `;
@@ -32,8 +42,12 @@ const searchEarnings = cache(async (tic: string): Promise<Earnings[]> => {
         calendar_quarter: row.calendar_quarter,
         eps: row.eps,
         eps_estimated: row.eps_estimated,
+        eps_yoy_growth: row.eps_yoy_growth,
+        eps_yoy_acceleration: row.eps_yoy_acceleration,
         revenue: row.revenue,
         revenue_estimated: row.revenue_estimated,
+        revenue_yoy_growth: row.revenue_yoy_growth,
+        revenue_yoy_acceleration: row.revenue_yoy_acceleration,
     }));
 
     return mapped;
