@@ -120,11 +120,11 @@ def calculate_streak_pos_neg(series: pd.Series) -> pd.Series:
     return out
 
 
-def calculate_pct_change(current: float, previous: float) -> float:
+def calculate_capped_rate(current: float, previous: float) -> float:
     if previous is None or current is None:
         return None
     
-    pct_change = (current - previous) / max(abs(previous), 1e-6)
+    rate_change = (current - previous) / max(abs(previous), 1e-6)
 
-    # Cap the percentage changewithin ±1000%
-    return max(min(pct_change, 10.0), -10.0)
+    # Cap the rate change within ±1000%
+    return max(min(rate_change, 10.0), -10.0)

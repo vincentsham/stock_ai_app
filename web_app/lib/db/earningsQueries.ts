@@ -9,9 +9,11 @@ const EARNINGS_SEARCH_QUERY = `
     FROM (
         SELECT e.tic, e.calendar_year, e.calendar_quarter, e.earnings_date, 
               e.eps, e.eps_estimated, 
-              edm.eps_diluted_yoy_growth_pct AS eps_yoy_growth, edm.eps_diluted_yoy_accel AS eps_yoy_acceleration,
+              edm.eps_diluted_yoy_growth * 100 AS eps_yoy_growth,
+              edm.eps_diluted_yoy_accel * 100 AS eps_yoy_acceleration,
               e.revenue, e.revenue_estimated, 
-              rm.revenue_yoy_growth_pct AS revenue_yoy_growth, rm.revenue_yoy_accel AS revenue_yoy_acceleration
+              rm.revenue_yoy_growth * 100 AS revenue_yoy_growth, 
+              rm.revenue_yoy_accel * 100 AS revenue_yoy_acceleration
         FROM core.earnings AS e
         LEFT JOIN core.eps_diluted_metrics AS edm
         ON e.tic = edm.tic 
