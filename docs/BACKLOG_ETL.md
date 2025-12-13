@@ -40,6 +40,8 @@ examples:
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 27 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
 | 33 | Feature | Modify the Catalyst Analysis Logic to only have positive and negative sentiment | High | Open |  |  |  |
+| 34 | Feature | Add a consolidated tag logic | High | Open |  |  |  |
+| 35 | Feature | Working on the metric etl jobs | High | Open |  |  |  |
 | 1007 | Feature | Compute more metrics (e.g. ebita) | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
