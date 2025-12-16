@@ -458,1319 +458,454 @@ def table_creation(conn):
         print("Table 'eps_diluted_metrics' created or already exists with composite primary key.")
 
 
-
-
-       # Create a table for gross profit metrics if it does not exist
+       # Create a table for valuation metrics if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.gross_profit_metrics (
+        CREATE TABLE IF NOT EXISTS core.valuation_metrics (
             -- Identity & period alignment
             inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            event_id           UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
-            calendar_year                     SMALLINT     NOT NULL,
-            calendar_quarter                  SMALLINT     NOT NULL,
+            date                              DATE         NOT NULL,
+                       
+            market_cap          NUMERIC(20, 2),   -- price * diluted shares
+            pe_ttm              NUMERIC(20, 6),   -- Price / EPS (TTM)
+            pe_forward          NUMERIC(20, 6),   -- Price / Forward EPS
 
-            -- EPS Metrics
-            gross_profit                           BIGINT,
-            gross_profit_ttm                       BIGINT,
-                       
-            -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            gross_profit_qoq_growth             FLOAT,
-            gross_profit_qoq_positive_flag        SMALLINT,
-            gross_profit_qoq_count_4q                SMALLINT,
-            gross_profit_qoq_streak_length           SMALLINT,
-            gross_profit_qoq_growth_class        VARCHAR(50),
-            gross_profit_qoq_growth_regime          VARCHAR(50), 
-                       
-            gross_profit_qoq_volatility_4q        FLOAT,
-            gross_profit_qoq_volatility_flag           SMALLINT,
-            gross_profit_qoq_growth_drift             FLOAT,
-            gross_profit_qoq_outlier_flag               SMALLINT,
-            gross_profit_qoq_stability_regime        VARCHAR(50),
-                       
-            gross_profit_qoq_accel                  FLOAT,
-            gross_profit_qoq_accel_count_4q             SMALLINT,  
-            gross_profit_qoq_accel_positive_flag        SMALLINT,
-            gross_profit_qoq_accel_streak_length           SMALLINT,
-            gross_profit_qoq_accel_regime              VARCHAR(50),
-
-            -- Year-over-Year (YoY) Growth Metrics           
-            gross_profit_yoy_growth             FLOAT,
-            gross_profit_yoy_positive_flag        SMALLINT,
-            gross_profit_yoy_count_4q                SMALLINT,
-            gross_profit_yoy_streak_length           SMALLINT,
-            gross_profit_yoy_growth_class        VARCHAR(50),
-            gross_profit_yoy_growth_regime          VARCHAR(50),
+            ev_to_ebitda_ttm    NUMERIC(20, 6),   -- EV / EBITDA (TTM)
+            fcf_yield_ttm       NUMERIC(20, 8),   -- FCF / Market Cap (TTM)
+            ps_ttm              NUMERIC(20, 6),   -- Price / Sales (TTM)
             
-            gross_profit_yoy_volatility_4q        FLOAT,
-            gross_profit_yoy_volatility_flag           SMALLINT,
-            gross_profit_yoy_growth_drift             FLOAT,
-            gross_profit_yoy_outlier_flag               SMALLINT,
-            gross_profit_yoy_stability_regime        VARCHAR(50),
-
-            gross_profit_yoy_accel                  FLOAT,
-            gross_profit_yoy_accel_count_4q             SMALLINT,  
-            gross_profit_yoy_accel_positive_flag        SMALLINT,
-            gross_profit_yoy_accel_streak_length           SMALLINT,
-            gross_profit_yoy_accel_regime              VARCHAR(50),
             
-            -- TTM Growth Metrics
-            gross_profit_ttm_growth             FLOAT,
-            gross_profit_ttm_positive_flag        SMALLINT,
-            gross_profit_ttm_count_4q                SMALLINT,
-            gross_profit_ttm_streak_length           SMALLINT,
-            gross_profit_ttm_growth_class        VARCHAR(50),
-            gross_profit_ttm_growth_regime          VARCHAR(50),
 
-            gross_profit_ttm_volatility_4q        FLOAT,
-            gross_profit_ttm_volatility_flag           SMALLINT,
-            gross_profit_ttm_growth_drift             FLOAT,
-            gross_profit_ttm_outlier_flag               SMALLINT,
-            gross_profit_ttm_stability_regime        VARCHAR(50),
+            /* =========================
+                ➕ Contextual
+                ========================= */
 
-            gross_profit_ttm_accel                  FLOAT,
-            gross_profit_ttm_accel_count_4q             SMALLINT,
-            gross_profit_ttm_accel_positive_flag        SMALLINT,
-            gross_profit_ttm_accel_streak_length           SMALLINT,
-            gross_profit_ttm_accel_regime              VARCHAR(50),
+            ev_to_revenue_ttm   NUMERIC(20, 6),   -- EV / Revenue (TTM)
+            p_to_fcf_ttm        NUMERIC(20, 6),   -- Price / Free Cash Flow (TTM)
+            peg_ratio           NUMERIC(20, 6),   -- PE / EPS growth (explicit growth basis)
+            price_to_book       NUMERIC(20, 6),   -- Market Cap / Equity
 
-            raw_json_sha256                       CHAR(64)     NOT NULL,
+            /* =========================
+                🧠 Advanced (Optional)
+                ========================= */
+
+            ev_to_fcf_ttm       NUMERIC(20, 6),   -- EV / FCF (TTM)
+            earnings_yield_ttm  NUMERIC(20, 8),   -- EPS / Price  (or NI / Market Cap)
+            revenue_yield_ttm   NUMERIC(20, 8),   -- Revenue / Market Cap
+
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            UNIQUE (tic, date)
+        );
+        """)
+        print("Table 'valuation_metrics' created or already exists with composite primary key.")
+
+
+       # Create a table for profitability metrics if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.profitability_metrics (
+            -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            tic                               VARCHAR(10)  NOT NULL,
+            date                              DATE         NOT NULL,
+
+            gross_margin         NUMERIC(20, 8),  -- (Revenue - COGS) / Revenue
+            operating_margin     NUMERIC(20, 8),  -- EBIT / Revenue
+            ebitda_margin        NUMERIC(20, 8),  -- EBITDA / Revenue
+            net_margin           NUMERIC(20, 8),  -- Net Income / Revenue
+
+            /* =========================
+                Expand for More
+                ========================= */
+
+            roe                  NUMERIC(20, 8),  -- Net Income / Avg Equity
+            roa                  NUMERIC(20, 8),  -- Net Income / Avg Assets
+            ocf_margin           NUMERIC(20, 8),  -- Operating Cash Flow / Revenue
+            fcf_margin           NUMERIC(20, 8),  -- Free Cash Flow / Revenue
+                   
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            UNIQUE (tic, date)
+        );
+        """)
+        print("Table 'profitability_metrics' created or already exists with composite primary key.")
+
+
+       # Create a table for growth metrics if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.growth_metrics (
+            -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            tic                               VARCHAR(10)  NOT NULL,
+            date                              DATE         NOT NULL,
+
+            /* =========================
+                Default View (UX)
+                ========================= */
+
+            revenue_growth_yoy       NUMERIC(20, 8),  -- (Rev_t - Rev_t-1) / abs(Rev_t-1)
+            revenue_cagr_3y          NUMERIC(20, 8),  -- (Rev_t / Rev_t-3)^(1/3) - 1
+            eps_growth_yoy           NUMERIC(20, 8),  -- (EPS_t - EPS_t-1) / abs(EPS_t-1)
+            eps_cagr_3y              NUMERIC(20, 8),  -- (EPS_t / EPS_t-3)^(1/3) - 1
+            fcf_growth_yoy           NUMERIC(20, 8),  -- (FCF_t - FCF_t-1) / abs(FCF_t-1)
+            fcf_cagr_3y              NUMERIC(20, 8),  -- (FCF_t / FCF_t-3)^(1/3) - 1
+
+            /* =========================
+                Expand for More
+                ========================= */
+
+            revenue_cagr_5y          NUMERIC(20, 8),
+            eps_cagr_5y              NUMERIC(20, 8),
+            fcf_cagr_5y              NUMERIC(20, 8),
+
+            ebitda_growth_yoy        NUMERIC(20, 8),  -- optional                       
+            operating_income_growth_yoy NUMERIC(20, 8), -- optional (EBIT / OpInc)
+
+            forward_revenue_growth   NUMERIC(20, 8),  -- optional, expected
+            forward_eps_growth       NUMERIC(20, 8),  -- optional, expected
+
+                   
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            UNIQUE (tic, date)
+        );
+        """)
+        print("Table 'growth_metrics' created or already exists with composite primary key.")
+
+
+
+       # Create a table for efficiency metrics if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.efficiency_metrics (
+            -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            tic                               VARCHAR(10)  NOT NULL,
+            date                              DATE         NOT NULL,
+                
+            /* =========================
+                Default View (UX)
+                ========================= */
+
+            asset_turnover           NUMERIC(20, 8),  -- Revenue / Avg Total Assets
+            cash_conversion_cycle    NUMERIC(20, 6),  -- DSO + DIO - DPO (days)
+            dso                      NUMERIC(20, 6),  -- Avg AR / Revenue * 365 (days)
+            dio                      NUMERIC(20, 6),  -- Avg Inventory / COGS * 365 (days)
+            dpo                      NUMERIC(20, 6),  -- Avg AP / COGS * 365 (days)
+
+            /* =========================
+                Expand for More
+                ========================= */
+
+            fixed_asset_turnover     NUMERIC(20, 8),  -- Revenue / Avg Net PPE
+            revenue_per_employee     NUMERIC(20, 2),  -- Revenue / Employees
+            opex_ratio               NUMERIC(20, 8),  -- (SG&A + R&D) / Revenue
+
+                   
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            UNIQUE (tic, date)
+        );
+        """)
+        print("Table 'efficiency_metrics' created or already exists with composite primary key.")
+
+
+
+       # Create a table for financial health metrics if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.financial_health_metrics (
+            -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            tic                               VARCHAR(10)  NOT NULL,
+            date                              DATE         NOT NULL,
+
+            /* =========================
+                Default View (UX)
+                ========================= */
+
+            net_debt                NUMERIC(20, 2),   -- Total Debt - Cash & Equivalents
+            net_debt_to_ebitda_ttm  NUMERIC(20, 6),   -- Net Debt / EBITDA (TTM)
+            interest_coverage_ttm   NUMERIC(20, 6),   -- EBIT / Interest Expense (TTM)
+            current_ratio           NUMERIC(20, 6),   -- Current Assets / Current Liabilities
+
+            /* =========================
+                Expand for More
+                ========================= */
+
+            quick_ratio             NUMERIC(20, 6),   -- (Current Assets - Inventory) / Current Liabilities
+            cash_ratio              NUMERIC(20, 6),   -- Cash & Equivalents / Current Liabilities
+
+            debt_to_equity          NUMERIC(20, 6),   -- Total Debt / Shareholders' Equity (NULL if equity <= 0)
+            debt_to_assets          NUMERIC(20, 6),   -- Total Debt / Total Assets
+
+            fixed_charge_coverage_ttm NUMERIC(20, 6), -- optional (if you compute it)
+
+            altman_z_score          NUMERIC(20, 6),   -- advanced (non-financials)
+            cash_runway_months      NUMERIC(20, 6),   -- Cash / |FCF_ttm/12| (loss-making firms)
+
+                   
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            UNIQUE (tic, date)
+        );
+        """)
+        print("Table 'financial_health_metrics' created or already exists with composite primary key.")
+
+
+       # Create a table for capital allocation metrics if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.capital_allocation_metrics (
+            -- Identity & period alignment
+            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            tic                               VARCHAR(10)  NOT NULL,
+            date                              DATE         NOT NULL,
+
+            -- Default View (UX)
+            roic                   NUMERIC(20,8),  -- NOPAT_TTM / Avg Invested Capital
+            total_shareholder_yield NUMERIC(20,8), -- dividend_yield + buyback_yield
+            share_count_change_yoy     NUMERIC(20,8),  -- dilution / accretion
+
+            -- Expand (Advanced)
+            reinvestment_rate         NUMERIC(20,8),  -- (CapEx + ΔWC) / NOPAT_TTM
+            fcf_per_share_growth_yoy   NUMERIC(20,8),  -- YoY growth of (FCF_TTM / diluted shares)
+
+                   
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            UNIQUE (tic, date)
+        );
+        """)
+        print("Table 'capital_allocation_metrics' created or already exists with composite primary key.")
+
+
+       # Create a table for valuation percentiles if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.valuation_percentiles (
+            -- Identity & period alignment
+            inference_id                      UUID         NOT NULL,
+            tic                               VARCHAR(10)  NOT NULL,
+            date                              DATE         NOT NULL,
                        
-            UNIQUE (tic, calendar_year, calendar_quarter),
-            UNIQUE (event_id),
-            FOREIGN KEY (event_id)
-                REFERENCES core.income_statements (event_id)
+            market_cap_percentile          NUMERIC(6, 3),   -- price * diluted shares
+            pe_ttm_percentile             NUMERIC(6, 3),   -- Price / EPS (TTM)
+            pe_forward_percentile        NUMERIC(6, 3),   -- Price / Forward EPS
+
+            ev_to_ebitda_ttm_percentile    NUMERIC(6, 3),   -- EV / EBITDA (TTM)
+            fcf_yield_ttm_percentile       NUMERIC(6, 3),   -- FCF / Market Cap (TTM)
+            ps_ttm_percentile              NUMERIC(6, 3),   -- Price / Sales (TTM)
+            
+            /* =========================
+                ➕ Contextual
+                ========================= */
+
+            ev_to_revenue_ttm_percentile   NUMERIC(6, 3),   -- EV / Revenue (TTM)
+            p_to_fcf_ttm_percentile        NUMERIC(6, 3),   -- Price / Free Cash Flow (TTM)
+            peg_ratio_percentile           NUMERIC(6, 3),   -- PE / EPS growth (explicit growth basis)
+            price_to_book_percentile       NUMERIC(6, 3),   -- Market Cap / Equity
+
+            /* =========================
+                🧠 Advanced (Optional)
+                ========================= */
+
+            ev_to_fcf_ttm_percentile       NUMERIC(6, 3),   -- EV / FCF (TTM)
+            earnings_yield_ttm_percentile  NUMERIC(6, 3),   -- EPS / Price  (or NI / Market Cap)
+            revenue_yield_ttm_percentile   NUMERIC(6, 3),   -- Revenue / Market Cap
+
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            
+            UNIQUE (tic, date),
+            UNIQUE (inference_id),
+            FOREIGN KEY (inference_id)
+                REFERENCES core.valuation_metrics (inference_id)
                 ON DELETE CASCADE
         );
         """)
-        print("Table 'gross_profit_metrics' created or already exists with composite primary key.")
+        print("Table 'valuation_percentiles' created or already exists with composite primary key.")
 
 
 
-       # Create a table for ebit metrics if it does not exist
+       # Create a table for profitability percentiles if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.ebit_metrics (
+        CREATE TABLE IF NOT EXISTS core.profitability_percentiles (
             -- Identity & period alignment
-            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            event_id           UUID NOT NULL,
+            inference_id       UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
-            calendar_year                     SMALLINT     NOT NULL,
-            calendar_quarter                  SMALLINT     NOT NULL,
+            date                              DATE         NOT NULL,
 
-            -- EPS Metrics
-            ebit                           BIGINT,
-            ebit_ttm                       BIGINT,
-                       
-            -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            ebit_qoq_growth             FLOAT,
-            ebit_qoq_positive_flag        SMALLINT,
-            ebit_qoq_count_4q                SMALLINT,
-            ebit_qoq_streak_length           SMALLINT,
-            ebit_qoq_growth_class        VARCHAR(50),
-            ebit_qoq_growth_regime          VARCHAR(50), 
-                       
-            ebit_qoq_volatility_4q        FLOAT,
-            ebit_qoq_volatility_flag           SMALLINT,
-            ebit_qoq_growth_drift             FLOAT,
-            ebit_qoq_outlier_flag               SMALLINT,
-            ebit_qoq_stability_regime        VARCHAR(50),
-                       
-            ebit_qoq_accel                  FLOAT,
-            ebit_qoq_accel_count_4q             SMALLINT,  
-            ebit_qoq_accel_positive_flag        SMALLINT,
-            ebit_qoq_accel_streak_length           SMALLINT,
-            ebit_qoq_accel_regime              VARCHAR(50),
+            gross_margin_percentile         NUMERIC(6, 3),  -- (Revenue - COGS) / Revenue
+            operating_margin_percentile     NUMERIC(6, 3),  -- EBIT / Revenue
+            ebitda_margin_percentile        NUMERIC(6, 3),  -- EBITDA / Revenue
+            net_margin_percentile           NUMERIC(6, 3),  -- Net Income / Revenue
 
-            -- Year-over-Year (YoY) Growth Metrics           
-            ebit_yoy_growth             FLOAT,
-            ebit_yoy_positive_flag        SMALLINT,
-            ebit_yoy_count_4q                SMALLINT,
-            ebit_yoy_streak_length           SMALLINT,
-            ebit_yoy_growth_class        VARCHAR(50),
-            ebit_yoy_growth_regime          VARCHAR(50),
-            
-            ebit_yoy_volatility_4q        FLOAT,
-            ebit_yoy_volatility_flag           SMALLINT,
-            ebit_yoy_growth_drift             FLOAT,
-            ebit_yoy_outlier_flag               SMALLINT,
-            ebit_yoy_stability_regime        VARCHAR(50),
+            /* =========================
+                Expand for More
+                ========================= */
 
-            ebit_yoy_accel                  FLOAT,
-            ebit_yoy_accel_count_4q             SMALLINT,  
-            ebit_yoy_accel_positive_flag        SMALLINT,
-            ebit_yoy_accel_streak_length           SMALLINT,
-            ebit_yoy_accel_regime              VARCHAR(50),
-            
-            -- TTM Growth Metrics
-            ebit_ttm_growth             FLOAT,
-            ebit_ttm_positive_flag        SMALLINT,
-            ebit_ttm_count_4q                SMALLINT,
-            ebit_ttm_streak_length           SMALLINT,
-            ebit_ttm_growth_class        VARCHAR(50),
-            ebit_ttm_growth_regime          VARCHAR(50),
-
-            ebit_ttm_volatility_4q        FLOAT,
-            ebit_ttm_volatility_flag           SMALLINT,
-            ebit_ttm_growth_drift             FLOAT,
-            ebit_ttm_outlier_flag               SMALLINT,
-            ebit_ttm_stability_regime        VARCHAR(50),
-
-            ebit_ttm_accel                  FLOAT,
-            ebit_ttm_accel_count_4q             SMALLINT,
-            ebit_ttm_accel_positive_flag        SMALLINT,
-            ebit_ttm_accel_streak_length           SMALLINT,
-            ebit_ttm_accel_regime              VARCHAR(50),
-
-            raw_json_sha256                       CHAR(64)     NOT NULL,
+            roe_percentile                  NUMERIC(6, 3),  -- Net Income / Avg Equity
+            roa_percentile                  NUMERIC(6, 3),  -- Net Income / Avg Assets
+            ocf_margin_percentile           NUMERIC(6, 3),  -- Operating Cash Flow / Revenue
+            fcf_margin_percentile           NUMERIC(6, 3),  -- Free Cash Flow / Revenue
+                   
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
 
-            UNIQUE (tic, calendar_year, calendar_quarter),
-            UNIQUE (event_id),
-            FOREIGN KEY (event_id)
-                REFERENCES core.income_statements (event_id)
+            UNIQUE (tic, date),
+            UNIQUE (inference_id),
+            FOREIGN KEY (inference_id)
+                REFERENCES core.profitability_metrics (inference_id)
                 ON DELETE CASCADE
         );
         """)
-        print("Table 'ebit_metrics' created or already exists with composite primary key.")
+        print("Table 'profitability_percentiles' created or already exists with composite primary key.")
 
 
-
-       # Create a table for profit margin metrics if it does not exist
+       # Create a table for growth percentiles if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.profit_margin_metrics (
+        CREATE TABLE IF NOT EXISTS core.growth_percentiles (
             -- Identity & period alignment
-            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            event_id           UUID NOT NULL,
+            inference_id       UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
-            calendar_year                     SMALLINT     NOT NULL,
-            calendar_quarter                  SMALLINT     NOT NULL,
+            date                              DATE         NOT NULL,
 
-            -- EPS Metrics
-            profit_margin                           FLOAT,
-            profit_margin_ttm                       FLOAT,
-                       
-            -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            profit_margin_qoq_growth             FLOAT,
-            profit_margin_qoq_positive_flag        SMALLINT,
-            profit_margin_qoq_count_4q                SMALLINT,
-            profit_margin_qoq_streak_length           SMALLINT,
-            profit_margin_qoq_growth_class        VARCHAR(50),
-            profit_margin_qoq_growth_regime          VARCHAR(50), 
-                       
-            profit_margin_qoq_volatility_4q        FLOAT,
-            profit_margin_qoq_volatility_flag           SMALLINT,
-            profit_margin_qoq_growth_drift             FLOAT,
-            profit_margin_qoq_outlier_flag               SMALLINT,
-            profit_margin_qoq_stability_regime        VARCHAR(50),
-                       
-            profit_margin_qoq_accel                  FLOAT,
-            profit_margin_qoq_accel_count_4q             SMALLINT,  
-            profit_margin_qoq_accel_positive_flag        SMALLINT,
-            profit_margin_qoq_accel_streak_length           SMALLINT,
-            profit_margin_qoq_accel_regime              VARCHAR(50),
+            /* =========================
+                Default View (UX)
+                ========================= */
 
-            -- Year-over-Year (YoY) Growth Metrics           
-            profit_margin_yoy_growth             FLOAT,
-            profit_margin_yoy_positive_flag        SMALLINT,
-            profit_margin_yoy_count_4q                SMALLINT,
-            profit_margin_yoy_streak_length           SMALLINT,
-            profit_margin_yoy_growth_class        VARCHAR(50),
-            profit_margin_yoy_growth_regime          VARCHAR(50),
-            
-            profit_margin_yoy_volatility_4q        FLOAT,
-            profit_margin_yoy_volatility_flag           SMALLINT,
-            profit_margin_yoy_growth_drift             FLOAT,
-            profit_margin_yoy_outlier_flag               SMALLINT,
-            profit_margin_yoy_stability_regime        VARCHAR(50),
+            revenue_growth_yoy_percentile       NUMERIC(6, 3),  -- (Rev_t - Rev_t-1) / abs(Rev_t-1)
+            revenue_cagr_3y_percentile          NUMERIC(6, 3),  -- (Rev_t / Rev_t-3)^(1/3) - 1
+            eps_growth_yoy_percentile           NUMERIC(6, 3),  -- (EPS_t - EPS_t-1) / abs(EPS_t-1)
+            eps_cagr_3y_percentile              NUMERIC(6, 3),  -- (EPS_t / EPS_t-3)^(1/3) - 1
+            fcf_growth_yoy_percentile           NUMERIC(6, 3),  -- (FCF_t - FCF_t-1) / abs(FCF_t-1)
+            fcf_cagr_3y_percentile              NUMERIC(6, 3),  -- (FCF_t / FCF_t-3)^(1/3) - 1
 
-            profit_margin_yoy_accel                  FLOAT,
-            profit_margin_yoy_accel_count_4q             SMALLINT,  
-            profit_margin_yoy_accel_positive_flag        SMALLINT,
-            profit_margin_yoy_accel_streak_length           SMALLINT,
-            profit_margin_yoy_accel_regime              VARCHAR(50),
-            
-            -- TTM Growth Metrics
-            profit_margin_ttm_growth             FLOAT,
-            profit_margin_ttm_positive_flag        SMALLINT,
-            profit_margin_ttm_count_4q                SMALLINT,
-            profit_margin_ttm_streak_length           SMALLINT,
-            profit_margin_ttm_growth_class        VARCHAR(50),
-            profit_margin_ttm_growth_regime          VARCHAR(50),
+            /* =========================
+                Expand for More
+                ========================= */
 
-            profit_margin_ttm_volatility_4q        FLOAT,
-            profit_margin_ttm_volatility_flag           SMALLINT,
-            profit_margin_ttm_growth_drift             FLOAT,
-            profit_margin_ttm_outlier_flag               SMALLINT,
-            profit_margin_ttm_stability_regime        VARCHAR(50),
+            revenue_cagr_5y_percentile          NUMERIC(6, 3),
+            eps_cagr_5y_percentile              NUMERIC(6, 3),
+            fcf_cagr_5y_percentile              NUMERIC(6, 3),
 
-            profit_margin_ttm_accel                  FLOAT,
-            profit_margin_ttm_accel_count_4q             SMALLINT,
-            profit_margin_ttm_accel_positive_flag        SMALLINT,
-            profit_margin_ttm_accel_streak_length           SMALLINT,
-            profit_margin_ttm_accel_regime              VARCHAR(50),
+            ebitda_growth_yoy_percentile        NUMERIC(6, 3),  -- optional                       
+            operating_income_growth_yoy_percentile NUMERIC(6, 3), -- optional (EBIT / OpInc)
 
-            raw_json_sha256                       CHAR(64)     NOT NULL,
+            forward_revenue_growth_percentile   NUMERIC(6, 3),  -- optional, expected
+            forward_eps_growth_percentile       NUMERIC(6, 3),  -- optional, expected
+                   
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            
-            UNIQUE (tic, calendar_year, calendar_quarter),           
-            UNIQUE (event_id),
-            FOREIGN KEY (event_id)
-                REFERENCES core.income_statements (event_id)
+
+            UNIQUE (tic, date),
+            UNIQUE (inference_id),
+            FOREIGN KEY (inference_id)
+                REFERENCES core.growth_metrics (inference_id)
                 ON DELETE CASCADE
         );
         """)
-        print("Table 'profit_margin_metrics' created or already exists with composite primary key.")
+        print("Table 'growth_percentiles' created or already exists with composite primary key.")
 
 
-       # Create a table for Operating Cash Flow (OCF) metrics if it does not exist
+
+       # Create a table for efficiency percentiles if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.ocf_metrics (
+        CREATE TABLE IF NOT EXISTS core.efficiency_percentiles (
             -- Identity & period alignment
-            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            event_id           UUID NOT NULL,
+            inference_id       UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
-            calendar_year                     SMALLINT     NOT NULL,
-            calendar_quarter                  SMALLINT     NOT NULL,
+            date                              DATE         NOT NULL,
+                
+            /* =========================
+                Default View (UX)
+                ========================= */
 
-            -- EPS Metrics
-            ocf                           BIGINT,
-            ocf_ttm                       BIGINT,
-                       
-            -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            ocf_qoq_growth             FLOAT,
-            ocf_qoq_positive_flag        SMALLINT,
-            ocf_qoq_count_4q                SMALLINT,
-            ocf_qoq_streak_length           SMALLINT,
-            ocf_qoq_growth_class        VARCHAR(50),
-            ocf_qoq_growth_regime          VARCHAR(50), 
-                       
-            ocf_qoq_volatility_4q        FLOAT,
-            ocf_qoq_volatility_flag           SMALLINT,
-            ocf_qoq_growth_drift             FLOAT,
-            ocf_qoq_outlier_flag               SMALLINT,
-            ocf_qoq_stability_regime        VARCHAR(50),
-                       
-            ocf_qoq_accel                  FLOAT,
-            ocf_qoq_accel_count_4q             SMALLINT,  
-            ocf_qoq_accel_positive_flag        SMALLINT,
-            ocf_qoq_accel_streak_length           SMALLINT,
-            ocf_qoq_accel_regime              VARCHAR(50),
+            asset_turnover_percentile           NUMERIC(6, 3),  -- Revenue / Avg Total Assets
+            cash_conversion_cycle_percentile    NUMERIC(6, 3),  -- DSO + DIO - DPO (days)
+            dso_percentile                      NUMERIC(6, 3),  -- Avg AR / Revenue * 365 (days)
+            dio_percentile                      NUMERIC(6, 3),  -- Avg Inventory / COGS * 365 (days)
+            dpo_percentile                      NUMERIC(6, 3),  -- Avg AP / COGS * 365 (days)
+            /* =========================
+                Expand for More
+                ========================= */
 
-            -- Year-over-Year (YoY) Growth Metrics           
-            ocf_yoy_growth             FLOAT,
-            ocf_yoy_positive_flag        SMALLINT,
-            ocf_yoy_count_4q                SMALLINT,
-            ocf_yoy_streak_length           SMALLINT,
-            ocf_yoy_growth_class        VARCHAR(50),
-            ocf_yoy_growth_regime          VARCHAR(50),
-            
-            ocf_yoy_volatility_4q        FLOAT,
-            ocf_yoy_volatility_flag           SMALLINT,
-            ocf_yoy_growth_drift             FLOAT,
-            ocf_yoy_outlier_flag               SMALLINT,
-            ocf_yoy_stability_regime        VARCHAR(50),
+            fixed_asset_turnover_percentile     NUMERIC(6, 3),  -- Revenue / Avg Net PPE
+            revenue_per_employee_percentile     NUMERIC(6, 3),  -- Revenue / Employees
+            opex_ratio_percentile               NUMERIC(6, 3),  -- (SG&A + R&D) / Revenue
 
-            ocf_yoy_accel                  FLOAT,
-            ocf_yoy_accel_count_4q             SMALLINT,  
-            ocf_yoy_accel_positive_flag        SMALLINT,
-            ocf_yoy_accel_streak_length           SMALLINT,
-            ocf_yoy_accel_regime              VARCHAR(50),
-            
-            -- TTM Growth Metrics
-            ocf_ttm_growth             FLOAT,
-            ocf_ttm_positive_flag        SMALLINT,
-            ocf_ttm_count_4q                SMALLINT,
-            ocf_ttm_streak_length           SMALLINT,
-            ocf_ttm_growth_class        VARCHAR(50),
-            ocf_ttm_growth_regime          VARCHAR(50),
-
-            ocf_ttm_volatility_4q        FLOAT,
-            ocf_ttm_volatility_flag           SMALLINT,
-            ocf_ttm_growth_drift             FLOAT,
-            ocf_ttm_outlier_flag               SMALLINT,
-            ocf_ttm_stability_regime        VARCHAR(50),
-
-            ocf_ttm_accel                  FLOAT,
-            ocf_ttm_accel_count_4q             SMALLINT,
-            ocf_ttm_accel_positive_flag        SMALLINT,
-            ocf_ttm_accel_streak_length           SMALLINT,
-            ocf_ttm_accel_regime              VARCHAR(50),
-
-            raw_json_sha256                       CHAR(64)     NOT NULL,
+                   
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            
-            UNIQUE (tic, calendar_year, calendar_quarter),           
-            UNIQUE (event_id),
-            FOREIGN KEY (event_id)
-                REFERENCES core.cash_flow_statements (event_id)
+
+            UNIQUE (tic, date),
+            UNIQUE (inference_id),
+            FOREIGN KEY (inference_id)
+                REFERENCES core.efficiency_metrics (inference_id)
+                ON DELETE CASCADE
+                       
+        );
+        """)
+        print("Table 'efficiency_percentiles' created or already exists with composite primary key.")
+
+
+
+       # Create a table for financial health percentiles if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.financial_health_percentiles (
+            -- Identity & period alignment
+            inference_id       UUID NOT NULL,
+            tic                               VARCHAR(10)  NOT NULL,
+            date                              DATE         NOT NULL,
+
+            /* =========================
+                Default View (UX)
+                ========================= */
+
+            net_debt_percentile                NUMERIC(6, 3),   -- Total Debt - Cash & Equivalents
+            net_debt_to_ebitda_ttm_percentile  NUMERIC(6, 3),   -- Net Debt / EBITDA (TTM)
+            interest_coverage_ttm_percentile   NUMERIC(6, 3),   -- EBIT / Interest Expense (TTM)
+            current_ratio_percentile           NUMERIC(6, 3),   -- Current Assets / Current Liabilities
+
+            /* =========================
+                Expand for More
+                ========================= */
+
+            quick_ratio_percentile             NUMERIC(6, 3),   -- (Current Assets - Inventory) / Current Liabilities
+            cash_ratio_percentile              NUMERIC(6, 3),   -- Cash & Equivalents / Current Liabilities
+
+            debt_to_equity_percentile          NUMERIC(6, 3),   -- Total Debt / Shareholders' Equity (NULL if equity <= 0)
+            debt_to_assets_percentile          NUMERIC(6, 3),   -- Total Debt / Total Assets
+            fixed_charge_coverage_ttm_percentile NUMERIC(6, 3), -- optional (if you compute it)
+
+            altman_z_score_percentile          NUMERIC(6, 3),   -- advanced (non-financials)
+            cash_runway_months_percentile      NUMERIC(6, 3),   -- Cash / |FCF_ttm/12| (loss-making firms)
+
+                   
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            UNIQUE (tic, date),
+            UNIQUE (inference_id),
+            FOREIGN KEY (inference_id)
+                REFERENCES core.financial_health_metrics (inference_id)
                 ON DELETE CASCADE
         );
         """)
-        print("Table 'ocf_metrics' created or already exists with composite primary key.")
+        print("Table 'financial_health_percentiles' created or already exists with composite primary key.")
 
 
-
-       # Create a table for Free Cash Flow (FCF) metrics if it does not exist
+       # Create a table for capital allocation percentiles if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.fcf_metrics (
+        CREATE TABLE IF NOT EXISTS core.capital_allocation_percentiles (
             -- Identity & period alignment
-            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            event_id           UUID NOT NULL,
+            inference_id       UUID NOT NULL,
             tic                               VARCHAR(10)  NOT NULL,
-            calendar_year                     SMALLINT     NOT NULL,
-            calendar_quarter                  SMALLINT     NOT NULL,
+            date                              DATE         NOT NULL,
 
-            -- EPS Metrics
-            fcf                           BIGINT,
-            fcf_ttm                       BIGINT,
-                       
-            -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            fcf_qoq_growth             FLOAT,
-            fcf_qoq_positive_flag        SMALLINT,
-            fcf_qoq_count_4q                SMALLINT,
-            fcf_qoq_streak_length           SMALLINT,
-            fcf_qoq_growth_class        VARCHAR(50),
-            fcf_qoq_growth_regime          VARCHAR(50), 
-                       
-            fcf_qoq_volatility_4q        FLOAT,
-            fcf_qoq_volatility_flag           SMALLINT,
-            fcf_qoq_growth_drift             FLOAT,
-            fcf_qoq_outlier_flag               SMALLINT,
-            fcf_qoq_stability_regime        VARCHAR(50),
-                       
-            fcf_qoq_accel                  FLOAT,
-            fcf_qoq_accel_count_4q             SMALLINT,  
-            fcf_qoq_accel_positive_flag        SMALLINT,
-            fcf_qoq_accel_streak_length           SMALLINT,
-            fcf_qoq_accel_regime              VARCHAR(50),
+            -- Default View (UX)
+            roic_percentile                   NUMERIC(6,3),  -- NOPAT_TTM / Avg Invested Capital
+            total_shareholder_yield_percentile NUMERIC(6,3), -- dividend_yield + buyback_yield
+            share_count_change_yoy_percentile     NUMERIC(6,3),  -- dilution / accretion
 
-            -- Year-over-Year (YoY) Growth Metrics           
-            fcf_yoy_growth             FLOAT,
-            fcf_yoy_positive_flag        SMALLINT,
-            fcf_yoy_count_4q                SMALLINT,
-            fcf_yoy_streak_length           SMALLINT,
-            fcf_yoy_growth_class        VARCHAR(50),
-            fcf_yoy_growth_regime          VARCHAR(50),
-            
-            fcf_yoy_volatility_4q        FLOAT,
-            fcf_yoy_volatility_flag           SMALLINT,
-            fcf_yoy_growth_drift             FLOAT,
-            fcf_yoy_outlier_flag               SMALLINT,
-            fcf_yoy_stability_regime        VARCHAR(50),
-
-            fcf_yoy_accel                  FLOAT,
-            fcf_yoy_accel_count_4q             SMALLINT,  
-            fcf_yoy_accel_positive_flag        SMALLINT,
-            fcf_yoy_accel_streak_length           SMALLINT,
-            fcf_yoy_accel_regime              VARCHAR(50),
-            
-            -- TTM Growth Metrics
-            fcf_ttm_growth             FLOAT,
-            fcf_ttm_positive_flag        SMALLINT,
-            fcf_ttm_count_4q                SMALLINT,
-            fcf_ttm_streak_length           SMALLINT,
-            fcf_ttm_growth_class        VARCHAR(50),
-            fcf_ttm_growth_regime          VARCHAR(50),
-
-            fcf_ttm_volatility_4q        FLOAT,
-            fcf_ttm_volatility_flag           SMALLINT,
-            fcf_ttm_growth_drift             FLOAT,
-            fcf_ttm_outlier_flag               SMALLINT,
-            fcf_ttm_stability_regime        VARCHAR(50),
-
-            fcf_ttm_accel                  FLOAT,
-            fcf_ttm_accel_count_4q             SMALLINT,
-            fcf_ttm_accel_positive_flag        SMALLINT,
-            fcf_ttm_accel_streak_length           SMALLINT,
-            fcf_ttm_accel_regime              VARCHAR(50),
-
-            raw_json_sha256                       CHAR(64)     NOT NULL,
+            -- Expand (Advanced)
+            reinvestment_rate_percentile         NUMERIC(6,3),  -- (CapEx + ΔWC) / NOPAT_TTM
+            fcf_per_share_growth_yoy_percentile   NUMERIC(6,3),  -- YoY growth of (FCF_TTM / diluted shares)
+                   
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            
-            UNIQUE (tic, calendar_year, calendar_quarter),           
-            UNIQUE (event_id),
-            FOREIGN KEY (event_id)
-                REFERENCES core.cash_flow_statements (event_id)
+            UNIQUE (tic, date),
+            UNIQUE (inference_id),
+            FOREIGN KEY (inference_id)
+                REFERENCES core.capital_allocation_metrics (inference_id)
                 ON DELETE CASCADE
         );
         """)
-        print("Table 'fcf_metrics' created or already exists with composite primary key.")
-
-
-
-
-       # Create a table for Free Cash Flow Margin (FCF Margin) metrics if it does not exist
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.fcf_margin_metrics (
-            -- Identity & period alignment
-            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            event_id           UUID NOT NULL,
-            tic                               VARCHAR(10)  NOT NULL,
-            calendar_year                     SMALLINT     NOT NULL,
-            calendar_quarter                  SMALLINT     NOT NULL,
-
-            -- EPS Metrics
-            fcf_margin                           FLOAT,
-            fcf_margin_ttm                       FLOAT,
-                       
-            -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            fcf_margin_qoq_growth          FLOAT,
-            fcf_margin_qoq_positive_flag        SMALLINT,
-            fcf_margin_qoq_count_4q                SMALLINT,
-            fcf_margin_qoq_streak_length           SMALLINT,
-            fcf_margin_qoq_growth_class        VARCHAR(50),
-            fcf_margin_qoq_growth_regime          VARCHAR(50), 
-                       
-            fcf_margin_qoq_volatility_4q        FLOAT,
-            fcf_margin_qoq_volatility_flag           SMALLINT,
-            fcf_margin_qoq_growth_drift             FLOAT,
-            fcf_margin_qoq_outlier_flag               SMALLINT,
-            fcf_margin_qoq_stability_regime        VARCHAR(50),
-                       
-            fcf_margin_qoq_accel                  FLOAT,
-            fcf_margin_qoq_accel_count_4q             SMALLINT,  
-            fcf_margin_qoq_accel_positive_flag        SMALLINT,
-            fcf_margin_qoq_accel_streak_length           SMALLINT,
-            fcf_margin_qoq_accel_regime              VARCHAR(50),
-
-            -- Year-over-Year (YoY) Growth Metrics           
-            fcf_margin_yoy_growth             FLOAT,
-            fcf_margin_yoy_positive_flag        SMALLINT,
-            fcf_margin_yoy_count_4q                SMALLINT,
-            fcf_margin_yoy_streak_length           SMALLINT,
-            fcf_margin_yoy_growth_class        VARCHAR(50),
-            fcf_margin_yoy_growth_regime          VARCHAR(50),
-            
-            fcf_margin_yoy_volatility_4q        FLOAT,
-            fcf_margin_yoy_volatility_flag           SMALLINT,
-            fcf_margin_yoy_growth_drift             FLOAT,
-            fcf_margin_yoy_outlier_flag               SMALLINT,
-            fcf_margin_yoy_stability_regime        VARCHAR(50),
-
-            fcf_margin_yoy_accel                  FLOAT,
-            fcf_margin_yoy_accel_count_4q             SMALLINT,  
-            fcf_margin_yoy_accel_positive_flag        SMALLINT,
-            fcf_margin_yoy_accel_streak_length           SMALLINT,
-            fcf_margin_yoy_accel_regime              VARCHAR(50),
-            
-            -- TTM Growth Metrics
-            fcf_margin_ttm_growth             FLOAT,
-            fcf_margin_ttm_positive_flag        SMALLINT,
-            fcf_margin_ttm_count_4q                SMALLINT,
-            fcf_margin_ttm_streak_length           SMALLINT,
-            fcf_margin_ttm_growth_class        VARCHAR(50),
-            fcf_margin_ttm_growth_regime          VARCHAR(50),
-
-            fcf_margin_ttm_volatility_4q        FLOAT,
-            fcf_margin_ttm_volatility_flag           SMALLINT,
-            fcf_margin_ttm_growth_drift             FLOAT,
-            fcf_margin_ttm_outlier_flag               SMALLINT,
-            fcf_margin_ttm_stability_regime        VARCHAR(50),
-
-            fcf_margin_ttm_accel                  FLOAT,
-            fcf_margin_ttm_accel_count_4q             SMALLINT,
-            fcf_margin_ttm_accel_positive_flag        SMALLINT,
-            fcf_margin_ttm_accel_streak_length           SMALLINT,
-            fcf_margin_ttm_accel_regime              VARCHAR(50),
-
-            raw_json_sha256                       CHAR(64)     NOT NULL,
-            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            
-            UNIQUE (tic, calendar_year, calendar_quarter),           
-            UNIQUE (event_id),
-            FOREIGN KEY (event_id)
-                REFERENCES core.cash_flow_statements (event_id)
-                ON DELETE CASCADE
-        );
-        """)
-        print("Table 'fcf_margin_metrics' created or already exists with composite primary key.")
-
-
-
-
-       # Create a table for Free CapEx metrics if it does not exist
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.capex_metrics (
-            -- Identity & period alignment
-            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            event_id           UUID NOT NULL,
-            tic                               VARCHAR(10)  NOT NULL,
-            calendar_year                     SMALLINT     NOT NULL,
-            calendar_quarter                  SMALLINT     NOT NULL,
-
-            -- EPS Metrics
-            capex                           BIGINT,
-            capex_ttm                       BIGINT,
-                       
-            -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            capex_qoq_growth          FLOAT,
-            capex_qoq_positive_flag        SMALLINT,
-            capex_qoq_count_4q                SMALLINT,
-            capex_qoq_streak_length           SMALLINT,
-            capex_qoq_growth_class        VARCHAR(50),
-            capex_qoq_growth_regime          VARCHAR(50), 
-                       
-            capex_qoq_volatility_4q        FLOAT,
-            capex_qoq_volatility_flag           SMALLINT,
-            capex_qoq_growth_drift             FLOAT,
-            capex_qoq_outlier_flag               SMALLINT,
-            capex_qoq_stability_regime        VARCHAR(50),
-                       
-            capex_qoq_accel                  FLOAT,
-            capex_qoq_accel_count_4q             SMALLINT,  
-            capex_qoq_accel_positive_flag        SMALLINT,
-            capex_qoq_accel_streak_length           SMALLINT,
-            capex_qoq_accel_regime              VARCHAR(50),
-
-            -- Year-over-Year (YoY) Growth Metrics           
-            capex_yoy_growth             FLOAT,
-            capex_yoy_positive_flag        SMALLINT,
-            capex_yoy_count_4q                SMALLINT,
-            capex_yoy_streak_length           SMALLINT,
-            capex_yoy_growth_class        VARCHAR(50),
-            capex_yoy_growth_regime          VARCHAR(50),
-            
-            capex_yoy_volatility_4q        FLOAT,
-            capex_yoy_volatility_flag           SMALLINT,
-            capex_yoy_growth_drift             FLOAT,
-            capex_yoy_outlier_flag               SMALLINT,
-            capex_yoy_stability_regime        VARCHAR(50),
-
-            capex_yoy_accel                  FLOAT,
-            capex_yoy_accel_count_4q             SMALLINT,  
-            capex_yoy_accel_positive_flag        SMALLINT,
-            capex_yoy_accel_streak_length           SMALLINT,
-            capex_yoy_accel_regime              VARCHAR(50),
-            
-            -- TTM Growth Metrics
-            capex_ttm_growth             FLOAT,
-            capex_ttm_positive_flag        SMALLINT,
-            capex_ttm_count_4q                SMALLINT,
-            capex_ttm_streak_length           SMALLINT,
-            capex_ttm_growth_class        VARCHAR(50),
-            capex_ttm_growth_regime          VARCHAR(50),
-
-            capex_ttm_volatility_4q        FLOAT,
-            capex_ttm_volatility_flag           SMALLINT,
-            capex_ttm_growth_drift             FLOAT,
-            capex_ttm_outlier_flag               SMALLINT,
-            capex_ttm_stability_regime        VARCHAR(50),
-
-            capex_ttm_accel                  FLOAT,
-            capex_ttm_accel_count_4q             SMALLINT,
-            capex_ttm_accel_positive_flag        SMALLINT,
-            capex_ttm_accel_streak_length           SMALLINT,
-            capex_ttm_accel_regime              VARCHAR(50),
-
-            raw_json_sha256                       CHAR(64)     NOT NULL,
-            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            
-            UNIQUE (tic, calendar_year, calendar_quarter),           
-            UNIQUE (event_id),
-            FOREIGN KEY (event_id)
-                REFERENCES core.cash_flow_statements (event_id)
-                ON DELETE CASCADE
-        );
-        """)
-        print("Table 'capex_metrics' created or already exists with composite primary key.")
-
-
-       # Create a table for Cash Conversion Ratio (CCR) metrics if it does not exist
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.ccr_metrics (
-            -- Identity & period alignment
-            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            event_id           UUID NOT NULL,
-            tic                               VARCHAR(10)  NOT NULL,
-            calendar_year                     SMALLINT     NOT NULL,
-            calendar_quarter                  SMALLINT     NOT NULL,
-
-            -- EPS Metrics
-            ccr                           FLOAT,
-            ccr_ttm                       FLOAT,
-                       
-            -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            ccr_qoq_growth          FLOAT,
-            ccr_qoq_positive_flag        SMALLINT,
-            ccr_qoq_count_4q                SMALLINT,
-            ccr_qoq_streak_length           SMALLINT,
-            ccr_qoq_growth_class        VARCHAR(50),
-            ccr_qoq_growth_regime          VARCHAR(50), 
-                       
-            ccr_qoq_volatility_4q        FLOAT,
-            ccr_qoq_volatility_flag           SMALLINT,
-            ccr_qoq_growth_drift             FLOAT,
-            ccr_qoq_outlier_flag               SMALLINT,
-            ccr_qoq_stability_regime        VARCHAR(50),
-                       
-            ccr_qoq_accel                  FLOAT,
-            ccr_qoq_accel_count_4q             SMALLINT,  
-            ccr_qoq_accel_positive_flag        SMALLINT,
-            ccr_qoq_accel_streak_length           SMALLINT,
-            ccr_qoq_accel_regime              VARCHAR(50),
-
-            -- Year-over-Year (YoY) Growth Metrics           
-            ccr_yoy_growth             FLOAT,
-            ccr_yoy_positive_flag        SMALLINT,
-            ccr_yoy_count_4q                SMALLINT,
-            ccr_yoy_streak_length           SMALLINT,
-            ccr_yoy_growth_class        VARCHAR(50),
-            ccr_yoy_growth_regime          VARCHAR(50),
-            
-            ccr_yoy_volatility_4q        FLOAT,
-            ccr_yoy_volatility_flag           SMALLINT,
-            ccr_yoy_growth_drift             FLOAT,
-            ccr_yoy_outlier_flag               SMALLINT,
-            ccr_yoy_stability_regime        VARCHAR(50),
-
-            ccr_yoy_accel                  FLOAT,
-            ccr_yoy_accel_count_4q             SMALLINT,  
-            ccr_yoy_accel_positive_flag        SMALLINT,
-            ccr_yoy_accel_streak_length           SMALLINT,
-            ccr_yoy_accel_regime              VARCHAR(50),
-            
-            -- TTM Growth Metrics
-            ccr_ttm_growth             FLOAT,
-            ccr_ttm_positive_flag        SMALLINT,
-            ccr_ttm_count_4q                SMALLINT,
-            ccr_ttm_streak_length           SMALLINT,
-            ccr_ttm_growth_class        VARCHAR(50),
-            ccr_ttm_growth_regime          VARCHAR(50),
-
-            ccr_ttm_volatility_4q        FLOAT,
-            ccr_ttm_volatility_flag           SMALLINT,
-            ccr_ttm_growth_drift             FLOAT,
-            ccr_ttm_outlier_flag               SMALLINT,
-            ccr_ttm_stability_regime        VARCHAR(50),
-
-            ccr_ttm_accel                  FLOAT,
-            ccr_ttm_accel_count_4q             SMALLINT,
-            ccr_ttm_accel_positive_flag        SMALLINT,
-            ccr_ttm_accel_streak_length           SMALLINT,
-            ccr_ttm_accel_regime              VARCHAR(50),
-
-            raw_json_sha256                       CHAR(64)     NOT NULL,
-            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            
-            UNIQUE (tic, calendar_year, calendar_quarter),           
-            UNIQUE (event_id),
-            FOREIGN KEY (event_id)
-                REFERENCES core.cash_flow_statements (event_id)
-                ON DELETE CASCADE
-        );
-        """)
-        print("Table 'ccr_metrics' created or already exists with composite primary key.")
-
-       # Create a table for Return on Assets (ROA) metrics if it does not exist
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.roa_metrics (
-            -- Identity & period alignment
-            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            event_id           UUID NOT NULL,
-            tic                               VARCHAR(10)  NOT NULL,
-            calendar_year                     SMALLINT     NOT NULL,
-            calendar_quarter                  SMALLINT     NOT NULL,
-
-            -- EPS Metrics
-            roa                           FLOAT,
-            roa_ttm                       FLOAT,
-                       
-            -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            roa_qoq_growth          FLOAT,
-            roa_qoq_positive_flag        SMALLINT,
-            roa_qoq_count_4q                SMALLINT,
-            roa_qoq_streak_length           SMALLINT,
-            roa_qoq_growth_class        VARCHAR(50),
-            roa_qoq_growth_regime          VARCHAR(50), 
-                       
-            roa_qoq_volatility_4q        FLOAT,
-            roa_qoq_volatility_flag           SMALLINT,
-            roa_qoq_growth_drift             FLOAT,
-            roa_qoq_outlier_flag               SMALLINT,
-            roa_qoq_stability_regime        VARCHAR(50),
-                       
-            roa_qoq_accel                  FLOAT,
-            roa_qoq_accel_count_4q             SMALLINT,  
-            roa_qoq_accel_positive_flag        SMALLINT,
-            roa_qoq_accel_streak_length           SMALLINT,
-            roa_qoq_accel_regime              VARCHAR(50),
-
-            -- Year-over-Year (YoY) Growth Metrics           
-            roa_yoy_growth             FLOAT,
-            roa_yoy_positive_flag        SMALLINT,
-            roa_yoy_count_4q                SMALLINT,
-            roa_yoy_streak_length           SMALLINT,
-            roa_yoy_growth_class        VARCHAR(50),
-            roa_yoy_growth_regime          VARCHAR(50),
-            
-            roa_yoy_volatility_4q        FLOAT,
-            roa_yoy_volatility_flag           SMALLINT,
-            roa_yoy_growth_drift             FLOAT,
-            roa_yoy_outlier_flag               SMALLINT,
-            roa_yoy_stability_regime        VARCHAR(50),
-
-            roa_yoy_accel                  FLOAT,
-            roa_yoy_accel_count_4q             SMALLINT,  
-            roa_yoy_accel_positive_flag        SMALLINT,
-            roa_yoy_accel_streak_length           SMALLINT,
-            roa_yoy_accel_regime              VARCHAR(50),
-            
-            -- TTM Growth Metrics
-            roa_ttm_growth             FLOAT,
-            roa_ttm_positive_flag        SMALLINT,
-            roa_ttm_count_4q                SMALLINT,
-            roa_ttm_streak_length           SMALLINT,
-            roa_ttm_growth_class        VARCHAR(50),
-            roa_ttm_growth_regime          VARCHAR(50),
-
-            roa_ttm_volatility_4q        FLOAT,
-            roa_ttm_volatility_flag           SMALLINT,
-            roa_ttm_growth_drift             FLOAT,
-            roa_ttm_outlier_flag               SMALLINT,
-            roa_ttm_stability_regime        VARCHAR(50),
-
-            roa_ttm_accel                  FLOAT,
-            roa_ttm_accel_count_4q             SMALLINT,
-            roa_ttm_accel_positive_flag        SMALLINT,
-            roa_ttm_accel_streak_length           SMALLINT,
-            roa_ttm_accel_regime              VARCHAR(50),
-
-            raw_json_sha256                       CHAR(64)     NOT NULL,
-            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            
-            UNIQUE (tic, calendar_year, calendar_quarter),           
-            UNIQUE (event_id),
-            FOREIGN KEY (event_id)
-                REFERENCES core.balance_sheets (event_id)
-                ON DELETE CASCADE
-        );
-        """)
-        print("Table 'roa_metrics' created or already exists with composite primary key.")
-
-       # Create a table for Return on Equity (ROE) metrics if it does not exist
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.roe_metrics (
-            -- Identity & period alignment
-            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            event_id           UUID NOT NULL,
-            tic                               VARCHAR(10)  NOT NULL,
-            calendar_year                     SMALLINT     NOT NULL,
-            calendar_quarter                  SMALLINT     NOT NULL,
-
-            -- EPS Metrics
-            roe                           FLOAT,
-            roe_ttm                       FLOAT,
-                       
-            -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            roe_qoq_growth          FLOAT,
-            roe_qoq_positive_flag        SMALLINT,
-            roe_qoq_count_4q                SMALLINT,
-            roe_qoq_streak_length           SMALLINT,
-            roe_qoq_growth_class        VARCHAR(50),
-            roe_qoq_growth_regime          VARCHAR(50), 
-                       
-            roe_qoq_volatility_4q        FLOAT,
-            roe_qoq_volatility_flag           SMALLINT,
-            roe_qoq_growth_drift             FLOAT,
-            roe_qoq_outlier_flag               SMALLINT,
-            roe_qoq_stability_regime        VARCHAR(50),
-                       
-            roe_qoq_accel                  FLOAT,
-            roe_qoq_accel_count_4q             SMALLINT,  
-            roe_qoq_accel_positive_flag        SMALLINT,
-            roe_qoq_accel_streak_length           SMALLINT,
-            roe_qoq_accel_regime              VARCHAR(50),
-
-            -- Year-over-Year (YoY) Growth Metrics           
-            roe_yoy_growth             FLOAT,
-            roe_yoy_positive_flag        SMALLINT,
-            roe_yoy_count_4q                SMALLINT,
-            roe_yoy_streak_length           SMALLINT,
-            roe_yoy_growth_class        VARCHAR(50),
-            roe_yoy_growth_regime          VARCHAR(50),
-            
-            roe_yoy_volatility_4q        FLOAT,
-            roe_yoy_volatility_flag           SMALLINT,
-            roe_yoy_growth_drift             FLOAT,
-            roe_yoy_outlier_flag               SMALLINT,
-            roe_yoy_stability_regime        VARCHAR(50),
-
-            roe_yoy_accel                  FLOAT,
-            roe_yoy_accel_count_4q             SMALLINT,  
-            roe_yoy_accel_positive_flag        SMALLINT,
-            roe_yoy_accel_streak_length           SMALLINT,
-            roe_yoy_accel_regime              VARCHAR(50),
-            
-            -- TTM Growth Metrics
-            roe_ttm_growth             FLOAT,
-            roe_ttm_positive_flag        SMALLINT,
-            roe_ttm_count_4q                SMALLINT,
-            roe_ttm_streak_length           SMALLINT,
-            roe_ttm_growth_class        VARCHAR(50),
-            roe_ttm_growth_regime          VARCHAR(50),
-
-            roe_ttm_volatility_4q        FLOAT,
-            roe_ttm_volatility_flag           SMALLINT,
-            roe_ttm_growth_drift             FLOAT,
-            roe_ttm_outlier_flag               SMALLINT,
-            roe_ttm_stability_regime        VARCHAR(50),
-
-            roe_ttm_accel                  FLOAT,
-            roe_ttm_accel_count_4q             SMALLINT,
-            roe_ttm_accel_positive_flag        SMALLINT,
-            roe_ttm_accel_streak_length           SMALLINT,
-            roe_ttm_accel_regime              VARCHAR(50),
-
-            raw_json_sha256                       CHAR(64)     NOT NULL,
-            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            
-            UNIQUE (tic, calendar_year, calendar_quarter),           
-            UNIQUE (event_id),
-            FOREIGN KEY (event_id)
-                REFERENCES core.balance_sheets (event_id)
-                ON DELETE CASCADE
-        );
-        """)
-        print("Table 'roe_metrics' created or already exists with composite primary key.")
-
-
-       # Create a table for Return on Invested Capital (ROIC) metrics if it does not exist
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.roic_metrics (
-            -- Identity & period alignment
-            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            event_id           UUID NOT NULL,
-            tic                               VARCHAR(10)  NOT NULL,
-            calendar_year                     SMALLINT     NOT NULL,
-            calendar_quarter                  SMALLINT     NOT NULL,
-
-            -- EPS Metrics
-            roic                           FLOAT,
-            roic_ttm                       FLOAT,
-                       
-            -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            roic_qoq_growth          FLOAT,
-            roic_qoq_positive_flag        SMALLINT,
-            roic_qoq_count_4q                SMALLINT,
-            roic_qoq_streak_length           SMALLINT,
-            roic_qoq_growth_class        VARCHAR(50),
-            roic_qoq_growth_regime          VARCHAR(50), 
-                       
-            roic_qoq_volatility_4q        FLOAT,
-            roic_qoq_volatility_flag           SMALLINT,
-            roic_qoq_growth_drift             FLOAT,
-            roic_qoq_outlier_flag               SMALLINT,
-            roic_qoq_stability_regime        VARCHAR(50),
-                       
-            roic_qoq_accel                  FLOAT,
-            roic_qoq_accel_count_4q             SMALLINT,  
-            roic_qoq_accel_positive_flag        SMALLINT,
-            roic_qoq_accel_streak_length           SMALLINT,
-            roic_qoq_accel_regime              VARCHAR(50),
-
-            -- Year-over-Year (YoY) Growth Metrics           
-            roic_yoy_growth             FLOAT,
-            roic_yoy_positive_flag        SMALLINT,
-            roic_yoy_count_4q                SMALLINT,
-            roic_yoy_streak_length           SMALLINT,
-            roic_yoy_growth_class        VARCHAR(50),
-            roic_yoy_growth_regime          VARCHAR(50),
-            
-            roic_yoy_volatility_4q        FLOAT,
-            roic_yoy_volatility_flag           SMALLINT,
-            roic_yoy_growth_drift             FLOAT,
-            roic_yoy_outlier_flag               SMALLINT,
-            roic_yoy_stability_regime        VARCHAR(50),
-
-            roic_yoy_accel                  FLOAT,
-            roic_yoy_accel_count_4q             SMALLINT,  
-            roic_yoy_accel_positive_flag        SMALLINT,
-            roic_yoy_accel_streak_length           SMALLINT,
-            roic_yoy_accel_regime              VARCHAR(50),
-            
-            -- TTM Growth Metrics
-            roic_ttm_growth             FLOAT,
-            roic_ttm_positive_flag        SMALLINT,
-            roic_ttm_count_4q                SMALLINT,
-            roic_ttm_streak_length           SMALLINT,
-            roic_ttm_growth_class        VARCHAR(50),
-            roic_ttm_growth_regime          VARCHAR(50),
-
-            roic_ttm_volatility_4q        FLOAT,
-            roic_ttm_volatility_flag           SMALLINT,
-            roic_ttm_growth_drift             FLOAT,
-            roic_ttm_outlier_flag               SMALLINT,
-            roic_ttm_stability_regime        VARCHAR(50),
-
-            roic_ttm_accel                  FLOAT,
-            roic_ttm_accel_count_4q             SMALLINT,
-            roic_ttm_accel_positive_flag        SMALLINT,
-            roic_ttm_accel_streak_length           SMALLINT,
-            roic_ttm_accel_regime              VARCHAR(50),
-
-            raw_json_sha256                       CHAR(64)     NOT NULL,
-            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            
-            UNIQUE (tic, calendar_year, calendar_quarter),           
-            UNIQUE (event_id),
-            FOREIGN KEY (event_id)
-                REFERENCES core.balance_sheets (event_id)
-                ON DELETE CASCADE
-        );
-        """)
-        print("Table 'roic_metrics' created or already exists with composite primary key.")
-
-
-       # Create a table for Current Ratio (CR) metrics if it does not exist
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.cr_metrics (
-            -- Identity & period alignment
-            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            event_id           UUID NOT NULL,
-            tic                               VARCHAR(10)  NOT NULL,
-            calendar_year                     SMALLINT     NOT NULL,
-            calendar_quarter                  SMALLINT     NOT NULL,
-
-            -- EPS Metrics
-            cr                           FLOAT,
-            cr_ttm                       FLOAT,
-                       
-            -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            cr_qoq_growth          FLOAT,
-            cr_qoq_positive_flag        SMALLINT,
-            cr_qoq_count_4q                SMALLINT,
-            cr_qoq_streak_length           SMALLINT,
-            cr_qoq_growth_class        VARCHAR(50),
-            cr_qoq_growth_regime          VARCHAR(50), 
-                       
-            cr_qoq_volatility_4q        FLOAT,
-            cr_qoq_volatility_flag           SMALLINT,
-            cr_qoq_growth_drift             FLOAT,
-            cr_qoq_outlier_flag               SMALLINT,
-            cr_qoq_stability_regime        VARCHAR(50),
-                       
-            cr_qoq_accel                  FLOAT,
-            cr_qoq_accel_count_4q             SMALLINT,  
-            cr_qoq_accel_positive_flag        SMALLINT,
-            cr_qoq_accel_streak_length           SMALLINT,
-            cr_qoq_accel_regime              VARCHAR(50),
-
-            -- Year-over-Year (YoY) Growth Metrics           
-            cr_yoy_growth             FLOAT,
-            cr_yoy_positive_flag        SMALLINT,
-            cr_yoy_count_4q                SMALLINT,
-            cr_yoy_streak_length           SMALLINT,
-            cr_yoy_growth_class        VARCHAR(50),
-            cr_yoy_growth_regime          VARCHAR(50),
-            
-            cr_yoy_volatility_4q        FLOAT,
-            cr_yoy_volatility_flag           SMALLINT,
-            cr_yoy_growth_drift             FLOAT,
-            cr_yoy_outlier_flag               SMALLINT,
-            cr_yoy_stability_regime        VARCHAR(50),
-
-            cr_yoy_accel                  FLOAT,
-            cr_yoy_accel_count_4q             SMALLINT,  
-            cr_yoy_accel_positive_flag        SMALLINT,
-            cr_yoy_accel_streak_length           SMALLINT,
-            cr_yoy_accel_regime              VARCHAR(50),
-            
-            -- TTM Growth Metrics
-            cr_ttm_growth             FLOAT,
-            cr_ttm_positive_flag        SMALLINT,
-            cr_ttm_count_4q                SMALLINT,
-            cr_ttm_streak_length           SMALLINT,
-            cr_ttm_growth_class        VARCHAR(50),
-            cr_ttm_growth_regime          VARCHAR(50),
-
-            cr_ttm_volatility_4q        FLOAT,
-            cr_ttm_volatility_flag           SMALLINT,
-            cr_ttm_growth_drift             FLOAT,
-            cr_ttm_outlier_flag               SMALLINT,
-            cr_ttm_stability_regime        VARCHAR(50),
-
-            cr_ttm_accel                  FLOAT,
-            cr_ttm_accel_count_4q             SMALLINT,
-            cr_ttm_accel_positive_flag        SMALLINT,
-            cr_ttm_accel_streak_length           SMALLINT,
-            cr_ttm_accel_regime              VARCHAR(50),
-
-            raw_json_sha256                       CHAR(64)     NOT NULL,
-            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            
-            UNIQUE (tic, calendar_year, calendar_quarter),
-            UNIQUE (event_id),
-            FOREIGN KEY (event_id)
-                REFERENCES core.balance_sheets (event_id)
-                ON DELETE CASCADE
-        );
-        """)
-        print("Table 'cr_metrics' created or already exists with composite primary key.")
-
-
-
-       # Create a table for Debt to Equity Ratio (DER) metrics if it does not exist
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.der_metrics (
-            -- Identity & period alignment
-            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            event_id           UUID NOT NULL,
-            tic                               VARCHAR(10)  NOT NULL,
-            calendar_year                     SMALLINT     NOT NULL,
-            calendar_quarter                  SMALLINT     NOT NULL,
-
-            -- EPS Metrics
-            der                           FLOAT,
-            der_ttm                       FLOAT,
-                       
-            -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            der_qoq_growth          FLOAT,
-            der_qoq_positive_flag        SMALLINT,
-            der_qoq_count_4q                SMALLINT,
-            der_qoq_streak_length           SMALLINT,
-            der_qoq_growth_class        VARCHAR(50),
-            der_qoq_growth_regime          VARCHAR(50), 
-                       
-            der_qoq_volatility_4q        FLOAT,
-            der_qoq_volatility_flag           SMALLINT,
-            der_qoq_growth_drift             FLOAT,
-            der_qoq_outlier_flag               SMALLINT,
-            der_qoq_stability_regime        VARCHAR(50),
-                       
-            der_qoq_accel                  FLOAT,
-            der_qoq_accel_count_4q             SMALLINT,  
-            der_qoq_accel_positive_flag        SMALLINT,
-            der_qoq_accel_streak_length           SMALLINT,
-            der_qoq_accel_regime              VARCHAR(50),
-
-            -- Year-over-Year (YoY) Growth Metrics           
-            der_yoy_growth             FLOAT,
-            der_yoy_positive_flag        SMALLINT,
-            der_yoy_count_4q                SMALLINT,
-            der_yoy_streak_length           SMALLINT,
-            der_yoy_growth_class        VARCHAR(50),
-            der_yoy_growth_regime          VARCHAR(50),
-            
-            der_yoy_volatility_4q        FLOAT,
-            der_yoy_volatility_flag           SMALLINT,
-            der_yoy_growth_drift             FLOAT,
-            der_yoy_outlier_flag               SMALLINT,
-            der_yoy_stability_regime        VARCHAR(50),
-
-            der_yoy_accel                  FLOAT,
-            der_yoy_accel_count_4q             SMALLINT,  
-            der_yoy_accel_positive_flag        SMALLINT,
-            der_yoy_accel_streak_length           SMALLINT,
-            der_yoy_accel_regime              VARCHAR(50),
-            
-            -- TTM Growth Metrics
-            der_ttm_growth             FLOAT,
-            der_ttm_positive_flag        SMALLINT,
-            der_ttm_count_4q                SMALLINT,
-            der_ttm_streak_length           SMALLINT,
-            der_ttm_growth_class        VARCHAR(50),
-            der_ttm_growth_regime          VARCHAR(50),
-
-            der_ttm_volatility_4q        FLOAT,
-            der_ttm_volatility_flag           SMALLINT,
-            der_ttm_growth_drift             FLOAT,
-            der_ttm_outlier_flag               SMALLINT,
-            der_ttm_stability_regime        VARCHAR(50),
-
-            der_ttm_accel                  FLOAT,
-            der_ttm_accel_count_4q             SMALLINT,
-            der_ttm_accel_positive_flag        SMALLINT,
-            der_ttm_accel_streak_length           SMALLINT,
-            der_ttm_accel_regime              VARCHAR(50),
-
-            raw_json_sha256                       CHAR(64)     NOT NULL,
-            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            
-            UNIQUE (tic, calendar_year, calendar_quarter),           
-            UNIQUE (event_id),
-            FOREIGN KEY (event_id)
-                REFERENCES core.balance_sheets (event_id)
-                ON DELETE CASCADE
-        );
-        """)
-        print("Table 'der_metrics' created or already exists with composite primary key.")
-
-
-
-       # Create a table for Interest Coverage Ratio (ICR) metrics if it does not exist
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.icr_metrics (
-            -- Identity & period alignment
-            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            event_id           UUID NOT NULL,
-            tic                               VARCHAR(10)  NOT NULL,
-            calendar_year                     SMALLINT     NOT NULL,
-            calendar_quarter                  SMALLINT     NOT NULL,
-
-            -- EPS Metrics
-            icr                           FLOAT,
-            icr_ttm                       FLOAT,
-                       
-            -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            icr_qoq_growth          FLOAT,
-            icr_qoq_positive_flag        SMALLINT,
-            icr_qoq_count_4q                SMALLINT,
-            icr_qoq_streak_length           SMALLINT,
-            icr_qoq_growth_class        VARCHAR(50),
-            icr_qoq_growth_regime          VARCHAR(50), 
-                       
-            icr_qoq_volatility_4q        FLOAT,
-            icr_qoq_volatility_flag           SMALLINT,
-            icr_qoq_growth_drift             FLOAT,
-            icr_qoq_outlier_flag               SMALLINT,
-            icr_qoq_stability_regime        VARCHAR(50),
-                       
-            icr_qoq_accel                  FLOAT,
-            icr_qoq_accel_count_4q             SMALLINT,  
-            icr_qoq_accel_positive_flag        SMALLINT,
-            icr_qoq_accel_streak_length           SMALLINT,
-            icr_qoq_accel_regime              VARCHAR(50),
-
-            -- Year-over-Year (YoY) Growth Metrics           
-            icr_yoy_growth             FLOAT,
-            icr_yoy_positive_flag        SMALLINT,
-            icr_yoy_count_4q                SMALLINT,
-            icr_yoy_streak_length           SMALLINT,
-            icr_yoy_growth_class        VARCHAR(50),
-            icr_yoy_growth_regime          VARCHAR(50),
-            
-            icr_yoy_volatility_4q        FLOAT,
-            icr_yoy_volatility_flag           SMALLINT,
-            icr_yoy_growth_drift             FLOAT,
-            icr_yoy_outlier_flag               SMALLINT,
-            icr_yoy_stability_regime        VARCHAR(50),
-
-            icr_yoy_accel                  FLOAT,
-            icr_yoy_accel_count_4q             SMALLINT,  
-            icr_yoy_accel_positive_flag        SMALLINT,
-            icr_yoy_accel_streak_length           SMALLINT,
-            icr_yoy_accel_regime              VARCHAR(50),
-            
-            -- TTM Growth Metrics
-            icr_ttm_growth             FLOAT,
-            icr_ttm_positive_flag        SMALLINT,
-            icr_ttm_count_4q                SMALLINT,
-            icr_ttm_streak_length           SMALLINT,
-            icr_ttm_growth_class        VARCHAR(50),
-            icr_ttm_growth_regime          VARCHAR(50),
-
-            icr_ttm_volatility_4q        FLOAT,
-            icr_ttm_volatility_flag           SMALLINT,
-            icr_ttm_growth_drift             FLOAT,
-            icr_ttm_outlier_flag               SMALLINT,
-            icr_ttm_stability_regime        VARCHAR(50),
-
-            icr_ttm_accel                  FLOAT,
-            icr_ttm_accel_count_4q             SMALLINT,
-            icr_ttm_accel_positive_flag        SMALLINT,
-            icr_ttm_accel_streak_length           SMALLINT,
-            icr_ttm_accel_regime              VARCHAR(50),
-
-            raw_json_sha256                       CHAR(64)     NOT NULL,
-            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            
-            UNIQUE (tic, calendar_year, calendar_quarter),           
-            UNIQUE (event_id),
-            FOREIGN KEY (event_id)
-                REFERENCES core.income_statements (event_id)
-                ON DELETE CASCADE
-        );
-        """)
-        print("Table 'icr_metrics' created or already exists with composite primary key.")
-
-
-
-       # Create a table for Net Debt / EBITDA metrics if it does not exist
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.net_debt_to_ebitda_metrics (
-            -- Identity & period alignment
-            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            event_id           UUID NOT NULL,
-            tic                               VARCHAR(10)  NOT NULL,
-            calendar_year                     SMALLINT     NOT NULL,
-            calendar_quarter                  SMALLINT     NOT NULL,
-
-            -- EPS Metrics
-            net_debt_to_ebitda                           FLOAT,
-            net_debt_to_ebitda_ttm                       FLOAT,
-                       
-            -- Quarter-over-Quarter (QoQ) Growth Metrics           
-            net_debt_to_ebitda_qoq_growth          FLOAT,
-            net_debt_to_ebitda_qoq_positive_flag        SMALLINT,
-            net_debt_to_ebitda_qoq_count_4q                SMALLINT,
-            net_debt_to_ebitda_qoq_streak_length           SMALLINT,
-            net_debt_to_ebitda_qoq_growth_class        VARCHAR(50),
-            net_debt_to_ebitda_qoq_growth_regime          VARCHAR(50), 
-                       
-            net_debt_to_ebitda_qoq_volatility_4q        FLOAT,
-            net_debt_to_ebitda_qoq_volatility_flag           SMALLINT,
-            net_debt_to_ebitda_qoq_growth_drift             FLOAT,
-            net_debt_to_ebitda_qoq_outlier_flag               SMALLINT,
-            net_debt_to_ebitda_qoq_stability_regime        VARCHAR(50),
-                       
-            net_debt_to_ebitda_qoq_accel                  FLOAT,
-            net_debt_to_ebitda_qoq_accel_count_4q             SMALLINT,  
-            net_debt_to_ebitda_qoq_accel_positive_flag        SMALLINT,
-            net_debt_to_ebitda_qoq_accel_streak_length           SMALLINT,
-            net_debt_to_ebitda_qoq_accel_regime              VARCHAR(50),
-
-            -- Year-over-Year (YoY) Growth Metrics           
-            net_debt_to_ebitda_yoy_growth             FLOAT,
-            net_debt_to_ebitda_yoy_positive_flag        SMALLINT,
-            net_debt_to_ebitda_yoy_count_4q                SMALLINT,
-            net_debt_to_ebitda_yoy_streak_length           SMALLINT,
-            net_debt_to_ebitda_yoy_growth_class        VARCHAR(50),
-            net_debt_to_ebitda_yoy_growth_regime          VARCHAR(50),
-            
-            net_debt_to_ebitda_yoy_volatility_4q        FLOAT,
-            net_debt_to_ebitda_yoy_volatility_flag           SMALLINT,
-            net_debt_to_ebitda_yoy_growth_drift             FLOAT,
-            net_debt_to_ebitda_yoy_outlier_flag               SMALLINT,
-            net_debt_to_ebitda_yoy_stability_regime        VARCHAR(50),
-
-            net_debt_to_ebitda_yoy_accel                  FLOAT,
-            net_debt_to_ebitda_yoy_accel_count_4q             SMALLINT,  
-            net_debt_to_ebitda_yoy_accel_positive_flag        SMALLINT,
-            net_debt_to_ebitda_yoy_accel_streak_length           SMALLINT,
-            net_debt_to_ebitda_yoy_accel_regime              VARCHAR(50),
-            
-            -- TTM Growth Metrics
-            net_debt_to_ebitda_ttm_growth             FLOAT,
-            net_debt_to_ebitda_ttm_positive_flag        SMALLINT,
-            net_debt_to_ebitda_ttm_count_4q                SMALLINT,
-            net_debt_to_ebitda_ttm_streak_length           SMALLINT,
-            net_debt_to_ebitda_ttm_growth_class        VARCHAR(50),
-            net_debt_to_ebitda_ttm_growth_regime          VARCHAR(50),
-
-            net_debt_to_ebitda_ttm_volatility_4q        FLOAT,
-            net_debt_to_ebitda_ttm_volatility_flag           SMALLINT,
-            net_debt_to_ebitda_ttm_growth_drift             FLOAT,
-            net_debt_to_ebitda_ttm_outlier_flag               SMALLINT,
-            net_debt_to_ebitda_ttm_stability_regime        VARCHAR(50),
-
-            net_debt_to_ebitda_ttm_accel                  FLOAT,
-            net_debt_to_ebitda_ttm_accel_count_4q             SMALLINT,
-            net_debt_to_ebitda_ttm_accel_positive_flag        SMALLINT,
-            net_debt_to_ebitda_ttm_accel_streak_length           SMALLINT,
-            net_debt_to_ebitda_ttm_accel_regime              VARCHAR(50),
-
-            raw_json_sha256                       CHAR(64)     NOT NULL,
-            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            
-            UNIQUE (tic, calendar_year, calendar_quarter),           
-            UNIQUE (event_id),
-            FOREIGN KEY (event_id)
-                REFERENCES core.balance_sheets (event_id)
-                ON DELETE CASCADE
-        );
-        """)
-        print("Table 'net_debt_to_ebitda_metrics' created or already exists with composite primary key.")
+        print("Table 'capital_allocation_percentiles' created or already exists with composite primary key.")
 
 
 
