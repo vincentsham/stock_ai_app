@@ -56,6 +56,7 @@ def main():
     Main function to orchestrate the ETL process for earnings.
     """
     earnings_df = read_records()
+    earnings_df = earnings_df[earnings_df['eps_estimated'].notnull() | earnings_df['revenue_estimated'].notnull()]
     earnings_df['raw_json'] = earnings_df['raw_json'].apply(lambda x: json.dumps(x) if pd.notnull(x) else {})   
 
     load_records(earnings_df)

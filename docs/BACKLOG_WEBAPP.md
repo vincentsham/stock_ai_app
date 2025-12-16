@@ -39,6 +39,8 @@ examples:
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 14 | Feature | Metrics Session | High | Open | w_feat_14 | | |
+| 1004 | Feature | Add an animation on analyst grade meter | Medium | Open |  | | |
+| 1005 | Feature | Add tooltips for metrics session, including the % change | Medium | Open |  | | |
 | 10001 | Technical | Create Twitter Card Image (1200x600px) | Low | Open | | | |
 | 10002 | Technical | Create Open Graph Image (1200x630px) | Low | Open | | | |
 | 10003 | Technical | Create Apple Touch Icon (180x180px) | Low | Open | | | |
