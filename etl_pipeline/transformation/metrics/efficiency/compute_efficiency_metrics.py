@@ -1,7 +1,7 @@
 from database.utils import connect_to_db, execute_query, insert_records, read_sql_query
 import pandas as pd
 import yfinance as yf
-
+import numpy as np
 
 
 def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
@@ -12,7 +12,7 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
         LIMIT 1;
     """
     df_market_cap = read_sql_query(market_cap_query, conn)
-    employees = df_market_cap.at[0, 'employees'] if not df_market_cap.empty else None
+    employees = df_market_cap.at[0, 'employees'] if not df_market_cap.empty else np.nan
 
     close_price_query = f"""
         SELECT tic, date::date, close AS close_price
@@ -103,38 +103,43 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
 
     df['asset_turnover'] = df.apply(
         lambda row: float(row['revenue_ttm']) / float(row['total_assets_avg'])
-        if pd.notna(row['revenue_ttm']) and pd.notna(row['total_assets_avg']) and row['total_assets_avg'] != 0 else None, axis=1
+        if pd.notna(row['revenue_ttm']) and pd.notna(row['total_assets_avg']) and row['total_assets_avg'] != 0 else np.nan, axis=1
     )
     df['fixed_asset_turnover'] = df.apply(
         lambda row: float(row['revenue_ttm']) / float(row['property_plant_equipment_net_avg'])
-        if pd.notna(row['revenue_ttm']) and pd.notna(row['property_plant_equipment_net_avg']) and row['property_plant_equipment_net_avg'] != 0 else None, axis=1
+        if pd.notna(row['revenue_ttm']) and pd.notna(row['property_plant_equipment_net_avg']) and row['property_plant_equipment_net_avg'] != 0 else np.nan, axis=1
     )
     df['revenue_per_employee'] = df.apply(
         lambda row: float(row['revenue_ttm']) / float(employees)
-        if pd.notna(row['revenue_ttm']) and employees and employees != 0 else None, axis=1
+        if pd.notna(row['revenue_ttm']) and employees and employees != 0 else np.nan, axis=1
     )
     df['opex_ratio'] = df.apply(
         lambda row: float(row['operating_expenses_ttm']) / float(row['revenue_ttm'])
-        if pd.notna(row['operating_expenses_ttm']) and pd.notna(row['revenue_ttm']) and row['revenue_ttm'] != 0 else None, axis=1
+        if pd.notna(row['operating_expenses_ttm']) and pd.notna(row['revenue_ttm']) and row['revenue_ttm'] != 0 else np.nan, axis=1
     )
     df['dso'] = df.apply(
         lambda row: (float(row['accounts_receivables_avg']) / float(row['revenue_ttm'])) * 365
-        if pd.notna(row['accounts_receivables_avg']) and pd.notna(row['revenue_ttm']) and row['revenue_ttm'] != 0 else None, axis=1
+        if pd.notna(row['accounts_receivables_avg']) and row['accounts_receivables_avg'] != 0 \
+            and pd.notna(row['revenue_ttm']) and row['revenue_ttm'] != 0 else np.nan, axis=1
     )
     df['dio'] = df.apply(
         lambda row: (float(row['inventory_avg']) / float(row['cost_of_revenue_ttm'])) * 365
-        if pd.notna(row['inventory_avg']) and pd.notna(row['cost_of_revenue_ttm']) and row['cost_of_revenue_ttm'] != 0 else None, axis=1
+        if pd.notna(row['inventory_avg']) and row['inventory_avg'] != 0 \
+            and pd.notna(row['cost_of_revenue_ttm']) and row['cost_of_revenue_ttm'] != 0 else np.nan, axis=1
     )
     df['dpo'] = df.apply(
         lambda row: (float(row['accounts_payables_avg']) / float(row['cost_of_revenue_ttm'])) * 365
-        if pd.notna(row['accounts_payables_avg']) and pd.notna(row['cost_of_revenue_ttm']) and row['cost_of_revenue_ttm'] != 0 else None, axis=1
-    )
-    df['cash_conversion_cycle'] = df.apply(
-        lambda row: float(row['dso']) + float(row['dio']) - float(row['dpo'])
-        if pd.notna(row['dso']) and pd.notna(row['dio']) and pd.notna(row['dpo']) else None, axis=1
+        if pd.notna(row['accounts_payables_avg']) and row['accounts_payables_avg'] != 0 \
+            and pd.notna(row['cost_of_revenue_ttm']) and row['cost_of_revenue_ttm'] != 0 else np.nan, axis=1
     )
 
-    
+    dso = pd.to_numeric(df['dso'], errors='coerce').fillna(0.0)
+    dio = pd.to_numeric(df['dio'], errors='coerce').fillna(0.0)
+    dpo = pd.to_numeric(df['dpo'], errors='coerce').fillna(0.0)
+
+    ccc = dso + dio - dpo
+    df['cash_conversion_cycle'] = ccc.where(ccc != 0, pd.NA)
+
     transformed_df = df[['tic', 'date', 'asset_turnover', 'fixed_asset_turnover',
                          'revenue_per_employee', 'opex_ratio', 'dso', 'dio',
                          'dpo', 'cash_conversion_cycle']]

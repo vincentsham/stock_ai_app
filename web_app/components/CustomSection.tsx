@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { CatalystSection } from './CatalystSection';
+import { CatalystsSection } from './CatalystsSection';
 import { EarningsSection } from './EarningsSection';
-import { EarningsCallSection } from './EarningsCallSection';
-import { AnalystSection } from './AnalystSection';
+import { EarningsCallsSection } from './EarningsCallsSection';
+import { AnalystsSection } from './AnalystsSection';
 import { MetricsSection } from './MetricsSection';
 import { Zap, DollarSign, Calendar, Users, BarChart3 } from 'lucide-react';
 
@@ -75,19 +75,19 @@ export const CustomSection: React.FC<{ tic: string }> = ({ tic }) => {
       {/* Content Area */}
       <div>
         <div className={activeTab === 'catalysts' ? 'block' : 'hidden'}>
-          <CatalystSection tic={tic} />
+          <CatalystsSection tic={tic} />
         </div>
         <div className={activeTab === 'earnings' ? 'block' : 'hidden'}>
           <EarningsSection tic={tic} />
         </div>
         <div className={activeTab === 'earningsCalls' ? 'block' : 'hidden'}>
-          <EarningsCallSection tic={tic} />
+          <EarningsCallsSection tic={tic} />
         </div>
         <div className={activeTab === 'analysts' ? 'block' : 'hidden'}>
-          <AnalystSection tic={tic} />
+          <AnalystsSection tic={tic} />
         </div>
         <div className={activeTab === 'metrics' ? 'block' : 'hidden'}>
-          <MetricsSection />
+          <MetricsSection tic={tic} />
         </div>
       </div>
     </div>

@@ -24,9 +24,9 @@ def fetch_records_fmp(tic):
 # Insert historical earnings data into the database
 def insert_records_fmp(conn, data, tic, url):
     try:
-
         df = pd.DataFrame(data)
         df["date"] = pd.to_datetime(df["date"])
+        df = df[df["epsActual"].notnull() | df["revenueActual"].notnull() | df["epsEstimated"].notnull() | df["revenueEstimated"].notnull()]
         # df = df[df["date"] >= pd.to_datetime("2010-01-01")]
         cursor = conn.cursor()
         query = """
@@ -95,7 +95,7 @@ def insert_records_fmp(conn, data, tic, url):
         conn.commit()
         return total_records
     except Exception as e:
-        print(f"Error inserting data for {tic}: {e}")
+        print(f"Error inserting fmp data for {tic}: {e}")
         conn.rollback()
         return 0 
 
@@ -142,6 +142,9 @@ def insert_records_coincodex(conn, data, tic, url):
         """
         total_records = 0
         for record in data:
+            if record.get("eps") is None and record.get("revenue") is None and \
+               record.get("epsEstimated") is None and record.get("revenueEstimated") is None:
+                continue
             cursor.execute(query, (
                 tic,
                 record.get("date"),
@@ -161,13 +164,14 @@ def insert_records_coincodex(conn, data, tic, url):
         conn.commit()
         return total_records
     except Exception as e:
-        print(f"Error inserting data for {tic}: {e}")
+        print(f"Error inserting coincodex data for {tic}: {e}")
         conn.rollback()
         return 0
 
 # Insert historical earnings data into the database
 def update_records_coincodex(conn, data, tic, url):
     try:
+
         cursor = conn.cursor()
         query = """
         UPDATE raw.earnings
@@ -185,6 +189,9 @@ def update_records_coincodex(conn, data, tic, url):
         """
         total_records = 0
         for record in data:
+            if record.get("eps") is None and record.get("revenue") is None and \
+               record.get("epsEstimated") is None and record.get("revenueEstimated") is None:
+                continue
 
             cursor.execute(query, (
                 record.get("fiscalDateEnding"),
@@ -202,7 +209,7 @@ def update_records_coincodex(conn, data, tic, url):
         conn.commit()
         return total_records
     except Exception as e:
-        print(f"Error inserting data for {tic}: {e}")
+        print(f"Error updating coincodex data for {tic}: {e}")
         conn.rollback()
         return 0
 

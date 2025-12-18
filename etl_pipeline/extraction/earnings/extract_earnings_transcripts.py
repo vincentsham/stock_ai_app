@@ -21,7 +21,7 @@ def fetch_record(ticker, year, quarter):
         return response.json(), url
     else:
         print(f"Failed to fetch data for {ticker}: {response.status_code}")
-        return None
+        return None, None
 
 # Insert earnings transcript data into the database
 def insert_record(conn, data, tic, earnings_date, url=None):

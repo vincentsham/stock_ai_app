@@ -1,7 +1,7 @@
 from database.utils import connect_to_db, execute_query, insert_records, read_sql_query
 import pandas as pd
 import yfinance as yf
-
+import numpy as np
 
 
 def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
@@ -12,7 +12,7 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
         LIMIT 1;
     """
     df_market_cap = read_sql_query(market_cap_query, conn)
-    market_cap = df_market_cap.at[0, 'market_cap'] if not df_market_cap.empty else None
+    market_cap = df_market_cap.at[0, 'market_cap'] if not df_market_cap.empty else np.nan
 
     close_price_query = f"""
         SELECT tic, date::date, close AS close_price
@@ -64,7 +64,7 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
     df_income['shares_outstanding_prev'] = df_income['shares_outstanding'].shift(4)
     df_income['share_count_change_yoy'] = df_income.apply(
         lambda r: (float(r['shares_outstanding']) - float(r['shares_outstanding_prev'])) / float(r['shares_outstanding_prev'])
-        if pd.notna(r['shares_outstanding']) and pd.notna(r['shares_outstanding_prev']) and r['shares_outstanding_prev'] != 0 else None,
+        if pd.notna(r['shares_outstanding']) and pd.notna(r['shares_outstanding_prev']) and r['shares_outstanding_prev'] != 0 else np.nan,
         axis=1,
     )
     df_income['tax_rate'] = df_income.apply(
@@ -126,28 +126,30 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
 
     df['roic'] = df.apply(
         lambda row: float(row['nopat']) / float(row['ic'])
-        if pd.notna(row['ic']) and row['ic'] > 0 else None, axis=1
+        if pd.notna(row['ic']) and row['ic'] > 0 else np.nan, axis=1
     )
     df['total_shareholder_yield'] = df.apply(
         lambda row: (float(row['net_common_dividends_paid_ttm']) + float(row['net_common_stock_issuance_ttm'])) / float(row['market_cap_asof'])
-        if pd.notna(row['market_cap_asof']) and row['market_cap_asof'] > 0 else None, axis=1
+        if pd.notna(row['market_cap_asof']) and row['market_cap_asof'] > 0 \
+            and (float(row['net_common_dividends_paid_ttm']) + float(row['net_common_stock_issuance_ttm'])) > 0 \
+        else np.nan, axis=1
     )
 
     df['reinvestment_rate'] = df.apply(
         lambda row: (float(row['capital_expenditure_ttm']) - float(row['change_in_working_capital_ttm'])) / float(row['nopat'])
-        if pd.notna(row['nopat']) and row['nopat'] > 0 else None, axis=1
+        if pd.notna(row['nopat']) and row['nopat'] > 0 else np.nan, axis=1
     )
     df['fcf_per_share'] = df.apply(
         lambda row: float(row['fcf_ttm']) / float(row['shares_outstanding'])
-        if pd.notna(row['shares_outstanding']) and row['shares_outstanding'] > 0 else None, axis=1
+        if pd.notna(row['shares_outstanding']) and row['shares_outstanding'] > 0 else np.nan, axis=1
     )
     df['fcf_per_share_prev'] = df.apply(
         lambda row: float(row['fcf_ttm_prev']) / float(row['shares_outstanding_prev'])
-        if pd.notna(row['fcf_ttm_prev']) and pd.notna(row['shares_outstanding_prev']) and row['shares_outstanding_prev'] > 0 else None, axis=1
+        if pd.notna(row['fcf_ttm_prev']) and pd.notna(row['shares_outstanding_prev']) and row['shares_outstanding_prev'] > 0 else np.nan, axis=1
     )
     df['fcf_per_share_growth_yoy'] = df.apply(
         lambda row: (float(row['fcf_per_share']) - float(row['fcf_per_share_prev'])) / float(row['fcf_per_share_prev'])
-        if pd.notna(row['fcf_per_share_prev']) and row['fcf_per_share_prev'] > 0 else None, axis=1
+        if pd.notna(row['fcf_per_share_prev']) and row['fcf_per_share_prev'] > 0 else np.nan, axis=1
     )
 
     transformed_df = df[['tic', 'date', 'roic', 'total_shareholder_yield',
