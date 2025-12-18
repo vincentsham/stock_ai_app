@@ -40,7 +40,7 @@ examples:
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 27 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
 | 33 | Feature | Modify the Catalyst Analysis Logic to only have positive and negative sentiment | High | Open |  |  |  |
-| 34 | Feature | Add a consolidated tag logic | High | Open |  |  |  |
+| 34 | Feature | Fix the earning transcript extraction (The old website blocks the access. Use https://discountingcashflows.com/company/AAPL/transcripts/) | High | Open |  |  |  |
 | 1007 | Feature | Compute more metrics (e.g. ebita) | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
@@ -48,6 +48,7 @@ examples:
 | 1011 | Feature | Create DataMart Table for catalyst section | Medium | Open |  |  |  |
 | 1013 | Feature | Add a core.stock_profiles update job for just updating market cap OR solely market cap update job | Medium | Open |  |  |  |
 | 1014 | Feature | Add the change yield logic for metrics session | Medium | Open |  |  |  |
+| 1015 | Feature | Add a consolidated tag logic | Medium | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
 | 10004 | Miscellaneous | Create psql partition logic | Low | Open |  |  |  |
