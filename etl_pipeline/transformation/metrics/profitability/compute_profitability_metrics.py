@@ -1,7 +1,7 @@
 from database.utils import connect_to_db, execute_query, insert_records, read_sql_query
 import pandas as pd
 import yfinance as yf
-
+import numpy as np
 
 
 def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
@@ -93,35 +93,35 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
     # Compute metrics
     df['gross_margin'] = df.apply(
         lambda row: float(row['gross_profit_ttm']) / float(row['revenue_ttm'])
-        if row['revenue_ttm'] and row['revenue_ttm'] > 0 else None, axis=1
+        if row['revenue_ttm'] and row['revenue_ttm'] > 0 else np.nan, axis=1
     )
     df['operating_margin'] = df.apply(
         lambda row: float(row['ebit_ttm']) / float(row['revenue_ttm'])
-        if row['revenue_ttm'] and row['revenue_ttm'] > 0 else None, axis=1
+        if row['revenue_ttm'] and row['revenue_ttm'] > 0 else np.nan, axis=1
     )
     df['ebitda_margin'] = df.apply(
         lambda row: float(row['ebitda_ttm']) / float(row['revenue_ttm'])
-        if row['revenue_ttm'] and row['revenue_ttm'] > 0 else None, axis=1
+        if row['revenue_ttm'] and row['revenue_ttm'] > 0 else np.nan, axis=1
     )
     df['net_margin'] = df.apply(
         lambda row: float(row['net_income_ttm']) / float(row['revenue_ttm'])
-        if row['revenue_ttm'] and row['revenue_ttm'] > 0 else None, axis=1
+        if row['revenue_ttm'] and row['revenue_ttm'] > 0 else np.nan, axis=1
     )
     df['roa'] = df.apply(
         lambda row: float(row['net_income_ttm']) / float(row['total_assets_avg'])
-        if row['total_assets_avg'] and row['total_assets_avg'] > 0 else None, axis=1
+        if row['total_assets_avg'] and row['total_assets_avg'] > 0 else np.nan, axis=1
     )
     df['roe'] = df.apply(
         lambda row: float(row['net_income_ttm']) / float(row['total_stockholders_equity_avg'])
-        if row['total_stockholders_equity_avg'] and row['total_stockholders_equity_avg'] > 0 else None, axis=1
+        if row['total_stockholders_equity_avg'] and row['total_stockholders_equity_avg'] > 0 else np.nan, axis=1
     )
     df['ocf_margin'] = df.apply(
         lambda row: float(row['ocf_ttm']) / float(row['revenue_ttm'])
-        if row['revenue_ttm'] and row['revenue_ttm'] > 0 else None, axis=1
+        if row['revenue_ttm'] and row['revenue_ttm'] > 0 else np.nan, axis=1
     )
     df['fcf_margin'] = df.apply(
         lambda row: float(row['fcf_ttm']) / float(row['revenue_ttm'])
-        if row['revenue_ttm'] and row['revenue_ttm'] > 0 else None, axis=1
+        if row['revenue_ttm'] and row['revenue_ttm'] > 0 else np.nan, axis=1
     )
 
     transformed_df = df[['tic', 'date', 'gross_margin', 'operating_margin', 'ebitda_margin',

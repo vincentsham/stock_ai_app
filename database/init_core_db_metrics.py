@@ -483,6 +483,7 @@ def table_creation(conn):
             ev_to_revenue_ttm   NUMERIC(20, 6),   -- EV / Revenue (TTM)
             p_to_fcf_ttm        NUMERIC(20, 6),   -- Price / Free Cash Flow (TTM)
             peg_ratio           NUMERIC(20, 6),   -- PE / EPS growth (explicit growth basis)
+            peg_ratio_forward           NUMERIC(20, 6),   -- PE / EPS growth (explicit growth basis)
             price_to_book       NUMERIC(20, 6),   -- Market Cap / Equity
 
             /* =========================
@@ -543,20 +544,21 @@ def table_creation(conn):
 
             revenue_growth_yoy       NUMERIC(20, 8),  -- (Rev_t - Rev_t-1) / abs(Rev_t-1)
             revenue_cagr_3y          NUMERIC(20, 8),  -- (Rev_t / Rev_t-3)^(1/3) - 1
+            revenue_cagr_5y          NUMERIC(20, 8),  -- (Rev_t / Rev_t-5)^(1/5) - 1
             eps_growth_yoy           NUMERIC(20, 8),  -- (EPS_t - EPS_t-1) / abs(EPS_t-1)
             eps_cagr_3y              NUMERIC(20, 8),  -- (EPS_t / EPS_t-3)^(1/3) - 1
+            eps_cagr_5y              NUMERIC(20, 8),  -- (EPS_t / EPS_t-5)^(1/5) - 1
             fcf_growth_yoy           NUMERIC(20, 8),  -- (FCF_t - FCF_t-1) / abs(FCF_t-1)
             fcf_cagr_3y              NUMERIC(20, 8),  -- (FCF_t / FCF_t-3)^(1/3) - 1
+            fcf_cagr_5y              NUMERIC(20, 8),  -- (FCF_t / FCF_t-5)^(1/5) - 1
+            ebitda_growth_yoy        NUMERIC(20, 8),  -- optional   
+            ebitda_cagr_3y           NUMERIC(20, 8),  -- optional
+            ebitda_cagr_5y           NUMERIC(20, 8),  -- optional
 
             /* =========================
                 Expand for More
                 ========================= */
-
-            revenue_cagr_5y          NUMERIC(20, 8),
-            eps_cagr_5y              NUMERIC(20, 8),
-            fcf_cagr_5y              NUMERIC(20, 8),
-
-            ebitda_growth_yoy        NUMERIC(20, 8),  -- optional                       
+                          
             operating_income_growth_yoy NUMERIC(20, 8), -- optional (EBIT / OpInc)
 
             forward_revenue_growth   NUMERIC(20, 8),  -- optional, expected
@@ -618,7 +620,6 @@ def table_creation(conn):
                 Default View (UX)
                 ========================= */
 
-            net_debt                NUMERIC(20, 2),   -- Total Debt - Cash & Equivalents
             net_debt_to_ebitda_ttm  NUMERIC(20, 6),   -- Net Debt / EBITDA (TTM)
             interest_coverage_ttm   NUMERIC(20, 6),   -- EBIT / Interest Expense (TTM)
             current_ratio           NUMERIC(20, 6),   -- Current Assets / Current Liabilities
@@ -632,12 +633,6 @@ def table_creation(conn):
 
             debt_to_equity          NUMERIC(20, 6),   -- Total Debt / Shareholders' Equity (NULL if equity <= 0)
             debt_to_assets          NUMERIC(20, 6),   -- Total Debt / Total Assets
-
-            fixed_charge_coverage_ttm NUMERIC(20, 6), -- optional (if you compute it)
-
-            altman_z_score          NUMERIC(20, 6),   -- advanced (non-financials)
-            cash_runway_months      NUMERIC(20, 6),   -- Cash / |FCF_ttm/12| (loss-making firms)
-
                    
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
             UNIQUE (tic, date)
@@ -694,6 +689,7 @@ def table_creation(conn):
             ev_to_revenue_ttm_percentile   NUMERIC(6, 3),   -- EV / Revenue (TTM)
             p_to_fcf_ttm_percentile        NUMERIC(6, 3),   -- Price / Free Cash Flow (TTM)
             peg_ratio_percentile           NUMERIC(6, 3),   -- PE / EPS growth (explicit growth basis)
+            peg_ratio_forward_percentile           NUMERIC(6, 3),   -- PE / EPS growth (explicit growth basis)
             price_to_book_percentile       NUMERIC(6, 3),   -- Market Cap / Equity
 
             /* =========================
@@ -765,20 +761,23 @@ def table_creation(conn):
 
             revenue_growth_yoy_percentile       NUMERIC(6, 3),  -- (Rev_t - Rev_t-1) / abs(Rev_t-1)
             revenue_cagr_3y_percentile          NUMERIC(6, 3),  -- (Rev_t / Rev_t-3)^(1/3) - 1
+            revenue_cagr_5y_percentile          NUMERIC(6, 3),  -- (Rev_t / Rev_t-5)^(1/5) - 1
             eps_growth_yoy_percentile           NUMERIC(6, 3),  -- (EPS_t - EPS_t-1) / abs(EPS_t-1)
             eps_cagr_3y_percentile              NUMERIC(6, 3),  -- (EPS_t / EPS_t-3)^(1/3) - 1
+            eps_cagr_5y_percentile              NUMERIC(6, 3),  -- (EPS_t / EPS_t-5)^(1/5) - 1
             fcf_growth_yoy_percentile           NUMERIC(6, 3),  -- (FCF_t - FCF_t-1) / abs(FCF_t-1)
             fcf_cagr_3y_percentile              NUMERIC(6, 3),  -- (FCF_t / FCF_t-3)^(1/3) - 1
-
+            fcf_cagr_5y_percentile              NUMERIC(6, 3),  -- (FCF_t / FCF_t-5)^(1/5) - 1
+            ebitda_growth_yoy_percentile        NUMERIC(6, 3),  -- optional   
+            ebitda_cagr_3y_percentile           NUMERIC(6, 3),  -- optional
+            ebitda_cagr_5y_percentile           NUMERIC(6, 3),  -- optional
+                       
             /* =========================
                 Expand for More
                 ========================= */
 
-            revenue_cagr_5y_percentile          NUMERIC(6, 3),
-            eps_cagr_5y_percentile              NUMERIC(6, 3),
-            fcf_cagr_5y_percentile              NUMERIC(6, 3),
 
-            ebitda_growth_yoy_percentile        NUMERIC(6, 3),  -- optional                       
+                     
             operating_income_growth_yoy_percentile NUMERIC(6, 3), -- optional (EBIT / OpInc)
 
             forward_revenue_growth_percentile   NUMERIC(6, 3),  -- optional, expected
@@ -849,7 +848,6 @@ def table_creation(conn):
                 Default View (UX)
                 ========================= */
 
-            net_debt_percentile                NUMERIC(6, 3),   -- Total Debt - Cash & Equivalents
             net_debt_to_ebitda_ttm_percentile  NUMERIC(6, 3),   -- Net Debt / EBITDA (TTM)
             interest_coverage_ttm_percentile   NUMERIC(6, 3),   -- EBIT / Interest Expense (TTM)
             current_ratio_percentile           NUMERIC(6, 3),   -- Current Assets / Current Liabilities
@@ -863,10 +861,6 @@ def table_creation(conn):
 
             debt_to_equity_percentile          NUMERIC(6, 3),   -- Total Debt / Shareholders' Equity (NULL if equity <= 0)
             debt_to_assets_percentile          NUMERIC(6, 3),   -- Total Debt / Total Assets
-            fixed_charge_coverage_ttm_percentile NUMERIC(6, 3), -- optional (if you compute it)
-
-            altman_z_score_percentile          NUMERIC(6, 3),   -- advanced (non-financials)
-            cash_runway_months_percentile      NUMERIC(6, 3),   -- Cash / |FCF_ttm/12| (loss-making firms)
 
                    
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),

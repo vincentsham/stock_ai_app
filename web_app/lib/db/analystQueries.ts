@@ -39,6 +39,8 @@ const ANALYST_ANALYSIS_SEARCH_QUERY = `
         ON arqs.tic = sod.tic
         AND arqs.end_date = sod.date
     WHERE sod.tic = $1
+          AND arqs.pt_count IS NOT NULL 
+          AND arqs.grade_count IS NOT NULL
     ORDER BY sod.date DESC;
 `;
 

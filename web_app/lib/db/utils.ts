@@ -15,8 +15,8 @@ const pool = new Pool({
 });
 
 // 3. Optional: Add error logging for the pool itself
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
+pool.on('error', (error: Error) => {
+  console.error('Unexpected error on idle client', error);
   // Process will exit if this error is not handled
 });
 

@@ -11,21 +11,9 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts';
+import { formatCurrency } from '@/lib/formatters';
 
-// --- Helpers ---
 
-const formatCurrency = (value: number) => {
-  if (value >= 1e12) {
-    return `$${(value / 1e12).toFixed(2)}T`;
-  }
-  if (value >= 1e9) {
-    return `$${(value / 1e9).toFixed(2)}B`;
-  }
-  if (value >= 1e6) {
-    return `$${(value / 1e6).toFixed(0)}M`;
-  }
-  return `$${value}`;
-};
 
 const getStatus = (actual: number | null | undefined, estimated: number) => {
   if (actual === null || actual === undefined) {
