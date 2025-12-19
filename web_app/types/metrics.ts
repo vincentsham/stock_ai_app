@@ -17,3 +17,12 @@ export type MetricList = {
     defaultVisibleCount: number;
 };
 
+export type StockScores = {
+    tic: string;
+    valuation_score: number | null;
+    profitability_score: number | null;
+    growth_score: number | null;
+    efficiency_score: number | null;
+    financial_health_score: number | null;
+    total_score: number | null;
+};

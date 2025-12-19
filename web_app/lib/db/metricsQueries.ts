@@ -305,11 +305,76 @@ const searchMetrics = cache(async (tic: string, category: string, query: string)
   return { category, tic, score: null, metrics: [], defaultVisibleCount: 0 };
 });
 
-
-
-
 export const searchValuationMetrics = async (tic: string) => searchMetrics(tic, 'Valuation', VALUATION_METRICS_SEARCH_QUERY);
 export const searchProfitabilityMetrics = async (tic: string) => searchMetrics(tic, 'Profitability', PROFITABILITY_METRICS_SEARCH_QUERY);
 export const searchGrowthMetrics = async (tic: string) => searchMetrics(tic, 'Growth', GROWTH_METRICS_SEARCH_QUERY);
 export const searchEfficiencyMetrics = async (tic: string) => searchMetrics(tic, 'Efficiency', EFFICIENCY_METRICS_SEARCH_QUERY);
 export const searchFinancialHealthMetrics = async (tic: string) => searchMetrics(tic, 'Financial Health', FINANCIAL_HEALTH_METRICS_SEARCH_QUERY);
+
+
+const STOCK_SCORES_SEARCH_QUERY = `
+    SELECT
+      ss.tic,
+      ss.valuation_score,
+      ss.profitability_score,
+      ss.growth_score,
+      ss.efficiency_score,
+      ss.financial_health_score,
+      ss.total_score
+    FROM core.stock_scores ss
+    WHERE ss.tic = $1
+    ORDER BY ss.date DESC
+    LIMIT 1;
+`;
+
+
+export const searchStockScores = cache(async (tic: string) => {
+  let client;
+  try {
+    // 1. Acquire a client (connection) from the pool
+    client = await pool.connect();
+
+    const data = await client.query(STOCK_SCORES_SEARCH_QUERY, [tic.trim().toUpperCase()]);
+
+    // 2. Process the results
+    if (data.rows.length > 0) {
+      const row = data.rows[0];
+      const stockScores = {
+        tic: row['tic'] as string,
+        valuation_score: row['valuation_score'] as number | null,
+        profitability_score: row['profitability_score'] as number | null,
+        growth_score: row['growth_score'] as number | null,
+        efficiency_score: row['efficiency_score'] as number | null,
+        financial_health_score: row['financial_health_score'] as number | null,
+        total_score: row['total_score'] as number | null,
+      };
+      return stockScores;
+    } else {
+      return {
+        tic,
+        valuation_score: null,
+        profitability_score: null,
+        growth_score: null,
+        efficiency_score: null,
+        financial_health_score: null,
+        total_score: null,
+      };
+    }
+  } catch (err) {
+    console.error('Database query error:', err);
+    return {
+      tic,
+      valuation_score: null,
+      profitability_score: null,
+      growth_score: null,
+      efficiency_score: null,
+      financial_health_score: null,
+      total_score: null,
+    };
+  } finally {
+    // 3. IMPORTANT: Release the client back to the pool
+    if (client) {
+      client.release();
+    }
+  }
+});

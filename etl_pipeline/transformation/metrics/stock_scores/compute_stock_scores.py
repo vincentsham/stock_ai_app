@@ -28,6 +28,12 @@ def _nanmax(values) -> float:
         return float("nan")
     return float(np.nanmax(arr))
 
+def _nanmean(values) -> float:
+    arr = np.array([_to_float_or_nan(v) for v in values], dtype=float)
+    if arr.size == 0 or np.isnan(arr).all():
+        return float("nan")
+    return float(np.nanmean(arr))
+
 
 def compute_valuation_score(row):
     cols = [
@@ -72,13 +78,20 @@ def compute_efficiency_score(row):
         row['asset_turnover_percentile'],
         100 - _to_float_or_nan(row['opex_ratio_percentile']),
     ]
-    if pd.notna(row.get('dio_percentile')):
-        cols.append(100 - _to_float_or_nan(row['dio_percentile']))
-        cols.append(100 - _to_float_or_nan(row['dpo_percentile']))
-        cols.append(100 - _to_float_or_nan(row['dso_percentile']))
-        cols.append(100 - _to_float_or_nan(row['cash_conversion_cycle_percentile']))
-    else:
-        cols.append(_nanmax([row['revenue_per_employee_percentile'], row['fixed_asset_turnover_percentile']]))
+    cols_inventory = []
+    cols_inventory.append(100 - _to_float_or_nan(row['dio_percentile']))
+    cols_inventory.append(100 - _to_float_or_nan(row['dpo_percentile']))
+    cols_inventory.append(100 - _to_float_or_nan(row['dso_percentile']))
+    cols_inventory.append(100 - _to_float_or_nan(row['cash_conversion_cycle_percentile']))
+
+    cols_non_inventory = []
+    cols_non_inventory.append(row['revenue_per_employee_percentile'])
+    cols_non_inventory.append(row['fixed_asset_turnover_percentile'])
+
+    if _nanmean(cols_inventory) != float("nan") and _nanmean(cols_inventory) > _nanmean(cols_non_inventory):
+        cols += cols_inventory
+    elif _nanmean(cols_non_inventory) != float("nan"):
+        cols += cols_non_inventory
 
     max_score = _nanmax(cols)
     min_score = _nanmin(cols)
