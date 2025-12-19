@@ -40,7 +40,7 @@ examples:
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 27 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
 | 33 | Feature | Modify the Catalyst Analysis Logic to only have positive and negative sentiment | High | Open |  |  |  |
-| 34 | Feature | Fix the earning transcript extraction (The old website blocks the access. Use https://discountingcashflows.com/company/AAPL/transcripts/) | High | Open |  |  |  |
+| 36 | Feature | Fully integrate with DefeatBeta | High | Open |  |  |  |
 | 1007 | Feature | Compute more metrics (e.g. ebita) | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
@@ -105,6 +105,8 @@ examples:
 | 30 | Feature | surprise analysis | High | Close | feat_30 | 2025-10-21 | 2025-10-21 |
 | 31 | Feature | analyst reports analysis extending to mid and long term comparison | High | Close | feat_31 | 2025-10-24 | 2025-10-24 |
 | 32 | Feature | Catalyst Logic needs to be improved. e.g. each quote can be assigned one catalyst only. | High | Close | feat_32 | 2025-12-02 | 2025-12-03 |
+| 34 | Feature | Fix the earning transcript extraction (The old website blocks the access. Use https://discountingcashflows.com/company/AAPL/transcripts/) | High | Close | feat_34 | 2025-12-18 | 2025-12-18 |
+| 34 | Feature | Fix the earning transcript extraction with DefeatBeta | High | Close | feat_34 | 2025-12-18 | 2025-12-18 |
 | 35 | Feature | Working on the metric etl jobs | High | Close | feat_35 | 2025-12-15 | 2025-12-16 |
 | 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |

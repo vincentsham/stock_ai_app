@@ -91,6 +91,7 @@ def table_creation(conn):
             source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
+            transcript_sha256 CHAR(64)     NOT NULL,
             updated_at      TIMESTAMPTZ DEFAULT now(),
             PRIMARY KEY (tic, earnings_date)
         );
