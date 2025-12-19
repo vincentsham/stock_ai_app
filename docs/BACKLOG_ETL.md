@@ -41,6 +41,8 @@ examples:
 | 27 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
 | 33 | Feature | Modify the Catalyst Analysis Logic to only have positive and negative sentiment | High | Open |  |  |  |
 | 36 | Feature | Fully integrate with DefeatBeta | High | Open |  |  |  |
+| 37 | Feature | Add a post-filter job to filter out or expire catalysts | High | Open |  |  |  |
+| 38 | Feature | Add a pre-filter job to filter out or expire news and transcript chunks | High | Open |  |  |  |
 | 1007 | Feature | Compute more metrics (e.g. ebita) | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
