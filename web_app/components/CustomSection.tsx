@@ -27,6 +27,17 @@ export const CustomSection: React.FC<{ tic: string }> = ({ tic }) => {
           Catalysts
         </button>
         <button
+          onClick={() => setActiveTab('metrics')}
+          className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'metrics'
+              ? 'border-blue-500 text-blue-400'
+              : 'border-transparent text-gray-400 hover:text-gray-200'
+          }`}
+        >
+          <BarChart3 size={16} />
+          Metrics
+        </button>
+        <button
           onClick={() => setActiveTab('earnings')}
           className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'earnings'
@@ -59,23 +70,15 @@ export const CustomSection: React.FC<{ tic: string }> = ({ tic }) => {
           <Users size={16} />
           Analysts
         </button>
-        <button
-          onClick={() => setActiveTab('metrics')}
-          className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'metrics'
-              ? 'border-blue-500 text-blue-400'
-              : 'border-transparent text-gray-400 hover:text-gray-200'
-          }`}
-        >
-          <BarChart3 size={16} />
-          Metrics
-        </button>
       </div>
 
       {/* Content Area */}
       <div>
         <div className={activeTab === 'catalysts' ? 'block' : 'hidden'}>
           <CatalystsSection tic={tic} />
+        </div>
+        <div className={activeTab === 'metrics' ? 'block' : 'hidden'}>
+          <MetricsSection tic={tic} />
         </div>
         <div className={activeTab === 'earnings' ? 'block' : 'hidden'}>
           <EarningsSection tic={tic} />
@@ -85,9 +88,6 @@ export const CustomSection: React.FC<{ tic: string }> = ({ tic }) => {
         </div>
         <div className={activeTab === 'analysts' ? 'block' : 'hidden'}>
           <AnalystsSection tic={tic} />
-        </div>
-        <div className={activeTab === 'metrics' ? 'block' : 'hidden'}>
-          <MetricsSection tic={tic} />
         </div>
       </div>
     </div>
