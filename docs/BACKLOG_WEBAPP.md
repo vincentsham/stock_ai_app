@@ -38,7 +38,6 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-| 14 | Feature | Metrics Session | High | Open | w_feat_14 | | |
 | 1004 | Feature | Add an animation on analyst grade meter | Medium | Open |  | | |
 | 1005 | Feature | Add tooltips for metrics session, including the % change | Medium | Open |  | | |
 | 10001 | Technical | Create Twitter Card Image (1200x600px) | Low | Open | | | |
@@ -69,6 +68,7 @@ examples:
 | 11 | Feature | Earnings Session | High | Close | w_feat_11 | 2025-12-05 | 2025-12-07 |
 | 12 | Feature | Analysts Session | High | Close | w_feat_12 | 2025-12-07 | 2025-12-09 |
 | 13 | Feature | Add the growth and acceleration graph on Earnings session | High | Close | w_feat_13 | 2025-12-09 | 2025-12-10 |
+| 14 | Feature | Metrics Session | High | Close | w_feat_14 | 2025-12-15 | 2025-12-17 |
 | 1001 | Feature | Search bar key Enter for selecting the first item | Medium | Close | w_feat_1001 | 2025-12-04 | 2025-12-04 |
 | 1002 | Feature | Fix the flickering by hidden the inactive tabs | Medium | Close | w_feat_1002 |2025-12-09 | 2025-12-09 |
 | 1003 | Miscellaneous | Add a short text under session headers and fix some color | Medium | Close | w_misc_1003 |2025-12-09 | 2025-12-09 |
