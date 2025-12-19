@@ -37,6 +37,8 @@ The project combines backend intelligence (Python, FastAPI) with future web visu
 | **News API** | General financial and market news aggregation. |
 | **Benzinga** | Premium financial headlines and sentiment data. |
 | **Nasdaq** | Market data, filings, and official corporate actions. |
+| **DefeatBeta** | Alternative of yfinance (it has lots of unique metrics, like earnings transcripts, forecast rev/eps, rev by sector/geographic, etc.) - https://github.com/defeat-beta/defeatbeta-api |
+| **DCF** | Earnings Transcripts - https://discountingcashflows.com/company/AAPL/transcripts/ |
 
 ---
 

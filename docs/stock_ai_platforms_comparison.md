@@ -1,6 +1,13 @@
 # 📘 Structured Notes + AI Critic’s Comments on AI Stock Analysis Websites (TSLA Case Study)
 
 ---
+## **Discounting Cash Flows**
+🔗 [TSLA on DCF](https://discountingcashflows.com/company/TSLA/transcripts/)
+
+### Your Notes
+1. One of the best app so far to display stock metrics, like seekingAlpha.
+2. It has many earnings transcripts.
+
 
 ## **Mexem**
 🔗 [TSLA on Mexem](https://www.mexem.com/ai-stock-reports?company_id=C82334267)

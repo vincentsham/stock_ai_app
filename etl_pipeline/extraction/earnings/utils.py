@@ -10,7 +10,7 @@ def insert_record(conn, data, tic, earnings_date, url):
         query = """
         INSERT INTO raw.earnings_transcripts (
             tic, earnings_date, source, 
-            transcripts_sha256,
+            transcript_sha256,
             raw_json, raw_json_sha256
         ) VALUES (
             %s, %s, %s, %s, %s, %s
@@ -18,12 +18,12 @@ def insert_record(conn, data, tic, earnings_date, url):
         ON CONFLICT (tic, earnings_date)
         DO UPDATE SET
             source = EXCLUDED.source,
-            transcripts_sha256 = EXCLUDED.transcripts_sha256,
+            transcript_sha256 = EXCLUDED.transcript_sha256,
             raw_json = EXCLUDED.raw_json,
             raw_json_sha256 = EXCLUDED.raw_json_sha256,
             updated_at = NOW()
         WHERE
-            raw.earnings_transcripts.transcripts_sha256 <>EXCLUDED.transcripts_sha256;
+            raw.earnings_transcripts.transcript_sha256 <>EXCLUDED.transcript_sha256;
         """
 
         cursor.execute(query, (
