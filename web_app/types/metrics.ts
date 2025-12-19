@@ -12,8 +12,8 @@ export type Metric = {
 export type MetricList = {
     category: string;
     tic: string;
+    score: number | null;
     metrics: Metric[];
     defaultVisibleCount: number;
 };
-
 

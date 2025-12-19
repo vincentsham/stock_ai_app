@@ -30,7 +30,7 @@ const getColorTheme = (percentile: number | null, inverse: boolean | null): stri
 
 
 
-export const MetricCard: React.FC<MetricList> = ({ category, tic, metrics, defaultVisibleCount}) => {
+export const MetricCard: React.FC<MetricList> = ({ category, tic, score, metrics, defaultVisibleCount}) => {
   const [showAll, setShowAll] = useState(false);
 
   // Determine visible items based on expansion state and defaultVisibleCount
@@ -39,14 +39,28 @@ export const MetricCard: React.FC<MetricList> = ({ category, tic, metrics, defau
     : metrics;
 
   const hasHiddenItems = defaultVisibleCount !== undefined && metrics.length > defaultVisibleCount;
+  const scoreColorTheme = score !== null ? getColorTheme(score, false) : null;
+
+  const scoreBadgeClassNameByColor: Record<string, string> = {
+    green: 'border-emerald-500/30 bg-emerald-950 text-emerald-400',
+    yellow: 'border-amber-500/30 bg-amber-950 text-amber-400',
+    red: 'border-rose-500/30 bg-rose-950 text-rose-400',
+    gray: 'border-gray-700 bg-gray-800/50 text-gray-300',
+  };
+  const scoreBadgeClassName = scoreColorTheme ? (scoreBadgeClassNameByColor[scoreColorTheme] ?? scoreBadgeClassNameByColor.gray) : scoreBadgeClassNameByColor.gray;
 
   return (
     <div 
       className="bg-[#111218] border border-gray-800 rounded-xl overflow-hidden transition-all duration-300 hover:border-gray-700 flex flex-col h-fit"
     >
       <div className="px-4 pt-4 pb-3 border-b border-gray-800/70 bg-[#111218]">
-        <h3 className="text-white font-bold text-lg border-l-4 border-blue-500 pl-3 leading-none">
-          {category}
+        <h3 className="text-white font-bold text-lg border-l-4 border-blue-500 pl-3 leading-none flex items-center justify-between gap-3">
+          <span className="min-w-0 truncate">{category}</span>
+          {score !== null && (
+            <span className={`px-2 py-1 text-sm font-bold rounded-full whitespace-nowrap border shadow-sm ${scoreBadgeClassName}`}>
+              Score: {Number(score).toFixed(0)}
+            </span>
+          )}
         </h3>
       </div>
 

@@ -633,6 +633,9 @@ def table_creation(conn):
 
             debt_to_equity          NUMERIC(20, 6),   -- Total Debt / Shareholders' Equity (NULL if equity <= 0)
             debt_to_assets          NUMERIC(20, 6),   -- Total Debt / Total Assets
+                       
+            altman_z_score          NUMERIC(20, 6),   -- Altman Z-Score
+            cash_runway_months      NUMERIC(20, 2),   -- Cash & Equivalents / Monthly Operating Cash Burn
                    
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
             UNIQUE (tic, date)
@@ -862,6 +865,8 @@ def table_creation(conn):
             debt_to_equity_percentile          NUMERIC(6, 3),   -- Total Debt / Shareholders' Equity (NULL if equity <= 0)
             debt_to_assets_percentile          NUMERIC(6, 3),   -- Total Debt / Total Assets
 
+            altman_z_score_percentile          NUMERIC(6, 3),   -- Altman Z-Score
+            cash_runway_months_percentile      NUMERIC(6, 3),   -- Cash & Equivalents / Monthly Operating Cash Burn
                    
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
             UNIQUE (tic, date),
@@ -900,6 +905,27 @@ def table_creation(conn):
         );
         """)
         print("Table 'capital_allocation_percentiles' created or already exists with composite primary key.")
+
+
+
+       # Create a table for stock scores if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.stock_scores (
+            -- Identity & period alignment
+            tic                               VARCHAR(10)  NOT NULL,
+            date                              DATE         NOT NULL,
+
+            valuation_score          NUMERIC(6, 3),  -- 0-100
+            profitability_score      NUMERIC(6, 3),  -- 0-100
+            growth_score             NUMERIC(6, 3),  -- 0-100
+            efficiency_score         NUMERIC(6, 3),  -- 0-100
+            financial_health_score   NUMERIC(6, 3),  -- 0-100
+            total_score              NUMERIC(6, 3),  -- 0-100
+            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+            UNIQUE (tic, date)
+        );
+        """)
+        print("Table 'stock_scores' created or already exists with composite primary key.")
 
 
 

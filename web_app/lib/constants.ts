@@ -528,13 +528,16 @@ export const METRICS_METADATA: Record<string, {
       //       displayByDefault: false,
       //       description: 'Fixed Charge Coverage Ratio, evaluating ability to cover fixed charges with earnings; higher values indicate better financial stability.',
       // },
-      // 'altman_z_score': {
-      //       name: 'Altman Z-Score',
-      //       display_fn: (value: number | null) => value !== null ? value.toFixed(2) : 'N/A',
-      //       inverse: false,
-      //       displayByDefault: false,
-      //       description: 'Altman Z-Score, predicting bankruptcy risk based on financial ratios; higher values suggest lower risk of financial distress.',
-      // },
+      'altman_z_score': {
+            name: 'Altman Z-Score',
+            display_fn: (value: unknown) => {
+                  const n = coerceNumber(value);
+                  return n === null ? 'N/A' : `${n.toFixed(2)}`;
+            },
+            inverse: false,
+            displayByDefault: false,
+            description: 'Altman Z-Score, predicting bankruptcy risk based on financial ratios; higher values suggest lower risk of financial distress.',
+      },
       // 'cash_runway_months': {
       //       name: 'Cash Runway (Months)',
       //       display_fn: (value: number | null) => value !== null ? `${value.toFixed(1)} months` : 'N/A',
