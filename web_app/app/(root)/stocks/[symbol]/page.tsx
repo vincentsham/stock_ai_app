@@ -4,6 +4,7 @@ import {
  } from '@/lib/tradingview/configs';
 import TradingViewWidget from '@/components/TradingViewWidget';
 import { CustomSection } from '@/components/CustomSection';
+import StockRadarChart from '@/components/StockRadarChart';
 
 interface PageParams {
     params: {
@@ -23,16 +24,27 @@ const StockPage = async ({ params }: PageParams) => {
             height={150}
             />
 
-            <TradingViewWidget
-            scriptUrl={`${scriptUrl}symbol-overview.js`}
-            config={SYMBOL_CHART_WIDGET_CONFIG(symbol, 400)}
-            height={400}
-            />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+                <div className="lg:col-span-2">
+                    <TradingViewWidget
+                        scriptUrl={`${scriptUrl}symbol-overview.js`}
+                        config={SYMBOL_CHART_WIDGET_CONFIG(symbol, 400)}
+                        height={400}
+                    />
+                </div>
+
+                <div className="lg:col-span-1">
+                    <StockRadarChart
+                        tic={symbol}
+                        height={400}
+                        className="w-full"
+                    />
+                </div>
+            </div>
 
             <CustomSection 
             tic={symbol} 
             />
-
         </div>
     )
 }
