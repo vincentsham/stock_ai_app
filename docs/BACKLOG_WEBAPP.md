@@ -38,6 +38,7 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
+| 15 | Feature | Big Metrics score and Radar Diagram | High | Open | w_feat_14 | 2025-12-19 | |
 | 1004 | Feature | Add an animation on analyst grade meter | Medium | Open |  | | |
 | 1005 | Feature | Add tooltips for metrics session, including the % change | Medium | Open |  | | |
 | 10001 | Technical | Create Twitter Card Image (1200x600px) | Low | Open | | | |
