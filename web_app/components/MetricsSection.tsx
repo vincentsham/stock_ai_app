@@ -8,7 +8,6 @@ import {
   searchGrowthMetrics,
   searchEfficiencyMetrics,
   searchFinancialHealthMetrics,
-  searchCapitalAllocationMetrics,
 } from '@/lib/db/metricsQueries';
 import { MetricList } from '@/types';
 import { MetricCard } from './MetricCard';
@@ -99,6 +98,7 @@ export const MetricsSection: React.FC<{ tic: string }> = ({ tic }) => {
               <MetricCard key={`${tic}-metrics-base-${index}`} 
                           category={colItem.category} 
                           tic={colItem.tic} 
+                          score={colItem.score}
                           metrics={colItem.metrics} 
                           defaultVisibleCount={colItem.defaultVisibleCount} />
             </div>
@@ -114,6 +114,7 @@ export const MetricsSection: React.FC<{ tic: string }> = ({ tic }) => {
                 <MetricCard key={`${tic}-metrics-md-${colIndex}-${index}`} 
                             category={colItem.category} 
                             tic={colItem.tic} 
+                            score={colItem.score}
                             metrics={colItem.metrics} 
                             defaultVisibleCount={colItem.defaultVisibleCount} />
               )
@@ -130,6 +131,7 @@ export const MetricsSection: React.FC<{ tic: string }> = ({ tic }) => {
                 <MetricCard key={`${tic}-metrics-lg-${colIndex}-${index}`} 
                             category={colItem.category} 
                             tic={colItem.tic} 
+                            score={colItem.score}
                             metrics={colItem.metrics} 
                             defaultVisibleCount={colItem.defaultVisibleCount} />
               )

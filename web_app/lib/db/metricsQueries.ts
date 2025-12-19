@@ -10,6 +10,7 @@ const VALUATION_METRICS_SEARCH_QUERY = `
     SELECT
       v.tic,
       v.date,
+      ss.valuation_score AS score,
 
       -- valuation
       v.pe_ttm,
@@ -52,6 +53,8 @@ const VALUATION_METRICS_SEARCH_QUERY = `
       ON v.tic = ca.tic AND v.date = ca.date
     JOIN core.capital_allocation_percentiles cap
       ON ca.inference_id = cap.inference_id
+    JOIN core.stock_scores ss
+      ON v.tic = ss.tic AND v.date = ss.date
     WHERE v.tic = $1
     ORDER BY v.date DESC
     LIMIT 1;
@@ -63,6 +66,8 @@ const PROFITABILITY_METRICS_SEARCH_QUERY = `
     SELECT
       p.tic,
       p.date,
+      -- final score
+      ss.profitability_score AS score,
 
       -- profitability
       p.net_margin,
@@ -94,6 +99,8 @@ const PROFITABILITY_METRICS_SEARCH_QUERY = `
       ON p.tic = ca.tic AND p.date = ca.date
     JOIN core.capital_allocation_percentiles cap
       ON ca.inference_id = cap.inference_id
+    JOIN core.stock_scores ss
+      ON p.tic = ss.tic AND p.date = ss.date
     WHERE p.tic = $1
     ORDER BY p.date DESC
     LIMIT 1;
@@ -105,6 +112,8 @@ const GROWTH_METRICS_SEARCH_QUERY = `
     SELECT
       g.tic,
       g.date,
+      -- final score
+      ss.growth_score AS score,
 
       -- growth
       g.revenue_growth_yoy,
@@ -151,6 +160,8 @@ const GROWTH_METRICS_SEARCH_QUERY = `
     FROM core.growth_metrics g
     JOIN core.growth_percentiles gp
       ON g.inference_id = gp.inference_id
+    JOIN core.stock_scores ss
+      ON g.tic = ss.tic AND g.date = ss.date
     WHERE g.tic = $1
     ORDER BY g.date DESC
     LIMIT 1;
@@ -162,6 +173,8 @@ const EFFICIENCY_METRICS_SEARCH_QUERY = `
     SELECT
       e.tic,
       e.date,
+      -- final score
+      ss.efficiency_score AS score,
 
       -- efficiency
       e.asset_turnover,
@@ -171,6 +184,7 @@ const EFFICIENCY_METRICS_SEARCH_QUERY = `
       e.dso,
       e.dio,
       e.dpo,
+      e.revenue_per_employee,
 
       -- efficiency percentiles
       ep.asset_turnover_percentile,
@@ -180,11 +194,14 @@ const EFFICIENCY_METRICS_SEARCH_QUERY = `
       ep.dpo_percentile,
       ep.fixed_asset_turnover_percentile,
       ep.revenue_per_employee_percentile,
-      ep.opex_ratio_percentile
+      ep.opex_ratio_percentile,
+      ep.revenue_per_employee_percentile
 
     FROM core.efficiency_metrics e
     JOIN core.efficiency_percentiles ep
       ON e.inference_id = ep.inference_id
+    JOIN core.stock_scores ss
+      ON e.tic = ss.tic AND e.date = ss.date
     WHERE e.tic = $1
     ORDER BY e.date DESC
     LIMIT 1;
@@ -195,6 +212,8 @@ const FINANCIAL_HEALTH_METRICS_SEARCH_QUERY = `
     SELECT
       fh.tic,
       fh.date,
+      -- final score
+      ss.financial_health_score AS score,
 
       -- financial health
       fh.net_debt_to_ebitda_ttm,
@@ -204,6 +223,7 @@ const FINANCIAL_HEALTH_METRICS_SEARCH_QUERY = `
       fh.cash_ratio,
       fh.debt_to_equity,
       fh.debt_to_assets,
+      fh.altman_z_score,
 
       -- financial health percentiles
       fhp.net_debt_to_ebitda_ttm_percentile,
@@ -212,41 +232,20 @@ const FINANCIAL_HEALTH_METRICS_SEARCH_QUERY = `
       fhp.quick_ratio_percentile,
       fhp.cash_ratio_percentile,
       fhp.debt_to_equity_percentile,
-      fhp.debt_to_assets_percentile
+      fhp.debt_to_assets_percentile,
+      fhp.altman_z_score_percentile
     FROM core.financial_health_metrics fh
     JOIN core.financial_health_percentiles fhp
       ON fh.inference_id = fhp.inference_id
+    JOIN core.stock_scores ss
+      ON fh.tic = ss.tic AND fh.date = ss.date
     WHERE fh.tic = $1
     ORDER BY fh.date DESC
     LIMIT 1;
 `;
 
-const CAPITAL_ALLOCATION_METRICS_SEARCH_QUERY = `
-    SELECT
-      ca.tic,
-      ca.date,
 
-      -- capital allocation
-      ca.roic,
-      ca.total_shareholder_yield,
-      ca.share_count_change_yoy,
-      ca.reinvestment_rate,
-      ca.fcf_per_share_growth_yoy,
 
-      -- capital allocation percentiles
-      cap.roic_percentile,
-      cap.total_shareholder_yield_percentile,
-      cap.share_count_change_yoy_percentile,
-      cap.reinvestment_rate_percentile,
-      cap.fcf_per_share_growth_yoy_percentile
-
-    FROM core.capital_allocation_metrics ca
-    JOIN core.capital_allocation_percentiles cap
-      ON ca.inference_id = cap.inference_id
-    WHERE ca.tic = $1
-    ORDER BY ca.date DESC
-    LIMIT 1;
-`;
 
 const searchMetrics = cache(async (tic: string, category: string, query: string): Promise<MetricList> => {
   let client;
@@ -263,11 +262,12 @@ const searchMetrics = cache(async (tic: string, category: string, query: string)
       const metricList: MetricList = {
         category: category,
         tic: tic,
+        score: row['score'] as number | null,
         metrics: [] as Metric[],
         defaultVisibleCount: 0,
       };
       for (const [key, value] of Object.entries(row as Record<string, any>)) {
-          if (key.endsWith('_percentile') || key === 'category' || key === 'tic' || key === 'date') continue; // Skip percentile entries
+          if (key.endsWith('_percentile') || key === 'category' || key === 'tic' || key === 'date' || key === 'score') continue; // Skip percentile entries
           const percentileKey = `${key}_percentile`;
           const metadata = (METRICS_METADATA as Record<string, any>)[key];
           if (!metadata) continue;
@@ -292,7 +292,7 @@ const searchMetrics = cache(async (tic: string, category: string, query: string)
 
   } catch (err) {
     console.error('Database query error:', err);
-    return { category, tic, metrics: [], defaultVisibleCount: 0 };
+    return { category, tic, score: null, metrics: [], defaultVisibleCount: 0 };
 
   } finally {
     // 3. IMPORTANT: Release the client back to the pool
@@ -302,12 +302,14 @@ const searchMetrics = cache(async (tic: string, category: string, query: string)
   }
 
   // Return an empty object if no results are found
-  return { category, tic, metrics: [], defaultVisibleCount: 0 };
+  return { category, tic, score: null, metrics: [], defaultVisibleCount: 0 };
 });
+
+
+
 
 export const searchValuationMetrics = async (tic: string) => searchMetrics(tic, 'Valuation', VALUATION_METRICS_SEARCH_QUERY);
 export const searchProfitabilityMetrics = async (tic: string) => searchMetrics(tic, 'Profitability', PROFITABILITY_METRICS_SEARCH_QUERY);
 export const searchGrowthMetrics = async (tic: string) => searchMetrics(tic, 'Growth', GROWTH_METRICS_SEARCH_QUERY);
 export const searchEfficiencyMetrics = async (tic: string) => searchMetrics(tic, 'Efficiency', EFFICIENCY_METRICS_SEARCH_QUERY);
 export const searchFinancialHealthMetrics = async (tic: string) => searchMetrics(tic, 'Financial Health', FINANCIAL_HEALTH_METRICS_SEARCH_QUERY);
-export const searchCapitalAllocationMetrics = async (tic: string) => searchMetrics(tic, 'Capital Allocation', CAPITAL_ALLOCATION_METRICS_SEARCH_QUERY);

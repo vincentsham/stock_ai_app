@@ -164,7 +164,8 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
 
     transformed_df = df[['tic', 'date','net_debt_to_ebitda_ttm',
                          'interest_coverage_ttm', 'current_ratio', 'quick_ratio',
-                         'cash_ratio', 'debt_to_equity', 'debt_to_assets',
+                         'cash_ratio', 'debt_to_equity', 'debt_to_assets', 'altman_z_score',
+                         'cash_runway_months'
                          ]]
 
     return transformed_df
