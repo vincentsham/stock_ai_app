@@ -25,8 +25,7 @@ def process_and_load_chunks():
                 LEFT JOIN core.news_chunks AS nc
                 ON n.event_id = nc.event_id
                 WHERE n.url IS NOT NULL
-                    AND (nc.raw_json_sha256 IS NULL
-                        OR n.raw_json_sha256 <> nc.raw_json_sha256);
+                    AND (n.raw_json_sha256 IS DISTINCT FROM nc.raw_json_sha256);
             """)
             records = cursor.fetchall()
             total_records = 0

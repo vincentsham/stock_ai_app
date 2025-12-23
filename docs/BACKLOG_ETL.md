@@ -39,21 +39,14 @@ examples:
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 27 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
-| 37 | Feature | Add a post-filter job to filter out or expire catalysts | High | Open |  |  |  |
-| 1007 |  |  | Medium | Open |  |  |  |
-| 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
-| 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
-| 1010 | Feature | Only extract a limit number of existing Catalysts or Archive the old catalysts | Medium | Open |  |  |  |
-| 1011 | Feature | Create DataMart Table for catalyst section | Medium | Open |  |  |  |
-| 1013 | Feature | | Medium | Open |  |  |  |
-| 1014 | Feature | | Medium | Open |  |  |  |
-| 1015 | Feature | Add a consolidated tag logic | Medium | Open |  |  |  |
+| 1007 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
+| 1008 | Feature | Only extract a limit number of existing Catalysts or Archive the old catalysts | Medium | Open |  |  |  |
+| 1009 | Feature | Create DataMart Table for catalyst section | Medium | Open |  |  |  |
+| 1010 | Feature | Add a consolidated tag logic| Medium | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
-| 10004 | Miscellaneous | Create psql partition logic | Low | Open |  |  |  |
+| 10004 |  |  | Low | Open |  |  |  |
 | 10005 | Technical | Improve the speed of ai agent (async + concurrent) | Low | Open |  |  |  |
-| 10008 | Miscellaneous | Reference table for the text of categorical columns in metrics | Low | Open |  |  |  |
-| 10009 | Miscellaneous | Fix folder structure | Low | Open |  |  |  |
 </div>
 
 
@@ -110,6 +103,7 @@ examples:
 | 35 | Feature | Working on the metric etl jobs | High | Close | feat_35 | 2025-12-15 | 2025-12-16 |
 | 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
 | 36 | Feature | Fully integrate with DefeatBeta | High | Close | feat_36 | 2025-12-19 | 2025-12-22 |
+| 37 | Miscellaneous | Finetune the ai agent process | High | Close | misc_37 | 2025-12-23 | 2025-12-23 |
 | 38 | Feature | Add a pre-filter job to filter out or expire news and transcript chunks | High | Close | feat_38 | 2025-12-23 | 2025-12-23 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous | Create a md doc for source | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |

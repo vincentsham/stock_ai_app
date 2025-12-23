@@ -1,7 +1,7 @@
 from states import News
 from prompts import STAGE1_PROMPT, STAGE2_PROMPT, STAGE1_SYSTEM_MESSAGE, STAGE2_SYSTEM_MESSAGE
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
-from etl_pipeline.utils import run_llm
+from etl_pipeline.utils import run_llm, parse_json_from_llm
 from dotenv import load_dotenv
 import json
 
@@ -27,7 +27,7 @@ def stage1(state: News) -> dict:
     system_prompt = SystemMessage(content=STAGE1_SYSTEM_MESSAGE)
     human_prompt = HumanMessage(content=prompt)
     messages = [system_prompt, human_prompt]
-    response = json.loads(run_llm(messages).content)
+    response = parse_json_from_llm(run_llm(messages).content)
     
     category = response.get("category")
     event_type = response.get("event_type")
@@ -65,7 +65,7 @@ def stage2(state: News) -> dict:
     system_prompt = SystemMessage(content=STAGE2_SYSTEM_MESSAGE)
     human_prompt = HumanMessage(content=prompt)
     messages = [system_prompt, human_prompt]
-    response = json.loads(run_llm(messages).content)
+    response = parse_json_from_llm(run_llm(messages).content)
 
     time_horizon = response.get("time_horizon")
     duration = response.get("duration")

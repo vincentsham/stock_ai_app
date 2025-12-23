@@ -56,10 +56,21 @@ def main():
     # Start timing
     start_time = time.time()
     processed_data = []
+    retries = 3
 
     # Use tqdm to track progress
     for state in tqdm(states, desc="Processing company profiles"):
-        final_state = app.invoke(state[0])
+        while retries > 0:
+            try:
+                final_state = app.invoke(state[0])
+                break
+            except Exception as e:
+                retries -= 1
+                if retries == 0:
+                    print(f"Failed to process {state[0].company_info.tic} after multiple retries: {e}")
+                    raise e
+                print(f"Error processing {state[0].company_info.tic}: {e}. Retrying...")
+                
         final_state['event_id'] = state[1]  # Add event_id to the final state
         final_state['transcript_sha256'] = state[2]  # Add transcript_sha256 to the final state
         out = {

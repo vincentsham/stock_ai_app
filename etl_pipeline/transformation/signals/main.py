@@ -88,15 +88,25 @@ def main(type: Literal["news", "earnings_transcript"] = "news"):
     # Start timing
     start_time = time.time()
     processed_data = []
+    retries = 3
 
     # Use tqdm to track progress
     for state in tqdm(states, desc="Processing company profiles"):
+        while retries > 0:
+            try:
+                final_state = app.invoke(state[0])
+                retries = 3  # reset retries for next state
+                break
+            except Exception as e:
+                retries -= 1
+                if retries == 0:
+                    print(f"Failed to process {state[1]['event_id']} after multiple retries: {e}")
+                    raise e
+                print(f"Error processing {state[1]['event_id']}: {e}. Retrying...")
         df = state[1]
-        final_state = app.invoke(state[0])
         df['is_signal'] = final_state['is_signal']
         df['reason'] = final_state['reason']
         processed_data.append(df)
-
     # Load processed data into core.stock_metadata
     total_records = 0
     if conn:

@@ -60,10 +60,22 @@ def main():
     # Start timing
     start_time = time.time()
     processed_data = []
+    retries = 3
 
     # Use tqdm to track progress
     for state in tqdm(states, desc="Processing company profiles"):
-        final_state = app.invoke(state[0])
+        while retries > 0:
+            try:
+                final_state = app.invoke(state[0])
+                retries = 3  # reset retries for next state
+                break
+            except Exception as e:
+                retries -= 1
+                if retries == 0:
+                    print(f"Failed to process {state[0].tic} after multiple retries: {e}")
+                    raise e
+                print(f"Error processing {state[0].tic}: {e}. Retrying...")
+
         final_state['raw_json_sha256'] = state[1]  # retain raw_json_sha256 for integrity
         processed_data.append(final_state)
 

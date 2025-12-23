@@ -4,6 +4,8 @@ from psycopg import connect
 from database.utils import connect_to_db
 import json
 from etl_pipeline.utils import hash_dict
+import pandas as pd
+from database.utils import insert_records
 
 # API credentials
 API_KEY = os.getenv("FMP_API_KEY")
@@ -20,38 +22,6 @@ def fetch_news(tic, limit=100):
         print(f"Failed to fetch data: {response.status_code}")
         return None, None
 
-# Insert news data into the table
-def insert_news(data, tic, source_url, conn):
-    total_records = 0
-    try:
-        with conn.cursor() as cur:
-            for record in data:
-                cur.execute(
-                    """
-                    INSERT INTO raw.news (
-                        tic, url, source, raw_json, raw_json_sha256, updated_at
-                    ) VALUES (%s, %s, %s, %s, %s, NOW())
-                    ON CONFLICT (tic, url) DO UPDATE
-                    SET 
-                        source = EXCLUDED.source,
-                        raw_json = EXCLUDED.raw_json,
-                        raw_json_sha256 = EXCLUDED.raw_json_sha256,
-                        updated_at = NOW();
-                    """, (
-                    tic,
-                    record.get("url"),
-                    source_url,
-                    json.dumps(record),  # raw JSON payload
-                    hash_dict(record)
-                ))
-                total_records += cur.rowcount
-            conn.commit()
-        return total_records
-    except Exception as e:
-        print(f"Error inserting or updating data for ticker {tic}: {e}")
-        conn.rollback()
-        return 0
-
 # Main function
 def main():
     conn = connect_to_db()
@@ -62,9 +32,16 @@ def main():
         for record in records:
             tic = record[0]
             total_records = 0
-            data, source_url = fetch_news(tic=tic, limit=100)
+            df = {}
+            data, source_url = fetch_news(tic=tic, limit=500)
             if data:
-                total_records += insert_news(data, tic, source_url, conn)
+                df['tic'] = tic
+                df['url'] = [item.get('url') for item in data]
+                df['source'] = 'fmp'
+                df['raw_json'] = [json.dumps(record) for record in data]
+                df['raw_json_sha256'] = [hash_dict(record) for record in data]
+                df = pd.DataFrame(df)
+                total_records = insert_records(conn, df, "raw.news", keys=['tic', 'url'])
             print(f"For {tic}: Total records processed = {total_records}")
         conn.close()
 

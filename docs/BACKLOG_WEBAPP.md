@@ -41,13 +41,9 @@ examples:
 | 17 | Feature | Add the comparison tool | High | Open | | | |
 | 1004 | Feature | Add loading spinner and error page | Medium | Open |  | | |
 | 1005 | Feature | Add tooltips for metrics session, including the % change | Medium | Open |  | | |
-| 1006 | Feature | Add the revenue by products/geographics session, called (products/geographics) | Medium | Open |  | | |
-| 10001 | Technical | Create Twitter Card Image (1200x600px) | Low | Open | | | |
-| 10002 | Technical | Create Open Graph Image (1200x630px) | Low | Open | | | |
-| 10003 | Technical | Create Apple Touch Icon (180x180px) | Low | Open | | | |
-| 10004 | Technical | Create robots.txt file | Low | Open | | | |
-| 10005 | Technical | Add Google Search Console Verification | Low | Open | | | |
-| 10006 | Feature | Collaspe all the extensions when the tab is inactive | Low | Open | | | |
+| 10001 | Technical | Finetune metadata for SEO | Low | Open | | | |
+| 10002 | Feature | Collaspe all the extensions when the tab is inactive | Low | Open | | | |
+| 10003 | Feature | Add the revenue by products/geographics session, called (products/geographics) | Low | Open |  | | |
 </div>
 
 

@@ -114,17 +114,27 @@ def get_catalyst_id_list(conn, tic: str, catalyst_type: str) -> list:
     return catalyst_id_list
 
 
+
+
 def main(type: Literal["news", "earnings_transcript"] = "news",
          frequency: Literal["daily", "monthly", "quarterly"] = "monthly",
-         top_k: int = 3):
+         top_k: int = 3, year: int = None, quarter: int = None, month: int = None):
     # Connect to the database
     conn = connect_to_db()
     if conn:
         query = QUERY[type][frequency]
         df = read_sql_query(query, conn)
+        if year is not None:
+            df = df[df['year'] == year]
+        if quarter is not None:
+            df = df[df['quarter'] == quarter]
+        if month is not None:
+            df = df[df['month'] == month]
     else:
         print("Could not connect to database.")
         return
+    
+
 
     # Construct states from the retrieved records
     states = []
@@ -154,10 +164,21 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
     total_new_records = 0
     total_existing_records = 0
     total_updated_master_records = 0
+    retries = 3
 
     # Use tqdm to track progress
     for state in tqdm(states, desc="Processing company profiles"):
-        final_state = app.invoke(state)
+        while retries > 0:
+            try:
+                final_state = app.invoke(state)
+                retries = 3  # reset retries for next state
+                break
+            except Exception as e:
+                retries -= 1
+                if retries == 0:
+                    print(f"Failed to process {state.company_info.tic} after multiple retries: {e}")
+                    raise e
+                print(f"Error processing {state.company_info.tic}: {e}. Retrying...")
         processed_data = []
         for catalyst in final_state.get("catalysts", []):
             if catalyst.candidate.is_catalyst == 1:
@@ -186,6 +207,9 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
                         "raw_json_sha256": catalyst.chunk.raw_json_sha256,
                 }
                 processed_data.append(out)
+
+        # Clean "null" strings in UUID columns before inserting records
+        # df = clean_null_strings(df, ['catalyst_id', 'event_id'])
 
         # print(f"Total number of records is {len(processed_data)}.")
         try:
@@ -250,5 +274,6 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
     return
 
 if __name__ == "__main__":
-    main("earnings_transcript", "quarterly", top_k=1)
-    main("news", "monthly", top_k=1)
+    main("earnings_transcript", "quarterly", top_k=3, year=2025, quarter=3)
+    # main("earnings_transcript", "quarterly", top_k=3, year=2025, quarter=2)
+    # main("news", "monthly", top_k=1)

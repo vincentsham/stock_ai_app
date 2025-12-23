@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
 
 import json
@@ -14,12 +15,11 @@ from decimal import Decimal
 load_dotenv()
 
 llm_chatgpt = ChatOpenAI(model=os.getenv("OPENAI_LLM_MODEL"), api_key=os.getenv("OPENAI_API_KEY"))
-llm_gemini = ChatOpenAI(model=os.getenv("GEMINI_LLM_MODEL"), api_key=os.getenv("GEMINI_API_KEY"))
+llm_gemini = ChatGoogleGenerativeAI(model=os.getenv("GEMINI_LLM_MODEL"), google_api_key=os.getenv("GEMINI_API_KEY"))
 
-def run_llm(messages: list[BaseMessage]) -> dict:
+def run_llm(messages: list[BaseMessage], model = os.getenv("LLM_MODEL", "chatgpt")) -> dict:
     """Interact with the LLM using a system message and a human prompt."""
     try:
-        model = os.getenv("LLM_MODEL", "chatgpt")
         if model == "chatgpt":
             response = llm_chatgpt.invoke(messages)
         elif model == "gemini":
