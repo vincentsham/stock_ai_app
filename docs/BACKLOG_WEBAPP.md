@@ -39,7 +39,7 @@ examples:
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 17 | Feature | Add the comparison tool | High | Open | | | |
-| 1004 | Feature | Add an animation on analyst grade meter | Medium | Open |  | | |
+| 1004 | Feature | Add loading spinner and error page | Medium | Open |  | | |
 | 1005 | Feature | Add tooltips for metrics session, including the % change | Medium | Open |  | | |
 | 1006 | Feature | Add the revenue by products/geographics session, called (products/geographics) | Medium | Open |  | | |
 | 10001 | Technical | Create Twitter Card Image (1200x600px) | Low | Open | | | |
