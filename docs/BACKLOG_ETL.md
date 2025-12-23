@@ -41,18 +41,18 @@ examples:
 | 27 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
 | 37 | Feature | Add a post-filter job to filter out or expire catalysts | High | Open |  |  |  |
 | 38 | Feature | Add a pre-filter job to filter out or expire news and transcript chunks | High | Open |  |  |  |
-| 1007 | Feature | Compute more metrics (e.g. ebita) | Medium | Open |  |  |  |
+| 1007 |  |  | Medium | Open |  |  |  |
 | 1008 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1009 | Miscellaneous | Extract news - fetching pages | Medium | Open |  |  |  |
 | 1010 | Feature | Only extract a limit number of existing Catalysts or Archive the old catalysts | Medium | Open |  |  |  |
 | 1011 | Feature | Create DataMart Table for catalyst section | Medium | Open |  |  |  |
-| 1013 | Feature | Add a core.stock_profiles update job for just updating market cap OR solely market cap update job | Medium | Open |  |  |  |
-| 1014 | Feature | Add the change yield logic for metrics session | Medium | Open |  |  |  |
+| 1013 | Feature | | Medium | Open |  |  |  |
+| 1014 | Feature | | Medium | Open |  |  |  |
 | 1015 | Feature | Add a consolidated tag logic | Medium | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
 | 10004 | Miscellaneous | Create psql partition logic | Low | Open |  |  |  |
-| 10005 | Technical | Improve the speed of news ai agent (async + concurrent) | Low | Open |  |  |  |
+| 10005 | Technical | Improve the speed of ai agent (async + concurrent) | Low | Open |  |  |  |
 | 10008 | Miscellaneous | Reference table for the text of categorical columns in metrics | Low | Open |  |  |  |
 | 10009 | Miscellaneous | Fix folder structure | Low | Open |  |  |  |
 </div>
