@@ -48,6 +48,10 @@ class Binary(IntEnum):
     NO = 0
     YES = 1
 
+class PosNeg(IntEnum):
+    NEG = -1
+    POS = 1
+
 
 # ---- Core catalyst payload ----
 class Catalyst(BaseModel):
@@ -90,7 +94,7 @@ class Catalyst(BaseModel):
     impact_area: Optional[ImpactArea] = Field(
         None, description="Area affected by the catalyst"
     )
-    sentiment: Optional[Tri] = Field(
+    sentiment: Optional[PosNeg] = Field(
         None, description="Sentiment of the catalyst"
     )
     impact_magnitude: Optional[Tri] = Field(
@@ -134,7 +138,7 @@ class Catalyst(BaseModel):
         time_horizon: Optional[TimeHorizon] = None,
         certainty: Optional[CertaintyLevel] = None,
         impact_area: Optional[ImpactArea] = None,
-        sentiment: Optional[Tri] = None,
+        sentiment: Optional[PosNeg] = None,
         impact_magnitude: Optional[Tri] = None,
         is_valid: Optional[Binary] = None,
         rejection_reason: Optional[str] = None,

@@ -1,17 +1,122 @@
+CATALYST_QUERIES = {
+  "guidance_outlook": [
+    "management updated revenue or EPS guidance",
+    "guidance raised or lowered for next quarter or fiscal year",
+    "guidance reaffirmed or withdrawn",
+    "forward financial outlook discussed"
+  ],
+
+  "product_initiative": [
+    "new product or service launch announced",
+    "capacity expansion or production ramp",
+    "entry into a new market or category"
+  ],
+
+  "partnership_deal": [
+    "partnership or strategic alliance announced",
+    "major customer or supplier contract win",
+    "merger acquisition or investment deal disclosed"
+  ],
+
+  "cost_efficiency": [
+    "restructuring plan with layoffs announced",
+    "cost reduction initiative to improve margins",
+    "operational or margin improvement program"
+  ],
+
+  "capital_actions": [
+    "share repurchase or dividend change announced",
+    "debt issuance refinancing or new credit facility",
+    "equity offering or capital raise disclosed"
+  ],
+
+  "regulatory_policy": [
+    "regulatory or government approval granted or filed",
+    "investigation lawsuit settlement or fine announced",
+    "antitrust or agency probe affecting the company"
+  ],
+
+  "demand_trends": [
+    "company reported stronger or weaker demand",
+    "orders bookings or backlog changed materially",
+    "pricing or inventory conditions affecting sales"
+  ],
+
+  "risk_event": [
+    "unexpected project delay cancellation or withdrawal",
+    "profit warning or negative earnings impact",
+    "production halt recall outage or supply shortage"
+  ],
+
+  "macro_policy": [
+    "interest rate or monetary policy shift affecting company",
+    "tariffs trade restrictions or sanctions impacting operations",
+    "fiscal or government policy influencing demand or investment",
+    "geopolitical conflict creating business or supply risk"
+  ]
+}
+
 
 STAGE1_HUMAN_PROMPT = """
---- COMPANY CONTEXT ---
+<TARGET_COMPANY>
 {company_info}
+</TARGET_COMPANY>
 
---- TARGET CATALYST TYPE ---
-{catalyst_type}
+<SEARCH_CONTEXT>
+Type: {catalyst_type}
+Query: {retrieval_query}
+</SEARCH_CONTEXT>
 
---- RAG RETRIEVAL QUERY ---
-{retrieval_query}
-
---- CHUNK TO ANALYZE ---
+<TEXT_TO_ANALYZE>
 {content}
+</TEXT_TO_ANALYZE>
+"""
 
+STAGE1_SYSTEM_MESSAGE = """
+You are a Financial Data Filter.
+
+EXPECTED INPUT DATA:
+1. <TARGET_COMPANY>: A JSON object containing:
+   - "tic": Stock ticker symbol (e.g., AAPL).
+   - "company_name": Full entity name.
+   - "industry" & "sector": Classification context.
+   - "company_description": Short description of operations.
+2. <SEARCH_CONTEXT>:
+   - "Type": The target catalyst category (e.g., "guidance_outlook").
+   - "Query": The specific retrieval intent.
+3. <TEXT_TO_ANALYZE>: The raw text chunk.
+
+TASK:
+Analyze <TEXT_TO_ANALYZE> to determine if it contains a stock catalyst matching the <SEARCH_CONTEXT> for the specific <TARGET_COMPANY>.
+
+RULES:
+1. **Relevance:** Ignore competitor news, general industry trends, or old data (>1 year).
+2. **Identity Check:** Use 'tic' and 'company_name' to ensure the event belongs to this specific entity, not a peer.
+3. **Sector Check:** Use 'industry'/'sector' to filter out irrelevant jargon (e.g., don't flag "oil prices" for a software firm unless explicitly linked).
+4. **Smart Snipping:** Extract ONLY the core subject and action. Use "..." to remove filler words.
+
+JSON OUTPUT FORMAT:
+{
+  "rationale": "Max 15 words on why this matches the Search Context for THIS company.",
+  "is_catalyst": 0 | 1,
+  "evidence": "Verbatim quote using '...' for compression. MAX 40 WORDS. Returns null if 0."
+}
+"""
+
+
+STAGE1_HUMAN_PROMPT = """
+<TARGET_COMPANY>
+{company_info}
+</TARGET_COMPANY>
+
+<SEARCH_CONTEXT>
+Type: {catalyst_type}
+Query: {retrieval_query}
+</SEARCH_CONTEXT>
+
+<TEXT_TO_ANALYZE>
+{content}
+</TEXT_TO_ANALYZE>
 """
 
 
@@ -19,1309 +124,228 @@ STAGE1_HUMAN_PROMPT = """
 STAGE1_SYSTEM_MESSAGE = """
 You are an AI classifier for financial text.
 
-You will be given:
-1) ONE chunk from an earnings transcript or news article.
-2) Company context:
-- tic: stock ticker symbol (e.g. AAPL)
-- company_name: full name (e.g. Apple Inc.)
-- industry: (e.g. Technology, Automotive, Banks)
-- sector: (e.g. Consumer Electronics, Financials)
-- company_description: short business description
-3) The TARGET catalyst type to evaluate (e.g. "guidance_outlook", "product_initiative", etc.).
-4) The retrieval QUERY used by the RAG system to find this chunk.
+EXPECTED INPUT DATA:
+1. <TARGET_COMPANY>: A JSON object containing:
+   - "tic": Stock ticker symbol (e.g., AAPL).
+   - "company_name": Full entity name.
+   - "industry" & "sector": Classification context.
+   - "company_description": Short description of operations.
+2. <SEARCH_CONTEXT>:
+   - "Type": The target catalyst category (e.g., "guidance_outlook").
+   - "Query": The specific retrieval intent.
+3. <TEXT_TO_ANALYZE>: The raw text chunk.
+
 
 Use the query as context for what kind of event the system expects.
 Your job is to decide if this chunk truly describes that kind of catalyst event **for this company**.
 
-Task:
-Determine whether the chunk expresses a concrete, forward-looking, event-like statement
+TASK:
+1. Determine whether the chunk expresses a concrete, forward-looking, event-like statement
 matching the intended catalyst type and relevant to the company’s operations.
+2. Explain your reasoning in a brief rationale (max 15 words).
+3. Extract a quote snippet from the chunk that best supports your decision.
 
-Ignore:
+IGNORE:
 - generic strategy or vision statements
 - historical results with no forward implication
 - macro or competitor commentary unrelated to this company
 - filler, greetings, or Q&A context
 
-Return JSON ONLY, following this structure:
-{
-"is_catalyst": 0 | 1,
-"rationale": "short explanation of why this is or isn’t a catalyst (max 25 words)",
-"evidence": "Verbatim quote of the most relevant 1-2 sentences. You may use ellipses (...) to skip non-essential words, but do not rephrase. (max 60 words). If is_catalyst is 0, return null."
-}
-
-Rules:
+RULES:
 - Consider both the chunk text and the retrieval query when judging relevance.
 - Be slightly liberal: if the chunk clearly implies an actionable development, mark 1.
 - If it only mentions routine context or vague sentiment, mark 0.
 - Use company context only to assess whether the event affects this business or industry.
+
+Return JSON ONLY, following this structure:
+{
+  "rationale": "Max 15 words on why this matches the Search Context for THIS company.",
+  "is_catalyst": 0 | 1,
+  "evidence": "Verbatim quote using "..." for compression. MAX 40 WORDS. Returns empty string "" if 0."
+}
 """
 
 
 STAGE2_HUMAN_PROMPT = """
---- COMPANY CONTEXT ---
+<TARGET_COMPANY>
 {company_info}
+</TARGET_COMPANY>
 
---- TARGET CATALYST TYPE ---
-{catalyst_type}
+<CONTEXT_METADATA>
+Type: {catalyst_type}
+Query: {retrieval_query}
+Stage1_Rationale: {rationale}
+</CONTEXT_METADATA>
 
---- RAG RETRIEVAL QUERY ---
-{retrieval_query}
-
---- CHUNK TO ANALYZE ---
-{content}
-
---- STAGE 1 OUTPUT ---
-is_catalyst: 1
-rationale: {rationale}
-
---- CURRENT CATALYSTS (for this company and type) ---
+<CURRENT_CATALYSTS>
 {current_catalysts_json}
+</CURRENT_CATALYSTS>
+
+<EVIDENCE_SNIPPET>
+{evidence}
+</EVIDENCE_SNIPPET>
 """
 
 
+STAGE2_SYSTEM_TEMPLATE = """
+You are an expert Financial Analyst specializing in {role} catalysts.
 
-GUIDANCE_OUTLOOK_SYSTEM_MESSAGE = """
-You are an AI analyst specializing in GUIDANCE / OUTLOOK catalysts.
-
-Input:
-1. A transcript or news CHUNK already confirmed as guidance_outlook.
-2. The company context:
-   - tic: stock ticker symbol (e.g. AAPL)
-   - company_name: full name (e.g. Apple Inc.)
-   - industry: (e.g. Technology, Automotive, Banks)
-   - sector: (e.g. Consumer Electronics, Financials)
-   - company_description: short business description
-3. The retrieval QUERY used to find this chunk (e.g. "raised or lowered revenue or EPS guidance").
-4. The REASON from Stage 1 explaining why this chunk was considered a catalyst.
-5. A list of CURRENT guidance catalysts for this company.
-   Each follows the same schema as your output:
-   {
-     "catalyst_id": "<uuid>",
-     "state": "...",
-     "title": "...",
-     "summary": "...",
-     "evidence": "...",
-     "time_horizon": "...",
-     "certainty": "...",
-     "impact_area": "...",
-     "sentiment": "...",
-     "impact_magnitude": "..."
-   }
-
-Goal:
-Decide whether this chunk represents  
-• a NEW guidance catalyst (no match found), or  
-• an UPDATE to an existing catalyst (same topic, period, or metric).
-
-Use all provided context — especially the retrieval query, the Stage 1 rationale, and any CURRENT catalyst summaries/titles — to decide whether this is:
-• a distinct (new) guidance event, or
-• a continuation / modification of an existing one.
-
-The title must be short, specific, and encode **directional/sentiment context**.
-
-If this is an UPDATE:
-• keep the same catalyst_id
-• adjust the state to "updated"
-• refine or expand the previous summary logically based on the new evidence
-• and also refine the previous title to reflect the new status.
+Your Goal:
+Analyze the provided <EVIDENCE_SNIPPET> (extracted from a larger text) to determine if it represents a **NEW** catalyst or an **UPDATE** to an existing one.
 
 ----------------------------------------------------
-MATCHING RULES
+DOMAIN RULES: {role}
 ----------------------------------------------------
-Treat as the SAME catalyst (update) if:
-• same or overlapping period (e.g., FY 2025, next quarter), or  
-• same impact_area (revenue, EPS, margin, demand, cashflow), or  
-• mentions reaffirmation (“unchanged”, “as guided”, “reaffirm”), or  
-• clearly revises, extends, or elaborates prior guidance.  
-Otherwise → new catalyst.
+**Valid Definition:**
+{definition}
+
+**Matching Logic (New vs Update):**
+{matching_rules}
+
+**Allowed Impact Areas:**
+[{valid_impact_areas}]
 
 ----------------------------------------------------
-OUTPUT (JSON ONLY)
+DECISION LOGIC
 ----------------------------------------------------
-{
-  "catalyst_id": null,  # use existing catalyst_id if updating, otherwise JSON null (not string)
+Step 1: Read the <EVIDENCE_SNIPPET> and <STAGE1_RATIONALE>.
+Step 2: Compare against <CURRENT_CATALYSTS> to check for duplicates/updates.
+Step 3: Apply the **Matching Logic** defined above.
+   - If match found → It is an UPDATE.
+   - If no match → It is NEW.
+Step 4: Generate the JSON output. 
+   - If it is UPDATE, adjust the state to "updated"; keep the same catalyst_id; update all the fields according to the new snippet.
+   - If NEW, set `catalyst_id` to null.
+
+----------------------------------------------------
+OUTPUT SCHEMA (JSON ONLY)
+----------------------------------------------------
+Return a single JSON object:
+{{
+  "catalyst_id": "UUID string if update (copy from current list), or null if new",
   "state": "announced" | "updated" | "withdrawn" | "realized",
-  "title": "short headline (max 12 words)",
-  "summary": "concise one- to two-sentence description (max 60 words, may refine previous summary if updating)",
-  "evidence": "Verbatim quote of the most relevant 1-2 sentences. You may use ellipses (...) to skip non-essential words, but do not rephrase. (max 60 words)",
-  "time_horizon": 0 | 1 | 2 | null,   # 0 = short_term (≤1 week), 1 = mid_term (≤3 months), 2 = long_term (>3 months)
+  "title": "Short, punchy headline (max 12 words). Directional.",
+  "summary": "1-2 sentence description (max 60 words). Synthesize the snippet's meaning.",
+  "evidence": "Copy the input <EVIDENCE_SNIPPET> exactly.",
+  "time_horizon": 0 | 1 | 2 | null,   // 0=Short(≤1wk), 1=Mid(≤3mo), 2=Long(>3mo)
   "certainty": "confirmed" | "planned" | "rumor" | "denied" | null,
-  "impact_area": "revenue" | "earnings" | "margin" | "profitability" | "cashflow" | "capex" | "expenses" | "volume" | "demand" | null,
-  "sentiment": -1 | 0 | 1,   # -1 = negative, 0 = neutral, 1 = positive
-  "impact_magnitude": -1 | 0 | 1    # -1 = minor, 0 = moderate, 1 = major
-}
-
-STATE meaning:
-• **announced** → new guidance not previously seen  
-• **updated** → matched an existing catalyst; reaffirmed or modified  
-• **withdrawn** → prior guidance canceled, paused, or withdrawn  
-• **realized** → guidance achieved or fully realized
-
-----------------------------------------------------
-EXAMPLE
-----------------------------------------------------
-Chunk:
-"We are reaffirming our full-year 2025 revenue guidance that we raised last quarter."
-
-Company:
-Apple Inc. (AAPL), Technology, Consumer Electronics
-
-Query:
-"raised or lowered revenue or EPS guidance"
-
-Stage 1 Reason:
-"Management reaffirmed guidance for the same fiscal period."
-
-Current Catalysts:
-[
-  {
-    "catalyst_id": "g1",
-    "state": "announced",
-    "title": "Raised FY 2025 revenue guidance",
-    "summary": "Announced an upward revision to full-year 2025 revenue guidance.",
-    "impact_area": "revenue",
-    "sentiment": 1
-  }
-]
-
-Expected Output:
-{
-  "catalyst_id": "g1",
-  "state": "updated",
-  "title": "FY 2025 revenue guidance reaffirmed (previously raised)",
-  "summary": "Reaffirmed FY 2025 revenue guidance, maintaining the prior upward revision from Q2.",
-  "evidence": "We are reaffirming our full-year 2025 revenue guidance that we raised last quarter.",
-  "time_horizon": 1,
-  "certainty": "confirmed",
-  "impact_area": "revenue",
-  "sentiment": 0,
-  "impact_magnitude": -1
-}
+  "impact_area": "Must be one of: [{valid_impact_areas}]",
+  "sentiment": -1 | 0 | 1,   // -1=Negative, 0=Neutral, 1=Positive
+  "impact_magnitude": -1 | 0 | 1   // -1=Minor, 0=Moderate, 1=Major
+}}
 """
 
 
-PRODUCT_INITIATIVE_SYSTEM_MESSAGE = """
-You are an AI analyst specializing in PRODUCT / EXPANSION INITIATIVES catalysts.
-
-Input:
-1. A transcript or news CHUNK already confirmed as product_initiative.
-2. The company context:
-   - tic: stock ticker symbol (e.g. AAPL)
-   - company_name: full name (e.g. Apple Inc.)
-   - industry: (e.g. Technology, Automotive, Banks)
-   - sector: (e.g. Consumer Electronics, Financials)
-   - company_description: short business description
-3. The retrieval QUERY used to find this chunk (e.g. "new product or service launch announced").
-4. The REASON from Stage 1 explaining why this chunk was considered a catalyst.
-5. A list of CURRENT product_initiative catalysts for this company.
-   Each follows the same schema as your output:
-   {
-     "catalyst_id": "<uuid>",
-     "state": "...",
-      "title": "...",
-     "summary": "...",
-     "evidence": "...",
-     "time_horizon": "...",
-     "certainty": "...",
-     "impact_area": "...",
-     "sentiment": "...",
-     "impact_magnitude": "..."
-   }
-
-Goal:
-Decide whether this chunk represents
-• a NEW product / expansion catalyst (no match found), or
-• an UPDATE to an existing catalyst (same initiative, product, site, or rollout).
-
-Use all provided context — especially the retrieval query, the Stage 1 rationale, and any CURRENT catalyst summaries/titles — to decide whether this is:
-• a distinct (new) guidance event, or
-• a continuation / modification of an existing one.
-
-The title must be short, specific, and encode **directional/sentiment context**.
-
-If this is an UPDATE:
-• keep the same catalyst_id
-• adjust the state to "updated"
-• refine or expand the previous summary logically based on the new evidence
-• and also refine the previous title to reflect the new status.
-
-----------------------------------------------------
-DETECTION RULES
-----------------------------------------------------
-Valid when the company:
-• announces or launches a new product, service, or feature
-• expands into a new geography, category, or market segment
-• increases production capacity (factory, facility, manufacturing line)
-• reports ramp-up, scaling, pilot → GA, or rollout progress for an already announced initiative
-
-Ignore:
-• generic innovation talk (“we continue to innovate”)
-• vague R&D updates without a specific initiative or timeline
-
-----------------------------------------------------
-MATCHING RULES
-----------------------------------------------------
-Treat as the SAME catalyst (update) if:
-• same product, service, facility, or project name,
-• OR same business objective (e.g. “ramp of the Vietnam plant”, “phase 2 of the same DC”),
-• OR it clearly says progress, ramp, rollout, pilot-to-scale, or “as previously announced”.
-
-Otherwise → new catalyst.
-
-----------------------------------------------------
-OUTPUT (JSON ONLY)
-----------------------------------------------------
-{
-  "catalyst_id": null,  # use existing catalyst_id if updating, otherwise JSON null (not string)
-  "state": "announced" | "updated" | "withdrawn" | "realized",
-  "title": "short headline (max 12 words)",
-  "summary": "concise 1–2 sentence description (max 60 words). If update, refine/extend the earlier summary.",
-  "evidence": "Verbatim quote of the most relevant 1-2 sentences. You may use ellipses (...) to skip non-essential words, but do not rephrase. (max 60 words)",
-  "time_horizon": 0 | 1 | 2 | null,   # 0 = short_term (≤1 week), 1 = mid_term (≤3 months), 2 = long_term (>3 months)
-  "certainty": "confirmed" | "planned" | "rumor" | "denied" | null,
-  "impact_area": "revenue" | "operations" | "strategy" | "technology" | "market_expansion" | "capacity" | null,
-  "sentiment": -1 | 0 | 1,   # -1 = negative, 0 = neutral, 1 = positive
-  "impact_magnitude": -1 | 0 | 1    # -1 = minor, 0 = moderate, 1 = major
+STAGE2_SYSTEM_CONFIG = {
+    "guidance_outlook": {
+        "role": "GUIDANCE / OUTLOOK",
+        "definition": "Valid when management issues forecasts for revenue, EPS, margins, cash flow, or production numbers for a specific future period.",
+        "matching_rules": "Treat as UPDATE if: Same fiscal period (e.g., Q4, FY25), same metric (revenue, EPS), or mentions 'reaffirming'/'lowering'/'raising' prior guidance.",
+        "valid_impact_areas": "revenue, earnings, margin, profitability, cashflow, expenses, volume, demand"
+    },
+    "product_initiative": {
+        "role": "PRODUCT / EXPANSION",
+        "definition": "Valid for new product launches, feature rollouts, entering new markets/geographies, or capacity expansion (factories, lines).",
+        "matching_rules": "Treat as UPDATE if: Same product name, same facility location, or explicitly mentions progress/ramp-up of a previously announced initiative.",
+        "valid_impact_areas": "revenue, operations, strategy, technology, market_expansion, capacity"
+    },
+    "partnership_deal": {
+        "role": "PARTNERSHIP / DEAL",
+        "definition": "Valid for M&A, joint ventures, strategic alliances, major contract wins, or licensing agreements.",
+        "matching_rules": "Treat as UPDATE if: Same partner/counterparty name, same deal structure, or mentions closing/completion of a previously announced deal.",
+        "valid_impact_areas": "revenue, strategy, operations, market_expansion, technology, supply_chain, financial"
+    },
+    "cost_efficiency": {
+        "role": "COST EFFICIENCY / RESTRUCTURING",
+        "definition": "Valid for layoffs, hiring freezes, cost-saving programs, facility closures, or margin improvement initiatives.",
+        "matching_rules": "Treat as UPDATE if: Same program name (e.g. 'Project X'), same savings target amount, or progress update on previously announced restructuring.",
+        "valid_impact_areas": "profitability, operations, cashflow, expenses, margin, headcount, productivity"
+    },
+    "capital_actions": {
+        "role": "CAPITAL ACTIONS",
+        "definition": "Valid for share buybacks, dividends, debt issuance/repayment, credit facilities, or capital allocation changes.",
+        "matching_rules": "Treat as UPDATE if: Refers to the same buyback program ($ amount/dates), dividend declaration, or financing facility.",
+        "valid_impact_areas": "shareholder_return, financing, cashflow, balance_sheet, leverage, liquidity"
+    },
+    "regulatory_policy": {
+        "role": "REGULATORY / LEGAL",
+        "definition": "Valid for lawsuits, investigations, FDA/regulatory approvals, settlements, or compliance changes.",
+        "matching_rules": "Treat as UPDATE if: Same lawsuit case, same regulatory application (e.g., specific drug), or resolution of a known investigation.",
+        "valid_impact_areas": "compliance, risk, operations, revenue, licensing, legal, governance, policy"
+    },
+    "demand_trends": {
+        "role": "DEMAND / MACRO TRENDS",
+        "definition": "Valid for reports of strong/weak bookings, backlog changes, inventory destocking, or specific regional/sector demand shifts.",
+        "matching_rules": "Treat as UPDATE if: Relates to the same specific product line, region (e.g., 'China demand'), or customer segment (e.g., 'Enterprise').",
+        "valid_impact_areas": "revenue, demand, volume, pricing, macro, region, channel, inventory"
+    },
+    "risk_event": {
+        "role": "RISK / NEGATIVE EVENT",
+        "definition": "Valid for supply chain disruptions, delays, cancellations, accidents, cyber breaches, or executive departures.",
+        "matching_rules": "Treat as UPDATE if: Same specific incident, same delayed project, or continuation of a previously reported outage/shortage.",
+        "valid_impact_areas": "operations, supply_chain, earnings, demand, financial, regulatory, cybersecurity, reputation, leadership, environmental"
+    },
+    "macro_policy": {
+        "role": "MACRO / POLICY / GEOPOLITICAL",
+        "definition": "Valid for interest rates, inflation, FX, trade tariffs, fiscal stimulus, or war/geopolitical conflict affecting the company.",
+        "matching_rules": "Treat as UPDATE if: Same macro factor (e.g. 'interest rates'), same specific policy (e.g. 'IRA Act'), or same geopolitical conflict.",
+        "valid_impact_areas": "macro, monetary_policy, fiscal_policy, trade_policy, currency_fx, commodity_prices, geopolitical, inflation_cost, demand, risk"
+    }
 }
-
-STATE meaning:
-• **announced** → new product / expansion first disclosed
-• **updated** → progress, ramp, or scope change to an existing initiative
-• **withdrawn** → initiative paused, canceled, or materially delayed
-• **realized** → initiative completed, launched, or fully in production
-
-----------------------------------------------------
-EXAMPLE
-----------------------------------------------------
-Chunk:
-"We have begun mass production of our next-generation AI chip following last quarter’s announcement."
-
-Company:
-NVIDIA Corp. (NVDA), Technology, Semiconductors
-
-Query:
-"capacity expansion or production ramp at new facility"
-
-Stage 1 Reason:
-"Company confirmed production ramp of previously announced AI chip."
-
-Current Catalysts:
-[
-  {
-    "catalyst_id": "p1",
-    "state": "announced",
-    "title": "New AI Chip Launch",
-    "summary": "Announced next-gen AI chip launch last quarter.",
-    "impact_area": "revenue",
-    "sentiment": 1
-  }
-]
-
-Expected Output:
-{
-  "catalyst_id": "p1",
-  "state": "updated",
-  "title": "AI Chip Mass Production Started",
-  "summary": "Mass production started for the previously announced next-gen AI chip.",
-  "evidence": "We have begun mass production of our next-generation AI chip following last quarter’s announcement.",
-  "time_horizon": 1,
-  "certainty": "confirmed",
-  "impact_area": "operations",
-  "sentiment": 1,
-  "impact_magnitude": 0
-}
-"""
-
-PARTNERSHIP_DEAL_SYSTEM_MESSAGE = """
-You are an AI analyst specializing in PARTNERSHIP / DEAL catalysts.
-
-Input:
-1. A transcript or news CHUNK already confirmed as partnership_deal.
-2. The company context:
-   - tic: stock ticker symbol (e.g. AAPL)
-   - company_name: full name (e.g. Apple Inc.)
-   - industry: (e.g. Technology, Automotive, Banks)
-   - sector: (e.g. Consumer Electronics, Financials)
-   - company_description: short business description
-3. The retrieval QUERY used to find this chunk (e.g. "partnership or strategic alliance announced").
-4. The REASON from Stage 1 explaining why this chunk was considered a catalyst.
-5. A list of CURRENT partnership_deal catalysts for this company.
-   Each follows the same schema as your output:
-   {
-     "catalyst_id": "<uuid>",
-     "state": "...",
-     "title": "...",
-     "summary": "...",
-     "evidence": "...",
-     "time_horizon": "...",
-     "certainty": "...",
-     "impact_area": "...",
-     "sentiment": "...",
-     "impact_magnitude": "..."
-   }
-
-Goal:
-Decide whether this chunk represents  
-• a NEW partnership / contract / deal catalyst, or  
-• an UPDATE to an existing one (same agreement, partner, or transaction).
-
-Use all provided context — especially the retrieval query, the Stage 1 rationale, and any CURRENT catalyst summaries/titles — to decide whether this is:
-• a distinct (new) guidance event, or
-• a continuation / modification of an existing one.
-
-The title must be short, specific, and encode **directional/sentiment context**.
-
-If this is an UPDATE:
-• keep the same catalyst_id
-• adjust the state to "updated"
-• refine or expand the previous summary logically based on the new evidence
-• and also refine the previous title to reflect the new status.
-
-----------------------------------------------------
-DETECTION RULES
-----------------------------------------------------
-Valid when the company:
-• announces a partnership, collaboration, or joint venture  
-• wins a major customer or supplier contract  
-• announces M&A (merger, acquisition, divestiture, takeover)  
-• signs a long-term alliance, licensing, or distribution agreement  
-
-Ignore:
-• vague comments like “we work with partners” or “exploring opportunities”  
-• early-stage talks unless binding or confirmed  
-
-----------------------------------------------------
-MATCHING RULES
-----------------------------------------------------
-Treat as the SAME catalyst (update) if:
-• same partner, counterparty, or target company, or  
-• same deal / agreement name or structure, or  
-• mentions closing, progress, integration, or reaffirmation (“as announced”, “deal completed”, “transaction finalized”).  
-
-Otherwise → new catalyst.
-
-----------------------------------------------------
-OUTPUT (JSON ONLY)
-----------------------------------------------------
-{
-  "catalyst_id": null,  # use existing catalyst_id if updating, otherwise JSON null (not string)
-  "state": "announced" | "updated" | "withdrawn" | "realized",
-  "title": "short headline (max 12 words)",
-  "summary": "concise 1–2 sentence description (max 60 words; may refine prior summary if updating)",
-  "evidence": "Verbatim quote of the most relevant 1-2 sentences. You may use ellipses (...) to skip non-essential words, but do not rephrase. (max 60 words)",
-  "time_horizon": 0 | 1 | 2 | null,   # 0 = short_term (≤1 week), 1 = mid_term (≤3 months), 2 = long_term (>3 months)
-  "certainty": "confirmed" | "planned" | "rumor" | "denied" | null,
-  "impact_area": "revenue" | "strategy" | "operations" | "market_expansion" | "technology" | "supply_chain" | "financial" | null,
-  "sentiment": -1 | 0 | 1,   # -1 = negative, 0 = neutral, 1 = positive
-  "impact_magnitude": -1 | 0 | 1    # -1 = minor, 0 = moderate, 1 = major
-}
-
-STATE meaning:
-• **announced** → new partnership or deal disclosed for the first time  
-• **updated** → existing deal reaffirmed, modified, or progressed  
-• **withdrawn** → deal canceled or abandoned  
-• **realized** → deal completed, closed, or integrated  
-
-----------------------------------------------------
-EXAMPLE
-----------------------------------------------------
-Chunk:
-"The merger with Orion Systems, first announced in Q2, has officially closed this month."
-
-Company:
-TechNova Corp. (TNVA), Technology, Software & Services
-
-Query:
-"merger or acquisition agreement signed"
-
-Stage 1 Reason:
-"Company confirmed completion of previously announced merger."
-
-Current Catalysts:
-[
-  {
-    "catalyst_id": "pd1",
-    "state": "announced",
-    "title": "Merger with Orion Systems Announced",
-    "summary": "Announced merger agreement with Orion Systems in Q2.",
-    "impact_area": "strategy",
-    "sentiment": 1
-  }
-]
-
-Expected Output:
-{
-  "catalyst_id": "pd1",
-  "state": "realized",
-  "title": "Merger with Orion Systems Completed",
-  "summary": "Completed merger with Orion Systems, finalizing the previously announced transaction.",
-  "evidence": "The merger with Orion Systems, first announced in Q2, has officially closed this month.",
-  "time_horizon": 1,
-  "certainty": "confirmed",
-  "impact_area": "strategy",
-  "sentiment": 1,
-  "impact_magnitude": 1
-}
-"""
-
-COST_EFFICIENCY_SYSTEM_MESSAGE = """
-You are an AI analyst specializing in COST EFFICIENCY / RESTRUCTURING catalysts.
-
-Input:
-1. A transcript or news CHUNK already confirmed as cost_efficiency.
-2. The company context:
-   - tic: stock ticker symbol (e.g. AAPL)
-   - company_name: full name (e.g. Apple Inc.)
-   - industry: (e.g. Technology, Automotive, Banks)
-   - sector: (e.g. Consumer Electronics, Financials)
-   - company_description: short business description
-3. The retrieval QUERY used to find this chunk (e.g. "cost reduction or efficiency initiative to improve margins").
-4. The REASON from Stage 1 explaining why this chunk was considered a catalyst.
-5. A list of CURRENT cost_efficiency catalysts for this company.
-   Each follows the same schema as your output:
-   {
-     "catalyst_id": "<uuid>",
-     "state": "...",
-     "title": "...",
-     "summary": "...",
-     "evidence": "...",
-     "time_horizon": "...",
-     "certainty": "...",
-     "impact_area": "...",
-     "sentiment": "...",
-     "impact_magnitude": "..."
-   }
-
-Goal:
-Determine whether this chunk represents  
-• a NEW cost-efficiency or restructuring catalyst, or  
-• an UPDATE to an existing one (same program, target, or savings initiative).
-
-Use all provided context — especially the retrieval query, the Stage 1 rationale, and any CURRENT catalyst summaries/titles — to decide whether this is:
-• a distinct (new) guidance event, or
-• a continuation / modification of an existing one.
-
-The title must be short, specific, and encode **directional/sentiment context**.
-
-If this is an UPDATE:
-• keep the same catalyst_id
-• adjust the state to "updated"
-• refine or expand the previous summary logically based on the new evidence
-• and also refine the previous title to reflect the new status.
-
-----------------------------------------------------
-DETECTION RULES
-----------------------------------------------------
-Valid when the company:
-• announces layoffs, workforce reductions, or hiring freezes  
-• launches cost-saving, restructuring, or margin-improvement programs  
-• consolidates or closes facilities, divisions, or business lines  
-• reports progress toward previously announced savings or efficiency targets  
-
-Ignore:
-• generic efficiency statements (“we remain focused on costs”)  
-• vague cost comments without concrete actions, numbers, or timing  
-
-----------------------------------------------------
-MATCHING RULES
-----------------------------------------------------
-Treat as the SAME catalyst (update) if:
-• same cost or restructuring program,  
-• same savings target, headcount initiative, or operational area,  
-• same fiscal period or objective (“2025 plan”, “margin expansion program”), or  
-• text indicates progress, completion, reaffirmation, or revision (“on track”, “completed”, “phase 2 underway”).  
-
-Otherwise → new catalyst.
-
-----------------------------------------------------
-OUTPUT (JSON ONLY)
-----------------------------------------------------
-{
-  "catalyst_id": null,  # use existing catalyst_id if updating, otherwise JSON null (not string)
-  "state": "announced" | "updated" | "withdrawn" | "realized",
-  "title": "short headline (max 12 words)",
-  "summary": "concise 1–2 sentence description (max 60 words; may refine previous summary if updating)",
-  "evidence": "Verbatim quote of the most relevant 1-2 sentences. You may use ellipses (...) to skip non-essential words, but do not rephrase. (max 60 words)",
-  "time_horizon": 0 | 1 | 2 | null,   # 0 = short_term (≤1 week), 1 = mid_term (≤3 months), 2 = long_term (>3 months)
-  "certainty": "confirmed" | "planned" | "rumor" | "denied" | null,
-  "impact_area": "profitability" | "operations" | "cashflow" | "expenses" | "margin" | "headcount" | "productivity" | null,
-  "sentiment": -1 | 0 | 1,   # -1 = negative, 0 = neutral, 1 = positive
-  "impact_magnitude": -1 | 0 | 1    # -1 = minor, 0 = moderate, 1 = major
-}
-
-STATE meaning:
-• **announced** → new cost or restructuring plan disclosed  
-• **updated** → existing program reaffirmed, revised, or expanded  
-• **withdrawn** → plan canceled, paused, or reduced in scope  
-• **realized** → program completed and savings achieved  
-
-----------------------------------------------------
-EXAMPLE
-----------------------------------------------------
-Chunk:
-"Our 2025 cost-reduction program is now complete, achieving over $200 million in savings."
-
-Company:
-MegaTech Corp. (MTCH), Technology, Hardware Manufacturing
-
-Query:
-"cost reduction or efficiency initiative to improve margins"
-
-Stage 1 Reason:
-"Company confirmed completion of prior cost-reduction program."
-
-Current Catalysts:
-[
-  {
-    "catalyst_id": "ce1",
-    "state": "announced",
-    "title": "2025 Cost-Reduction Program Announced",
-    "summary": "Announced cost-reduction program targeting $200M savings in 2025.",
-    "impact_area": "profitability",
-    "sentiment": 1
-  }
-]
-
-Expected Output:
-{
-  "catalyst_id": "ce1",
-  "state": "realized",
-  "title": "2025 Cost-Reduction Program Completed",
-  "summary": "Completed 2025 cost-reduction program achieving $200M savings.",
-  "evidence": "Our 2025 cost-reduction program is now complete, achieving over $200 million in savings.",
-  "time_horizon": 1,
-  "certainty": "confirmed",
-  "impact_area": "profitability",
-  "sentiment": 1,
-  "impact_magnitude": 1
-}
-"""
-
-
-CAPITAL_ACTIONS_SYSTEM_MESSAGE = """
-You are an AI analyst specializing in CAPITAL ACTIONS catalysts.
-
-Input:
-1. A transcript or news CHUNK already confirmed as capital_actions.
-2. The company context:
-   - tic: stock ticker symbol (e.g. AAPL)
-   - company_name: full name (e.g. Apple Inc.)
-   - industry: (e.g. Technology, Automotive, Banks)
-   - sector: (e.g. Consumer Electronics, Financials)
-   - company_description: short business description
-3. The retrieval QUERY used to find this chunk (e.g. "share repurchase authorization or dividend change").
-4. The REASON from Stage 1 explaining why this chunk was considered a catalyst.
-5. A list of CURRENT capital_actions catalysts for this company.
-   Each follows the same schema as your output:
-   {
-     "catalyst_id": "<uuid>",
-     "state": "...",
-     "title": "...",
-     "summary": "...",
-     "evidence": "...",
-     "time_horizon": "...",
-     "certainty": "...",
-     "impact_area": "...",
-     "sentiment": "...",
-     "impact_magnitude": "..."
-   }
-
-Goal:
-Determine whether this chunk represents  
-• a NEW capital-related catalyst, or  
-• an UPDATE to an existing one (same buyback, dividend, debt issuance, or financing action).
-
-Use all provided context — especially the retrieval query, the Stage 1 rationale, and any CURRENT catalyst summaries/titles — to decide whether this is:
-• a distinct (new) guidance event, or
-• a continuation / modification of an existing one.
-
-The title must be short, specific, and encode **directional/sentiment context**.
-
-If this is an UPDATE:
-• keep the same catalyst_id
-• adjust the state to "updated"
-• refine or expand the previous summary logically based on the new evidence
-• and also refine the previous title to reflect the new status.
-
-----------------------------------------------------
-DETECTION RULES
-----------------------------------------------------
-Valid when the company:
-• announces, modifies, or completes a share repurchase or dividend program  
-• issues, repays, or refinances debt or equity (bonds, notes, convertibles, secondary offering)  
-• opens, extends, or modifies a credit facility or revolving line  
-• changes capital-allocation policy (e.g., leverage reduction, payout ratio, balance sheet optimization)  
-
-Ignore:
-• vague balance-sheet commentary (“strong capital position”, “maintaining flexibility”)  
-• general mentions of capital discipline without an explicit action  
-
-----------------------------------------------------
-MATCHING RULES
-----------------------------------------------------
-Treat as the SAME catalyst (update) if:
-• it refers to the same repurchase, dividend, or financing program,  
-• same impact_area (cashflow, financing, shareholder_return, leverage, liquidity), or  
-• language indicates reaffirmation, execution, or completion (“executed”, “fully repaid”, “as announced”, “program completed”).  
-
-Otherwise → new catalyst.
-
-----------------------------------------------------
-OUTPUT (JSON ONLY)
-----------------------------------------------------
-{
-  "catalyst_id": null,  # use existing catalyst_id if updating, otherwise JSON null (not string)
-  "state": "announced" | "updated" | "withdrawn" | "realized",
-  "title": "short headline (max 12 words)",
-  "summary": "concise 1–2 sentence description (max 60 words; refine existing summary if updating)",
-  "evidence": "Verbatim quote of the most relevant 1-2 sentences. You may use ellipses (...) to skip non-essential words, but do not rephrase. (max 60 words)",
-  "time_horizon": 0 | 1 | 2 | null,   # 0 = short_term (≤1 week), 1 = mid_term (≤3 months), 2 = long_term (>3 months)
-  "certainty": "confirmed" | "planned" | "rumor" | "denied" | null,
-  "impact_area": "shareholder_return" | "financing" | "cashflow" | "balance_sheet" | "leverage" | "liquidity" | null,
-  "sentiment": -1 | 0 | 1,   # -1 = negative, 0 = neutral, 1 = positive
-  "impact_magnitude": -1 | 0 | 1    # -1 = minor, 0 = moderate, 1 = major
-}
-
-STATE meaning:
-• **announced** → new capital action disclosed (buyback, dividend, issuance, or facility)  
-• **updated** → existing action reaffirmed, modified, or expanded  
-• **withdrawn** → action canceled, suspended, or reduced  
-• **realized** → program completed, repaid, or fully executed  
-
-----------------------------------------------------
-EXAMPLE
-----------------------------------------------------
-Chunk:
-"Our $5 billion share-repurchase program, launched last year, has now been completed."
-
-Company:
-Apple Inc. (AAPL), Technology, Consumer Electronics
-
-Query:
-"share repurchase authorization or dividend change"
-
-Stage 1 Reason:
-"Company confirmed completion of its prior share-repurchase program."
-
-Current Catalysts:
-[
-  {
-    "catalyst_id": "ca1",
-    "state": "announced",
-    "title": "$5B Share Repurchase Program Announced",
-    "summary": "Announced $5 billion share-repurchase program last year.",
-    "impact_area": "shareholder_return",
-    "sentiment": 1
-  }
-]
-
-Expected Output:
-{
-  "catalyst_id": "ca1",
-  "state": "realized",
-  "title": "Completed $5B Share Repurchase Program",
-  "summary": "Completed $5 billion share-repurchase program initiated last year.",
-  "evidence": "Our $5 billion share-repurchase program, launched last year, has now been completed.",
-  "time_horizon": 1,
-  "certainty": "confirmed",
-  "impact_area": "shareholder_return",
-  "sentiment": 1,
-  "impact_magnitude": 1
-}
-"""
-
-REGULATORY_POLICY_SYSTEM_MESSAGE = """
-You are an AI analyst specializing in REGULATORY / LEGAL catalysts.
-
-Input:
-1. A transcript or news CHUNK already confirmed as regulatory_policy.
-2. The company context:
-   - tic: stock ticker symbol (e.g. AAPL)
-   - company_name: full name (e.g. Apple Inc.)
-   - industry: (e.g. Technology, Biotech, Financials)
-   - sector: (e.g. Healthcare, Consumer Electronics, Banks)
-   - company_description: short business description
-3. The retrieval QUERY used to find this chunk (e.g. "regulatory approval or authorization granted").
-4. The REASON from Stage 1 explaining why this chunk was considered a catalyst.
-5. A list of CURRENT regulatory_policy catalysts for this company.
-   Each follows the same schema as your output:
-   {
-     "catalyst_id": "<uuid>",
-     "state": "...",
-     "title": "...",
-     "summary": "...",
-     "evidence": "...",
-     "time_horizon": "...",
-     "certainty": "...",
-     "impact_area": "...",
-     "sentiment": "...",
-     "impact_magnitude": "..."
-   }
-
-Goal:
-Determine whether this chunk represents  
-• a NEW regulatory or legal catalyst, or  
-• an UPDATE to an existing one (same case, filing, or agency process).
-
-Use all provided context — especially the retrieval query, the Stage 1 rationale, and any CURRENT catalyst summaries/titles — to decide whether this is:
-• a distinct (new) guidance event, or
-• a continuation / modification of an existing one.
-
-The title must be short, specific, and encode **directional/sentiment context**.
-
-If this is an UPDATE:
-• keep the same catalyst_id
-• adjust the state to "updated"
-• refine or expand the previous summary logically based on the new evidence
-• and also refine the previous title to reflect the new status.
-
-----------------------------------------------------
-DETECTION RULES
-----------------------------------------------------
-Valid when the company:
-• receives, files, or seeks approval from a government or regulatory body (e.g., FDA, SEC, FCC, EPA)  
-• faces or resolves a fine, lawsuit, or investigation  
-• is directly affected by new or revised laws, regulations, or enforcement actions  
-• announces settlement, closure, or approval outcomes affecting its operations or risk exposure  
-
-Ignore:
-• macro policy or industry-wide regulation with no direct company action  
-• generic commentary about compliance without a specific filing, approval, or case  
-
-----------------------------------------------------
-MATCHING RULES
-----------------------------------------------------
-Treat as the SAME catalyst (update) if:
-• relates to the same case, application, approval, or enforcement process  
-• same agency, court, or authority  
-• same impact_area (compliance, legal, risk, policy, operations, or revenue)  
-• mentions procedural status or resolution (“approved”, “settled”, “closed”, “dismissed”, “withdrawn”, “reaffirmed”)  
-
-Otherwise → new catalyst.
-
-----------------------------------------------------
-OUTPUT (JSON ONLY)
-----------------------------------------------------
-{
-  "catalyst_id": null,  # use existing catalyst_id if updating, otherwise JSON null (not string)
-  "state": "announced" | "updated" | "withdrawn" | "realized",
-  "title": "short headline (max 12 words)",
-  "summary": "concise 1–2 sentence description (max 60 words; refine or merge prior summary if updating)",
-  "evidence": "Verbatim quote of the most relevant 1-2 sentences. You may use ellipses (...) to skip non-essential words, but do not rephrase. (max 60 words)",
-  "time_horizon": 0 | 1 | 2 | null,   # 0 = short_term (≤1 week), 1 = mid_term (≤3 months), 2 = long_term (>3 months)
-  "certainty": "confirmed" | "planned" | "rumor" | "denied" | null,
-  "impact_area": "compliance" | "risk" | "operations" | "revenue" | "licensing" | "legal" | "governance" | "policy" | null,
-  "sentiment": -1 | 0 | 1,   # -1 = negative, 0 = neutral, 1 = positive
-  "impact_magnitude": -1 | 0 | 1    # -1 = minor, 0 = moderate, 1 = major
-}
-
-STATE meaning:
-• **announced** → new regulatory, legal, or policy event disclosed  
-• **updated** → existing matter advanced, reaffirmed, or modified  
-• **withdrawn** → case, filing, or application dropped or paused  
-• **realized** → event concluded (approval granted, case closed, or settlement reached)
-
-----------------------------------------------------
-EXAMPLE
-----------------------------------------------------
-Chunk:
-"The SEC has formally closed its investigation into our accounting practices without further action."
-
-Company:
-FinServe Inc. (FSV), Financial Services, Banking
-
-Query:
-"investigation or lawsuit announced; settlement or fine"
-
-Stage 1 Reason:
-"Company confirmed resolution of prior SEC investigation."
-
-Current Catalysts:
-[
-  {
-    "catalyst_id": "rl1",
-    "state": "announced",
-    "title": "SEC Investigation into Accounting Practices",
-    "summary": "SEC launched investigation into accounting practices.",
-    "impact_area": "risk",
-    "sentiment": -1
-  }
-]
-
-Expected Output:
-{
-  "catalyst_id": "rl1",
-  "state": "realized",
-  "title": "SEC Investigation Closed",
-  "summary": "SEC closed accounting investigation with no further action.",
-  "evidence": "The SEC has formally closed its investigation into our accounting practices without further action.",
-  "time_horizon": 0,
-  "certainty": "confirmed",
-  "impact_area": "risk",
-  "sentiment": 1,
-  "impact_magnitude": 0
-}
-"""
-
-DEMAND_TRENDS_SYSTEM_MESSAGE = """
-You are an AI analyst specializing in DEMAND / MACRO TRENDS catalysts.
-
-Input:
-1. A transcript or news CHUNK already confirmed as demand_trends.
-2. The company context:
-   - tic: stock ticker symbol (e.g. AAPL)
-   - company_name: full name (e.g. Apple Inc.)
-   - industry: (e.g. Technology, Consumer Goods, Industrials)
-   - sector: (e.g. Electronics, Retail, Manufacturing)
-   - company_description: short business description
-3. The retrieval QUERY used to find this chunk (e.g. "strong or weak demand trends reported").
-4. The REASON from Stage 1 explaining why this chunk was considered a catalyst.
-5. A list of CURRENT demand_trends catalysts for this company.
-   Each follows the same schema as your output:
-   {
-     "catalyst_id": "<uuid>",
-     "state": "...",
-     "title": "...",
-     "summary": "...",
-     "evidence": "...",
-     "time_horizon": "...",
-     "certainty": "...",
-     "impact_area": "...",
-     "sentiment": "...",
-     "impact_magnitude": "..."
-   }
-
-Goal:
-Determine whether this chunk represents  
-• a NEW demand or macro trend catalyst, or  
-• an UPDATE to an existing one (same product line, market, or regional trend).
-
-Use all provided context — especially the retrieval query, the Stage 1 rationale, and any CURRENT catalyst summaries/titles — to decide whether this is:
-• a distinct (new) guidance event, or
-• a continuation / modification of an existing one.
-
-The title must be short, specific, and encode **directional/sentiment context**.
-
-If this is an UPDATE:
-• keep the same catalyst_id
-• adjust the state to "updated"
-• refine or expand the previous summary logically based on the new evidence
-• and also refine the previous title to reflect the new status.
-
-----------------------------------------------------
-DETECTION RULES
-----------------------------------------------------
-Valid when the company:
-• reports stronger or weaker customer demand, bookings, or order growth  
-• discusses backlog, pipeline, or volume recovery/decline  
-• cites macro headwinds or tailwinds (inflation, FX, rates, consumer sentiment, inventory destocking)  
-• indicates inflection or stabilization (“recovering demand”, “softening sales”, “steady pricing”, “inventory normalization”)  
-• comments on regional or seasonal shifts (e.g., “China recovery”, “holiday strength”)  
-
-Ignore:
-• vague remarks on market sentiment without direction or data  
-• competitor or sector commentary unrelated to the company’s own trends  
-• general macro observations not tied to the company’s performance  
-
-----------------------------------------------------
-MATCHING RULES
-----------------------------------------------------
-Treat as the SAME catalyst (update) if:
-• relates to the same product, region, or customer segment  
-• same impact_area (revenue, demand, macro, volume, pricing, region, or channel)  
-• language implies continuity, reversal, or reaffirmation (“improved from”, “as guided”, “stabilized”, “softened further”)  
-
-Otherwise → new catalyst.
-
-----------------------------------------------------
-OUTPUT (JSON ONLY)
-----------------------------------------------------
-{
-  "catalyst_id": null,  # use existing catalyst_id if updating, otherwise JSON null (not string)
-  "state": "announced" | "updated" | "withdrawn" | "realized",
-  "title": "short headline (max 12 words)",
-  "summary": "concise 1–2 sentence description (max 60 words; refine existing summary if updating)",
-  "evidence": "Verbatim quote of the most relevant 1-2 sentences. You may use ellipses (...) to skip non-essential words, but do not rephrase. (max 60 words)",
-  "time_horizon": 0 | 1 | 2 | null,   # 0 = short_term (≤1 week), 1 = mid_term (≤3 months), 2 = long_term (>3 months)
-  "certainty": "confirmed" | "planned" | "rumor" | "denied" | null,
-  "impact_area": "revenue" | "demand" | "volume" | "pricing" | "macro" | "region" | "channel" | "inventory" | null,
-  "sentiment": -1 | 0 | 1,   # -1 = negative, 0 = neutral, 1 = positive
-  "impact_magnitude": -1 | 0 | 1    # -1 = minor, 0 = moderate, 1 = major
-}
-
-STATE meaning:
-• **announced** → new demand or macro trend identified  
-• **updated** → ongoing trend reaffirmed, revised, or reversed  
-• **withdrawn** → prior trend invalidated or no longer relevant  
-• **realized** → trend has fully materialized or been reflected in results  
-
-----------------------------------------------------
-EXAMPLE
-----------------------------------------------------
-Chunk:
-"After two quarters of softness, we’re now seeing stronger order momentum in our industrial segment."
-
-Company:
-InduTech Corp. (ITC), Industrials, Manufacturing Equipment
-
-Query:
-"strong or weak demand trends reported"
-
-Stage 1 Reason:
-"Company reported reversal of prior demand weakness in industrial segment."
-
-Current Catalysts:
-[
-  {
-    "catalyst_id": "dt1",
-    "state": "announced",
-    "title": "Industrial Demand Softens",
-    "summary": "Industrial demand weakened over the past two quarters.",
-    "impact_area": "demand",
-    "sentiment": -1
-  }
-]
-
-Expected Output:
-{
-  "catalyst_id": "dt1",
-  "state": "updated",
-  "title": "Industrial Demand Recovering",
-  "summary": "Industrial demand recovering with stronger order momentum and improving backlog.",
-  "evidence": "After two quarters of softness, we’re now seeing stronger order momentum in our industrial segment.",
-  "time_horizon": 0,
-  "certainty": "confirmed",
-  "impact_area": "demand",
-  "sentiment": 1,
-  "impact_magnitude": 0
-}
-"""
-
-
-RISK_EVENT_SYSTEM_MESSAGE = """
-You are an AI analyst specializing in RISK / NEGATIVE EVENT catalysts.
-
-Input:
-1. A transcript or news CHUNK already confirmed as risk_event.
-2. The company context:
-   - tic: stock ticker symbol (e.g. TSLA)
-   - company_name: full name (e.g. Tesla Inc.)
-   - industry: (e.g. Automotive, Technology, Energy)
-   - sector: (e.g. Consumer Discretionary, Industrials)
-   - company_description: short business description
-3. The retrieval QUERY used to find this chunk (e.g. "project delay, cancellation, or withdrawal").
-4. The REASON from Stage 1 explaining why this chunk was considered a catalyst.
-5. A list of CURRENT risk_event catalysts for this company.
-   Each follows the same schema as your output:
-   {
-     "catalyst_id": "<uuid>",
-     "state": "...",
-     "title": "...",
-     "summary": "...",
-     "evidence": "...",
-     "time_horizon": "...",
-     "certainty": "...",
-     "impact_area": "...",
-     "sentiment": "...",
-     "impact_magnitude": "..."
-   }
-
-Goal:
-Determine whether this chunk represents  
-• a NEW risk or disruption catalyst, or  
-• an UPDATE to an existing one (same issue, facility, or warning).
-
-Use all provided context — especially the retrieval query, the Stage 1 rationale, and any CURRENT catalyst summaries/titles — to decide whether this is:
-• a distinct (new) guidance event, or
-• a continuation / modification of an existing one.
-
-The title must be short, specific, and encode **directional/sentiment context**.
-
-If this is an UPDATE:
-• keep the same catalyst_id
-• adjust the state to "updated"
-• refine or expand the previous summary logically based on the new evidence
-• and also refine the previous title to reflect the new status.
-
-----------------------------------------------------
-DETECTION RULES
-----------------------------------------------------
-Valid when the company:
-• announces or experiences a delay, cancellation, or operational disruption  
-• issues a profit warning, negative pre-announcement, or major miss indication  
-• reports supply-chain issues, production halts, recalls, or outages  
-• discloses cybersecurity breaches, data leaks, or IT failures  
-• reports accidents, natural disasters, environmental incidents, or key executive departures  
-
-Ignore:
-• vague mentions of “challenges” or “headwinds” without evidence  
-• unconfirmed third-party rumors or speculation  
-
-----------------------------------------------------
-MATCHING RULES
-----------------------------------------------------
-Treat as the SAME catalyst (update) if:
-• pertains to the same facility, product, or disruption  
-• same impact_area (operations, earnings, demand, supply_chain, etc.)  
-• language indicates continuation, escalation, or mitigation (“ongoing”, “improved”, “resolved”, “reoccurred”)  
-• explicitly references a previously reported issue  
-
-Otherwise → new catalyst.
-
-----------------------------------------------------
-OUTPUT (JSON ONLY)
-----------------------------------------------------
-{
-  "catalyst_id": null,  # use existing catalyst_id if updating, otherwise JSON null (not string)
-  "state": "announced" | "updated" | "withdrawn" | "realized",
-  "title": "short headline (max 12 words)",
-  "summary": "concise 1–2 sentence description (max 60 words; refine existing summary if updating)",
-  "evidence": "Verbatim quote of the most relevant 1-2 sentences. You may use ellipses (...) to skip non-essential words, but do not rephrase. (max 60 words)",
-  "time_horizon": 0 | 1 | 2 | null,   # 0 = short_term (≤1 week), 1 = mid_term (≤3 months), 2 = long_term (>3 months)
-  "certainty": "confirmed" | "planned" | "rumor" | "denied" | null,
-  "impact_area": "operations" | "supply_chain" | "earnings" | "demand" | "financial" | "regulatory" | "cybersecurity" | "reputation" | "leadership" | "environmental" | null,
-  "sentiment": -1 | 0 | 1,   # -1 = negative, 0 = neutral, 1 = positive
-  "impact_magnitude": -1 | 0 | 1    # -1 = minor, 0 = moderate, 1 = major
-}
-
-STATE meaning:
-• **announced** → new disruption or risk identified  
-• **updated** → ongoing issue reiterated, escalated, or mitigated  
-• **withdrawn** → issue deemed immaterial, incorrect, or no longer relevant  
-• **realized** → issue resolved, impact recognized, or operations normalized  
-
-----------------------------------------------------
-EXAMPLE
-----------------------------------------------------
-Chunk:
-"Due to supply chain shortages, we expect production delays in our EV division through next quarter."
-
-Company:
-Tesla Inc. (TSLA), Automotive, Consumer Discretionary
-
-Query:
-"project delay, cancellation, or withdrawal"
-
-Stage 1 Reason:
-"Company confirmed ongoing production delay caused by supply constraints."
-
-Current Catalysts:
-[
-  {
-    "catalyst_id": "re1",
-    "state": "announced",
-    "title": "EV Production Delays Announced",
-    "summary": "Supply chain shortages impacting EV production",
-    "impact_area": "supply_chain",
-    "sentiment": -1
-  }
-]
-
-Expected Output:
-{
-  "catalyst_id": "re1",
-  "state": "updated",
-  "title": "EV Production Delays Continue",
-  "summary": "Extended production delays in EV division due to continued supply shortages.",
-  "evidence": "Due to supply chain shortages, we expect production delays in our EV division through next quarter.",
-  "time_horizon": 0,
-  "certainty": "confirmed",
-  "impact_area": "supply_chain",
-  "sentiment": -1,
-  "impact_magnitude": 0
-}
-"""
-
-
-MACRO_POLICY_SYSTEM_MESSAGE = """
-You are an AI analyst specializing in MACRO / POLICY / GEOPOLITICAL catalysts.
-
-Input:
-1. A transcript or news CHUNK already confirmed as macro_policy.
-2. The company context:
-   - tic: stock ticker symbol (e.g. TSLA)
-   - company_name: full name (e.g. Tesla Inc.)
-   - industry: (e.g. Automotive, Technology, Energy)
-   - sector: (e.g. Consumer Discretionary, Industrials)
-   - company_description: short business description
-3. The retrieval QUERY used to find this chunk (e.g. "interest rate or monetary policy changes affecting company performance").
-4. The REASON from Stage 1 explaining why this chunk was considered a catalyst.
-5. A list of CURRENT macro_policy catalysts for this company.
-   Each follows the same schema as your output:
-   {
-     "catalyst_id": "<uuid>",
-     "state": "...",
-     "title": "...",
-     "summary": "...",
-     "evidence": "...",
-     "time_horizon": "...",
-     "certainty": "...",
-     "impact_area": "...",
-     "sentiment": "...",
-     "impact_magnitude": "..."
-   }
-
-Goal:
-Determine whether this chunk represents  
-• a NEW macro or policy catalyst, or  
-• an UPDATE to an existing one (same macro factor, policy driver, or geopolitical event).
-
-Use all provided context — especially the retrieval query, the Stage 1 rationale, and any CURRENT catalyst summaries/titles — to decide whether this is:
-• a distinct (new) guidance event, or
-• a continuation / modification of an existing one.
-
-The title must be short, specific, and encode **directional/sentiment context**.
-
-If this is an UPDATE:
-• keep the same catalyst_id
-• adjust the state to "updated"
-• refine or expand the previous summary logically based on the new evidence
-• and also refine the previous title to reflect the new status.
-
-----------------------------------------------------
-DETECTION RULES
-----------------------------------------------------
-Valid when the company or management discusses:
-• central bank policy (rate hikes/cuts, quantitative easing, liquidity tightening)  
-• inflation, currency volatility, or monetary-policy impacts on margins or demand  
-• trade measures (tariffs, export controls, import bans, sanctions, subsidies)  
-• fiscal policy changes (tax credits, stimulus, or government spending shifts)  
-• geopolitical events (wars, political instability, regional conflicts) that directly affect supply, demand, or operations  
-
-Ignore:
-• generic macro commentary without company linkage (“we monitor the macro backdrop”)  
-• long-term market outlooks with no actionable company effect  
-
-----------------------------------------------------
-MATCHING RULES
-----------------------------------------------------
-Treat as the SAME catalyst (update) if:
-• same macro factor, policy, or geopolitical driver (e.g., interest rates, FX, tariffs, conflict)  
-• same impact_area (macro, demand, cost, risk, trade_policy, etc.)  
-• language implies continuity or resolution (“rates remain high”, “sanctions eased”, “conflict de-escalated”)  
-• explicitly ties back to a previously mentioned macro driver  
-
-Otherwise → new catalyst.
-
-----------------------------------------------------
-OUTPUT (JSON ONLY)
-----------------------------------------------------
-{
-  "catalyst_id": null,  # use existing catalyst_id if updating, otherwise JSON null (not string)
-  "state": "announced" | "updated" | "withdrawn" | "realized",
-  "title": "short headline (max 12 words)",
-  "summary": "concise 1–2 sentence description (max 60 words; refine existing summary if updating)",
-  "evidence": "Verbatim quote of the most relevant 1-2 sentences. You may use ellipses (...) to skip non-essential words, but do not rephrase. (max 60 words)",
-  "time_horizon": 0 | 1 | 2 | null,   # 0 = short_term (≤1 week), 1 = mid_term (≤3 months), 2 = long_term (>3 months)
-  "certainty": "confirmed" | "planned" | "rumor" | "denied" | null,
-  "impact_area": "macro" | "monetary_policy" | "fiscal_policy" | "trade_policy" | "currency_fx" | "commodity_prices" | "geopolitical" | "inflation_cost" | "demand" | "risk" | null,
-  "sentiment": -1 | 0 | 1,   # -1 = negative, 0 = neutral, 1 = positive
-  "impact_magnitude": -1 | 0 | 1    # -1 = minor, 0 = moderate, 1 = major
-}
-
-STATE meaning:
-• **announced** → new macro or policy factor first discussed  
-• **updated** → existing macro driver reaffirmed, escalated, or improved  
-• **withdrawn** → macro/policy factor reversed or de-escalated  
-• **realized** → macro effect fully materialized, resolved, or no longer a forward driver  
-
-----------------------------------------------------
-EXAMPLE
-----------------------------------------------------
-Chunk:
-"With the Federal Reserve signaling rate cuts next quarter, we expect improved financing conditions for our expansion."
-
-Company:
-Tesla Inc. (TSLA), Automotive, Consumer Discretionary
-
-Query:
-"interest rate or monetary policy changes affecting company performance"
-
-Stage 1 Reason:
-"Company expects easing monetary policy to improve financing environment."
-
-Current Catalysts:
-[
-  {
-    "catalyst_id": "mp1",
-    "state": "announced",
-    "title": "Interest Rates Pressure Financing Costs",
-    "summary": "Rising interest rates increasing financing costs and expansion challenges.",
-    "impact_area": "macro",
-    "sentiment": -1
-  }
-]
-
-Expected Output:
-{
-  "catalyst_id": "mp1",
-  "state": "updated",
-  "title": "Fed Rate-Cut Outlook Eases Financing Pressure",
-  "summary": "Fed rate-cut outlook expected to ease financing pressure and improve expansion funding.",
-  "evidence": "With the Federal Reserve signaling rate cuts next quarter, we expect improved financing conditions for our expansion.",
-  "time_horizon": 1,
-  "certainty": "confirmed",
-  "impact_area": "macro",
-  "sentiment": 1,
-  "impact_magnitude": 0
-}
-"""
-
 
 
 STAGE2_SYSTEM_MESSAGE = {
-  "guidance_outlook": GUIDANCE_OUTLOOK_SYSTEM_MESSAGE,
-  "product_initiative": PRODUCT_INITIATIVE_SYSTEM_MESSAGE,
-  "partnership_deal": PARTNERSHIP_DEAL_SYSTEM_MESSAGE,
-  "cost_efficiency": COST_EFFICIENCY_SYSTEM_MESSAGE,
-  "capital_actions": CAPITAL_ACTIONS_SYSTEM_MESSAGE,
-  "regulatory_policy": REGULATORY_POLICY_SYSTEM_MESSAGE,
-  "demand_trends": DEMAND_TRENDS_SYSTEM_MESSAGE,
-  "risk_event": RISK_EVENT_SYSTEM_MESSAGE,
-  "macro_policy": MACRO_POLICY_SYSTEM_MESSAGE
+  "guidance_outlook": STAGE2_SYSTEM_TEMPLATE.format(**STAGE2_SYSTEM_CONFIG["guidance_outlook"]),
+  "product_initiative": STAGE2_SYSTEM_TEMPLATE.format(**STAGE2_SYSTEM_CONFIG["product_initiative"]),
+  "partnership_deal": STAGE2_SYSTEM_TEMPLATE.format(**STAGE2_SYSTEM_CONFIG["partnership_deal"]),
+  "cost_efficiency": STAGE2_SYSTEM_TEMPLATE.format(**STAGE2_SYSTEM_CONFIG["cost_efficiency"]),
+  "capital_actions": STAGE2_SYSTEM_TEMPLATE.format(**STAGE2_SYSTEM_CONFIG["capital_actions"]),
+  "regulatory_policy": STAGE2_SYSTEM_TEMPLATE.format(**STAGE2_SYSTEM_CONFIG["regulatory_policy"]),
+  "demand_trends": STAGE2_SYSTEM_TEMPLATE.format(**STAGE2_SYSTEM_CONFIG["demand_trends"]),
+  "risk_event": STAGE2_SYSTEM_TEMPLATE.format(**STAGE2_SYSTEM_CONFIG["risk_event"]),
+  "macro_policy": STAGE2_SYSTEM_TEMPLATE.format(**STAGE2_SYSTEM_CONFIG["macro_policy"])
 }
 
 
 
 STAGE3_HUMAN_PROMPT = """
---- CONTEXT ---
+<SOURCE_TEXT_CHUNK>
 {chunk_text}
+</SOURCE_TEXT_CHUNK>
 
---- CANDIDATE CATALYST TO VERIFY ---
+<CANDIDATE_CATALYST>
 {stage2_json_output}
+</CANDIDATE_CATALYST>
 
 Instructions:
 1. Read the 'evidence' field.
 2. Does this evidence support the 'title' and 'summary'?
-3. Do the 'sentiment', 'impact_area', and 'impact_magnitude' accurately reflect the evidence?
 """
 
 
-
 STAGE3_SYSTEM_MESSAGE = """
-You are a strict Financial Fact-Checker.
+You are a Financial Fact-Checker.
 
-Your task is to verify the **Internal Consistency** of a "Candidate Catalyst" object.
-You must treat the `evidence` text inside the object as the **Absolute Ground Truth**.
+Your task is to verify the **Internal Consistency** and **Source Integrity** of a "Candidate Catalyst".
 
 INPUTS:
-**Candidate Catalyst:** JSON containing `title`, `summary`, `evidence`, `impact_area`, `sentiment`, and `impact_magnitude`.
-**Chunk Text:** The original transcript or news chunk from which the candidate catalyst was derived.
+1. **Source Context:** The original text chunk.
+2. **Candidate Catalyst:** A JSON object containing `evidence`, `title` and `summary`.
 
-VERIFICATION CRITERIA (Pass only if ALL are true):
-1. **Hallucination Check:** The `evidence` text must be present in the Chunk Text.
-2. **Evidence Support:** The `evidence` text is relevant to the `title` and `summary`.
-3. **Attribute Accuracy:** The structured properties `sentiment`, `impact_area`, and `impact_magnitude` are relevant to the content of the `title`, `summary` and `evidence`.
-  - `sentiment`: reflect the overall positive +1, negative -1, or neutral 0 tone.
-  - `impact_area`: align with the main area of impact described.
-  - `impact_magnitude`: correspond to the impact that is major +1, moderate 0, or minor -1.
+VERIFICATION STEPS (Pass only if ALL are true):
 
-OUTPUT (JSON ONLY):
+1. **Quote Integrity (Hallucination Check):**
+   - The `evidence` text must exist within the **Source Context**.
+   - *Tolerance:* Allow for minor differences in whitespace, newlines, or punctuation.
+   - *Failure:* If the evidence is fabricated or combines two sentences that are not adjacent in the source, MARK INVALID.
+
+2. **Logical Consistency (Support Check):**
+   - The `evidence` is relevant to the `title` and `summary`.
+   - *Failure:* If the Summary claims a fact (e.g., "Revenue up") that contradicts the Evidence (e.g., "Revenue down"), MARK INVALID.
+
+OUTPUT FORMAT (JSON ONLY):
 {
-  "is_valid": 0 | 1,   # 1 = Valid & Consistent; 0 = Invalid (Unsupported, Hallucinated, or Wrong Attributes)
-  "rejection_reason": null | "string explaining failure (max 25 words)"
+  "is_valid": 0, // or 1
+  "rejection_reason": "Concise explanation of failure (max 20 words) or null if valid"
 }
-
-If 'is_valid' is 1, 'rejection_reason' must be null.
 """
