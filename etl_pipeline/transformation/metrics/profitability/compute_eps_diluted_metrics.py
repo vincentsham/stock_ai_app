@@ -13,7 +13,7 @@ def read_records(conn, tic: str) -> pd.DataFrame:
             AND e.calendar_year = r.calendar_year
             AND e.calendar_quarter = r.calendar_quarter
         WHERE e.tic = '{tic}'
-            AND (r.raw_json_sha256 IS NULL OR r.raw_json_sha256 <> e.raw_json_sha256)
+            AND e.raw_json_sha256 IS DISTINCT FROM r.raw_json_sha256
         ORDER BY e.tic, e.calendar_year, e.calendar_quarter;
     """
     df = read_sql_query(query, conn)
@@ -25,7 +25,7 @@ def transform_records(df: pd.DataFrame) -> pd.DataFrame:
     transformed_df = df.copy()
     transformed_df['eps_diluted_ttm'] = transformed_df['eps_diluted'].rolling(window=4).sum()
     transformed_df = compute_growth_metrics(transformed_df, column="eps_diluted", score_regime=[-0.1, 0, 0.1, 0.3])
-    transformed_df = compute_stability_metrics(transformed_df, column="eps_diluted", volatility_threshold=0.1)
+    transformed_df = compute_stability_metrics(transformed_df, column="eps_diluted", volatility_threshold=0.05)
     transformed_df = compute_accel_metrics(transformed_df, column="eps_diluted")
     return transformed_df
 

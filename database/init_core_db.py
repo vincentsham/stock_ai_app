@@ -74,11 +74,11 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS core.earnings_calendar (
             tic VARCHAR(10) NOT NULL,
-            calendar_year SMALLINT NOT NULL,
-            calendar_quarter SMALLINT NOT NULL,
+            calendar_year INT NOT NULL,
+            calendar_quarter INT NOT NULL,
             earnings_date DATE,
-            fiscal_year SMALLINT,
-            fiscal_quarter SMALLINT,
+            fiscal_year INT,
+            fiscal_quarter INT,
             fiscal_date DATE,
             session VARCHAR(10),
             updated_at            TIMESTAMPTZ DEFAULT now(),
@@ -95,17 +95,17 @@ def table_creation(conn):
             calendar_year SMALLINT NOT NULL,
             calendar_quarter SMALLINT NOT NULL,
             earnings_date DATE NOT NULL,
+            fiscal_year SMALLINT,
+            fiscal_quarter SMALLINT,
             fiscal_date DATE,
             session VARCHAR(10),
             eps NUMERIC(10,4),
             eps_estimated NUMERIC(10,4),
             revenue NUMERIC(20,2),
             revenue_estimated NUMERIC(20,2),
-            price_before NUMERIC(12,4),
-            price_after NUMERIC(12,4),
             source                 VARCHAR(255),                  -- e.g., 'fmp', 'yahoo', etc.
-            raw_json               JSONB        NOT NULL,                 -- verbatim payload (optional but useful)
-            raw_json_sha256        CHAR(64)     NOT NULL,
+            raw_json               JSONB        NOT NULL,
+            raw_json_sha256 CHAR(64)     NOT NULL,
             updated_at            TIMESTAMPTZ DEFAULT now(),
             UNIQUE (tic, calendar_year, calendar_quarter)
         );
@@ -191,7 +191,7 @@ def table_creation(conn):
 
        # Create a table for income statements if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.income_statements (
+        CREATE TABLE IF NOT EXISTS core.income_statements_quarterly (
             -- Identity & period alignment
             event_id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             tic                               VARCHAR(10)  NOT NULL,
@@ -201,68 +201,55 @@ def table_creation(conn):
             fiscal_year                       SMALLINT    NOT NULL,                 -- e.g., 2025
             fiscal_quarter                    SMALLINT    NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
             fiscal_date                       DATE       NOT NULL,
-            period                            VARCHAR(10)  NOT NULL,    -- "Q1".."Q4", "FY" (as reported)
-
-            -- Filing / meta
-            filing_date                           DATE,
-            accepted_date                         TIMESTAMP,                -- raw feed is naive (no TZ)
-            cik                                   VARCHAR(20),
-            reported_currency                     VARCHAR(10),
-
+    
             -- Key financials 
-            revenue                               BIGINT,
-            cost_of_revenue                       BIGINT,
-            gross_profit                          BIGINT,
-            research_and_development_expenses     BIGINT,
-            general_and_administrative_expenses   BIGINT,
-            selling_and_marketing_expenses        BIGINT,
-            selling_general_and_administrative_expenses BIGINT,
-            other_expenses                        BIGINT,
-            operating_expenses                    BIGINT,
-            cost_and_expenses                     BIGINT,
+            revenue NUMERIC(20, 2),
+            cost_of_revenue NUMERIC(20, 2),
+            gross_profit NUMERIC(20, 2),
 
-            -- Operating & non-operating
-            ebitda                                BIGINT,
-            ebit                                  BIGINT,
-            non_operating_income_excluding_interest BIGINT,
-            operating_income                      BIGINT,
-            total_other_income_expenses_net       BIGINT,
-            income_before_tax                     BIGINT,
-            income_tax_expense                    BIGINT,
+            -- 3. Operating Expenses (The cost of running the business)
+            research_and_development NUMERIC(20, 2),
+            selling_general_admin NUMERIC(20, 2),
+            depreciation_amortization NUMERIC(20, 2),  -- Often hidden in other lines, but distinct
+            operating_expenses NUMERIC(20, 2),         -- The total of the above
 
-            -- Net income breakdowns
-            net_income_from_continuing_operations BIGINT,
-            net_income_from_discontinued_operations BIGINT,
-            other_adjustments_to_net_income       BIGINT,
-            net_income                            BIGINT,
-            net_income_deductions                 BIGINT,
-            bottom_line_net_income                BIGINT,
+            -- 4. Operating Profitability
+            operating_income NUMERIC(20, 2),
+            ebitda NUMERIC(20, 2),
+            ebit NUMERIC(20, 2),
 
-            -- Interest details
-            net_interest_income                   BIGINT,
-            interest_income                       BIGINT,
-            interest_expense                      BIGINT,
-            depreciation_and_amortization         BIGINT,
+            -- 5. Non-Operating Items (Interest & Investments)
+            interest_income NUMERIC(20, 2),
+            interest_expense NUMERIC(20, 2),
+            other_non_operating_income NUMERIC(20, 2),
 
-            -- EPS & shares
-            eps                                   NUMERIC(10,2),
-            eps_diluted                           NUMERIC(10,2),
-            weighted_average_shs_out              BIGINT,
-            weighted_average_shs_out_dil          BIGINT,
+            -- 6. Pre-Tax & Tax
+            income_before_tax NUMERIC(20, 2),
+            income_tax_expense NUMERIC(20, 2),
+            effective_tax_rate NUMERIC(10, 6),
+
+            -- 7. Bottom Line (Profit)
+            net_income NUMERIC(20, 2),
+
+            -- 8. Share Information (For per-share calculations)
+            weighted_average_shares_basic NUMERIC(20, 2),
+            weighted_average_shares_diluted NUMERIC(20, 2),
+            eps NUMERIC(10, 4),
+            eps_diluted NUMERIC(10, 4),
 
             -- Raw payload for traceability
             raw_json                              JSONB        NOT NULL,
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            UNIQUE (tic, fiscal_year, fiscal_quarter)
+            UNIQUE (tic, calendar_year, calendar_quarter)
         );
         """)
-        print("Table 'income_statements' created or already exists with unique constraint.")
+        print("Table 'income_statements_quarterly' created or already exists with unique constraint.")
 
 
        # Create a table for balance sheets if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.balance_sheets (
+        CREATE TABLE IF NOT EXISTS core.balance_sheets_quarterly (
             -- Identity & period alignment
             event_id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             tic                               VARCHAR(10)  NOT NULL,
@@ -272,91 +259,63 @@ def table_creation(conn):
             fiscal_year                       SMALLINT    NOT NULL,                 -- e.g., 2025
             fiscal_quarter                    SMALLINT    NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
             fiscal_date                       DATE       NOT NULL,
-            period                            VARCHAR(10)  NOT NULL,    -- "Q1".."Q4", "FY" (as reported)
 
-            -- Filing / meta
-            filing_date                           DATE,
-            accepted_date                         TIMESTAMP,                -- raw feed is naive (no TZ)
-            cik                                   VARCHAR(20),
-            reported_currency                     VARCHAR(10), 
+            -- 1. ASSETS: Liquidity & Working Capital
+            total_assets NUMERIC(20, 2),
+            total_current_assets NUMERIC(20, 2),
+            
+            -- Cash & Investments (Critical for 'Net Debt' calculation)
+            cash_and_short_term_investments NUMERIC(20, 2),
+            cash_and_cash_equivalents NUMERIC(20, 2),
+            
+            -- Receivables (Critical for 'Days Sales Outstanding')
+            accounts_receivable NUMERIC(20, 2),
+            
+            -- Inventory Breakdown (Critical for Manufacturing Efficiency analysis)
+            inventory NUMERIC(20, 2),
 
-            -- Assets
-            cash_and_cash_equivalents           BIGINT,
-            short_term_investments              BIGINT,
-            cash_and_short_term_investments     BIGINT,
-            net_receivables                     BIGINT,
-            accounts_receivables                BIGINT,
-            other_receivables                   BIGINT,
-            inventory                           BIGINT,
-            prepaids                            BIGINT,
-            other_current_assets                BIGINT,
-            total_current_assets                BIGINT,
+            -- Long-Term Assets
+            net_ppe NUMERIC(20, 2),              -- Property, Plant, Equipment
+            goodwill_and_intangibles NUMERIC(20, 2),
+            
+            -- 2. LIABILITIES: Obligations
+            total_liabilities NUMERIC(20, 2),
+            total_current_liabilities NUMERIC(20, 2),
+            
+            -- Operational Liabilities
+            accounts_payable NUMERIC(20, 2),
+            deferred_revenue_current NUMERIC(20, 2),      -- Future revenue indicator
+            deferred_revenue_non_current NUMERIC(20, 2), 
 
-            property_plant_equipment_net        BIGINT,
-            goodwill                            BIGINT,
-            intangible_assets                   BIGINT,
-            goodwill_and_intangible_assets      BIGINT,
-            long_term_investments               BIGINT,
-            tax_assets                          BIGINT,
-            other_non_current_assets            BIGINT,
-            total_non_current_assets            BIGINT,
-            other_assets                        BIGINT,
-            total_assets                        BIGINT,
+            -- Debt (Critical for Solvency & Enterprise Value)
+            total_debt NUMERIC(20, 2),           -- Aggregated Debt
+            long_term_debt NUMERIC(20, 2),
+            current_debt_and_capital_lease NUMERIC(20, 2),
 
-            -- Liabilities
-            total_payables                      BIGINT,
-            account_payables                    BIGINT,
-            other_payables                      BIGINT,
-            accrued_expenses                    BIGINT,
-            short_term_debt                     BIGINT,
-            capital_lease_obligations_current   BIGINT,
-            tax_payables                        BIGINT,
-            deferred_revenue                    BIGINT,
-            other_current_liabilities           BIGINT,
-            total_current_liabilities           BIGINT,
-
-            long_term_debt                      BIGINT,
-            capital_lease_obligations_non_current   BIGINT,
-            deferred_revenue_non_current        BIGINT,
-            deferred_tax_liabilities_non_current BIGINT,
-            other_non_current_liabilities       BIGINT,
-            total_non_current_liabilities       BIGINT,
-
-            other_liabilities                   BIGINT,
-            capital_lease_obligations           BIGINT,
-            total_liabilities                   BIGINT,
-
-            -- Equity
-            treasury_stock                      BIGINT,
-            preferred_stock                     BIGINT,
-            common_stock                        BIGINT,
-            retained_earnings                   BIGINT,
-            additional_paid_in_capital          BIGINT,
-            accumulated_other_comprehensive_income_loss BIGINT,
-            other_total_stockholders_equity     BIGINT,
-            total_stockholders_equity           BIGINT,
-            total_equity                        BIGINT,
-            minority_interest                   BIGINT,
-            total_liabilities_and_total_equity  BIGINT,
-
-            -- Derived Totals
-            total_investments                   BIGINT,
-            total_debt                          BIGINT,
-            net_debt                            BIGINT,
+            -- 3. EQUITY: Shareholder Value
+            total_equity NUMERIC(20, 2),
+            retained_earnings NUMERIC(20, 2),    -- Measure of accumulated profit
+            common_stock NUMERIC(20, 2),
+            
+            -- 4. KEY ANALYTICAL METRICS (Pre-calculated in source)
+            working_capital NUMERIC(20, 2),
+            invested_capital NUMERIC(20, 2),
+            net_tangible_assets NUMERIC(20, 2),
+            ordinary_shares_number NUMERIC(20, 2), -- Validating share counts
 
             -- Raw payload for traceability
             raw_json                              JSONB        NOT NULL,
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            UNIQUE (tic, fiscal_year, fiscal_quarter)
+            UNIQUE (tic, calendar_year, calendar_quarter)
         );
         """)
-        print("Table 'balance_sheets' created or already exists with unique constraint.")
+        print("Table 'balance_sheets_quarterly' created or already exists with unique constraint.")
 
 
        # Create a table for cash flow statements if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.cash_flow_statements (
+        CREATE TABLE IF NOT EXISTS core.cash_flow_statements_quarterly (
             -- Identity & period alignment
             event_id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             tic                               VARCHAR(10)  NOT NULL,
@@ -366,71 +325,51 @@ def table_creation(conn):
             fiscal_year                       SMALLINT    NOT NULL,                 -- e.g., 2025
             fiscal_quarter                    SMALLINT    NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
             fiscal_date                       DATE       NOT NULL,
-            period                            VARCHAR(10)  NOT NULL,    -- "Q1".."Q4", "FY" (as reported)
 
-            -- Filing / meta
-            filing_date                           DATE,
-            accepted_date                         TIMESTAMP,                -- raw feed is naive (no TZ)
-            cik                                   VARCHAR(20),
-            reported_currency                     VARCHAR(10),
+            -- 1. OPERATING ACTIVITIES (The Core Business)
+            net_income NUMERIC(20, 2),
+            depreciation_amortization NUMERIC(20, 2),
+            stock_based_compensation NUMERIC(20, 2), -- Key for Tech companies
+            deferred_income_tax NUMERIC(20, 2),
+            
+            -- Working Capital Changes (Efficiency indicators)
+            change_in_working_capital NUMERIC(20, 2),
+            change_in_receivables NUMERIC(20, 2),
+            change_in_inventory NUMERIC(20, 2),
+            change_in_accounts_payable NUMERIC(20, 2),
+            
+            operating_cash_flow NUMERIC(20, 2), -- The "Quality of Earnings" check
 
-            -- Operating Activities
-            net_income                              BIGINT,
-            depreciation_and_amortization           BIGINT,
-            deferred_income_tax                     BIGINT,
-            stock_based_compensation                BIGINT,
-            change_in_working_capital               BIGINT,
-            accounts_receivables                    BIGINT,
-            inventory                               BIGINT,
-            accounts_payables                       BIGINT,
-            other_working_capital                   BIGINT,
-            other_non_cash_items                    BIGINT,
-            net_cash_provided_by_operating_activities BIGINT,
+            -- 2. INVESTING ACTIVITIES (Growth & Capex)
+            capital_expenditure NUMERIC(20, 2),   -- "CapEx"
+            acquisitions_net NUMERIC(20, 2),      -- Cash spent buying other companies
+            investments_purchases NUMERIC(20, 2),
+            investments_sales NUMERIC(20, 2),
+            
+            investing_cash_flow NUMERIC(20, 2),
 
-            -- Investing Activities
-            investments_in_property_plant_and_equipment  BIGINT,
-            acquisitions_net                         BIGINT,
-            purchases_of_investments                 BIGINT,
-            sales_maturities_of_investments          BIGINT,
-            other_investing_activities               BIGINT,
-            net_cash_provided_by_investing_activities BIGINT,
+            -- 3. FINANCING ACTIVITIES (Debt & Equity)
+            net_debt_issuance NUMERIC(20, 2),
+            common_stock_repurchased NUMERIC(20, 2), -- "Buybacks"
+            dividends_paid NUMERIC(20, 2),
+            
+            financing_cash_flow NUMERIC(20, 2),
 
-            -- Financing Activities
-            net_debt_issuance                        BIGINT,
-            long_term_net_debt_issuance              BIGINT,
-            short_term_net_debt_issuance             BIGINT,
-            net_stock_issuance                       BIGINT,
-            net_common_stock_issuance                BIGINT,
-            common_stock_issuance                    BIGINT,
-            common_stock_repurchased                 BIGINT,
-            net_preferred_stock_issuance             BIGINT,
-            net_dividends_paid                       BIGINT,
-            common_dividends_paid                    BIGINT,
-            preferred_dividends_paid                 BIGINT,
-            other_financing_activities               BIGINT,
-            net_cash_provided_by_financing_activities BIGINT,
-
-            -- Cash & Reconciliation
-            effect_of_forex_changes_on_cash          BIGINT,
-            net_change_in_cash                       BIGINT,
-            cash_at_end_of_period                    BIGINT,
-            cash_at_beginning_of_period              BIGINT,
-
-            -- Derived / Analytical Metrics
-            operating_cash_flow                      BIGINT,
-            capital_expenditure                      BIGINT,
-            free_cash_flow                           BIGINT,
-            income_taxes_paid                        BIGINT,
-            interest_paid                            BIGINT,
+            -- 4. SUMMARY & SUPPLEMENTAL
+            free_cash_flow NUMERIC(20, 2),        -- The "Holy Grail" metric
+            net_change_in_cash NUMERIC(20, 2),
+            end_cash_position NUMERIC(20, 2),
+            income_tax_paid NUMERIC(20, 2),       -- Cash tax vs. Book tax
+            interest_paid NUMERIC(20, 2),               -- Interest paid
 
             -- Raw payload for traceability
             raw_json                              JSONB        NOT NULL,
             raw_json_sha256                       CHAR(64)     NOT NULL,
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            UNIQUE (tic, fiscal_year, fiscal_quarter)
+            UNIQUE (tic, calendar_year, calendar_quarter)
         );
         """)
-        print("Table 'cash_flow_statements' created or already exists with unique constraint.")
+        print("Table 'cash_flow_statements_quarterly' created or already exists with unique constraint.")
 
 
 

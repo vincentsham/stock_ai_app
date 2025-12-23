@@ -552,7 +552,7 @@ export const METRICS_METADATA: Record<string, {
             displayByDefault: false,
             description: 'Return on Invested Capital, measuring profitability relative to invested capital; higher values indicate efficient use of capital.',
       },
-      'total_shareholder_yield': {
+      'total_shareholder_yield_ttm': {
             name: 'Total Shareholder Yield',
             display_fn: formatPercentage,
             inverse: false,

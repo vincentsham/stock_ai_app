@@ -76,7 +76,7 @@ def compute_growth_score(row):
 def compute_efficiency_score(row):
     cols = [
         row['asset_turnover_percentile'],
-        100 - _to_float_or_nan(row['opex_ratio_percentile']),
+        row['fixed_asset_turnover_percentile']
     ]
     cols_inventory = []
     cols_inventory.append(100 - _to_float_or_nan(row['dio_percentile']))
@@ -86,7 +86,7 @@ def compute_efficiency_score(row):
 
     cols_non_inventory = []
     cols_non_inventory.append(row['revenue_per_employee_percentile'])
-    cols_non_inventory.append(row['fixed_asset_turnover_percentile'])
+    cols_non_inventory.append(100 - _to_float_or_nan(row['opex_ratio_percentile']))
 
     if _nanmean(cols_inventory) != float("nan") and _nanmean(cols_inventory) > _nanmean(cols_non_inventory):
         cols += cols_inventory
@@ -104,10 +104,12 @@ def compute_financial_health_score(row):
             [
                 100 - _to_float_or_nan(row['net_debt_to_ebitda_ttm_percentile']),
                 100 - _to_float_or_nan(row['debt_to_assets_percentile']),
+                100 - _to_float_or_nan(row['debt_to_equity_percentile']),
+                row['altman_z_score_percentile']
+
             ]
         )
     )
-    cols.append(_nanmax([row['altman_z_score_percentile'], 100 - _to_float_or_nan(row['debt_to_equity_percentile'])]))
     cols.append(_nanmax([row['current_ratio_percentile'], row['cash_ratio_percentile']]))
 
     max_score = _nanmax(cols)
@@ -122,17 +124,15 @@ def transform_records(conn, tic: str) -> pd.DataFrame:
     percentiles_query = f"""
         SELECT vp.tic, vp.date::date,
                vp.pe_ttm_percentile, vp.pe_forward_percentile, vp.peg_ratio_forward_percentile, vp.p_to_fcf_ttm_percentile,
-               pp.net_margin_percentile, pp.roe_percentile, pp.fcf_margin_percentile,
+               pp.net_margin_percentile, pp.roe_percentile, pp.roic_percentile, pp.fcf_margin_percentile,
                gp.forward_revenue_growth_percentile, gp.revenue_growth_yoy_percentile, gp.revenue_cagr_3y_percentile, gp.ebitda_growth_yoy_percentile, gp.forward_eps_growth_percentile, gp.eps_growth_yoy_percentile,
                ep.asset_turnover_percentile, ep.dio_percentile, ep.dpo_percentile, ep.dso_percentile, ep.cash_conversion_cycle_percentile, ep.opex_ratio_percentile, ep.revenue_per_employee_percentile, ep.fixed_asset_turnover_percentile,
-               fhp.interest_coverage_ttm_percentile, fhp.net_debt_to_ebitda_ttm_percentile, fhp.debt_to_assets_percentile, fhp.debt_to_equity_percentile, fhp.altman_z_score_percentile, fhp.current_ratio_percentile, fhp.cash_ratio_percentile,
-               cap.roic_percentile
+               fhp.interest_coverage_ttm_percentile, fhp.net_debt_to_ebitda_ttm_percentile, fhp.debt_to_assets_percentile, fhp.debt_to_equity_percentile, fhp.altman_z_score_percentile, fhp.current_ratio_percentile, fhp.cash_ratio_percentile
         FROM core.valuation_percentiles vp
         JOIN core.profitability_percentiles pp ON vp.tic = pp.tic AND vp.date = pp.date
         JOIN core.growth_percentiles gp ON vp.tic = gp.tic AND vp.date = gp.date
         JOIN core.efficiency_percentiles ep ON vp.tic = ep.tic AND vp.date = ep.date
         JOIN core.financial_health_percentiles fhp ON vp.tic = fhp.tic AND vp.date = fhp.date
-        JOIN core.capital_allocation_percentiles cap ON vp.tic = cap.tic AND vp.date = cap.date
         WHERE vp.tic = '{tic}'
         ORDER BY vp.date;
     """

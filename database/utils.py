@@ -69,41 +69,48 @@ def read_sql_query(query: str, conn) -> pd.DataFrame:
         raise e
 
 
-def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[], updated_at: bool = True) -> int:
+def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[], 
+                   updated_at: bool = True, where: list[str]=[]) -> int:
     """
     Fast and minimal insert/upsert using psycopg cursor.execute with tuples.
     """
     # Replace NaN/NA with None for PostgreSQL compatibility
-    df = df.replace({pd.NA: None, float('nan'): None, np.nan: None})
+    df = df.astype(object)
+    df = df.where(pd.notnull(df), None)
 
     cols = list(df.columns)
     placeholders = ", ".join(["%s"] * len(cols))
     updates = ", ".join([f"{c}=EXCLUDED.{c}" for c in cols])
     keys = ", ".join(keys) if len(keys) > 0 else None
+    where_clause = ""
     if keys:
         update_sql = f"""
         ON CONFLICT ({keys})
         DO UPDATE SET {updates}
         """
         if updated_at:
-            update_sql += ", updated_at = NOW();"
-        else:
-            update_sql += ";"
+            update_sql += ", updated_at = NOW()"
+            if where:
+                # core.earnings_transcripts.raw_json_sha256 IS DISTINCT FROM EXCLUDED.raw_json_sha256
+                where_clause = " AND ".join([f"{table_name}.{col} IS DISTINCT FROM EXCLUDED.{col}" for col in where])
+                where_clause = f"WHERE {where_clause}"
     else:
-        update_sql = "ON CONFLICT DO NOTHING;"
+        update_sql = "ON CONFLICT DO NOTHING"
+
 
     sql = f"""
         INSERT INTO {table_name} ({', '.join(cols)})
         VALUES ({placeholders})
-        {update_sql};
+        {update_sql}
+        {where_clause}
     """
+    sql += ";"
 
     try:
         with conn.cursor() as cursor:
             # Convert DataFrame to a sequence of tuples and execute in bulk
             data = tuple(df.itertuples(index=False, name=None))
             cursor.executemany(sql, data)  # ✅ psycopg safe bulk method
-
             total_records = cursor.rowcount
         conn.commit()
         return total_records
@@ -114,7 +121,8 @@ def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[], 
         return 0
 
 
-def insert_record(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[], updated_at: bool = True) -> int:
+def insert_record(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[], 
+                  updated_at: bool = True, where: list[str]=[]) -> int:
     """
     Fast and minimal insert/upsert using psycopg cursor.execute with tuples.
     """
@@ -125,27 +133,33 @@ def insert_record(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[], u
     placeholders = ", ".join(["%s"] * len(cols))
     updates = ", ".join([f"{c}=EXCLUDED.{c}" for c in cols])
     keys = ", ".join(keys) if len(keys) > 0 else None
+    where_clause = ""
     if keys:
         update_sql = f"""
         ON CONFLICT ({keys})
         DO UPDATE SET {updates}
         """
         if updated_at:
-            update_sql += ", updated_at = NOW();"
-        else:
-            update_sql += ";"
+            update_sql += ", updated_at = NOW()"
+            if where:
+                # core.earnings_transcripts.raw_json_sha256 IS DISTINCT FROM EXCLUDED.raw_json_sha256
+                where_clause = " AND ".join([f"{table_name}.{col} IS DISTINCT FROM EXCLUDED.{col}" for col in where])
+                where_clause = f"WHERE {where_clause}"
     else:
-        update_sql = "ON CONFLICT DO NOTHING;"
+        update_sql = "ON CONFLICT DO NOTHING"
 
     sql = f"""
         INSERT INTO {table_name} ({', '.join(cols)})
         VALUES ({placeholders})
-        {update_sql};
+        {update_sql}
+        {where_clause}
     """
-
+    sql += ";"
+    
     try:
         with conn.cursor() as cursor:
-            cursor.execute(sql, df)  # ✅ psycopg safe bulk method
+            df_values = tuple(df.iloc[0].tolist())
+            cursor.execute(sql, df_values)  
 
             total_records = cursor.rowcount
         conn.commit()

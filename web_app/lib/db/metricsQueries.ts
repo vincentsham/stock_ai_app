@@ -27,7 +27,7 @@ const VALUATION_METRICS_SEARCH_QUERY = `
       v.earnings_yield_ttm,
       v.revenue_yield_ttm,
       v.fcf_yield_ttm,
-      ca.total_shareholder_yield,
+      v.total_shareholder_yield_ttm,
 
       -- valuation percentiles
       vp.pe_ttm_percentile,
@@ -44,15 +44,11 @@ const VALUATION_METRICS_SEARCH_QUERY = `
       vp.fcf_yield_ttm_percentile,
       vp.earnings_yield_ttm_percentile,
       vp.revenue_yield_ttm_percentile,
-      cap.total_shareholder_yield_percentile
+      vp.total_shareholder_yield_ttm_percentile
 
     FROM core.valuation_metrics v
     JOIN core.valuation_percentiles vp
       ON v.inference_id = vp.inference_id
-    JOIN core.capital_allocation_metrics ca
-      ON v.tic = ca.tic AND v.date = ca.date
-    JOIN core.capital_allocation_percentiles cap
-      ON ca.inference_id = cap.inference_id
     JOIN core.stock_scores ss
       ON v.tic = ss.tic AND v.date = ss.date
     WHERE v.tic = $1
@@ -77,7 +73,7 @@ const PROFITABILITY_METRICS_SEARCH_QUERY = `
 
       p.roa,
       p.roe,
-      ca.roic,
+      p.roic,
       p.ocf_margin,
       p.fcf_margin,
 
@@ -88,17 +84,13 @@ const PROFITABILITY_METRICS_SEARCH_QUERY = `
       pp.net_margin_percentile,
       pp.roe_percentile,
       pp.roa_percentile,
-      cap.roic_percentile,
+      pp.roic_percentile,
       pp.ocf_margin_percentile,
       pp.fcf_margin_percentile
 
     FROM core.profitability_metrics p
     JOIN core.profitability_percentiles pp
       ON p.inference_id = pp.inference_id
-    JOIN core.capital_allocation_metrics ca
-      ON p.tic = ca.tic AND p.date = ca.date
-    JOIN core.capital_allocation_percentiles cap
-      ON ca.inference_id = cap.inference_id
     JOIN core.stock_scores ss
       ON p.tic = ss.tic AND p.date = ss.date
     WHERE p.tic = $1

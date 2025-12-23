@@ -1,6 +1,7 @@
 import pandas as pd
 import json
 from database.utils import connect_to_db, insert_records, execute_query
+from etl_pipeline.utils import get_calendar_year_quarter
 
 
 def read_earnings_records():
@@ -37,34 +38,6 @@ def read_income_statements_records():
     df = execute_query(query)
     return df
 
-
-
-def get_calendar_year_quarter(date):
-    """
-    Given a date, returns the corresponding calendar year and quarter.
-
-    Args:
-        date (str or pd.Timestamp): The date.
-    Returns:
-        tuple: (calendar_year, calendar_quarter)
-    """
-    if isinstance(date, str):
-        date = pd.to_datetime(date)
-
-    calendar_year = date.year
-    calendar_month = date.month
-    if calendar_month in [3, 4, 5]:
-        calendar_quarter = 1
-    elif calendar_month in [6, 7, 8]:
-        calendar_quarter = 2
-    elif calendar_month in [9, 10, 11]:
-        calendar_quarter = 3
-    elif calendar_month in [12]:
-        calendar_quarter = 4
-    elif calendar_month in [1, 2]:
-        calendar_quarter = 4
-        calendar_year -= 1
-    return calendar_year, calendar_quarter
 
 
 def transform_records():

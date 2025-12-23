@@ -60,6 +60,7 @@ export const MetricsSection: React.FC<{ tic: string }> = ({ tic }) => {
       };
       fetchAllData();
       console.log("Fetched metrics for", tic);
+      console.log(allMetrics);
     }, [tic]);
     
   

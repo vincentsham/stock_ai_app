@@ -2,7 +2,7 @@ from database.utils import connect_to_db, execute_query, insert_records, read_sq
 import pandas as pd
 import yfinance as yf
 import numpy as np
-
+from etl_pipeline.utils import convert_decimals_to_float
 
 def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
     market_cap_query = f"""
@@ -12,6 +12,7 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
         LIMIT 1;
     """
     df_market_cap = read_sql_query(market_cap_query, conn)
+    df_market_cap = convert_decimals_to_float(df_market_cap)
     employees = df_market_cap.at[0, 'employees'] if not df_market_cap.empty else np.nan
 
     close_price_query = f"""
@@ -23,24 +24,26 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
     df = read_sql_query(close_price_query, conn)
     df['date'] = pd.to_datetime(df['date'])
     df = df.sort_values('date')
+    df = convert_decimals_to_float(df)
 
 
     balance_sheet_query = f"""
         SELECT tic, calendar_year, calendar_quarter, earnings_date::date, total_assets,
-            total_debt, total_stockholders_equity, cash_and_short_term_investments,
-            property_plant_equipment_net, accounts_receivables, account_payables, inventory
-        FROM core.balance_sheets 
+            total_debt, total_equity, cash_and_short_term_investments,
+            net_ppe, accounts_receivable, accounts_payable, inventory
+        FROM core.balance_sheets_quarterly
         WHERE tic = '{tic}'
         ORDER BY earnings_date;
     """
     df_balance_sheet = read_sql_query(balance_sheet_query, conn)
     df_balance_sheet['earnings_date'] = pd.to_datetime(df_balance_sheet['earnings_date'])
     df_balance_sheet = df_balance_sheet.sort_values('earnings_date')
+    df_balance_sheet = convert_decimals_to_float(df_balance_sheet)
 
     df_balance_sheet['total_assets_avg'] = (df_balance_sheet['total_assets'] + df_balance_sheet.shift(4)['total_assets']) / 2
-    df_balance_sheet['property_plant_equipment_net_avg'] = (df_balance_sheet['property_plant_equipment_net'] + df_balance_sheet.shift(4)['property_plant_equipment_net']) / 2
-    df_balance_sheet['accounts_receivables_avg'] = (df_balance_sheet['accounts_receivables'] + df_balance_sheet.shift(4)['accounts_receivables']) / 2
-    df_balance_sheet['accounts_payables_avg'] = (df_balance_sheet['account_payables'] + df_balance_sheet.shift(4)['account_payables']) / 2
+    df_balance_sheet['net_ppe_avg'] = (df_balance_sheet['net_ppe'] + df_balance_sheet.shift(4)['net_ppe']) / 2
+    df_balance_sheet['accounts_receivable_avg'] = (df_balance_sheet['accounts_receivable'] + df_balance_sheet.shift(4)['accounts_receivable']) / 2
+    df_balance_sheet['accounts_payable_avg'] = (df_balance_sheet['accounts_payable'] + df_balance_sheet.shift(4)['accounts_payable']) / 2
     df_balance_sheet['inventory_avg'] = (df_balance_sheet['inventory'] + df_balance_sheet.shift(4)['inventory']) / 2
 
     income_statement_query = f"""
@@ -48,13 +51,14 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
                eps, revenue, ebit, ebitda, gross_profit, 
                net_income, operating_expenses, cost_of_revenue,
                income_tax_expense, income_before_tax
-        FROM core.income_statements 
+        FROM core.income_statements_quarterly
         WHERE tic = '{tic}'
         ORDER BY earnings_date;
     """
     df_income = read_sql_query(income_statement_query, conn)
     df_income['earnings_date'] = pd.to_datetime(df_income['earnings_date'])
     df_income = df_income.sort_values('earnings_date')
+    df_income = convert_decimals_to_float(df_income)
 
     df_income['revenue_ttm'] = df_income['revenue'].rolling(window=4).sum()
     df_income['operating_expenses_ttm'] = df_income['operating_expenses'].rolling(window=4).sum()
@@ -63,13 +67,15 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
     cash_flow_statement_query = f"""
         SELECT tic, calendar_year, calendar_quarter, earnings_date::date,
                free_cash_flow as fcf, operating_cash_flow as ocf
-        FROM core.cash_flow_statements 
+        FROM core.cash_flow_statements_quarterly
         WHERE tic = '{tic}' 
         ORDER BY earnings_date;
     """
     df_cash_flow = read_sql_query(cash_flow_statement_query, conn)
     df_cash_flow['earnings_date'] = pd.to_datetime(df_cash_flow['earnings_date'])
     df_cash_flow = df_cash_flow.sort_values('earnings_date')
+    df_cash_flow = convert_decimals_to_float(df_cash_flow)
+
     df_cash_flow['fcf_ttm'] = df_cash_flow['fcf'].rolling(window=4).sum()
     df_cash_flow['ocf_ttm'] = df_cash_flow['ocf'].rolling(window=4).sum()
     
@@ -106,8 +112,8 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
         if pd.notna(row['revenue_ttm']) and pd.notna(row['total_assets_avg']) and row['total_assets_avg'] != 0 else np.nan, axis=1
     )
     df['fixed_asset_turnover'] = df.apply(
-        lambda row: float(row['revenue_ttm']) / float(row['property_plant_equipment_net_avg'])
-        if pd.notna(row['revenue_ttm']) and pd.notna(row['property_plant_equipment_net_avg']) and row['property_plant_equipment_net_avg'] != 0 else np.nan, axis=1
+        lambda row: float(row['revenue_ttm']) / float(row['net_ppe_avg'])
+        if pd.notna(row['revenue_ttm']) and pd.notna(row['net_ppe_avg']) and row['net_ppe_avg'] != 0 else np.nan, axis=1
     )
     df['revenue_per_employee'] = df.apply(
         lambda row: float(row['revenue_ttm']) / float(employees)
@@ -118,8 +124,8 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
         if pd.notna(row['operating_expenses_ttm']) and pd.notna(row['revenue_ttm']) and row['revenue_ttm'] != 0 else np.nan, axis=1
     )
     df['dso'] = df.apply(
-        lambda row: (float(row['accounts_receivables_avg']) / float(row['revenue_ttm'])) * 365
-        if pd.notna(row['accounts_receivables_avg']) and row['accounts_receivables_avg'] != 0 \
+        lambda row: (float(row['accounts_receivable_avg']) / float(row['revenue_ttm'])) * 365
+        if pd.notna(row['accounts_receivable_avg']) and row['accounts_receivable_avg'] != 0 \
             and pd.notna(row['revenue_ttm']) and row['revenue_ttm'] != 0 else np.nan, axis=1
     )
     df['dio'] = df.apply(
@@ -128,14 +134,14 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
             and pd.notna(row['cost_of_revenue_ttm']) and row['cost_of_revenue_ttm'] != 0 else np.nan, axis=1
     )
     df['dpo'] = df.apply(
-        lambda row: (float(row['accounts_payables_avg']) / float(row['cost_of_revenue_ttm'])) * 365
-        if pd.notna(row['accounts_payables_avg']) and row['accounts_payables_avg'] != 0 \
+        lambda row: (float(row['accounts_payable_avg']) / float(row['cost_of_revenue_ttm'])) * 365
+        if pd.notna(row['accounts_payable_avg']) and row['accounts_payable_avg'] != 0 \
             and pd.notna(row['cost_of_revenue_ttm']) and row['cost_of_revenue_ttm'] != 0 else np.nan, axis=1
     )
 
-    dso = pd.to_numeric(df['dso'], errors='coerce').fillna(0.0)
-    dio = pd.to_numeric(df['dio'], errors='coerce').fillna(0.0)
-    dpo = pd.to_numeric(df['dpo'], errors='coerce').fillna(0.0)
+    dso = df['dso'].fillna(0.0)
+    dio = df['dio'].fillna(0.0)
+    dpo = df['dpo'].fillna(0.0)
 
     ccc = dso + dio - dpo
     df['cash_conversion_cycle'] = ccc.where(ccc != 0, pd.NA)
@@ -171,8 +177,8 @@ def main():
         for tic in tics:
             tic = tic[0]
             subquery = f"""
-                    SELECT tic, earnings_date::date + INTERVAL '15 months' AS date
-                    FROM core.balance_sheets 
+                    SELECT tic, earnings_date::date
+                    FROM core.balance_sheets_quarterly
                     WHERE tic = '{tic}'
                     ORDER BY earnings_date
                     LIMIT 1;
