@@ -63,10 +63,22 @@ def main():
 
     no_major_news = 0
     processed_data = []
+    retries = 3
 
     # Use tqdm to track progress
     for state in tqdm(states, desc="Processing states"):
-        final_state = app.invoke(state[0])
+        while retries > 0:
+            try:
+                final_state = app.invoke(state[0])
+                retries = 3  # reset retries for next state
+                break
+            except Exception as e:
+                retries -= 1
+                if retries == 0:
+                    print(f"Failed to process event ID {state[1]} after multiple retries: {e}")
+                    raise e
+                print(f"Error processing event ID {state[1]}: {e}. Retrying...")
+
         if "impact_magnitude" in final_state and final_state["impact_magnitude"] == 1:
             no_major_news += 1
         final_state["event_id"] = state[1]  # Add the event ID to the final state

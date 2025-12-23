@@ -22,8 +22,7 @@ def read_records():
     LEFT JOIN core.news as c
     ON r.tic = c.tic
         AND r.url = c.url
-    WHERE c.raw_json_sha256 IS NULL 
-        OR c.raw_json_sha256 <> r.raw_json_sha256
+    WHERE r.raw_json_sha256 IS DISTINCT FROM c.raw_json_sha256
     ;
     """
 

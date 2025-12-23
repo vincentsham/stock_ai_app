@@ -1,6 +1,6 @@
 from states import CompanyProfileState
 from prompts import SYSTEM_PROMPT, HUMAN_PROMPT
-from etl_pipeline.utils import run_llm  # Adjust import if needed
+from etl_pipeline.utils import run_llm, parse_json_from_llm  # Adjust import if needed
 import json
 
 
@@ -30,7 +30,7 @@ def summarize_company_profile(state: CompanyProfileState) -> dict:
     ]
     # Call the LLM (assume run_llm returns an object with .content)
     response = run_llm(messages)
-    result = json.loads(response.content)
+    result = parse_json_from_llm(response.content)
     summary = result.get("summary")
     short_summary = result.get("short_summary")
     return  {"summary": summary, "short_summary": short_summary}

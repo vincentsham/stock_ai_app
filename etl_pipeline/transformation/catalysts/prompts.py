@@ -104,7 +104,7 @@ Query: {retrieval_query}
 </SEARCH_CONTEXT>
 
 <COGNITIVE_CHECK>
-You are looking for news specifically regarding {company_info[tic]} ({company_info[company_name]}). 
+You are looking for news specifically regarding {company_tic} ({company_name}). 
 If the text primarily discusses another company, mark 'is_catalyst': 0.
 </COGNITIVE_CHECK>
 

@@ -7,25 +7,46 @@ from prompts import CATALYST_QUERIES, STAGE1_HUMAN_PROMPT, STAGE2_HUMAN_PROMPT, 
     STAGE1_SYSTEM_MESSAGE, STAGE2_SYSTEM_MESSAGE, STAGE3_HUMAN_PROMPT, STAGE3_SYSTEM_MESSAGE
 from states import CatalystSession, CatalystContext, Catalyst, catalyst_session_factory
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
-from etl_pipeline.utils import run_llm
+from etl_pipeline.utils import run_llm, parse_json_from_llm
 import json
+import os
 load_dotenv()
 
 # Helper function to build SQL query
 def get_sql_query(source_type: str, tic: str, calendar_year: int, calendar_quarter: Optional[int], 
                   calendar_month: Optional[int], vec_str: str, top_k: int = 3) -> str:
     if source_type == "earnings_transcript":
+        # sql = f"""
+        #     SELECT
+        #     c.tic, t.earnings_date AS date, c.event_id, c.chunk_id, c.chunk,
+        #     1 - (e.embedding <=> '{vec_str}'::vector)   AS cosine_sim,
+        #     t.source, NULL AS url, t.raw_json_sha256
+        #     FROM core.earnings_transcript_chunks  AS c
+        #     JOIN core.earnings_transcript_embeddings AS e
+        #     ON c.event_id = e.event_id AND c.chunk_id = e.chunk_id
+        #     JOIN core.earnings_transcripts AS t
+        #     ON c.event_id = t.event_id
+        #     WHERE c.tic = '{tic}' 
+        #         AND c.calendar_year = {calendar_year}
+        #         AND c.calendar_quarter = {calendar_quarter}
+        #         AND (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.3
+        #     ORDER BY cosine_sim DESC
+        #     LIMIT {top_k};
+        # """
         sql = f"""
             SELECT
             c.tic, t.earnings_date AS date, c.event_id, c.chunk_id, c.chunk,
             1 - (e.embedding <=> '{vec_str}'::vector)   AS cosine_sim,
             t.source, NULL AS url, t.raw_json_sha256
             FROM core.earnings_transcript_chunks  AS c
+            JOIN core.earnings_transcript_chunk_signal AS s
+            ON c.event_id = s.event_id AND c.chunk_id = s.chunk_id
             JOIN core.earnings_transcript_embeddings AS e
             ON c.event_id = e.event_id AND c.chunk_id = e.chunk_id
             JOIN core.earnings_transcripts AS t
             ON c.event_id = t.event_id
             WHERE c.tic = '{tic}' 
+                AND s.is_signal = 1
                 AND c.calendar_year = {calendar_year}
                 AND c.calendar_quarter = {calendar_quarter}
                 AND (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.3
@@ -33,17 +54,37 @@ def get_sql_query(source_type: str, tic: str, calendar_year: int, calendar_quart
             LIMIT {top_k};
         """
     elif source_type == "news":
+        # sql = f"""
+        #     SELECT
+        #     c.tic, c.published_at::DATE as date, c.event_id, c.chunk_id, c.chunk,
+        #     1 - (e.embedding <=> '{vec_str}'::vector)  AS cosine_sim,
+        #     n.source, n.url, n.raw_json_sha256
+        #     FROM core.news_chunks  AS c
+        #     JOIN core.news_embeddings AS e
+        #     ON c.event_id = e.event_id AND c.chunk_id = e.chunk_id
+        #     JOIN core.news AS n
+        #     ON c.event_id = n.event_id
+        #     WHERE c.tic = '{tic}' 
+        #         AND EXTRACT(YEAR FROM c.published_at) = {calendar_year}
+        #         AND EXTRACT(MONTH FROM c.published_at) = {calendar_month}
+        #         AND (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.3
+        #     ORDER BY cosine_sim DESC
+        #     LIMIT {top_k};
+        # """
         sql = f"""
             SELECT
             c.tic, c.published_at::DATE as date, c.event_id, c.chunk_id, c.chunk,
             1 - (e.embedding <=> '{vec_str}'::vector)  AS cosine_sim,
             n.source, n.url, n.raw_json_sha256
             FROM core.news_chunks  AS c
+            JOIN core.news_chunk_signal AS s
+            ON c.event_id = s.event_id AND c.chunk_id = s.chunk_id
             JOIN core.news_embeddings AS e
             ON c.event_id = e.event_id AND c.chunk_id = e.chunk_id
             JOIN core.news AS n
             ON c.event_id = n.event_id
             WHERE c.tic = '{tic}' 
+                AND s.is_signal = 1
                 AND EXTRACT(YEAR FROM c.published_at) = {calendar_year}
                 AND EXTRACT(MONTH FROM c.published_at) = {calendar_month}
                 AND (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.3
@@ -59,7 +100,7 @@ def get_sql_query(source_type: str, tic: str, calendar_year: int, calendar_quart
 # Retriever Node
 def retriever_node(state: CatalystSession) -> dict:
     # print("Starting retriever_node...")
-    embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")
+    embedding_model = OpenAIEmbeddings(model=os.getenv("OPENAI_EMBEDDING_MODEL"))
     tic = state.query_params.tic
     top_k = state.query_params.top_k
     source_type = state.query_params.source_type
@@ -81,7 +122,7 @@ def retriever_node(state: CatalystSession) -> dict:
                             vec_str, top_k)
 
         results = execute_query(sql)
-        if results is None:
+        if results is None or len(results) == 0:
             return {}
 
         for i in range(len(results)):
@@ -164,12 +205,16 @@ def stage1_node(state: CatalystSession) -> dict:
             ctx.candidate = Catalyst.init()
 
         # dump company info as JSON so the LLM gets a proper structure
-        company_info_json = json.dumps(
-            state.company_info.model_dump(), ensure_ascii=False
-        )
+        company_dict = state.company_info.model_dump()
+        company_info_json = json.dumps(company_dict, ensure_ascii=False)
+        # provide specific fields used in the prompt formatting
+        company_tic = company_dict.get("tic", "")
+        company_name = company_dict.get("company_name", company_dict.get("name", ""))
 
         human_prompt = STAGE1_HUMAN_PROMPT.format(
             company_info=company_info_json,
+            company_tic=company_tic,
+            company_name=company_name,
             catalyst_type=catalyst_type,
             retrieval_query=retrieval_query,
             content=content,
@@ -178,7 +223,7 @@ def stage1_node(state: CatalystSession) -> dict:
         messages = [system_prompt, HumanMessage(content=human_prompt)]
 
         llm_raw = run_llm(messages).content
-        llm_dict = json.loads(llm_raw)
+        llm_dict = parse_json_from_llm(llm_raw)
 
         # normalize is_catalyst: model promises 0|1, but be defensive
         is_cat_val = llm_dict.get("is_catalyst")
@@ -236,9 +281,12 @@ def stage2_node(state: CatalystSession) -> dict:
         llm_raw = run_llm(messages).content
 
         # 2) parse json
-        llm_dict = json.loads(llm_raw)
+        llm_dict = parse_json_from_llm(llm_raw)
 
-        new_catalyst_flag = llm_dict.get("catalyst_id") is None
+        new_catalyst_flag = llm_dict.get("catalyst_id") is None \
+                            or llm_dict.get("catalyst_id") == "" \
+                            or llm_dict.get("catalyst_id") == "null" \
+                            or llm_dict.get("catalyst_id") == "None"
         llm_dict["catalyst_id"] = str(uuid.uuid4()) if new_catalyst_flag else llm_dict.get("catalyst_id")
 
         # 3) VALIDATE with your Pydantic Catalyst
@@ -286,7 +334,7 @@ def stage3_node(state: CatalystSession) -> dict:
         llm_raw = run_llm(messages).content
 
         # 2) parse json
-        llm_dict = json.loads(llm_raw)
+        llm_dict = parse_json_from_llm(llm_raw)
         is_valid = llm_dict.get("is_valid", 1)
         rejection_reason = llm_dict.get("rejection_reason", None)
 

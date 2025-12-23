@@ -27,10 +27,8 @@ def process_and_store_embeddings():
                 LEFT JOIN core.news_embeddings AS e
                 ON nc.tic = e.tic
                     AND nc.url = e.url
-                WHERE e.chunk_sha256 IS NULL
-                    OR e.chunk_sha256 <> nc.chunk_sha256
-                    OR e.raw_json_sha256 IS NULL
-                    OR e.raw_json_sha256 <> nc.raw_json_sha256;
+                WHERE nc.chunk_sha256 IS DISTINCT FROM e.chunk_sha256
+                    OR nc.raw_json_sha256 IS DISTINCT FROM e.raw_json_sha256;
             """)
             records = cursor.fetchall()
 
