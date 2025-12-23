@@ -64,6 +64,8 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS raw.earnings (
             tic VARCHAR(10) NOT NULL,
+            calendar_year INT NOT NULL,
+            calendar_quarter SMALLINT NOT NULL,
             earnings_date DATE NOT NULL,
             fiscal_date DATE,
             session VARCHAR(10),
@@ -71,13 +73,11 @@ def table_creation(conn):
             eps_estimated NUMERIC(10,4),
             revenue NUMERIC(20,2),
             revenue_estimated NUMERIC(20,2),
-            price_before NUMERIC(12,4),
-            price_after NUMERIC(12,4),
             source                 VARCHAR(255),                  -- e.g., 'fmp', 'yahoo', etc.
-            raw_json               JSONB        NOT NULL,                 -- verbatim payload (optional but useful)
+            raw_json               JSONB        NOT NULL,
             raw_json_sha256        CHAR(64)     NOT NULL,
             updated_at            TIMESTAMPTZ DEFAULT now(),
-            PRIMARY KEY (tic, earnings_date)
+            PRIMARY KEY (tic, calendar_year, calendar_quarter)
         );
         """)
         print("Table 'earnings' created or already exists with composite primary key.")
@@ -87,13 +87,16 @@ def table_creation(conn):
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS raw.earnings_transcripts (
             tic             VARCHAR(10)  NOT NULL,
+            calendar_year INT NOT NULL,
+            calendar_quarter SMALLINT NOT NULL,
             earnings_date   DATE         NOT NULL,
+            url             TEXT NOT NULL,
             source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
             transcript_sha256 CHAR(64)     NOT NULL,
             updated_at      TIMESTAMPTZ DEFAULT now(),
-            PRIMARY KEY (tic, earnings_date)
+            PRIMARY KEY (tic, calendar_year, calendar_quarter)
         );
         """)
         print("Table 'earnings_transcripts' created or already exists with composite primary key.")
@@ -101,51 +104,51 @@ def table_creation(conn):
 
         # Create a table for income statements if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS raw.income_statements (
+        CREATE TABLE IF NOT EXISTS raw.income_statements_quarterly (
             tic             VARCHAR(10)  NOT NULL,                 -- e.g., AAPL
-            fiscal_year     SMALLINT    NOT NULL,                 -- e.g., 2025
-            fiscal_quarter  SMALLINT    NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
+            fiscal_year     INT          NOT NULL,
+            fiscal_quarter  SMALLINT     NOT NULL,
             fiscal_date     DATE       NOT NULL,
             source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
             updated_at      TIMESTAMPTZ DEFAULT now(),
-            PRIMARY KEY (tic, fiscal_year, fiscal_quarter)
+            PRIMARY KEY (tic, fiscal_year, fiscal_quarter, source)
         );
         """)
-        print("Table 'income_statements' created or already exists with composite primary key.")
+        print("Table 'income_statements_quarterly' created or already exists with composite primary key.")
 
         # Create a table for cash flows if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS raw.cash_flow_statements (
+        CREATE TABLE IF NOT EXISTS raw.cash_flow_statements_quarterly (
             tic             VARCHAR(10)  NOT NULL,                 -- e.g., AAPL
-            fiscal_year     SMALLINT          NOT NULL,                 -- e.g., 2025
-            fiscal_quarter  SMALLINT          NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
+            fiscal_year     INT          NOT NULL,
+            fiscal_quarter  SMALLINT     NOT NULL,
             fiscal_date     DATE       NOT NULL,
             source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
             updated_at      TIMESTAMPTZ DEFAULT now(),
-            PRIMARY KEY (tic, fiscal_year, fiscal_quarter)
+            PRIMARY KEY (tic, fiscal_year, fiscal_quarter, source)
         );
         """)
-        print("Table 'cash_flow_statements' created or already exists with composite primary key.")
+        print("Table 'cash_flow_statements_quarterly' created or already exists with composite primary key.")
 
         # Create a table for balance sheets if it does not exist
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS raw.balance_sheets (
+        CREATE TABLE IF NOT EXISTS raw.balance_sheets_quarterly (
             tic             VARCHAR(10)  NOT NULL,                 -- e.g., AAPL
-            fiscal_year     SMALLINT          NOT NULL,                 -- e.g., 2025
-            fiscal_quarter  SMALLINT          NOT NULL,                 -- 1–4 for quarters, 0 = full fiscal year (FY)
+            fiscal_year     INT          NOT NULL,
+            fiscal_quarter  SMALLINT     NOT NULL,
             fiscal_date     DATE       NOT NULL,
             source          VARCHAR(255),
             raw_json        JSONB        NOT NULL,
             raw_json_sha256 CHAR(64)     NOT NULL,
             updated_at      TIMESTAMPTZ DEFAULT now(),
-            PRIMARY KEY (tic, fiscal_year, fiscal_quarter)
+            PRIMARY KEY (tic, fiscal_year, fiscal_quarter, source)
         );
         """)
-        print("Table 'balance_sheets' created or already exists with composite primary key.")
+        print("Table 'balance_sheets_quarterly' created or already exists with composite primary key.")
 
         # Create a table for news data if it does not exist
         cursor.execute("""
@@ -195,26 +198,6 @@ def table_creation(conn):
         """)
         print("Table 'analyst_grades' created or already exists with composite primary key.")
 
-
-        # Create a table for dividends data if it does not exist
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS raw.dividends (
-            tic                VARCHAR(10) NOT NULL,
-            ex_dividend_date   DATE NOT NULL,
-            declaration_date   DATE,
-            payment_date       DATE,
-            adj_dividend       NUMERIC(12,6),
-            dividend           NUMERIC(12,6),
-            dividend_yield     NUMERIC(12,8),
-            frequency          VARCHAR(50),
-            source             VARCHAR(255),
-            raw_json           JSONB,
-            raw_json_sha256    CHAR(64),
-            updated_at      TIMESTAMPTZ DEFAULT now(),
-            PRIMARY KEY (tic, ex_dividend_date)
-        );
-        """)
-        print("Table 'dividends' created or already exists with composite primary key.")
 
         conn.commit()
         

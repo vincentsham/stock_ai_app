@@ -33,8 +33,7 @@ def main():
               ['core.profitability_metrics', 'core.profitability_percentiles'],
               ['core.growth_metrics', 'core.growth_percentiles'],
               ['core.efficiency_metrics', 'core.efficiency_percentiles'],
-              ['core.financial_health_metrics', 'core.financial_health_percentiles'],
-              ['core.capital_allocation_metrics', 'core.capital_allocation_percentiles']            
+              ['core.financial_health_metrics', 'core.financial_health_percentiles'],          
             ]
     conn = connect_to_db()
     if conn is not None:

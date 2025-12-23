@@ -23,7 +23,8 @@ def main():
                 AND et.calendar_quarter = eta.calendar_quarter
             JOIN core.stock_profiles AS sm 
             ON et.tic = sm.tic
-            WHERE eta.transcript_sha256 IS NULL OR eta.transcript_sha256 <> et.transcript_sha256;
+            WHERE et.calendar_year >= 2024 
+                AND (eta.transcript_sha256 IS NULL OR eta.transcript_sha256 <> et.transcript_sha256);
         """
         df = read_sql_query(query, conn)
     else:

@@ -21,7 +21,7 @@ def read_earnings(conn, tic: str) -> pd.DataFrame:
 
     query = f"""
         SELECT e.event_id, e.tic, e.calendar_year, e.calendar_quarter,
-               e.eps, e.eps_estimated, e.revenue, e.revenue_estimated, 
+               e.eps, e.eps_estimated, e.revenue, e.revenue_estimated,
                e.raw_json_sha256
         FROM core.earnings AS e
         LEFT JOIN core.earnings_metrics AS r 
@@ -31,7 +31,7 @@ def read_earnings(conn, tic: str) -> pd.DataFrame:
         WHERE e.tic = '{tic}' 
             AND e.eps IS NOT NULL 
             AND e.revenue IS NOT NULL
-            AND (r.raw_json_sha256 IS NULL OR r.raw_json_sha256 <> e.raw_json_sha256)
+            AND e.raw_json_sha256 IS DISTINCT FROM r.raw_json_sha256
         ORDER BY e.calendar_year, e.calendar_quarter;
     """
     df = read_sql_query(query, conn)

@@ -1,6 +1,6 @@
 from states import PastState, FutureState, RiskState, RiskResponseState, MergedState
 from database.utils import execute_query
-from etl_pipeline.utils import run_llm
+from etl_pipeline.utils import parse_json_from_llm, run_llm
 from typing import Literal, Optional, Union
 from prompts import PAST_PERFORMANCE_SYSTEM_MESSAGE, FUTURE_OUTLOOK_SYSTEM_MESSAGE, \
                     RISK_FACTORS_SYSTEM_MESSAGE, RISK_RESPONSE_SYSTEM_MESSAGE, \
@@ -130,8 +130,16 @@ def analysis_node(state: MergedState,
         messages = [system_prompt, ai_prompt, human_prompt]
     else:
         messages = [system_prompt, human_prompt]
-    response = json.loads(run_llm(messages).content)
-    return { STAGES[type]["analysis"]: {**response} }
+    response = run_llm(messages).content
+    try:
+        output = parse_json_from_llm(response)
+        return { STAGES[type]["analysis"]: {**output} }
+    except Exception as e:
+        print(f"Error in analysis_node for type {type}: {e}")
+        print("==================================")
+        print(response)
+        print("==================================")
+        return { STAGES[type]["analysis"]: {} }
 
 
 

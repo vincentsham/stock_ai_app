@@ -11,11 +11,11 @@ import re
 from datetime import datetime
 from database.utils import connect_to_db
 import json
-from etl_pipeline.utils import hash_dict, hash_text
+from etl_pipeline.utils import hash_dict, hash_text, get_calendar_year_quarter, filter_complete_years
 import numpy as np
 from pathlib import Path
-from utils import insert_record, lookup_record
-
+import pandas as pd
+from database.utils import insert_records
 
 def create_chrome_driver() -> webdriver.Chrome:
     """Create a Chrome driver with fallbacks to avoid macOS chromedriver crashes."""
@@ -121,10 +121,10 @@ def extract_latest_fyfq(soup: BeautifulSoup) -> tuple:
         return int(fiscal_year), int(fiscal_quarter), len(total_quarters)
     return None, None, 0
 
-def extract_earnings_date(soup: BeautifulSoup) -> str:
+def extract_earnings_date(soup: BeautifulSoup):
     container = soup.find("ul", id="transcriptsContent")
     if not container:
-        return ""
+        return None
     header_card = container.find("div", class_="flex flex-wrap justify-between bg-base-200 rounded-box p-4")
     if header_card:
         date_spans = header_card.find_all("span", class_="text-xs")
@@ -136,7 +136,7 @@ def extract_earnings_date(soup: BeautifulSoup) -> str:
                 date_str = match.group()
                 parsed_date = datetime.strptime(date_str, "%B %d, %Y")
                 return parsed_date.strftime("%Y-%m-%d")
-    return ""
+    return None
     
 
 
@@ -203,6 +203,7 @@ def extract_all_earnings_transcripts(tic: str, num_transcripts: int = 4) -> list
             soup = get_html_content(driver, url)
             transcript_text = extract_earnings_transcript(soup)
             earnings_date = extract_earnings_date(soup)
+
             if transcript_text != "":
                 transcripts.append({
                     "ticker": tic.upper(),
@@ -211,6 +212,7 @@ def extract_all_earnings_transcripts(tic: str, num_transcripts: int = 4) -> list
                     "date": earnings_date,
                     "transcript": transcript_text,
                     "url": url,
+                    "source": "discountingcashflows"
                 })
             fq = fq - 1
             if fq == 0:
@@ -222,7 +224,6 @@ def extract_all_earnings_transcripts(tic: str, num_transcripts: int = 4) -> list
     finally:
         driver.quit()
         return transcripts 
-
 
 
 def main():
@@ -244,7 +245,7 @@ if __name__ == "__main__":
         tics = cursor.fetchall()
         tics = [tic[0] for tic in tics]
         # tics = [tic[0] if tic[0] not in ['NVDA', 'AAPL', 'TSLA'] else None for tic in tics]
-        tics = ["SOFI"]
+        # tics = ["SOFI"]
         
 
         for tic in tics:
@@ -252,11 +253,28 @@ if __name__ == "__main__":
                 continue
             total_records = 0
             transcripts = extract_all_earnings_transcripts(tic, num_transcripts=8)
+            transcripts_list = []
             for transcript in transcripts:
                 earnings_date = transcript.get("date")
-                earnings_date = lookup_record(conn, tic, earnings_date)
+                source = transcript.get("source")
                 url = transcript.get("url")
-                if earnings_date:
-                    total_records += insert_record(conn, transcript, tic, earnings_date, url)
-            print(f"For {tic}: Total records processed = {total_records}")  
+                transcripts_list.append({
+                    "tic": tic.upper(),
+                    "earnings_date": earnings_date,
+                    "url": url,
+                    "transcript_sha256": hash_text(transcript.get("transcript")),
+                    "raw_json": json.dumps(transcript),
+                    "raw_json_sha256": hash_dict(transcript),
+                    "source": source
+                })
+            df_transcripts = pd.DataFrame(transcripts_list)
+            df_transcripts['earnings_date'] = pd.to_datetime(df_transcripts['earnings_date'])
+            df_transcripts = df_transcripts.sort_values(by='earnings_date', ascending=False)
+            df_transcripts = filter_complete_years(df_transcripts, tic)
+            calendar_year, calendar_quarter = zip(*[get_calendar_year_quarter(date) for date in df_transcripts['earnings_date']])
+            df_transcripts.loc[:, 'calendar_year'] = calendar_year
+            df_transcripts.loc[:, 'calendar_quarter'] = calendar_quarter
+
+            total_inserted = insert_records(conn, df_transcripts, "raw.earnings_transcripts", ["tic", "calendar_year", "calendar_quarter"], where=["raw_json_sha256"])
+            print(f"For {tic}: Total records processed = {total_inserted}")  
         conn.close()

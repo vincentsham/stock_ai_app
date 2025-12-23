@@ -493,6 +493,7 @@ def table_creation(conn):
             ev_to_fcf_ttm       NUMERIC(20, 6),   -- EV / FCF (TTM)
             earnings_yield_ttm  NUMERIC(20, 8),   -- EPS / Price  (or NI / Market Cap)
             revenue_yield_ttm   NUMERIC(20, 8),   -- Revenue / Market Cap
+            total_shareholder_yield_ttm NUMERIC(20, 8), -- (Dividends + Buybacks) / Market Cap (TTM)
 
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
             UNIQUE (tic, date)
@@ -520,6 +521,7 @@ def table_creation(conn):
 
             roe                  NUMERIC(20, 8),  -- Net Income / Avg Equity
             roa                  NUMERIC(20, 8),  -- Net Income / Avg Assets
+            roic                 NUMERIC(20, 8),  -- NOPAT / (Debt + Equity - Cash)
             ocf_margin           NUMERIC(20, 8),  -- Operating Cash Flow / Revenue
             fcf_margin           NUMERIC(20, 8),  -- Free Cash Flow / Revenue
                    
@@ -645,28 +647,28 @@ def table_creation(conn):
 
 
        # Create a table for capital allocation metrics if it does not exist
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.capital_allocation_metrics (
-            -- Identity & period alignment
-            inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            tic                               VARCHAR(10)  NOT NULL,
-            date                              DATE         NOT NULL,
+        # cursor.execute("""
+        # CREATE TABLE IF NOT EXISTS core.capital_allocation_metrics (
+        #     -- Identity & period alignment
+        #     inference_id       UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        #     tic                               VARCHAR(10)  NOT NULL,
+        #     date                              DATE         NOT NULL,
 
-            -- Default View (UX)
-            roic                   NUMERIC(20,8),  -- NOPAT_TTM / Avg Invested Capital
-            total_shareholder_yield NUMERIC(20,8), -- dividend_yield + buyback_yield
-            share_count_change_yoy     NUMERIC(20,8),  -- dilution / accretion
+        #     -- Default View (UX)
+        #     roic                   NUMERIC(20,8),  -- NOPAT_TTM / Avg Invested Capital
+        #     total_shareholder_yield NUMERIC(20,8), -- dividend_yield + buyback_yield
+        #     share_count_change_yoy     NUMERIC(20,8),  -- dilution / accretion
 
-            -- Expand (Advanced)
-            reinvestment_rate         NUMERIC(20,8),  -- (CapEx + ΔWC) / NOPAT_TTM
-            fcf_per_share_growth_yoy   NUMERIC(20,8),  -- YoY growth of (FCF_TTM / diluted shares)
+        #     -- Expand (Advanced)
+        #     reinvestment_rate         NUMERIC(20,8),  -- (CapEx + ΔWC) / NOPAT_TTM
+        #     fcf_per_share_growth_yoy   NUMERIC(20,8),  -- YoY growth of (FCF_TTM / diluted shares)
 
                    
-            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            UNIQUE (tic, date)
-        );
-        """)
-        print("Table 'capital_allocation_metrics' created or already exists with composite primary key.")
+        #     updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+        #     UNIQUE (tic, date)
+        # );
+        # """)
+        # print("Table 'capital_allocation_metrics' created or already exists with composite primary key.")
 
 
        # Create a table for valuation percentiles if it does not exist
@@ -702,6 +704,7 @@ def table_creation(conn):
             ev_to_fcf_ttm_percentile       NUMERIC(6, 3),   -- EV / FCF (TTM)
             earnings_yield_ttm_percentile  NUMERIC(6, 3),   -- EPS / Price  (or NI / Market Cap)
             revenue_yield_ttm_percentile   NUMERIC(6, 3),   -- Revenue / Market Cap
+            total_shareholder_yield_ttm_percentile NUMERIC(6, 3), -- (Dividends + Buybacks) / Market Cap (TTM)
 
             updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
             
@@ -735,6 +738,7 @@ def table_creation(conn):
 
             roe_percentile                  NUMERIC(6, 3),  -- Net Income / Avg Equity
             roa_percentile                  NUMERIC(6, 3),  -- Net Income / Avg Assets
+            roic_percentile                 NUMERIC(6, 3),  -- NOPAT / (Debt + Equity - Cash)
             ocf_margin_percentile           NUMERIC(6, 3),  -- Operating Cash Flow / Revenue
             fcf_margin_percentile           NUMERIC(6, 3),  -- Free Cash Flow / Revenue
                    
@@ -879,32 +883,32 @@ def table_creation(conn):
         print("Table 'financial_health_percentiles' created or already exists with composite primary key.")
 
 
-       # Create a table for capital allocation percentiles if it does not exist
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS core.capital_allocation_percentiles (
-            -- Identity & period alignment
-            inference_id       UUID NOT NULL,
-            tic                               VARCHAR(10)  NOT NULL,
-            date                              DATE         NOT NULL,
+    #    # Create a table for capital allocation percentiles if it does not exist
+    #     cursor.execute("""
+    #     CREATE TABLE IF NOT EXISTS core.capital_allocation_percentiles (
+    #         -- Identity & period alignment
+    #         inference_id       UUID NOT NULL,
+    #         tic                               VARCHAR(10)  NOT NULL,
+    #         date                              DATE         NOT NULL,
 
-            -- Default View (UX)
-            roic_percentile                   NUMERIC(6,3),  -- NOPAT_TTM / Avg Invested Capital
-            total_shareholder_yield_percentile NUMERIC(6,3), -- dividend_yield + buyback_yield
-            share_count_change_yoy_percentile     NUMERIC(6,3),  -- dilution / accretion
+    #         -- Default View (UX)
+    #         roic_percentile                   NUMERIC(6,3),  -- NOPAT_TTM / Avg Invested Capital
+    #         total_shareholder_yield_percentile NUMERIC(6,3), -- dividend_yield + buyback_yield
+    #         share_count_change_yoy_percentile     NUMERIC(6,3),  -- dilution / accretion
 
-            -- Expand (Advanced)
-            reinvestment_rate_percentile         NUMERIC(6,3),  -- (CapEx + ΔWC) / NOPAT_TTM
-            fcf_per_share_growth_yoy_percentile   NUMERIC(6,3),  -- YoY growth of (FCF_TTM / diluted shares)
+    #         -- Expand (Advanced)
+    #         reinvestment_rate_percentile         NUMERIC(6,3),  -- (CapEx + ΔWC) / NOPAT_TTM
+    #         fcf_per_share_growth_yoy_percentile   NUMERIC(6,3),  -- YoY growth of (FCF_TTM / diluted shares)
                    
-            updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-            UNIQUE (tic, date),
-            UNIQUE (inference_id),
-            FOREIGN KEY (inference_id)
-                REFERENCES core.capital_allocation_metrics (inference_id)
-                ON DELETE CASCADE
-        );
-        """)
-        print("Table 'capital_allocation_percentiles' created or already exists with composite primary key.")
+    #         updated_at                            TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    #         UNIQUE (tic, date),
+    #         UNIQUE (inference_id),
+    #         FOREIGN KEY (inference_id)
+    #             REFERENCES core.capital_allocation_metrics (inference_id)
+    #             ON DELETE CASCADE
+    #     );
+    #     """)
+    #     print("Table 'capital_allocation_percentiles' created or already exists with composite primary key.")
 
 
 

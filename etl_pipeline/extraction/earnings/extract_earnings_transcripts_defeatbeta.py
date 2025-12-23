@@ -1,7 +1,9 @@
 from database.utils import connect_to_db
-from etl_pipeline.utils import hash_dict, hash_text
+from etl_pipeline.utils import hash_dict, hash_text, filter_complete_years, get_calendar_year_quarter
 from defeatbeta_api.data.ticker import Ticker
-from utils import insert_record, lookup_record
+import pandas as pd
+import json
+from database.utils import insert_records, insert_record
 
 
 def extract_all_earnings_transcripts(tic, num_transcripts=None):
@@ -21,7 +23,8 @@ def extract_all_earnings_transcripts(tic, num_transcripts=None):
             "quarter": f"Q{row['fiscal_quarter']}",
             "date": row['report_date'],
             "transcript": transcript_text,
-            "url": 'https://github.com/defeat-beta/defeatbeta-api'  # Placeholder URL as defeatbeta does not provide direct URLs,
+            "url": 'https://github.com/defeat-beta/defeatbeta-api',  # Placeholder URL as defeatbeta does not provide direct URLs,
+            "source": "defeatbeta"
         }
         transcripts_list.append(transcript_data)
     return transcripts_list
@@ -41,11 +44,37 @@ if __name__ == "__main__":
                 continue
             total_records = 0
             transcripts = extract_all_earnings_transcripts(tic, num_transcripts=None)
+            transcripts_list = []
             for transcript in transcripts:
                 earnings_date = transcript.get("date")
-                earnings_date = lookup_record(conn, tic, earnings_date)
+                source = transcript.get("source")
                 url = transcript.get("url")
-                if earnings_date:
-                    total_records += insert_record(conn, transcript, tic, earnings_date, url)
-            print(f"For {tic}: Total records processed = {total_records}")  
+                transcripts_list.append({
+                    "tic": tic.upper(),
+                    "earnings_date": earnings_date,
+                    "url": url,
+                    "transcript_sha256": hash_text(transcript.get("transcript")),
+                    "raw_json": json.dumps(transcript),
+                    "raw_json_sha256": hash_dict(transcript),
+                    "source": source
+                })
+            df_transcripts = pd.DataFrame(transcripts_list)
+            df_transcripts['earnings_date'] = pd.to_datetime(df_transcripts['earnings_date'])
+            df_transcripts = df_transcripts.sort_values(by='earnings_date', ascending=False)
+            df_transcripts = filter_complete_years(df_transcripts, tic)
+            calendar_year, calendar_quarter = zip(*[get_calendar_year_quarter(date) for date in df_transcripts['earnings_date']])
+            df_transcripts.loc[:, 'calendar_year'] = calendar_year
+            df_transcripts.loc[:, 'calendar_quarter'] = calendar_quarter
+
+            total_inserted = insert_records(conn, df_transcripts, "raw.earnings_transcripts", ["tic", "calendar_year", "calendar_quarter"], where=["raw_json_sha256"])
+            print(f"For {tic}: Total records processed = {total_inserted}")  
+            # for i in range(df_transcripts.shape[0]):
+            #     df_row = df_transcripts.iloc[i:i+1]
+            #     # Change dtype to object for single row insertion
+            #     df_row = df_row.astype(object)
+            #     total_inserted = insert_record(conn, df_row, "raw.earnings_transcripts", ["tic", "calendar_year", "calendar_quarter"], where=["raw_json_sha256"])
+            #     if total_inserted > 0:
+            #         total_records += total_inserted
+            #         print(df_row)
+            # print(f"For {tic}: Total records processed = {total_records}")  
         conn.close()

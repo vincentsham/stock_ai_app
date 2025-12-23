@@ -2,6 +2,7 @@ from database.utils import connect_to_db, execute_query, insert_records, read_sq
 import pandas as pd
 import yfinance as yf
 import numpy as np
+from etl_pipeline.utils import convert_decimals_to_float
 
 
 def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
@@ -14,50 +15,61 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
     df = read_sql_query(close_price_query, conn)
     df['date'] = pd.to_datetime(df['date'])
     df = df.sort_values('date')
+    df = convert_decimals_to_float(df)
 
 
     balance_sheet_query = f"""
         SELECT tic, calendar_year, calendar_quarter, earnings_date::date, total_assets,
-            total_debt, total_stockholders_equity, cash_and_short_term_investments
-        FROM core.balance_sheets 
+            total_debt, total_equity, cash_and_short_term_investments, invested_capital
+        FROM core.balance_sheets_quarterly
         WHERE tic = '{tic}'
         ORDER BY earnings_date;
     """
     df_balance_sheet = read_sql_query(balance_sheet_query, conn)
     df_balance_sheet['earnings_date'] = pd.to_datetime(df_balance_sheet['earnings_date'])
     df_balance_sheet = df_balance_sheet.sort_values('earnings_date')
+    df_balance_sheet = convert_decimals_to_float(df_balance_sheet)
 
     df_balance_sheet['total_assets_avg'] = (df_balance_sheet['total_assets'] + df_balance_sheet['total_assets'].shift(4)) / 2
-    df_balance_sheet['total_stockholders_equity_avg'] = (df_balance_sheet['total_stockholders_equity'] + df_balance_sheet['total_stockholders_equity'].shift(4)) / 2
+    df_balance_sheet['total_equity_avg'] = (df_balance_sheet['total_equity'] + df_balance_sheet['total_equity'].shift(4)) / 2
+    df_balance_sheet['ic_avg'] = (df_balance_sheet['invested_capital'] + df_balance_sheet['invested_capital'].shift(4)) / 2
 
     income_statement_query = f"""
         SELECT tic, calendar_year, calendar_quarter, earnings_date::date,
                eps_diluted, revenue, ebit, ebitda, gross_profit, net_income,
-               income_tax_expense, income_before_tax
-        FROM core.income_statements 
+               income_tax_expense, income_before_tax, effective_tax_rate
+        FROM core.income_statements_quarterly
         WHERE tic = '{tic}'
         ORDER BY earnings_date;
     """
     df_income = read_sql_query(income_statement_query, conn)
     df_income['earnings_date'] = pd.to_datetime(df_income['earnings_date'])
     df_income = df_income.sort_values('earnings_date')
+    df_income = convert_decimals_to_float(df_income)
+
     df_income['revenue_ttm'] = df_income['revenue'].rolling(window=4).sum()
     df_income['ebitda_ttm'] = df_income['ebitda'].rolling(window=4).sum()
     df_income['ebit_ttm'] = df_income['ebit'].rolling(window=4).sum()
     df_income['gross_profit_ttm'] = df_income['gross_profit'].rolling(window=4).sum()
     df_income['net_income_ttm'] = df_income['net_income'].rolling(window=4).sum()
+    df_income['nopat'] = df_income.apply(
+        lambda row: row['ebit_ttm'] * (1 - row['effective_tax_rate'])
+        if pd.notna(row['ebit_ttm']) and pd.notna(row['effective_tax_rate']) else np.nan, axis=1
+    )
 
 
     cash_flow_statement_query = f"""
         SELECT tic, calendar_year, calendar_quarter, earnings_date::date,
                free_cash_flow as fcf, operating_cash_flow as ocf
-        FROM core.cash_flow_statements 
+        FROM core.cash_flow_statements_quarterly
         WHERE tic = '{tic}'
         ORDER BY earnings_date;
     """
     df_cash_flow = read_sql_query(cash_flow_statement_query, conn)
     df_cash_flow['earnings_date'] = pd.to_datetime(df_cash_flow['earnings_date'])
     df_cash_flow = df_cash_flow.sort_values('earnings_date')
+    df_cash_flow = convert_decimals_to_float(df_cash_flow)
+
     df_cash_flow['fcf_ttm'] = df_cash_flow['fcf'].rolling(window=4).sum()
     df_cash_flow['ocf_ttm'] = df_cash_flow['ocf'].rolling(window=4).sum()
 
@@ -112,9 +124,13 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
         if row['total_assets_avg'] and row['total_assets_avg'] > 0 else np.nan, axis=1
     )
     df['roe'] = df.apply(
-        lambda row: float(row['net_income_ttm']) / float(row['total_stockholders_equity_avg'])
-        if row['total_stockholders_equity_avg'] and row['total_stockholders_equity_avg'] > 0 else np.nan, axis=1
+        lambda row: float(row['net_income_ttm']) / float(row['total_equity_avg'])
+        if row['total_equity_avg'] and row['total_equity_avg'] > 0 else np.nan, axis=1
     )
+    df['roic'] = df.apply(
+        lambda row: float(row['nopat']) / float(row['ic_avg'])
+        if row['ic_avg'] and row['ic_avg'] > 0 else np.nan, axis=1
+    )  
     df['ocf_margin'] = df.apply(
         lambda row: float(row['ocf_ttm']) / float(row['revenue_ttm'])
         if row['revenue_ttm'] and row['revenue_ttm'] > 0 else np.nan, axis=1
@@ -125,7 +141,7 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
     )
 
     transformed_df = df[['tic', 'date', 'gross_margin', 'operating_margin', 'ebitda_margin',
-                         'net_margin', 'roa', 'roe', 'ocf_margin', 'fcf_margin']]   
+                         'net_margin', 'roa', 'roe', 'roic', 'ocf_margin', 'fcf_margin']]   
     return transformed_df
 
 
@@ -153,8 +169,8 @@ def main():
         for tic in tics:
             tic = tic[0]
             subquery = f"""
-                    SELECT tic, earnings_date::date + INTERVAL '15 months' AS date
-                    FROM core.balance_sheets 
+                    SELECT tic, earnings_date::date
+                    FROM core.balance_sheets_quarterly
                     WHERE tic = '{tic}'
                     ORDER BY earnings_date
                     LIMIT 1;

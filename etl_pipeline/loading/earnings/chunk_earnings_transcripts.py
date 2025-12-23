@@ -61,8 +61,8 @@ def process_and_load_chunks():
                     AND et.calendar_year = etc.calendar_year
                     AND et.calendar_quarter = etc.calendar_quarter
                 WHERE et.transcript IS NOT NULL
-                    AND (etc.transcript_sha256 IS NULL
-                        OR et.transcript_sha256 <> etc.transcript_sha256);
+                    AND et.transcript_sha256 IS DISTINCT FROM etc.transcript_sha256
+                    AND et.calendar_year >= 2024;
             """)
             records = cursor.fetchall()
             total_records = 0
