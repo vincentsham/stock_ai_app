@@ -107,8 +107,6 @@ def table_creation(conn):
         """)
         print("Table 'news_embeddings' created or already exists with composite primary key.")
 
-
-
         # Create an HNSW index for the embeddings
         cursor.execute("""
         CREATE INDEX IF NOT EXISTS idx_core_news_embeddings_vec_hnsw
@@ -117,6 +115,37 @@ def table_creation(conn):
           WITH (m = 16, ef_construction = 200);
         """)
         print("Index 'idx_core_news_embeddings_vec_hnsw' created or already exists.")
+
+
+
+        # Create a table for news chunk signal if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.news_chunk_signal (
+            tic             VARCHAR(10) NOT NULL,
+            -- Sequential id within a single transcript (1..N)
+            event_id         UUID NOT NULL,
+            chunk_id        INT NOT NULL,
+            chunk_sha256    CHAR(64)  NOT NULL,
+            raw_json_sha256 CHAR(64) NOT NULL,
+                       
+            is_signal       SMALLINT NOT NULL,
+            reason          TEXT,
+
+            updated_at      TIMESTAMPTZ DEFAULT now(),
+
+            PRIMARY KEY (event_id, chunk_id),
+
+            FOREIGN KEY (event_id)
+                REFERENCES core.news (event_id)
+                ON DELETE CASCADE,
+            FOREIGN KEY (event_id, chunk_id)
+                REFERENCES core.news_chunks (event_id, chunk_id)
+                ON DELETE CASCADE
+        );
+        """)
+        print("Table 'news_chunk_signal' created or already exists with composite primary key.")
+
+
 
 
 
@@ -243,6 +272,39 @@ def table_creation(conn):
           WITH (m = 16, ef_construction = 200);
         """)
         print("Index 'idx_core_earnings_transcript_embeddings_vec_hnsw' created or already exists.")
+
+
+
+        # Create a table for earnings transcript chunk signal if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.earnings_transcript_chunk_signal (
+            tic             VARCHAR(10) NOT NULL,
+            -- Sequential id within a single transcript (1..N)
+            event_id         UUID NOT NULL,
+            chunk_id        INT NOT NULL,
+            chunk_sha256    CHAR(64)  NOT NULL,
+            transcript_sha256 CHAR(64) NOT NULL,
+                       
+            is_signal       SMALLINT NOT NULL,
+            reason          TEXT,
+
+            updated_at      TIMESTAMPTZ DEFAULT now(),
+
+            PRIMARY KEY (event_id, chunk_id),
+                       
+                                  
+            FOREIGN KEY (event_id)
+                REFERENCES core.earnings_transcripts (event_id)
+                ON DELETE CASCADE,
+
+            FOREIGN KEY (event_id, chunk_id)
+                REFERENCES core.earnings_transcript_chunks (event_id, chunk_id)
+                ON DELETE CASCADE
+        );
+        """)
+        print("Table 'earnings_transcript_chunk_signal' created or already exists with composite primary key.")
+
+
 
 
         # Create a table for earnings transcript analysis if it does not exist

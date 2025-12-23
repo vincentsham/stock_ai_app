@@ -13,12 +13,19 @@ from decimal import Decimal
 
 load_dotenv()
 
-llm = ChatOpenAI(model=os.getenv("OPENAI_LLM_MODEL"))
+llm_chatgpt = ChatOpenAI(model=os.getenv("OPENAI_LLM_MODEL"), api_key=os.getenv("OPENAI_API_KEY"))
+llm_gemini = ChatOpenAI(model=os.getenv("GEMINI_LLM_MODEL"), api_key=os.getenv("GEMINI_API_KEY"))
 
 def run_llm(messages: list[BaseMessage]) -> dict:
     """Interact with the LLM using a system message and a human prompt."""
     try:
-        response = llm.invoke(messages)
+        model = os.getenv("LLM_MODEL", "chatgpt")
+        if model == "chatgpt":
+            response = llm_chatgpt.invoke(messages)
+        elif model == "gemini":
+            response = llm_gemini.invoke(messages)
+        else:
+            raise ValueError(f"Unsupported model: {model}")
         return response
     except Exception as e:
         # Raise an exception to be handled by the graph or caller

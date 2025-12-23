@@ -1,60 +1,11 @@
 import time
 import pandas as pd
-from database.utils import connect_to_db, read_sql_query
+from database.utils import connect_to_db, read_sql_query, insert_records
 from states import CompanyProfileState
 from graph import create_graph
 from tqdm import tqdm
 
 
-def insert_records(data, conn):
-    """Insert processed data into core.stock_profiles."""
-    try:
-        with conn.cursor() as cur:
-            for record in data:
-                cur.execute("""
-                    INSERT INTO core.stock_profiles (
-                        tic, name, sector, industry, country, 
-                        market_cap, employees, exchange, currency, 
-                        website, description, summary, short_summary, 
-                        raw_json_sha256, updated_at
-                    ) VALUES (
-                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW()
-                    )
-                    ON CONFLICT (tic) DO UPDATE SET
-                        name = EXCLUDED.name,
-                        sector = EXCLUDED.sector,
-                        industry = EXCLUDED.industry,
-                        country = EXCLUDED.country,
-                        market_cap = EXCLUDED.market_cap,
-                        employees = EXCLUDED.employees,
-                        exchange = EXCLUDED.exchange,
-                        currency = EXCLUDED.currency,
-                        website = EXCLUDED.website,
-                        description = EXCLUDED.description,
-                        summary = EXCLUDED.summary,
-                        short_summary = EXCLUDED.short_summary,
-                        raw_json_sha256 = EXCLUDED.raw_json_sha256,
-                        updated_at = NOW();
-                """, (
-                    record.get("tic"),
-                    record.get("company_name"),
-                    record.get("sector"),
-                    record.get("industry"),
-                    record.get("country"),
-                    record.get("market_cap"),
-                    record.get("employees"),
-                    record.get("exchange"),
-                    record.get("currency"),
-                    record.get("website"),
-                    record.get("description"),
-                    record.get("summary"),
-                    record.get("short_summary"),
-                    record.get("raw_json_sha256"),
-                ))
-            conn.commit()
-    except Exception as e:
-        print(f"Error inserting analysis data: {e}")
-        conn.rollback()
 
 def main():
     """Main function to execute the stock profile summarization pipeline."""
@@ -117,14 +68,22 @@ def main():
         processed_data.append(final_state)
 
     # Load processed data into core.stock_metadata
+    total_records = 0
     if conn:
-        insert_records(processed_data, conn)
+        processed_data = pd.DataFrame(processed_data)
+        processed_data = processed_data[["tic","company_name","sector","industry","country",
+                                         "market_cap","employees","exchange","currency",
+                                         "website","description","summary","short_summary",
+                                         "raw_json_sha256"]]
+        total_records = insert_records(conn, processed_data, 'core.stock_profiles', ['tic'])
+        
+
         conn.close()
 
     # End timing
     end_time = time.time()
     print(f"Processed {len(states)} records in {end_time - start_time:.2f} seconds.")
-    print(f"Total number of records is {len(processed_data)}.")
+    print(f"Total number of records is {total_records}.")
 
 if __name__ == "__main__":
     main()
