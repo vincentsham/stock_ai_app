@@ -70,7 +70,7 @@ def read_sql_query(query: str, conn) -> pd.DataFrame:
 
 
 def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[], 
-                   updated_at: bool = True, where: list[str]=[]) -> int:
+                   updated_at: bool = True, where: list[str]=[], commit=True) -> int:
     """
     Fast and minimal insert/upsert using psycopg cursor.execute with tuples.
     """
@@ -112,7 +112,8 @@ def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[],
             data = tuple(df.itertuples(index=False, name=None))
             cursor.executemany(sql, data)  # ✅ psycopg safe bulk method
             total_records = cursor.rowcount
-        conn.commit()
+        if commit:
+            conn.commit()
         return total_records
         
     except Exception as e:
@@ -122,7 +123,7 @@ def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[],
 
 
 def insert_record(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[], 
-                  updated_at: bool = True, where: list[str]=[]) -> int:
+                  updated_at: bool = True, where: list[str]=[], commit=True) -> int:
     """
     Fast and minimal insert/upsert using psycopg cursor.execute with tuples.
     """
@@ -162,7 +163,8 @@ def insert_record(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[],
             cursor.execute(sql, df_values)  
 
             total_records = cursor.rowcount
-        conn.commit()
+        if commit:
+            conn.commit()
         return total_records
         
     except Exception as e:
