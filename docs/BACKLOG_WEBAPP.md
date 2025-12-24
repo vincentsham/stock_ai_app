@@ -40,7 +40,6 @@ examples:
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 17 | Feature | Add the comparison tool | High | Open | | | |
 | 18 | Feature | Front page renovation - background, top stocks, popular stocks | High | Open | | | |
-| 1004 | Feature | Disable the redirect of the ticker widget | Medium | Close | feat_1004 | 2025-12-24 | 2025-12-24 |
 | 1005 | Feature | Add loading spinner and error page | Medium | Open |  | | |
 | 1006 | Feature | Add tooltips for metrics session, including the % change | Medium | Open |  | | |
 | 10001 | Technical | Finetune metadata for SEO | Low | Open | | | |
@@ -74,4 +73,5 @@ examples:
 | 1001 | Feature | Search bar key Enter for selecting the first item | Medium | Close | w_feat_1001 | 2025-12-04 | 2025-12-04 |
 | 1002 | Feature | Fix the flickering by hidden the inactive tabs | Medium | Close | w_feat_1002 |2025-12-09 | 2025-12-09 |
 | 1003 | Miscellaneous | Add a short text under session headers and fix some color | Medium | Close | w_misc_1003 |2025-12-09 | 2025-12-09 |
+| 1004 | Feature | Disable the redirect of the ticker widget | Medium | Close | feat_1004 | 2025-12-24 | 2025-12-24 |
 </div>
