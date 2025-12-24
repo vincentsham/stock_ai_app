@@ -172,7 +172,7 @@ export const EarningsGraph: React.FC<EarningsGraphProps> = ({ data, metric }) =>
 
   return (
     <div className="h-[300px] w-full">
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
         <LineChart
           data={data}
           margin={{ top: 10, right: 10, left: -10, bottom: 0 }}

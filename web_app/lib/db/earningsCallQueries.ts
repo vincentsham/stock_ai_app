@@ -5,12 +5,50 @@ import { cache } from 'react';
 import { EarningsCallAnalysis } from '@/types';
 
 const EARNINGS_CALL_SEARCH_QUERY = `
-    SELECT eta.*, et.earnings_date
-    FROM core.earnings_transcript_analysis eta
-    JOIN core.earnings_transcripts et 
-    ON eta.event_id = et.event_id
-    WHERE eta.tic = $1;
+    SELECT
+        inference_id,
+        event_id,
+        tic,
+        calendar_year,
+        calendar_quarter,
+        earnings_date,
+        sentiment,
+        durability,
+        performance_factors,
+        past_summary,
+        guidance_direction,
+        revenue_outlook,
+        margin_outlook,
+        earnings_outlook,
+        cashflow_outlook,
+        growth_acceleration,
+        future_outlook_sentiment,
+        growth_drivers,
+        future_summary,
+        risk_mentioned,
+        risk_impact,
+        risk_time_horizon,
+        risk_factors,
+        risk_summary,
+        mitigation_mentioned,
+        mitigation_effectiveness,
+        mitigation_time_horizon,
+        mitigation_actions,
+        mitigation_summary,
+        transcript_sha256,
+        updated_at
+    FROM mart.earnings_transcript_analysis 
+    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.earnings_transcript_analysis)
+        AND tic = $1;
 `;
+
+// const EARNINGS_CALL_SEARCH_QUERY = `
+//     SELECT eta.*, et.earnings_date
+//     FROM core.earnings_transcript_analysis eta
+//     JOIN core.earnings_transcripts et 
+//     ON eta.event_id = et.event_id
+//     WHERE eta.tic = $1;
+// `;
 
 const searchEarningsCalls = cache(async (tic: string): Promise<EarningsCallAnalysis[]> => {
   let client;

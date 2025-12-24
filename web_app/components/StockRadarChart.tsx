@@ -76,11 +76,13 @@ const StockRadarChart: React.FC<StockRadarChartProps> = ({ tic, height = 400 }) 
         );
     };
 
+    const chartHeight = Math.max(1, height - 32);
+
     return (
-        <div className="w-full" style={{ height: `${height}px` }}>
+        <div className="h-full w-full" style={{ height }}>
             {/* Main Card Container */}
             <div className="h-full w-full bg-[#0c0e15] rounded-3xl border border-gray-800 shadow-2xl overflow-hidden relative">
-                {/* Overall Score - Top Right */}
+                {/* Overall Score - Top Right  */}
                 <div className="absolute top-4 right-4 flex items-center space-x-2 z-10">
                     <div className="flex flex-col text-[12px] leading-tight text-slate-500 font-medium text-right">
                         <span>OVERALL</span>
@@ -90,8 +92,8 @@ const StockRadarChart: React.FC<StockRadarChartProps> = ({ tic, height = 400 }) 
                 </div>
 
                 {/* Chart Area */}
-                <div className="h-full w-full flex justify-center items-center py-4">
-                    <ResponsiveContainer width="100%" height="100%">
+                <div className="h-full w-full py-4">
+                    <ResponsiveContainer width="100%" height={chartHeight}>
                         <RadarChart cx="50%" cy="50%" outerRadius="65%" data={data}>
                             <defs>
                                 <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">

@@ -6,10 +6,17 @@ import { StockProfile } from '@/types';
 
 const STOCK_SEARCH_QUERY = `
   SELECT tic, name, exchange, sector, industry
-  FROM core.stock_profiles
-  WHERE tic ILIKE $1 OR name ILIKE $1
+  FROM mart.stock_profiles
+  WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.stock_profiles) AND (tic ILIKE $1 OR name ILIKE $1)
   LIMIT 15;
 `;
+
+// const STOCK_SEARCH_QUERY = `
+//   SELECT tic, name, exchange, sector, industry
+//   FROM core.stock_profiles
+//   WHERE tic ILIKE $1 OR name ILIKE $1
+//   LIMIT 15;
+// `;
 
 const searchStocks = cache(async (query: string): Promise<StockProfile[]> => {
   let client;

@@ -25,7 +25,7 @@ const StockPage = async ({ params }: PageParams) => {
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-                <div className="lg:col-span-2">
+                <div className="h-full lg:col-span-2 min-h-[400px]">
                     <TradingViewWidget
                         scriptUrl={`${scriptUrl}symbol-overview.js`}
                         config={SYMBOL_CHART_WIDGET_CONFIG(symbol, 400)}
@@ -33,7 +33,7 @@ const StockPage = async ({ params }: PageParams) => {
                     />
                 </div>
 
-                <div className="lg:col-span-1">
+                <div className="h-full lg:col-span-1 min-h-[400px]">
                     <StockRadarChart
                         tic={symbol}
                         height={400}
