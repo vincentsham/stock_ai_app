@@ -39,8 +39,10 @@ examples:
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 17 | Feature | Add the comparison tool | High | Open | | | |
-| 1004 | Feature | Add loading spinner and error page | Medium | Open |  | | |
-| 1005 | Feature | Add tooltips for metrics session, including the % change | Medium | Open |  | | |
+| 18 | Feature | Front page renovation - background, top stocks, popular stocks | High | Open | | | |
+| 1004 | Feature | Disable the redirect of the ticker widget | Medium | Close | feat_1004 | 2025-12-24 | 2025-12-24 |
+| 1005 | Feature | Add loading spinner and error page | Medium | Open |  | | |
+| 1006 | Feature | Add tooltips for metrics session, including the % change | Medium | Open |  | | |
 | 10001 | Technical | Finetune metadata for SEO | Low | Open | | | |
 | 10002 | Feature | Collaspe all the extensions when the tab is inactive | Low | Open | | | |
 | 10003 | Feature | Add the revenue by products/geographics session, called (products/geographics) | Low | Open |  | | |

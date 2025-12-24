@@ -53,9 +53,9 @@ export const MetricCard: React.FC<MetricList> = ({ category, tic, score, metrics
     <div 
       className="bg-[#111218] border border-gray-800 rounded-xl overflow-hidden transition-all duration-300 hover:border-gray-700 flex flex-col h-fit"
     >
-      <div className="px-4 pt-4 pb-3 border-b border-gray-800/70 bg-[#111218]">
-        <h3 className="text-white font-bold text-lg border-l-4 border-blue-500 pl-3 leading-none flex items-center justify-between gap-3">
-          <span className="min-w-0 truncate">{category}</span>
+      <div className="px-4 pt-4 pb-3 border-b border-gray-700/70 bg-gray-700">
+        <h3 className="text-white font-bold text-lg leading-none flex items-center justify-between gap-3">
+          <span className="min-w-0 truncate">{category.toUpperCase()}</span>
           {score !== null && (
             <span className={`px-2 py-1 text-xs font-bold rounded-full whitespace-nowrap border shadow-sm ${scoreBadgeClassName}`}>
               SCORE: {Number(score).toFixed(0)}

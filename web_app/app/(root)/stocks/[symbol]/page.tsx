@@ -22,6 +22,7 @@ const StockPage = async ({ params }: PageParams) => {
             scriptUrl={`${scriptUrl}symbol-info.js`}
             config={SYMBOL_INFO_WIDGET_CONFIG(symbol, 150)}
             height={150}
+            disabled={true}
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">

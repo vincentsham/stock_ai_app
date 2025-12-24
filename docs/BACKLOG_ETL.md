@@ -40,8 +40,7 @@ examples:
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 27 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
 | 1007 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
-| 1008 | Feature | Only extract a limit number of existing Catalysts or Archive the old catalysts | Medium | Open |  |  |  |
-| 1010 | Feature | Add a consolidated tag logic| Medium | Open |  |  |  |
+| 1008 | Feature | Add a consolidated tag logic| Medium | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
 | 10004 |  |  | Low | Open |  |  |  |
