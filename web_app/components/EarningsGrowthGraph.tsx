@@ -18,29 +18,34 @@ const formatPercent = (value: number) => `${value > 0 ? '+' : ''}${value.toFixed
 
 // --- Custom Components ---
 
-const CustomizedDot = (props: any) => {
+
+interface GrowthDotPayload {
+  [key: string]: number;
+}
+interface CustomizedDotProps {
+    cx?: number;
+    cy?: number;
+    payload: GrowthDotPayload;
+    metric: string;
+}
+
+const CustomizedDot = (props: CustomizedDotProps) => {
   const { cx, cy, payload, metric } = props;
   if (!cx || !cy) return null;
-
   const value = payload[metric];
   if (value === null || value === undefined) return null;
-
   const color = value >= 0 ? '#10b981' : '#f43f5e';
-
   return (
     <circle cx={cx} cy={cy} r={4} stroke={color} strokeWidth={2} fill="#0c0e15" />
   );
 };
 
-const CustomizedActiveDot = (props: any) => {
+const CustomizedActiveDot = (props: CustomizedDotProps) => {
   const { cx, cy, payload, metric } = props;
   if (!cx || !cy) return null;
-
   const value = payload[metric];
   if (value === null || value === undefined) return null;
-
   const color = value >= 0 ? '#10b981' : '#f43f5e';
-
   return (
     <g>
         <circle cx={cx} cy={cy} r={10} fill={color} fillOpacity={0.2} />
@@ -49,7 +54,17 @@ const CustomizedActiveDot = (props: any) => {
   );
 };
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+interface GrowthTooltipEntry {
+  name: string;
+  value: number;
+}
+interface CustomTooltipProps {
+    active?: boolean;
+    payload?: GrowthTooltipEntry[];
+    label?: string;
+}
+
+const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
     const entry = payload[0];
     const value = entry.value;
@@ -152,8 +167,8 @@ export const EarningsGrowthGraph: React.FC<EarningsGrowthGraphProps> = ({ data, 
             name={type === "growth" ? "YoY Growth" : "YoY Acceleration"}
             stroke={`url(#${gradientId})`} 
             strokeWidth={3}
-            dot={<CustomizedDot metric={keyName} />}
-            activeDot={<CustomizedActiveDot metric={keyName} />}
+            dot={<CustomizedDot metric={keyName} payload={{}} />}
+            activeDot={<CustomizedActiveDot metric={keyName} payload={{}} />}
             connectNulls={false} 
           />
         </LineChart>

@@ -1,4 +1,3 @@
-/// <reference path="../../types/global.d.ts" />
 'use server';
 import pool from '@/lib/db/utils';
 import { cache } from 'react';

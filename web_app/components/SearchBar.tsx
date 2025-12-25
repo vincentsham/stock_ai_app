@@ -1,7 +1,7 @@
 "use client"
 
 import {
-  Loader2, TrendingUp
+  TrendingUp
 } from "lucide-react"
 
 import {
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/command"
 
 import { useDebounce } from "@/hooks/useDebounce"
-import { useState, useEffect, useCallback } from "react"
+import React, { useState, useEffect, useCallback } from "react"
 import { searchStocks } from "@/lib/db/stockQueries"
 import Link from "next/link";
 import { StockProfile } from "@/types";
@@ -20,13 +20,25 @@ import type { KeyboardEvent } from "react"
 import { useRouter } from "next/navigation"
 
 const SearchBar = () => {
+    const [placeholder, setPlaceholder] = useState("Search Stocks (e.g. NVDA or Nvidia)");
+    useEffect(() => {
+      if (typeof window === 'undefined') return;
+      const updatePlaceholder = () => {
+        setPlaceholder(window.innerWidth < 640 ? "e.g. NVDA, Nvidia" : "Search Stocks (e.g. NVDA or Nvidia)");
+      };
+      updatePlaceholder();
+      window.addEventListener('resize', updatePlaceholder);
+      return () => {
+        window.removeEventListener('resize', updatePlaceholder);
+      };
+    }, []);
   const router = useRouter();
   const [searching, setSearching] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [stocks, setStocks] = useState<StockProfile[]>([]);  
 
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     if(!searchTerm.trim()) return;
     try {
       const results = await searchStocks(searchTerm.trim());
@@ -36,7 +48,7 @@ const SearchBar = () => {
     } finally {
       setLoading(false);
     }
-  }
+  }, [searchTerm]);
 
   const debouncedSearch = useDebounce(handleSearch, 400);
 
@@ -45,7 +57,7 @@ const SearchBar = () => {
     setSearching(true);
     setLoading(true);
     debouncedSearch();
-  }, [searchTerm]);
+  }, [searchTerm, debouncedSearch]);
 
   const handleSelectStock = useCallback(() => {
     setSearching(false);
@@ -74,10 +86,14 @@ const SearchBar = () => {
       {/* <CommandInput
         placeholder="Search for a stock by symbol or name..."
       /> */}
-      <div className="search-field">
-          <CommandInput value={searchTerm} onValueChange={setSearchTerm} placeholder="Search for a stock by symbol or name..." className="search-input" onKeyDown={handleEnterKey} />
-          {searching && loading && <Loader2 className="search-loader" />}
-      </div>
+
+      <CommandInput
+        value={searchTerm}
+        onValueChange={setSearchTerm}
+        placeholder={placeholder}
+        className="text-xs sm:text-sm placeholder:text-ellipsis"
+        onKeyDown={handleEnterKey}
+      />
 
       {/* Hidden by default, visible when any child in Command is focused */}
       <CommandList className="hidden group-focus-within:block">
@@ -90,7 +106,7 @@ const SearchBar = () => {
             <CommandEmpty className="search-list-empty">No results found.</CommandEmpty>
           ) : stocks.length > 0 ? (
             <ul>
-              {stocks?.map((stock, i) => (
+              {stocks?.map((stock) => (
                   <li key={stock.tic} className="search-item">
                     <Link
                         href={`/stocks/${stock.tic}`}

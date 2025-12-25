@@ -40,7 +40,7 @@ const StockRadarChart: React.FC<StockRadarChartProps> = ({ tic, height = 400 }) 
         cy?: number;
     }
 
-    const CustomTick = ({ payload, x, y, cx, cy }: CustomTickProps) => {
+    const CustomTick = ({ payload, x, y, cy }: CustomTickProps) => {
         const metric = data.find(d => d.subject === payload.value);
 
         // logic to push labels outward based on their position relative to center

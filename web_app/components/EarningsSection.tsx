@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
-import { TrendingUp, DollarSign, Activity } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { DollarSign } from 'lucide-react';
 import { EarningsGraph, EarningsLegend } from './EarningsGraph';
 import { EarningsGrowthGraph, EarningsGrowthLegend } from './EarningsGrowthGraph';
 import { EarningsTag } from './EarningsTag';
@@ -13,7 +13,6 @@ import { EARNINGS_TAG_METADATA } from '@/lib/constants';
 export const EarningsSection: React.FC<{ tic: string }> = ({ tic }) => {
     const [isMounted, setIsMounted] = useState(false);
     const [activeTab, setActiveTab] = useState<'trend' | 'growth' | 'acceleration'>('trend');
-    const [earningsData, setEarningsData] = useState<Earnings[]>([]);
     const [chartData, setChartData] = useState<(Earnings & { name: string })[]>([]);
     const [earningsRegimes, setEarningsRegimes] = useState<EarningsRegime | null>(null);
     const [epsRegimes, setEPSRegimes] = useState<EPSRegime | null>(null);
@@ -22,7 +21,6 @@ export const EarningsSection: React.FC<{ tic: string }> = ({ tic }) => {
     useEffect(() => {
         const fetchData = async () => {
             const data = await searchEarnings(tic);
-            setEarningsData(data);
             const dataWithNames = data.slice(-9).map(item => ({
               name: `${item.calendar_year.toString().slice(-2)}Q${item.calendar_quarter}`,
               ...item,
@@ -40,6 +38,7 @@ export const EarningsSection: React.FC<{ tic: string }> = ({ tic }) => {
 
     // Ensure charts only render on client to avoid hydration mismatch
     useEffect(() => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsMounted(true);
     }, []);
 
@@ -76,7 +75,7 @@ export const EarningsSection: React.FC<{ tic: string }> = ({ tic }) => {
                   {['Trend', 'Growth', 'Acceleration'].map((tab) => (
                       <button
                           key={tab}
-                          onClick={() => setActiveTab(tab.toLowerCase() as any)}
+                          onClick={() => setActiveTab(tab.toLowerCase() as 'trend' | 'growth' | 'acceleration')}
                           className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${
                               activeTab === tab.toLowerCase()
                               ? 'bg-gray-700 text-white shadow-sm'

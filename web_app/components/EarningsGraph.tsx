@@ -43,37 +43,36 @@ const getStatus = (actual: number | null | undefined, estimated: number) => {
 
 // --- Custom Components for Graph ---
 
-const CustomizedDot = (props: any) => {
+
+interface DotPayload {
+  [key: string]: number;
+}
+interface CustomizedDotProps {
+    cx?: number;
+    cy?: number;
+    payload: DotPayload;
+    metric: string;
+}
+
+const CustomizedDot = (props: CustomizedDotProps) => {
   const { cx, cy, payload, metric } = props;
-  
   if (!cx || !cy) return null;
-
   const actual = payload[metric];
-  
-  // Do not render dot if actual data is missing
   if (actual === null || actual === undefined) return null;
-
   const estimated = payload[`${metric}_estimated`];
   const { color } = getStatus(actual, estimated);
-
   return (
     <circle cx={cx} cy={cy} r={4} stroke={color} strokeWidth={2} fill="#0c0e15" />
   );
 };
 
-const CustomizedActiveDot = (props: any) => {
+const CustomizedActiveDot = (props: CustomizedDotProps) => {
   const { cx, cy, payload, metric } = props;
-  
   if (!cx || !cy) return null;
-
   const actual = payload[metric];
-  
-  // Do not render dot if actual data is missing
   if (actual === null || actual === undefined) return null;
-
   const estimated = payload[`${metric}_estimated`];
   const { color } = getStatus(actual, estimated);
-
   return (
     <g>
         {/* Outer Glow/Halo */}
@@ -84,9 +83,22 @@ const CustomizedActiveDot = (props: any) => {
   );
 };
 
-const CustomTooltip = ({ active, payload, label, type }: any) => {
+interface TooltipEntry {
+  color: string;
+  dataKey: string;
+  value: number;
+}
+interface CustomTooltipProps {
+    active?: boolean;
+    payload?: TooltipEntry[];
+    label?: string;
+    type: 'number' | 'currency';
+}
+
+const CustomTooltip = ({ active, payload, label, type }: CustomTooltipProps) => {
   if (active && payload && payload.length) {
-    const data = payload[0].payload;
+    // The recharts payload type for custom tooltips is not well-typed, but we know it has a 'payload' property with the data row
+    const data = (payload[0] as { payload?: Record<string, number> })?.payload ?? {};
     const metricKey = type === 'number' ? 'eps' : 'revenue';
     const actual = data[metricKey];
     const estimated = data[`${metricKey}_estimated`];
@@ -105,12 +117,11 @@ const CustomTooltip = ({ active, payload, label, type }: any) => {
     }
 
     // Sort payload to ensure Actual appears before Estimated
-    const sortedPayload = [...payload].sort((a: any, b: any) => {
+    const sortedPayload = [...payload].sort((a, b) => {
       const aKey = a.dataKey || '';
       const bKey = b.dataKey || '';
       const isAEst = aKey.includes('estimated');
       const isBEst = bKey.includes('estimated');
-      
       if (isAEst && !isBEst) return 1;
       if (!isAEst && isBEst) return -1;
       return 0;
@@ -119,18 +130,18 @@ const CustomTooltip = ({ active, payload, label, type }: any) => {
     return (
       <div className="bg-[#111218] border border-gray-700 p-3 rounded-lg shadow-xl text-sm z-50">
         <p className="text-gray-300 font-bold mb-2 font-mono text-xs">{label}</p>
-        
-        {sortedPayload.map((entry: any, index: number) => (
+        {sortedPayload.map((entry, index) => (
           <div key={index} className="flex items-center gap-2 mb-1">
             <div
               className="w-2 h-2 rounded-full"
               style={{ backgroundColor: entry.color }}
             />
             <span className="text-gray-400 capitalize text-xs">
-              {entry.dataKey === 'eps' ? 'EPS' : 
+              {entry.dataKey === 'eps' ? 'EPS' :
                entry.dataKey === 'eps_estimated' ? 'EPS Est.' :
-               entry.dataKey === 'revenue' ? 'Rev' : 
-               entry.dataKey === 'revenue_estimated' ? 'Rev Est.' : entry.name}:
+               entry.dataKey === 'revenue' ? 'Rev' :
+               entry.dataKey === 'revenue_estimated' ? 'Rev Est.' :
+                   (entry?.name ?? entry.dataKey)}:
             </span>
             <span className="text-white font-mono text-xs">
               {type === 'currency' 
@@ -220,8 +231,8 @@ export const EarningsGraph: React.FC<EarningsGraphProps> = ({ data, metric }) =>
             name="Actual"
             stroke="#3b82f6" 
             strokeWidth={3}
-            dot={<CustomizedDot metric={metric} />}
-            activeDot={<CustomizedActiveDot metric={metric} />}
+            dot={<CustomizedDot metric={metric} payload={{}} />}
+            activeDot={<CustomizedActiveDot metric={metric} payload={{}} />}
             connectNulls={false} 
           />
         </LineChart>

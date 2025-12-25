@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, Zap, AlertTriangle, TrendingUp, TrendingDown, Info, ExternalLink} from 'lucide-react';
+import { ChevronDown, ChevronUp, Zap, TrendingUp, TrendingDown, ExternalLink} from 'lucide-react';
 import { Catalyst, CatalystSentiment, ImpactMagnitude } from '@/types';
 
 interface CatalystCardProps {

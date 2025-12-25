@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Users } from 'lucide-react';
 import { AnalystPTGraph } from './AnalystPTGraph';
 import { AnalystGradeCard } from './AnalystGradeCard';

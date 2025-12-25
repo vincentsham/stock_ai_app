@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import SearchBar from "@/components/SearchBar";
+import HeaderNavOptions from "@/components/HeaderNavOptions";
 
 
 const Header = async () => {
@@ -15,14 +16,14 @@ const Header = async () => {
                     alt="Winsanity logo"
                     width={140}
                     height={48}
-                    className="hidden sm:flex h-8 w-auto cursor-pointer"
+                    className="hidden md:flex h-8 w-auto cursor-pointer"
                     />
                     <Image
                     src="/assets/icons/logo_small.svg"
                     alt="Winsanity logo"
                     width={140}
                     height={48}
-                    className="flex sm:hidden h-8 w-auto cursor-pointer"
+                    className="flex md:hidden h-8 w-auto cursor-pointer"
                     />
                 </Link>
 
@@ -34,7 +35,7 @@ const Header = async () => {
 
                 {/* RIGHT: Placeholder for future elements */}
                 <div className="flex justify-end w-auto ml-4">
-                    <div className="hidden sm:flex invisible w-40" />
+                    <HeaderNavOptions />
                 </div>
             </div>
         </header>

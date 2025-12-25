@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Catalyst } from '@/types';
 import { CatalystCard } from './CatalystCard';
-import { Zap, TrendingUp, TrendingDown, Info, Loader2, ChevronDown} from 'lucide-react';
+import { Zap, TrendingUp, TrendingDown, Loader2, ChevronDown} from 'lucide-react';
 import { searchCatalysts, countCatalysts} from "@/lib/db/catalystQueries";
 
 
@@ -14,17 +14,20 @@ export const CatalystsSection: React.FC<{ tic: string }> = ( {tic} ) => {
     const pageBull = useRef(2);
     const pageBear = useRef(2);
 
-    const [hasMore, setHasMore] = useState(true);
-    const [hasMoreBull, setHasMoreBull] = useState(true);
-    const [hasMoreBear, setHasMoreBear] = useState(true);
+
 
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const loadingRef = useRef(false);
-    const observerTarget = useRef<HTMLDivElement>(null);
 
     const [catalystCountBull, setCatalystCountBull] = useState<number | null>(null);
     const [catalystCountBear, setCatalystCountBear] = useState<number | null>(null);
 
+    const bullLoaded = catalystsBull.length;
+    const bearLoaded = catalystsBear.length;
+
+    const hasMoreBull = catalystCountBull !== null && bullLoaded < catalystCountBull;
+    const hasMoreBear = catalystCountBear !== null && bearLoaded < catalystCountBear;
+    const hasMore = hasMoreBull || hasMoreBear;
 
     useEffect(() => {
         const fetchInitialData = async () => {
@@ -45,7 +48,7 @@ export const CatalystsSection: React.FC<{ tic: string }> = ( {tic} ) => {
         fetchInitialData();
     }, [tic]);
 
-    const loadMore = useCallback(async (sentiment: Number) => {
+    const loadMore = useCallback(async (sentiment: number) => {
         // const res = await fetch(`/api/catalysts?tic=${tic}&page=${page.current}&limit=10`);
         // const json = await res.json();
         // const newData = json.data;
@@ -73,22 +76,10 @@ export const CatalystsSection: React.FC<{ tic: string }> = ( {tic} ) => {
 
  
 
-    useEffect(() => {
-        if (catalystCountBull == null || catalystCountBear == null) return;
-
-        const bullLoaded = catalystsBull.length;
-        const bearLoaded = catalystsBear.length;
-
-        const bullHasMore = bullLoaded < catalystCountBull;
-        const bearHasMore = bearLoaded < catalystCountBear;
-
-        setHasMoreBull(bullHasMore);
-        setHasMoreBear(bearHasMore);
-        setHasMore(bullHasMore || bearHasMore);
-    }, [catalystsBull, catalystsBear, catalystCountBull, catalystCountBear]);
 
 
-    const handleLoadMore = (sentiment: Number) => {
+
+    const handleLoadMore = (sentiment: number) => {
         loadingRef.current = true;
         setIsLoadingMore(true);
         // Simulate network query delay
