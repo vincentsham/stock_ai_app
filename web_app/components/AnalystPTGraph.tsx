@@ -25,17 +25,33 @@ const formatCurrency = (value: number | null) => {
     }).format(value);
 };
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+interface AnalystTooltipPayload {
+    payload: {
+        close: number;
+        pt_high: number;
+        pt_median: number;
+        pt_low: number;
+    };
+}
+interface CustomTooltipProps {
+    active?: boolean;
+    payload?: AnalystTooltipPayload[];
+    label?: string;
+}
+
+const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
         const originalData = payload[0].payload;
         
         // Format date nicer for the tooltip header
-        const dateObj = new Date(label);
-        const dateStr = dateObj.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
-        });
+                const dateObj = new Date(label ?? '');
+                const dateStr = isNaN(dateObj.getTime())
+                    ? ''
+                    : dateObj.toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                        });
         
         return (
         <div className="bg-[#111218] border border-gray-700 p-3 rounded-lg shadow-xl text-sm z-50 min-w-[180px]">

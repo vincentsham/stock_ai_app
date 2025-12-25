@@ -1,4 +1,3 @@
-/// <reference path="../../types/global.d.ts" />
 'use server';
 import pool from '@/lib/db/utils';
 import { cache } from 'react';
@@ -240,16 +239,16 @@ const searchMetrics = cache(async (tic: string, category: string, query: string)
         metrics: [] as Metric[],
         defaultVisibleCount: 0,
       };
-      for (const [key, value] of Object.entries(row as Record<string, any>)) {
+      for (const [key, value] of Object.entries(row as Record<string, unknown>)) {
           if (key.endsWith('_percentile') || key === 'category' || key === 'tic' || key === 'date' || key === 'score') continue; // Skip percentile entries
           const percentileKey = `${key}_percentile`;
-          const metadata = (METRICS_METADATA as Record<string, any>)[key];
+          const metadata = (METRICS_METADATA as Record<string, { name: string, display_fn: (v: unknown) => string, description: string, inverse: boolean | null, displayByDefault: boolean }>)[key];
           if (!metadata) continue;
           const metric: Metric = {
               label: key,
               name: metadata.name,
               value: metadata.display_fn(value), // Convert value to string
-              percentile: (row as any)[percentileKey] as number,
+              percentile: (row as Record<string, unknown>)[percentileKey] as number,
               description: metadata.description,
               inverse: metadata.inverse,
               displayByDefault: metadata.displayByDefault,

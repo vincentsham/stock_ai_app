@@ -38,8 +38,8 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-| 17 | Feature | Add the comparison tool | High | Open | | | |
-| 18 | Feature | Front page renovation - background, top stocks, popular stocks | High | Open | | | |
+| 18 | Feature | Add the comparison tool | High | Open | | | |
+| 19 | Feature | Front page renovation - background, top stocks, popular stocks | High | Open | | | |
 | 1005 | Feature | Add loading spinner and error page | Medium | Open |  | | |
 | 1006 | Feature | Add tooltips for metrics session, including the % change | Medium | Open |  | | |
 | 10001 | Technical | Finetune metadata for SEO | Low | Open | | | |
@@ -70,6 +70,7 @@ examples:
 | 14 | Feature | Metrics Session | High | Close | w_feat_14 | 2025-12-15 | 2025-12-17 |
 | 15 | Feature | Add Final metric scores | High | Close | w_feat_15 | 2025-12-19 | 2025-12-19 |
 | 16 | Feature | Add radar diagram | High | Close | w_feat_16 | 2025-12-19 | 2025-12-19 |
+| 17 | Feature | Fix the lint issues | High | Close | w_feat_17 | 2025-12-24 | 2025-12-24 |
 | 1001 | Feature | Search bar key Enter for selecting the first item | Medium | Close | w_feat_1001 | 2025-12-04 | 2025-12-04 |
 | 1002 | Feature | Fix the flickering by hidden the inactive tabs | Medium | Close | w_feat_1002 |2025-12-09 | 2025-12-09 |
 | 1003 | Miscellaneous | Add a short text under session headers and fix some color | Medium | Close | w_misc_1003 |2025-12-09 | 2025-12-09 |

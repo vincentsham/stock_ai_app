@@ -1,5 +1,4 @@
-import { formatCurrency, formatInteger, formatPercentage, formatRatio } from '@/lib/formatters';
-import { format } from 'path';
+import { formatCurrency, formatPercentage, formatRatio } from '@/lib/formatters';
 import { coerceNumber } from './utils';
 
 export const DISCLAIMER_TEXT = `This is for informational purposes only, not financial advice. 

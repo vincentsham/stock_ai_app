@@ -8,9 +8,7 @@ import {
   Minus, 
   Shield, 
   AlertTriangle, 
-  Zap,
   MousePointer2,
-  Target,
   PencilLine,
 } from 'lucide-react';
 import { EarningsCallAnalysis } from '@/types';

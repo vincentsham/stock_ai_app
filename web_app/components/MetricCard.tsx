@@ -30,7 +30,7 @@ const getColorTheme = (percentile: number | null, inverse: boolean | null): stri
 
 
 
-export const MetricCard: React.FC<MetricList> = ({ category, tic, score, metrics, defaultVisibleCount}) => {
+export const MetricCard: React.FC<MetricList> = ({ category, score, metrics, defaultVisibleCount}) => {
   const [showAll, setShowAll] = useState(false);
 
   // Determine visible items based on expansion state and defaultVisibleCount
