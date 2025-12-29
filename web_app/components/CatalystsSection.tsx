@@ -150,7 +150,7 @@ export const CatalystsSection: React.FC<{ tic: string }> = ( {tic} ) => {
                     <button
                         onClick={() => handleLoadMore(1)}
                         disabled={isLoadingMore}
-                        className="group flex items-center gap-2 px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 text-sm font-medium rounded-lg transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none hover:shadow-lg hover:shadow-blue-500/10 border border-gray-700 hover:border-gray-600"
+                        className="cursor-pointer group flex items-center gap-2 px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 text-sm font-medium rounded-lg transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none hover:shadow-lg  border border-gray-700 hover:border-gray-600"
                     >
                         {isLoadingMore ? (
                             <>
@@ -160,13 +160,13 @@ export const CatalystsSection: React.FC<{ tic: string }> = ( {tic} ) => {
                         ) : (
                             <>
                                 Load More Bull Catalysts
-                                <ChevronDown size={16} className="transition-transform group-hover:translate-y-0.5" />
+                                <ChevronDown size={16} className="transition-transform" />
                             </>
                         )}
                     </button>
                 ) : (
                     (catalystsBull.length > 0 || catalystsBear.length > 0) && (
-                        <span className="text-xs text-gray-700 uppercase tracking-widest font-semibold">End of Bull Analysis</span>
+                        <span className="text-xs text-gray-700 uppercase tracking-widest font-semibold cursor-pointer">End of Bull Analysis</span>
                     )
                 )}
             </div>
@@ -206,7 +206,7 @@ export const CatalystsSection: React.FC<{ tic: string }> = ( {tic} ) => {
                     <button
                         onClick={() => handleLoadMore(-1)}
                         disabled={isLoadingMore}
-                        className="group flex items-center gap-2 px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 text-sm font-medium rounded-lg transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none hover:shadow-lg hover:shadow-blue-500/10 border border-gray-700 hover:border-gray-600"
+                        className="cursor-pointer group flex items-center gap-2 px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 text-sm font-medium rounded-lg transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none hover:shadow-lg  border border-gray-700 hover:border-gray-600"
                     >
                         {isLoadingMore ? (
                             <>
@@ -216,13 +216,13 @@ export const CatalystsSection: React.FC<{ tic: string }> = ( {tic} ) => {
                         ) : (
                             <>
                                 Load More Bear Catalysts
-                                <ChevronDown size={16} className="transition-transform group-hover:translate-y-0.5" />
+                                <ChevronDown size={16} className="transition-transform" />
                             </>
                         )}
                     </button>
                 ) : (
                     (catalystsBull.length > 0 || catalystsBear.length > 0) && (
-                        <span className="text-xs text-gray-700 uppercase tracking-widest font-semibold">End of Bear Analysis</span>
+                        <span className="text-xs text-gray-700 uppercase tracking-widest font-semibold cursor-pointer">End of Bear Analysis</span>
                     )
                 )}
             </div>
@@ -235,7 +235,7 @@ export const CatalystsSection: React.FC<{ tic: string }> = ( {tic} ) => {
                     <button
                         onClick={() => handleLoadMore(0)}
                         disabled={isLoadingMore}
-                        className="group flex items-center gap-2 px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 text-sm font-medium rounded-lg transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none hover:shadow-lg hover:shadow-blue-500/10 border border-gray-700 hover:border-gray-600"
+                        className="cursor-pointer group flex items-center gap-2 px-6 py-2.5 bg-gray-800 hover:bg-gray-700 text-gray-200 text-sm font-medium rounded-lg transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none hover:shadow-lg border border-gray-700 hover:border-gray-600"
                     >
                         {isLoadingMore ? (
                             <>
@@ -245,13 +245,13 @@ export const CatalystsSection: React.FC<{ tic: string }> = ( {tic} ) => {
                         ) : (
                             <>
                                 Load More Catalysts
-                                <ChevronDown size={16} className="transition-transform group-hover:translate-y-0.5" />
+                                <ChevronDown size={16} className="transition-transform" />
                             </>
                         )}
                     </button>
                 ) : (
                     (catalystsBull.length > 0 || catalystsBear.length > 0) && (
-                        <span className="text-xs text-gray-700 uppercase tracking-widest font-semibold">End of Analysis</span>
+                        <span className="text-xs text-gray-700 uppercase tracking-widest font-semibold cursor-pointer">End of Analysis</span>
                     )
                 )}
             </div>

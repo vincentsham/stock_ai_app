@@ -3,7 +3,7 @@ import {
     SYMBOL_CHART_WIDGET_CONFIG
  } from '@/lib/tradingview/configs';
 import TradingViewWidget from '@/components/TradingViewWidget';
-import { CustomSection } from '@/components/CustomSection';
+import { StockMain } from '@/components/StockMain';
 import StockRadarChart from '@/components/StockRadarChart';
 
 interface PageParams {
@@ -43,7 +43,7 @@ const StockPage = async ({ params }: PageParams) => {
                 </div>
             </div>
 
-            <CustomSection 
+            <StockMain
             tic={symbol} 
             />
         </div>

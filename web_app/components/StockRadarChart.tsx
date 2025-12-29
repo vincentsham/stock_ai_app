@@ -119,10 +119,11 @@ const StockRadarChart: React.FC<StockRadarChartProps> = ({ tic, height = 400 }) 
                                 dataKey="score"
                                 stroke="#38bdf8"
                                 strokeWidth={3}
-                                fill="none"
-                                filter="url(#glow)"
+                                fill="#38bdf8"
+                                fillOpacity={0.15}
                                 isAnimationActive={true}
-                                dot={{ r: 4, fill: '#0c0e15', stroke: '#38bdf8', strokeWidth: 2 }}
+                                dot={{ r: 3, fillOpacity: 1, strokeWidth: 0 }}
+                                activeDot={{ r: 4, strokeWidth: 0 }}
                             />
                         </RadarChart>
                     </ResponsiveContainer>
