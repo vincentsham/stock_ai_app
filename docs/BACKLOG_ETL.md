@@ -39,7 +39,6 @@ examples:
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 27 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
-| 39 | Miscellaneous | import Catalyst logic to have more bear cases | High | Open |  |  |  |
 | 1007 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1008 | Feature | Add a consolidated tag logic| Medium | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
@@ -104,6 +103,7 @@ examples:
 | 36 | Feature | Fully integrate with DefeatBeta | High | Close | feat_36 | 2025-12-19 | 2025-12-22 |
 | 37 | Miscellaneous | Finetune the ai agent process | High | Close | misc_37 | 2025-12-23 | 2025-12-23 |
 | 38 | Feature | Add a pre-filter job to filter out or expire news and transcript chunks | High | Close | feat_38 | 2025-12-23 | 2025-12-23 |
+| 39 | Miscellaneous | import Catalyst logic to have more bear cases | High | Close | feat_39 | 2025-12-28 | 2025-12-29 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous | Create a md doc for source | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1003 | Feature | Standardise the db columns | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
