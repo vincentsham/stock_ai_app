@@ -17,21 +17,67 @@ SourceType = Literal["news", "earnings_transcript"]
 
 ImpactArea = Literal[
     # --- Financial Performance ---
-    "revenue", "earnings", "margin", "profitability", "cashflow", "expenses", "capex",
+    "revenue",
+    "earnings", 
+    "margin", 
+    "profitability", 
+    "cashflow", 
+    "expenses", 
+    "capex",
+    
     # --- Operations & Execution ---
-    "operations", "supply_chain", "capacity", "productivity", "headcount", "technology",
+    "operations", 
+    "supply_chain", 
+    "capacity", 
+    "productivity", 
+    "headcount", 
+    "technology",
+    
     # --- Strategic & Growth Drivers ---
-    "strategy", "market_expansion", "demand", "volume", "pricing", "channel", "inventory",
+    "strategy", 
+    "market_expansion", 
+    "demand", 
+    "volume", 
+    "pricing", 
+    "channel", 
+    "inventory",  # Critical for 'Bear' demand signals
+    
     # --- Financial Structure & Capital Actions ---
-    "shareholder_return", "financing", "balance_sheet", "leverage", "liquidity", "financial",
+    "shareholder_return", 
+    "financing", 
+    "balance_sheet", 
+    "leverage", 
+    "liquidity", 
+    "financial", 
+    "dilution",   # Critical for 'Bear' capital actions (ATM/Secondaries)
+    
     # --- Regulatory, Legal, & Governance ---
-    "compliance", "regulatory", "legal", "governance", "policy", "licensing", "risk",
+    "compliance", 
+    "regulatory", 
+    "legal", 
+    "governance", 
+    "policy", 
+    "licensing", 
+    "risk",
+    
     # --- Macro & External Environment ---
-    "macro", "monetary_policy", "fiscal_policy", "trade_policy",
-    "currency_fx", "commodity_prices", "inflation_cost", "geopolitical", "region",
+    "macro", 
+    "monetary_policy", 
+    "fiscal_policy", 
+    "trade_policy",
+    "currency_fx", 
+    "commodity_prices", 
+    "inflation_cost", # Matches 'inflation' concept
+    "geopolitical", 
+    "region",
+    
     # --- ESG, Cyber, & Leadership ---
-    "cybersecurity", "reputation", "leadership", "environmental",
+    "cybersecurity", # Specific tag for 'Bear' risk events (breaches)
+    "reputation", 
+    "leadership", 
+    "environmental"
 ]
+
 
 # ---- Enums ----
 class Tri(IntEnum):

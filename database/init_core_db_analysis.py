@@ -422,7 +422,7 @@ def table_creation(conn):
             raw_json_sha256 CHAR(64)     NOT NULL,
             updated_at    TIMESTAMPTZ DEFAULT now(),
                        
-            PRIMARY KEY (event_id, chunk_id, catalyst_id)
+            PRIMARY KEY (event_id, chunk_id, catalyst_id, catalyst_type)
         );
         """)
         print("Table 'catalyst_versions' created or already exists with unique constraint.")

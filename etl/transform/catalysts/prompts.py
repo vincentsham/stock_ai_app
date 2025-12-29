@@ -1,120 +1,111 @@
 CATALYST_QUERIES = {
   "guidance_outlook": [
-    "management updated revenue or EPS guidance",
-    "guidance raised or lowered for next quarter or fiscal year",
-    "guidance reaffirmed or withdrawn",
-    "forward financial outlook discussed"
+    "management raised revenue or EPS guidance",              # Bull (Explicit raise)
+    "guidance reaffirmed or outlook beat estimates",          # Bull (Reaffirm/Beat)
+    "guidance lowered withdrawn or missed estimates",         # Bear (Explicit cut)
+    "negative outlook or disappointing forecast"              # Bear (Soft sentiment)
   ],
 
   "product_initiative": [
-    "new product or service launch announced",
-    "capacity expansion or production ramp",
-    "entry into a new market or category"
+    "new product service launch or expansion",                # Bull (Commercial)
+    "production ramp up or capacity increase",                # Bull (Industrial)
+    "product delay cancellation or withdrawal",               # Bear (Strategic)
+    "production halt recall or quality failure"               # Bear (Operational)
   ],
 
   "partnership_deal": [
-    "partnership or strategic alliance announced",
-    "major customer or supplier contract win",
-    "merger acquisition or investment deal disclosed"
+    "partnership strategic alliance or contract win",         # Bull (Growth)
+    "merger acquisition or investment deal announced",        # Bull (M&A)
+    "contract termination or customer loss",                  # Bear (Revenue at risk)
+    "deal termination dispute or regulatory block"            # Bear (Deal failure)
   ],
 
   "cost_efficiency": [
-    "restructuring plan with layoffs announced",
-    "cost reduction initiative to improve margins",
-    "operational or margin improvement program"
+    "cost reduction restructuring or margin improvement",     # Bull (Efficiency actions)
+    "asset sale divestiture or spinning off business",        # Bull (Strategic pruning - NEW)
+    "rising operating expenses or margin contraction",        # Bear (Inefficiency)
+    "impairment charges or significant writedowns"            # Bear (Asset failure)
   ],
 
   "capital_actions": [
-    "share repurchase or dividend change announced",
-    "debt issuance refinancing or new credit facility",
-    "equity offering or capital raise disclosed"
+    "share repurchase buyback or dividend increase",          # Bull (Returning cash)
+    "debt refinancing or credit rating upgrade",              # Bull (Health)
+    "dividend cut suspension or reduction",                   # Bear (Cash crunch)
+    "equity offering dilution or capital raise"               # Bear (Dilution)
   ],
 
   "regulatory_policy": [
-    "regulatory or government approval granted or filed",
-    "investigation lawsuit settlement or fine announced",
-    "antitrust or agency probe affecting the company"
+    "regulatory government approval or clearance",            # Bull
+    "lawsuit settlement or favorable ruling",                 # Bull
+    "investigation lawsuit subpoena or probe",                # Bear
+    "short seller report or accounting irregularity"          # Bear
   ],
 
   "demand_trends": [
-    "company reported stronger or weaker demand",
-    "orders bookings or backlog changed materially",
-    "pricing or inventory conditions affecting sales"
+    "strong demand bookings or backlog growth",               # Bull (Volume)
+    "pricing power or market share gains",                    # Bull (Price)
+    "weak demand cancellations or inventory buildup",         # Bear (Volume)
+    "pricing pressure discounting or share loss"              # Bear (Price)
   ],
 
   "risk_event": [
-    "unexpected project delay cancellation or withdrawal",
-    "profit warning or negative earnings impact",
-    "production halt recall outage or supply shortage"
+    "insider buying or director share purchase",              # Bull (Confidence signal - NEW)
+    "unexpected executive departure or resignation",          # Bear (Leadership)
+    "operational disruption cyber breach or outage",          # Bear (Ops)
+    "supply chain shortage or logistics delay"                # Bear (External)
   ],
 
   "macro_policy": [
-    "interest rate or monetary policy shift affecting company",
-    "tariffs trade restrictions or sanctions impacting operations",
-    "fiscal or government policy influencing demand or investment",
-    "geopolitical conflict creating business or supply risk"
+    "favorable policy or government incentive announced",     # Bull
+    "interest rate or monetary policy impact",                # Neutral
+    "tariffs trade restrictions or sanctions",                # Bear
+    "geopolitical conflict or currency headwinds"             # Bear
   ]
 }
 
 
 
+
 STAGE1_SYSTEM_MESSAGE = """
-You are an expert Financial Data Filter specializing in signal-to-noise reduction.
+TASK: Identify concrete, stock-moving catalysts for <TARGET_COMPANY> in the text.
 
-EXPECTED INPUT DATA:
-1. <TARGET_COMPANY>: Ticker, Name, Industry, and Description.
-2. <SEARCH_CONTEXT>: The specific catalyst Type and Retrieval Intent.
-3. <TEXT_TO_ANALYZE>: The raw financial text (news, transcript, or filing).
+REJECT (Mark 0):
+- IRRELEVANT: Events affecting partners/competitors with NO explicit link to <TARGET_COMPANY>.
+- FLUFF: Generic "commitment to value," "pleased with progress," or vague "investigating options" without capital commitment.
+- HISTORICAL: Backward-looking data (e.g., "Last year's growth") with no forward guidance.
 
-TASK:
-Identify if the text contains a concrete, stock-moving catalyst for the <TARGET_COMPANY>.
+ACCEPT (Mark 1):
+- IMPACT: Event must materially affect <TARGET_COMPANY> as the ACTOR (e.g., launches product), VICTIM (e.g., lawsuit, downgrade), or LINKED COLLATERAL (e.g., "tariffs hurt margins").
+- SPECIFICITY: Contains dates, dollars, percentages, or specific product/regulatory outcomes.
 
-STRICT REJECTION CRITERIA (Mark 0):
-- THIRD-PARTY EVENTS: The event is happening to a partner, competitor, or customer, but the text does not describe a direct, material impact on the <TARGET_COMPANY>.
-- ROUTINE STATEMENTS: Generic "commitment to excellence," "focus on value," or "pleased with progress" without specific metrics or events.
-- PURELY HISTORICAL: Backward-looking data (e.g., "Last year we grew 5%") with no forward-looking implication.
-- VAGUE STRATEGY: High-level vision or "investigating possibilities" without a concrete roadmap.
-
-INCLUSION RULES (Mark 1):
-- AGENCY: The <TARGET_COMPANY> is the primary actor or the direct beneficiary of the event.
-- SPECIFICITY: Mention of dates, dollar amounts, percentages, specific product names, or new geographic markets.
-- SECTOR RELEVANCE: Ensure the jargon matches the company's industry (e.g., "clinical trial" for Biotech, "backlog" for Industrials).
-
-OUTPUT CONSTRAINTS:
-- 'is_catalyst': 1 if a specific, company-linked event is found; 0 otherwise.
-- 'rationale': Max 15 words. Must state *why* it matters to this specific company.
-- 'evidence': Verbatim quote. Use "..." to bridge relevant parts. Use an empty string "" if is_catalyst is 0.
-
-Return JSON ONLY:
+OUTPUT (JSON ONLY):
 {
-  "rationale": "string",
+  "rationale": "Max 15 words. Explain impact role (Actor/Victim).",
   "is_catalyst": 0 | 1,
-  "evidence": "string"
+  "evidence": "Verbatim quote... bridging parts allowed."
 }
 """
 
+
 STAGE1_HUMAN_PROMPT = """
-<TARGET_COMPANY>
+<TARGET>
 {company_info}
-</TARGET_COMPANY>
+</TARGET>
 
-<SEARCH_CONTEXT>
-Type: {catalyst_type}
-Query: {retrieval_query}
-</SEARCH_CONTEXT>
+<CONTEXT>
+Query: {retrieval_query} ({catalyst_type})
+</CONTEXT>
 
-<COGNITIVE_CHECK>
-You are looking for news specifically regarding {company_tic} ({company_name}). 
-If the text primarily discusses another company, mark 'is_catalyst': 0.
-</COGNITIVE_CHECK>
+<INSTRUCTION>
+Analyze text for material news regarding {company_tic}.
+Include actions BY the company OR events happening TO the company (lawsuits, shortages, competitor threats).
+If text focuses on another firm without linking to {company_tic}, return 0.
+</INSTRUCTION>
 
-<TEXT_TO_ANALYZE>
+<TEXT>
 {content}
-</TEXT_TO_ANALYZE>
+</TEXT>
 """
-
-
-
 
 STAGE2_SYSTEM_TEMPLATE = """
 You are a Senior Equity Research Analyst. Your goal is to convert raw evidence into an investable catalyst profile.
@@ -131,21 +122,27 @@ DOMAIN RULES: {role}
 - TIMELINE GUIDE: {horizon_guide}
 
 ----------------------------------------------------
-ANALYST GUIDELINES (Avoid False Negatives)
+ANALYST GUIDELINES (Critical for Accuracy)
 ----------------------------------------------------
-1. LOGICAL INFERENCE: Do not look for exact keyword matches. If the text implies a specific outcome (e.g., "expanding capacity" = "product_initiative"), accept it as logical.
-2. AGENTIC REASONING: Use the <STAGE1_RATIONALE> and <EVIDENCE_SNIPPET> together to determine the primary business impact.
-3. BINARY SENTIMENT: 
-   - 1 (Positive): The news is value-creative (e.g., higher revenue, lower costs, reduced risk).
-   - -1 (Negative): The news is value-destructive (e.g., lower margins, higher debt, operational delays).
+1. LOGICAL INFERENCE: If text implies a specific outcome (e.g., "idling plant" = "capacity reduction"), accept it.
+2. AGENTIC REASONING: Use the <STAGE1_RATIONALE> to determine the primary business impact.
 
-----------------------------------------------------
-TIMELINE DEFINITIONS (time_horizon)
-----------------------------------------------------
-Categorize the impact based on when the market will price in the result:
-- 0 (Immediate/Tactical): Impact felt ≤ 1 week (e.g., surprise beats, sudden legal news).
-- 1 (Cyclical/Quarterly): Impact hits within 3 months (e.g., next quarter's guidance).
-- 2 (Strategic/Long-term): Multi-quarter/year shift (e.g., long-term R&D or factory builds).
+3. SKEPTICISM & SPIN DETECTION (The Cynic's Rule):
+   - Management uses positive words for negative events. Decode them:
+     * "Rightsizing / Efficiency" -> Layoffs (Negative signal).
+     * "Headwinds / Uncertainty" -> Demand is falling (Negative).
+     * "Strategic Alternatives" -> Company for sale/Failing (Negative).
+   - CRITICAL OVERRIDE: If a report contains "Good Past Results" but "Weak Future Guidance", the Sentiment is NEGATIVE (-1). Forward guidance always trumps historical results.
+
+4. SENTIMENT SCORING:
+   - 1 (Positive): Revenue accretion, margin expansion, risk reduction, buybacks.
+   - -1 (Negative): Revenue contraction, dilution, legal liability, missed estimates.
+   - NOTE: Raising cash via Equity (ATM, Secondary) is ALWAYS SENTIMENT -1 (Dilution).
+
+5. MAGNITUDE SCORING (impact_magnitude):
+   - 1 (High/Thesis Changing): M&A >$500M, CEO fired, Guidance raise >10%, FDA Approval, Major Lawsuit lost.
+   - 0 (Medium/Material): Standard earnings beat/miss, New product launch, Contract win, Bolt-on acquisition.
+   - -1 (Low/Noise): Routine dividend payment, small insider sale, minor patent news, generic partnership PR.
 
 ----------------------------------------------------
 OUTPUT SCHEMA (JSON ONLY)
@@ -160,7 +157,7 @@ OUTPUT SCHEMA (JSON ONLY)
   "certainty": "confirmed" | "planned" | "rumor" | "denied",
   "impact_area": "Must be one of: [{valid_impact_areas}]",
   "sentiment": -1 | 1,
-  "impact_magnitude": -1 | 0 | 1
+  "impact_magnitude": 1 | 0 | -1
 }}
 """
 
@@ -185,70 +182,69 @@ Stage1_Rationale: {rationale}
 </EVIDENCE_SNIPPET>
 """
 
-
 STAGE2_SYSTEM_CONFIG = {
     "guidance_outlook": {
         "role": "GUIDANCE / OUTLOOK",
-        "definition": "Management forecasts for financial metrics (Revenue, EPS, Margins) or production targets.",
-        "matching_rules": "UPDATE if: Same metric AND same fiscal period (e.g., Q4, FY2025). If the year changes, it is NEW.",
+        "definition": "Management forecasts for Revenue, EPS, or Margins.",
+        "matching_rules": "UPDATE if: Same metric & period. NEW if: Guidance withdrawn, period changed, or estimates missed.",
         "valid_impact_areas": "revenue, earnings, margin, profitability, cashflow, expenses, volume, demand",
-        "horizon_guide": "Usually 0 for the announcement day reaction, or 1 for the period being guided."
+        "horizon_guide": "0 (Immediate Price Impact) or 1 (Quarterly Expectation)."
     },
     "product_initiative": {
-        "role": "PRODUCT / EXPANSION",
-        "definition": "New launches, R&D breakthroughs, market entries, or capacity increases.",
-        "matching_rules": "UPDATE if: Same product name/code OR same facility location. Track progression from 'planned' to 'realized'.",
+        "role": "PRODUCT / OPERATIONS",
+        "definition": "Launches/Expansion (Bull) OR Delays/Recalls/Shutdowns (Bear).",
+        "matching_rules": "UPDATE if: Same product/facility. NEW if: Distinct product line or facility affected.",
         "valid_impact_areas": "revenue, operations, strategy, technology, market_expansion, capacity",
-        "horizon_guide": "Typically 1 (Quarterly ramp) or 2 (Infrastructure/R&D)."
+        "horizon_guide": "1 (Ramp/Delay period) or 2 (Long-term R&D)."
     },
     "partnership_deal": {
-        "role": "PARTNERSHIP / DEAL",
-        "definition": "M&A, joint ventures, strategic alliances, or major contract wins.",
-        "matching_rules": "UPDATE if: Same partner name or deal name. Change state to 'realized' once the deal closes.",
+        "role": "PARTNERSHIP / M&A",
+        "definition": "New deals/Wins (Bull) OR Terminations/Client Losses/Deal Failures (Bear).",
+        "matching_rules": "UPDATE if: Same partner/deal. NEW if: Different partner or specific contract loss.",
         "valid_impact_areas": "revenue, strategy, operations, market_expansion, technology, supply_chain",
-        "horizon_guide": "Usually 0 (Deal news) or 2 (Strategic integration)."
+        "horizon_guide": "0 (Announcement shock) or 2 (Integration/Loss impact)."
     },
     "cost_efficiency": {
-        "role": "COST EFFICIENCY / RESTRUCTURING",
-        "definition": "Layoffs, savings programs, facility closures, or margin improvement plans.",
-        "matching_rules": "UPDATE if: Same program name or specific dollar-saving target.",
+        "role": "COST / RESTRUCTURING",
+        "definition": "Savings plans (Bull) OR Asset impairments/Writedowns/Soaring expenses (Bear).",
+        "matching_rules": "UPDATE if: Same program. NEW if: Specific asset writedown or new layoff round.",
         "valid_impact_areas": "profitability, operations, cashflow, expenses, margin, headcount",
-        "horizon_guide": "Usually 1 (Implementation period) or 2 (Multi-year savings)."
+        "horizon_guide": "1 (Restructuring execution)."
     },
     "capital_actions": {
-        "role": "CAPITAL ACTIONS",
-        "definition": "Share buybacks, dividends, debt issuance, or capital allocation changes.",
-        "matching_rules": "UPDATE if: Same buyback program amount/dates or same debt facility name.",
-        "valid_impact_areas": "shareholder_return, financing, cashflow, balance_sheet, liquidity",
-        "horizon_guide": "0 for dividend changes; 1 or 2 for ongoing buyback programs."
+        "role": "CAPITAL / DILUTION",
+        "definition": "Buybacks/Dividends (Bull) OR Equity Offerings/Dilution/Debt Defaults (Bear).",
+        "matching_rules": "UPDATE if: Same program. NEW if: ATM, Secondary, or Dividend Cut announced.",
+        "valid_impact_areas": "shareholder_return, financing, dilution, balance_sheet, liquidity",
+        "horizon_guide": "0 (Immediate pricing of Dilution/Dividend change)."
     },
     "regulatory_policy": {
-        "role": "REGULATORY / LEGAL",
-        "definition": "Lawsuits, FDA approvals, government investigations, or settlement news.",
-        "matching_rules": "UPDATE if: Same case name, docket number, or drug/product undergoing review.",
+        "role": "LEGAL / REGULATORY",
+        "definition": "Approvals/Settlements (Bull) OR Lawsuits/Probes/Short Seller Reports (Bear).",
+        "matching_rules": "UPDATE if: Same case. NEW if: New subpoena, short report, or distinct lawsuit.",
         "valid_impact_areas": "compliance, risk, operations, revenue, licensing, legal, governance",
-        "horizon_guide": "0 (Court ruling/FDA decision) or 2 (Ongoing litigation risk)."
+        "horizon_guide": "0 (Ruling/Report release) or 2 (Litigation drag)."
     },
     "demand_trends": {
-        "role": "DEMAND / MACRO TRENDS",
-        "definition": "Specific reports of bookings, backlog changes, or regional demand shifts (e.g., 'China demand').",
-        "matching_rules": "UPDATE if: Same product category or same geographic region.",
+        "role": "DEMAND / INVENTORY",
+        "definition": "Bookings growth (Bull) OR Inventory bloat/Cancellations/Pricing pressure (Bear).",
+        "matching_rules": "UPDATE if: Same region/segment. NEW if: Shift in inventory or regional demand.",
         "valid_impact_areas": "revenue, demand, volume, pricing, macro, region, inventory",
-        "horizon_guide": "Usually 1 (Quarterly trend indicator)."
+        "horizon_guide": "1 (Quarterly trend)."
     },
     "risk_event": {
-        "role": "RISK / NEGATIVE EVENT",
-        "definition": "Supply disruptions, cyber breaches, project cancellations, or leadership changes.",
-        "matching_rules": "UPDATE if: Same specific incident or same project being delayed.",
+        "role": "RISK / LEADERSHIP",
+        "definition": "Insider buys/Project success (Bull) OR Exec departures/Cyber breaches/Supply shocks (Bear).",
+        "matching_rules": "UPDATE if: Same incident. NEW if: Different executive leaves or new breach.",
         "valid_impact_areas": "operations, supply_chain, earnings, financial, reputation, leadership",
-        "horizon_guide": "Almost always 0 (Immediate shock) or 1 (Cleanup/Recovery period)."
+        "horizon_guide": "0 (Immediate shock)."
     },
     "macro_policy": {
         "role": "MACRO / GEOPOLITICAL",
-        "definition": "Interest rates, tariffs, FX, or conflict-driven business risks.",
-        "matching_rules": "UPDATE if: Same macro driver (e.g., 'Fed Rates') or same geopolitical conflict.",
+        "definition": "Rates/FX/Tariffs/Conflict impacting business.",
+        "matching_rules": "UPDATE if: Same policy. NEW if: New tariff or rate regime.",
         "valid_impact_areas": "macro, monetary_policy, trade_policy, currency_fx, geopolitical, inflation",
-        "horizon_guide": "Usually 1 (Quarterly cycle) or 2 (Structural macro shifts)."
+        "horizon_guide": "1 (Cycle impact) or 2 (Structural shift)."
     }
 }
 
@@ -265,27 +261,41 @@ STAGE2_SYSTEM_MESSAGE = {
 }
 
 
-
 STAGE3_SYSTEM_MESSAGE = """
-You are a Financial Fact-Checker. 
+You are a Financial Auditor. Your ONLY goal is to validate the findings of an Equity Analyst.
 
-Your ONLY goal is to ensure the Analyst's output is supported by the Source Text.
+INPUTS:
+1. SOURCE_TEXT: Raw news/filing text.
+2. CATALYST: The Analyst's extracted event.
 
-VERIFICATION STEPS:
-1. SOURCE CHECK: Does the 'evidence' exist in the text? (Note: "..." is allowed to skip filler, but the meaning must remain the same).
-2. LOGIC CHECK: Does the 'summary' and 'title' reflect the 'evidence'? 
-   - Reject if the summary adds facts (names, dates, or numbers) that are not in the evidence.
-   - Reject if the title claims a "positive" sentiment for a clearly "negative" or "boring" sentence.
-3. NO HALLUCINATION: If the Analyst "guessed" a detail to fill a JSON field, mark INVALID.
+PROTOCOL (PASS=1 | FAIL=0):
 
-OUTPUT FORMAT (JSON ONLY):
+1. QUOTE FIDELITY:
+   - 'evidence' must exist in <SOURCE_TEXT_CHUNK>.
+   - IGNORE minor whitespace/punctuation differences.
+   - REJECT if words are altered or combined without "..." bridging.
+
+2. DATA INTEGRITY (Strict):
+   - FAIL if 'summary' adds specific numbers, dates, or names NOT in 'evidence'.
+   - EXCEPTION: Standard calendar inferences (e.g., "Q3" -> "Sept") are ALLOWED.
+
+3. INTERPRETATION vs. HALLUCINATION (The "Bear" Filter):
+   - You must distinguish "financial decoding" from "inventing facts."
+   - CASE A (Valid Inference): Text="Headwinds" -> Summary="Weak Demand". (PASS: Standard translation).
+   - CASE B (Valid Inference): Text="ATM Facility" -> Summary="Dilution Risk". (PASS: Financial reality).
+   - CASE C (Invalid Hallucination): Text="Efficiency program" -> Summary="Firing 500 people". (FAIL: Number '500' invented).
+   - CASE D (Invalid Logic): Text="We aim to double sales" -> Summary="Sales doubled". (FAIL: Treating goal as fact).
+
+4. SENTIMENT CHECK:
+   - Do NOT reject negative sentiment on positive-sounding spin (e.g., "Capital Optimization" = Negative Dilution is CORRECT).
+   - Only REJECT if sentiment is logically impossible (e.g., "Bankruptcy" marked Positive).
+
+OUTPUT (JSON ONLY):
 {
   "is_valid": 0 | 1,
-  "rejection_reason": "Briefly state what fact was unsupported (max 20 words). Use empty string '' if is_valid is 1."
+  "rejection_reason": "If 0, state specific error (e.g., 'Summary added $10M figure'). If 1, use empty string."
 }
 """
-
-
 
 STAGE3_HUMAN_PROMPT = """
 <SOURCE_TEXT_CHUNK>
@@ -297,9 +307,9 @@ STAGE3_HUMAN_PROMPT = """
 </CANDIDATE_CATALYST>
 
 Instructions:
-1. Read the 'evidence' field.
-2. Does this evidence support the 'title' and 'summary'?
-3. Is there any hallucinated information?
-4. Does the sentiment match the evidence?
-5. Return the JSON ONLY as per the schema.
+1. QUOTE: Verify evidence exists (fuzzy match allowed).
+2. DATA: Ensure no numbers/names were invented.
+3. LOGIC: Check Case A-D rules (Decode spin = OK; Invent facts = FAIL).
+4. SENTIMENT: Confirm sentiment reflects financial reality.
+5. Return JSON.
 """
