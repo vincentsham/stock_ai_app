@@ -15,7 +15,6 @@ const VALUATION_METRICS_SEARCH_QUERY = `
       pe_ttm,
       pe_forward,
       ps_ttm,
-      peg_ratio,
       peg_ratio_forward,
       p_to_fcf_ttm,
       price_to_book,
@@ -345,6 +344,41 @@ export const searchStockScores = cache(async (tic: string) => {
       financial_health_score: null,
       total_score: null,
     };
+  } finally {
+    // 3. IMPORTANT: Release the client back to the pool
+    if (client) {
+      client.release();
+    }
+  }
+});
+
+
+
+const TOP_STOCKS_SEARCH_QUERY = `
+      SELECT
+        ss.tic
+      FROM mart.stock_scores ss
+      WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.stock_scores)
+      ORDER BY ss.total_score DESC
+      LIMIT $1;
+`;
+
+
+export const searchTopStocks = cache(async (limit: number) => {
+  let client;
+  try {
+    // 1. Acquire a client (connection) from the pool
+    client = await pool.connect();
+    const result = await client.query(TOP_STOCKS_SEARCH_QUERY, [limit]);
+
+    // 2. create a list of tic from result
+    const topTics: string[] = result.rows.map((row: any) => row['tic'] as string);
+    return topTics;
+
+  } catch (err) {
+    console.error('Database query error:', err);
+    return [];
+
   } finally {
     // 3. IMPORTANT: Release the client back to the pool
     if (client) {

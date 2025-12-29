@@ -1,10 +1,10 @@
 export const SYMBOL_INFO_WIDGET_CONFIG = (symbol: string, height: number) => ({
-    symbol: symbol.toUpperCase(),
-    colorTheme: 'dark',
-    isTransparent: true,
-    locale: 'en',
-    width: '100%',
-    height: height,
+    "symbol": symbol.toUpperCase(),
+    "colorTheme": "dark",
+    "isTransparent": true,
+    "locale": "en",
+    "width": "100%",
+    "height": height,
 });
 
 

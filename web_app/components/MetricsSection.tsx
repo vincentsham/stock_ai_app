@@ -11,14 +11,7 @@ import {
 } from '@/lib/db/metricsQueries';
 import { MetricList } from '@/types';
 import { MetricCard } from './MetricCard';
-
-interface AllMetrics {
-    valuation: MetricList | null;
-    profitability: MetricList | null;
-    growth: MetricList | null;
-    efficiency: MetricList | null;
-    financialHealth: MetricList | null;
-}
+import { AllMetrics } from '@/types/metrics';
 
 export const MetricsSection: React.FC<{ tic: string }> = ({ tic }) => {
     const [allMetrics, setAllMetrics] = useState<AllMetrics>({
@@ -70,7 +63,10 @@ export const MetricsSection: React.FC<{ tic: string }> = ({ tic }) => {
       return result;
     };
 
-    const columns = useMemo(() => Object.values(allMetrics), [allMetrics]);
+    const columns = useMemo(
+      () => Object.values(allMetrics).filter((item): item is MetricList => item !== null),
+      [allMetrics]
+    );
     const baseCols = useMemo(() => splitIntoColumns(columns, 1), [columns]);
     const mdCols = useMemo(() => splitIntoColumns(columns, 2), [columns]);
     const lgCols = useMemo(() => splitIntoColumns(columns, 3), [columns]);

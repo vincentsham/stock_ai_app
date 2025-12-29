@@ -5,7 +5,7 @@ import { coerceNumber } from './utils';
 
 export function formatNumber(value: unknown): string {
     const n = coerceNumber(value);
-    if (n === null) {
+    if (n === null || typeof n !== 'number' || isNaN(n)) {
         return 'N/A';
     }
     if (Math.abs(n) >= 1e12) {
@@ -28,7 +28,7 @@ export function formatNumber(value: unknown): string {
 
 export function formatInteger(value: unknown): string {
     const n = coerceNumber(value);
-    if (n === null) {
+    if (n === null || typeof n !== 'number' || isNaN(n)) {
         return 'N/A';
     }
     if (Math.abs(n) >= 1e12) {
@@ -50,7 +50,7 @@ export function formatInteger(value: unknown): string {
 
 export function formatCurrency(value: unknown): string {
     const n = coerceNumber(value);
-    if (n === null) {
+    if (n === null || typeof n !== 'number' || isNaN(n)) {
         return 'N/A';
     }
     if (n < 0) {
@@ -62,7 +62,7 @@ export function formatCurrency(value: unknown): string {
 
 export function formatRatio(value: unknown): string {
     const n = coerceNumber(value);
-    if (n === null) {
+    if (n === null || typeof n !== 'number' || isNaN(n)) {
         return 'N/A';
     }
     return `${formatNumber(n)}x`;
@@ -70,7 +70,7 @@ export function formatRatio(value: unknown): string {
 
 export function formatPercentage(value: unknown): string {
     const n = coerceNumber(value);
-    if (n === null) {
+    if (n === null || typeof n !== 'number' || isNaN(n)) {
         return 'N/A';
     }
     if (Math.abs(n) >= 0.1) {

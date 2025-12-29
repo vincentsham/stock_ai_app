@@ -7,6 +7,7 @@ export type Metric = {
     description: string;
     inverse: boolean | null;
     displayByDefault: boolean;
+    highlight?: boolean | null;
 };
 
 export type MetricList = {
@@ -15,7 +16,16 @@ export type MetricList = {
     score: number | null;
     metrics: Metric[];
     defaultVisibleCount: number;
+    highlight?: boolean | null;
 };
+
+export type AllMetrics = {
+    valuation: MetricList | null;
+    profitability: MetricList | null;
+    growth: MetricList | null;
+    efficiency: MetricList | null;
+    financialHealth: MetricList | null;
+}
 
 export type StockScores = {
     tic: string;
@@ -26,3 +36,11 @@ export type StockScores = {
     financial_health_score: number | null;
     total_score: number | null;
 };
+
+export type AllMetricsWithExpandedStates = {
+    valuation: {metrics: MetricList | null} & { expandedState: [boolean, () => void] };
+    profitability: {metrics: MetricList | null} & { expandedState: [boolean, () => void] };
+    growth: {metrics: MetricList | null} & { expandedState: [boolean, () => void] };
+    efficiency: {metrics: MetricList | null} & { expandedState: [boolean, () => void] };
+    financialHealth: {metrics: MetricList | null} & { expandedState: [boolean, () => void] };
+}

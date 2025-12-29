@@ -1,0 +1,95 @@
+'use client';
+
+import { useState } from 'react';
+import { CatalystsSection } from './CatalystsSection';
+import { EarningsSection } from './EarningsSection';
+import { EarningsCallsSection } from './EarningsCallsSection';
+import { AnalystsSection } from './AnalystsSection';
+import { MetricsSection } from './MetricsSection';
+import { Zap, DollarSign, Calendar, Users, BarChart3 } from 'lucide-react';
+
+export const StockMain: React.FC<{ tic: string }> = ({ tic }) => {
+  const [activeTab, setActiveTab] = useState<'catalysts' | 'earnings' | 'earningsCalls' | 'analysts' | 'metrics'>('catalysts');
+
+  return (
+    <div className="w-full bg-[#0c0e15] border border-gray-800 rounded-xl p-6 pt-1">
+      {/* Tab Navigation */}
+      <div className="flex border-b border-gray-800 mb-6 overflow-x-auto">
+        <button
+          onClick={() => setActiveTab('catalysts')}
+          className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'catalysts'
+              ? 'border-blue-500 text-blue-400'
+              : 'border-transparent text-gray-400 hover:text-white cursor-pointer'
+          }`}
+        >
+          <Zap size={16} />
+          Catalysts
+        </button>
+        <button
+          onClick={() => setActiveTab('metrics')}
+          className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'metrics'
+              ? 'border-blue-500 text-blue-400'
+              : 'border-transparent text-gray-400 hover:text-white cursor-pointer'
+          }`}
+        >
+          <BarChart3 size={16} />
+          Metrics
+        </button>
+        <button
+          onClick={() => setActiveTab('earnings')}
+          className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'earnings'
+              ? 'border-blue-500 text-blue-400'
+              : 'border-transparent text-gray-400 hover:text-white cursor-pointer'
+          }`}
+        >
+          <DollarSign size={16} />
+          Earnings
+        </button>
+        <button
+          onClick={() => setActiveTab('earningsCalls')}
+          className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'earningsCalls'
+              ? 'border-blue-500 text-blue-400'
+              : 'border-transparent text-gray-400 hover:text-white cursor-pointer'
+          }`}
+        >
+          <Calendar size={16} />
+          Earnings Calls
+        </button>
+        <button
+          onClick={() => setActiveTab('analysts')}
+          className={`px-4 py-3 text-sm font-medium transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'analysts'
+              ? 'border-blue-500 text-blue-400'
+              : 'border-transparent text-gray-400 hover:text-white cursor-pointer'
+          }`}
+        >
+          <Users size={16} />
+          Analysts
+        </button>
+      </div>
+
+      {/* Content Area */}
+      <div>
+        <div className={activeTab === 'catalysts' ? 'block' : 'hidden'}>
+          <CatalystsSection tic={tic} />
+        </div>
+        <div className={activeTab === 'metrics' ? 'block' : 'hidden'}>
+          <MetricsSection tic={tic} />
+        </div>
+        <div className={activeTab === 'earnings' ? 'block' : 'hidden'}>
+          <EarningsSection tic={tic} />
+        </div>
+        <div className={activeTab === 'earningsCalls' ? 'block' : 'hidden'}>
+          <EarningsCallsSection tic={tic} />
+        </div>
+        <div className={activeTab === 'analysts' ? 'block' : 'hidden'}>
+          <AnalystsSection tic={tic} />
+        </div>
+      </div>
+    </div>
+  );
+};

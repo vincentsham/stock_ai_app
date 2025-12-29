@@ -130,7 +130,7 @@ export const EarningsCallCard = ({ report }: { report: EarningsCallAnalysis }) =
   const mitigationEffectivenessLabel = report.mitigation_effectiveness == 1 ? 'Strong' : report.mitigation_effectiveness == 0 ? 'Moderate' : 'Weak';
 
   return (
-    <div className={`bg-[#111218] rounded-xl border border-gray-800 overflow-hidden transition-all duration-300 mb-4 ${isExpanded ? 'shadow-xl shadow-black/50 ring-1 ring-gray-700' : 'hover:border-gray-700'}`}>
+    <div className={`bg-[#111218] rounded-xl border border-gray-800 overflow-hidden hover:bg-gray-700 transition-all duration-300 mb-4 ${isExpanded ? 'shadow-xl shadow-black/50 ring-1 ring-gray-700' : 'hover:border-gray-700'}`}>
       
       {/* --- COLLAPSED HEADER (Clickable) --- */}
       <div 
@@ -149,7 +149,7 @@ export const EarningsCallCard = ({ report }: { report: EarningsCallAnalysis }) =
                <span>{new Date(report.earnings_date).toLocaleDateString()}</span>
             </p>
           </div>
-          <button className={`text-gray-500 hover:text-white transition-all duration-300 transform ${isExpanded ? 'rotate-180' : ''}`}>
+          <button className={`cursor-pointer text-gray-500 hover:text-white transition-all duration-300 transform ${isExpanded ? 'rotate-180' : ''}`}>
              <ChevronDown className="w-5 h-5" />
           </button>
         </div>
@@ -173,7 +173,7 @@ export const EarningsCallCard = ({ report }: { report: EarningsCallAnalysis }) =
           )) 
           : report.performance_factors.length > 4 && (
             <span className="text-xs font-bold px-2.5 py-1 rounded bg-gray-800 text-gray-500 border border-gray-700
-             transition-colors cursor-default hover:bg-gray-700 hover:text-white hover:border-gray-600">
+             transition-colors cursor-default hover:bg-gray-700 hover:text-white hover:border-gray-600 cursor-pointer">
               +{report.performance_factors.length - 4} more
             </span>
           )}
