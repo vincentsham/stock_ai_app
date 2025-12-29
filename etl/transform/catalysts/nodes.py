@@ -46,13 +46,14 @@ def get_sql_query(source_type: str, tic: str, calendar_year: int, calendar_quart
             JOIN core.earnings_transcripts AS t
             ON c.event_id = t.event_id
             WHERE c.tic = '{tic}' 
-                AND s.is_signal = 1
+                AND (s.is_signal = 1
+                    OR (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.5)
                 AND c.calendar_year = {calendar_year}
                 AND c.calendar_quarter = {calendar_quarter}
-                AND (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.3
             ORDER BY cosine_sim DESC
             LIMIT {top_k};
         """
+
     elif source_type == "news":
         # sql = f"""
         #     SELECT
@@ -84,10 +85,10 @@ def get_sql_query(source_type: str, tic: str, calendar_year: int, calendar_quart
             JOIN core.news AS n
             ON c.event_id = n.event_id
             WHERE c.tic = '{tic}' 
-                AND s.is_signal = 1
+                AND (s.is_signal = 1
+                    OR (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.5)
                 AND EXTRACT(YEAR FROM c.published_at) = {calendar_year}
                 AND EXTRACT(MONTH FROM c.published_at) = {calendar_month}
-                AND (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.3
             ORDER BY cosine_sim DESC
             LIMIT {top_k};
         """
@@ -123,6 +124,7 @@ def retriever_node(state: CatalystSession) -> dict:
 
         results = execute_query(sql)
         if results is None or len(results) == 0:
+            print(f"No results found for query: {source_type}, {tic}, {calendar_year}, {calendar_quarter}, {calendar_month}")
             return {}
 
         for i in range(len(results)):
@@ -249,6 +251,9 @@ def stage2_node(state: CatalystSession) -> dict:
 
     # we will build a new list so we don't accidentally mutate weirdly
     updated_contexts = []
+
+    # total_catalysts = sum(1 for ctx in state.catalysts if ctx.candidate and ctx.candidate.is_catalyst)
+    # print(f"Total catalyst chunks from stage1: {total_catalysts}/{len(state.catalysts)}")
 
     for ctx in state.catalysts:  # ctx is a CatalystContext
         cand = ctx.candidate

@@ -167,7 +167,7 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
     retries = 3
 
     # Use tqdm to track progress
-    for state in tqdm(states, desc="Processing company profiles"):
+    for state in tqdm(states, desc=f"Processing states - {type} - {frequency} - {year} {"Q" + str(quarter) if quarter else ''}{month if month else ''}"):
         while retries > 0:
             try:
                 final_state = app.invoke(state)
@@ -274,6 +274,11 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
     return
 
 if __name__ == "__main__":
-    # main("earnings_transcript", "quarterly", top_k=3, year=2025, quarter=3)
+    # main("earnings_transcript", "quarterly", top_k=1, year=2024, quarter=1)
+    # main("earnings_transcript", "quarterly", top_k=1, year=2024, quarter=2)
+    # main("earnings_transcript", "quarterly", top_k=1, year=2024, quarter=3)
+    # main("earnings_transcript", "quarterly", top_k=1, year=2024, quarter=4)
+    # main("earnings_transcript", "quarterly", top_k=3, year=2025, quarter=1)
     # main("earnings_transcript", "quarterly", top_k=3, year=2025, quarter=2)
+    # main("earnings_transcript", "quarterly", top_k=3, year=2025, quarter=3)
     main("news", "monthly", top_k=3, year=2025)
