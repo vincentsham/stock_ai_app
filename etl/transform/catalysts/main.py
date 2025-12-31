@@ -8,6 +8,16 @@ from tqdm import tqdm
 from prompts import CATALYST_QUERIES
 from datetime import datetime, timedelta, timezone
 import uuid
+from dotenv import load_dotenv
+from langchain_openai import OpenAIEmbeddings
+import os
+
+# Load environment variables
+load_dotenv()
+
+# Initialize the embedding model
+embedding_model_name = os.getenv("OPENAI_EMBEDDING_MODEL")
+embedding_model = OpenAIEmbeddings(model=embedding_model_name)
 
 
 QUERY = {
@@ -54,7 +64,9 @@ columns = {
                                          'evidence', 'state', 'sentiment', 'time_horizon','impact_magnitude', 
                                          'certainty', 'impact_area', 'is_valid', 'rejection_reason', 
                                          'ingestion_batch', 'source_type', 'source', 
-                                         'url', 'raw_json_sha256', 'updated_at']
+                                         'url', 'raw_json_sha256', 'updated_at'],
+    "catalyst_master_embeddings": ['catalyst_id', 'embedding', 'embedding_model', 'updated_at'],
+    "catalyst_version_embeddings": ['event_id', 'chunk_id', 'catalyst_id', 'catalyst_type', 'embedding', 'embedding_model', 'updated_at'],
 }
 
 
@@ -67,14 +79,18 @@ def update_master(conn, df: pd.DataFrame):
     4. Update core.catalyst_master with the aggregated data.
     """
     if df.empty:
-        print("No records to update in catalyst_master.")
+        # print("No records to update in catalyst_master.")
         return 0
     # Step 1: Query existing records from core.catalyst_versions
     query = f"""
-        SELECT cv.*, cm.created_at
+        SELECT cv.*, cve.embedding AS embedding, cve.embedding_model AS embedding_model, cm.created_at
         FROM core.catalyst_versions AS cv
         JOIN core.catalyst_master AS cm
         ON cv.catalyst_id = cm.catalyst_id
+        JOIN core.catalyst_version_embeddings AS cve
+        ON cv.catalyst_id = cve.catalyst_id
+            AND cv.event_id = cve.event_id
+            AND cv.chunk_id = cve.chunk_id 
         WHERE cv.catalyst_id IN ({', '.join([f"'{cid}'" for cid in df['catalyst_id'].dropna().unique()])});
     """
     existing_df = read_sql_query(query, conn)
@@ -99,6 +115,10 @@ def update_master(conn, df: pd.DataFrame):
     # Step 4: Update core.catalyst_master
     total_records = insert_records(conn, latest_records[columns['catalyst_master']], 
                                    'core.catalyst_master', keys=['catalyst_id'], updated_at=False)
+    total_records = insert_records(conn, latest_records[columns['catalyst_master_embeddings']], 
+                                   'core.catalyst_master_embeddings', keys=['catalyst_id'], updated_at=False)
+    
+
     return total_records
 
 
@@ -118,7 +138,8 @@ def get_catalyst_id_list(conn, tic: str, catalyst_type: str) -> list:
 
 def main(type: Literal["news", "earnings_transcript"] = "news",
          frequency: Literal["daily", "monthly", "quarterly"] = "monthly",
-         top_k: int = 3, year: int = None, quarter: int = None, month: int = None):
+         top_k: int = 3, year: int = None, quarter: int = None, month: int = None,
+         batch_size: int = 10, sleep_time: int = 65):
     # Connect to the database
     conn = connect_to_db()
     if conn:
@@ -166,21 +187,54 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
     total_updated_master_records = 0
     retries = 3
 
+    n_skip = 0
+    n_keep = 0
+    n_create = 0
+    n_update = 0
+    n_valid = 0
+    n = 0
+    
+
     # Use tqdm to track progress
-    for state in tqdm(states, desc=f"Processing states - {type} - {frequency} - {year} {"Q" + str(quarter) if quarter else ''}{month if month else ''}"):
+    for i, state in enumerate(tqdm(states, desc=f"Processing states - {type} - {frequency} - {year} {"Q" + str(quarter) if quarter else ''}{month if month else ''}")):
+    
+        # Batch Sleep Logic
+        if i > 0 and i % batch_size == 0:
+            print(f"\n[Rate Limit Protection] Processed {batch_size} items. Sleeping for {sleep_time} seconds...")
+            time.sleep(sleep_time)
+        
         while retries > 0:
             try:
                 final_state = app.invoke(state)
                 retries = 3  # reset retries for next state
                 break
             except Exception as e:
+                # Optional: If error is specifically RateLimitError, force a sleep immediately
+                if "rate limit" in str(e).lower() or "429" in str(e):
+                    print(f"Hit rate limit immediately on {state.company_info.tic}. Sleeping for {sleep_time}s before retry...")
+                    time.sleep(sleep_time)
+                
                 retries -= 1
                 if retries == 0:
-                    print(f"Failed to process {state.company_info.tic} after multiple retries: {e}")
-                    raise e
+                    print(f"Failed to process {state.company_info.tic} "
+                          f"{state.query_params.source_type}: {state.query_params.catalyst_type} for "
+                          f"{state.query_params.calendar_year}-{state.query_params.calendar_quarter if state.query_params.calendar_quarter else ''}{state.query_params.calendar_month if state.query_params.calendar_month else ''} "
+                          f"after multiple retries: {e}")
+                    # Decide if you want to raise e or continue. Continuing prevents one failure from stopping the batch.
+                    # raise e 
+                    break 
                 print(f"Error processing {state.company_info.tic}: {e}. Retrying...")
+        if retries == 0:
+            retries = 3  # reset for next state
+            continue  # skip to next state after exhausting retries
         processed_data = []
         for catalyst in final_state.get("catalysts", []):
+            n_skip += 1 if catalyst.action == "skip" else 0
+            n_keep += 1 if catalyst.action == "keep" else 0
+            n_create += 1 if catalyst.action == "create" else 0
+            n_update += 1 if catalyst.action == "update" else 0
+            n_valid += 1 if catalyst.candidate.is_valid == 1 else 0
+            n += 1
             if catalyst.candidate.is_catalyst == 1:
                 out = {
                         "event_id": catalyst.chunk.event_id,
@@ -220,6 +274,14 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
                 _total_new_records = 0
                 _total_existing_records = 0
                 _total_updated_master_records = 0
+
+                df['embedding'] = None
+                df['embedding_model'] = None
+
+                mask = df['title'].notnull()
+                embeddings = embedding_model.embed_documents(df.loc[mask,'title'].tolist())
+                df.loc[mask,'embedding'] = pd.Series(list(embeddings), index=df.index[mask])
+                df.loc[mask,'embedding_model'] = embedding_model_name
                 if len(df[df["state"] == "announced"]) > 0:
 
                     new_records = df[df["state"] == "announced"].copy()
@@ -233,9 +295,15 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
                     insert_records(conn, 
                                 new_records[columns['catalyst_master']], 
                                 "core.catalyst_master")
+                    insert_records(conn, 
+                                new_records[columns['catalyst_master_embeddings']], 
+                                "core.catalyst_master_embeddings")                    
                     _total_new_records = insert_records(conn, 
                                 new_records[columns['catalyst_versions']],
                                 "core.catalyst_versions")
+                    insert_records(conn, 
+                                new_records[columns['catalyst_version_embeddings']],
+                                "core.catalyst_version_embeddings")
 
                     total_new_records += _total_new_records
 
@@ -251,12 +319,19 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
                                 "core.catalyst_versions", 
                                 keys=['event_id', 'chunk_id', 'catalyst_id'],
                                 updated_at=False)
+                    insert_records(conn,
+                                existing_records[columns['catalyst_version_embeddings']],
+                                "core.catalyst_version_embeddings", 
+                                keys=['event_id', 'chunk_id', 'catalyst_id'],
+                                updated_at=False)
+                    
                     total_existing_records += _total_existing_records
                     _total_updated_master_records = update_master(conn, existing_records[existing_records['is_valid'] == 1])
                     total_updated_master_records += _total_updated_master_records
-                print(f"{final_state.get('company_info', {}).tic}: Total records processed: {len(processed_data)}, "
+                print(f"{final_state.get('company_info', {}).tic} - {final_state.get('query_params', {}).catalyst_type}: Total records processed: {len(processed_data)}, "
                       f"New records inserted: {_total_new_records}, Existing records updated: {_total_existing_records}, "
                       f"Master records updated: {_total_updated_master_records}")
+                print(f"Actions so far - Skip: {n_skip}, Keep: {n_keep}, Create: {n_create}, Update: {n_update}, Valid: {n_valid}, Total Processed Catalysts: {n}")
 
         except Exception as e:
             conn.rollback()
@@ -278,7 +353,7 @@ if __name__ == "__main__":
     # main("earnings_transcript", "quarterly", top_k=1, year=2024, quarter=2)
     # main("earnings_transcript", "quarterly", top_k=1, year=2024, quarter=3)
     # main("earnings_transcript", "quarterly", top_k=1, year=2024, quarter=4)
-    # main("earnings_transcript", "quarterly", top_k=3, year=2025, quarter=1)
-    # main("earnings_transcript", "quarterly", top_k=3, year=2025, quarter=2)
-    # main("earnings_transcript", "quarterly", top_k=3, year=2025, quarter=3)
-    main("news", "monthly", top_k=3, year=2025)
+    main("earnings_transcript", "quarterly", top_k=1, year=2025, quarter=1)
+    main("earnings_transcript", "quarterly", top_k=1, year=2025, quarter=2)
+    main("earnings_transcript", "quarterly", top_k=1, year=2025, quarter=3)
+    # main("news", "monthly", top_k=1, year=2025)

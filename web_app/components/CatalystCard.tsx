@@ -70,14 +70,14 @@ export const CatalystCard: React.FC<CatalystCardProps> = ({ catalyst }) => {
       className={`relative w-full rounded-lg border ${borderColor} ${bgColor} ${glowClass} p-4 transition-all duration-300 ease-in-out animate-slide-up-fade`}
       >
       {/* High Impact Badge */}
-      {/* {isHighImpact && (
+      {isHighImpact && (
         <div className="absolute -top-3 right-4">
           <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border ${isBullish ? 'border-emerald-500/30 bg-emerald-950 text-emerald-400' : 'border-rose-500/30 bg-rose-950 text-rose-400'} shadow-sm`}>
             <Zap size={10} className="fill-current" />
             HIGH IMPACT
           </span>
         </div>
-      )} */}
+      )}
 
       <div className="flex flex-col gap-3">
         {/* Header: Date and Type */}

@@ -422,12 +422,75 @@ def table_creation(conn):
             raw_json_sha256 CHAR(64)     NOT NULL,
             updated_at    TIMESTAMPTZ DEFAULT now(),
                        
-            PRIMARY KEY (event_id, chunk_id, catalyst_id, catalyst_type)
+            PRIMARY KEY (event_id, chunk_id, catalyst_id)
         );
         """)
         print("Table 'catalyst_versions' created or already exists with unique constraint.")
 
 
+        # Create a table for catalyst master embeddings if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.catalyst_master_embeddings (
+            catalyst_id      UUID NOT NULL,
+
+                       
+            -- Embedding vector
+            embedding       VECTOR(1536) NOT NULL,
+            embedding_model TEXT NOT NULL,
+
+            updated_at      TIMESTAMPTZ DEFAULT now(),
+
+            PRIMARY KEY (catalyst_id),
+            FOREIGN KEY (catalyst_id)
+                REFERENCES core.catalyst_master (catalyst_id)
+                ON DELETE CASCADE
+        );
+        """)
+        print("Table 'catalyst_master_embeddings' created or already exists with composite primary key.")
+
+        # Create an HNSW index for the embeddings
+        cursor.execute("""
+        CREATE INDEX IF NOT EXISTS idx_core_catalyst_master_embeddings_vec_hnsw
+          ON core.catalyst_master_embeddings
+          USING hnsw (embedding vector_cosine_ops)
+          WITH (m = 16, ef_construction = 200);
+        """)
+        print("Index 'idx_core_catalyst_master_embeddings_vec_hnsw' created or already exists.")
+
+
+
+
+        # Create a table for catalyst version embeddings if it does not exist
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS core.catalyst_version_embeddings (
+            event_id         UUID NOT NULL,
+            chunk_id        INT NOT NULL,
+            catalyst_id      UUID NOT NULL,
+            catalyst_type    VARCHAR(64) NOT NULL,
+
+                       
+            -- Embedding vector
+            embedding       VECTOR(1536) NOT NULL,
+            embedding_model TEXT NOT NULL,
+
+            updated_at      TIMESTAMPTZ DEFAULT now(),
+
+            PRIMARY KEY (event_id, chunk_id, catalyst_id),                   
+            FOREIGN KEY (event_id, chunk_id, catalyst_id)
+                REFERENCES core.catalyst_versions (event_id, chunk_id, catalyst_id)
+                ON DELETE CASCADE
+        );
+        """)
+        print("Table 'catalyst_version_embeddings' created or already exists with composite primary key.")
+
+        # Create an HNSW index for the embeddings
+        cursor.execute("""
+        CREATE INDEX IF NOT EXISTS idx_core_catalyst_version_embeddings_vec_hnsw
+          ON core.catalyst_version_embeddings
+          USING hnsw (embedding vector_cosine_ops)
+          WITH (m = 16, ef_construction = 200);
+        """)
+        print("Index 'idx_core_catalyst_version_embeddings_vec_hnsw' created or already exists.")
 
 
         conn.commit()

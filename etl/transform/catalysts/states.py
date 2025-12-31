@@ -14,6 +14,7 @@ LifecycleState = Literal["announced", "updated", "withdrawn", "realized"]
 
 CertaintyLevel = Literal["confirmed", "planned", "rumor", "denied"]
 SourceType = Literal["news", "earnings_transcript"]
+ActionType = Literal["create", "update", "keep", "skip"]
 
 ImpactArea = Literal[
     # --- Financial Performance ---
@@ -122,6 +123,9 @@ class Catalyst(BaseModel):
     state: Optional[LifecycleState] = Field(
         None, description="Lifecycle/category of the catalyst"
     )
+    date: Optional[str] = Field(
+        None, description="Date of the catalyst event"
+    )
     title: Optional[str] = Field(
         None, description="Title of the catalyst event"
     )
@@ -178,6 +182,7 @@ class Catalyst(BaseModel):
         catalyst_type: CatalystType,
         catalyst_id: Optional[str] = None,
         state: Optional[LifecycleState] = None,
+        date: Optional[str] = None,
         title: Optional[str] = None,
         summary: Optional[str] = None,
         evidence: Optional[str] = None,
@@ -195,6 +200,7 @@ class Catalyst(BaseModel):
             catalyst_type=catalyst_type,
             catalyst_id=catalyst_id,
             state=state,
+            date=date,
             title=title,
             summary=summary,
             evidence=evidence,
@@ -256,6 +262,9 @@ class ChunkContext(BaseModel):
     content: str = Field(..., description="Actual transcript/news chunk to classify")
     score: float = Field(..., description="Cosine similarity score for the chunk")
     source: str = Field(..., description="Source of the chunk, e.g., news URL or transcript ID")
+    embedding: List[float] = Field(
+        ..., description="Embedding vector for the chunk used in similarity calculations"
+    )
     url: Optional[str] = Field(None, description="URL of the news article, if applicable")
     raw_json_sha256: str = Field(..., description="SHA-256 hash of the raw JSON payload")
 
@@ -265,6 +274,13 @@ class ChunkContext(BaseModel):
 class CatalystContext(BaseModel):
     chunk: ChunkContext = Field(..., description="The chunk to analyze for catalyst detection")
     candidate: Catalyst = Field(..., description="Stage-2 result: normalized catalyst built from this chunk")
+    action: Optional[ActionType] = Field(
+        None, description="Action to take for this candidate: create new, update existing, or skip"
+    )
+    current_catalysts: List[Catalyst] = Field(
+        [],
+        description="Existing catalysts for THIS company and THIS catalyst_type (for update matching)",
+    )
 
     @classmethod
     def create_from_chunk(cls, 
@@ -278,6 +294,7 @@ class CatalystContext(BaseModel):
                    score: float,
                    source: str,
                    url: str,
+                   embedding: List[float],
                    raw_json_sha256: str
                    ) -> "CatalystContext":
         chunk = ChunkContext(
@@ -291,6 +308,7 @@ class CatalystContext(BaseModel):
             score=score,
             source=source,
             url=url,
+            embedding=embedding,
             raw_json_sha256=raw_json_sha256,
         )
         return cls(chunk=chunk, candidate=Catalyst.init())
@@ -300,10 +318,6 @@ class CatalystContext(BaseModel):
 class CatalystSession(BaseModel):
     company_info: CompanyInfo = Field(..., description="Basic company information")
     query_params: QueryParameters = Field(..., description="Parameters used for chunk retrieval")
-    current_catalysts: List[Catalyst] = Field(
-        default_factory=list,
-        description="Existing catalysts for THIS company and THIS catalyst_type (for update matching)",
-    )
     catalysts: List[CatalystContext] = Field(
         default_factory=list,
         description="All catalysts detected from the chunks for this company",
