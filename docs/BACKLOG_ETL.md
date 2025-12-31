@@ -103,7 +103,8 @@ examples:
 | 36 | Feature | Fully integrate with DefeatBeta | High | Close | feat_36 | 2025-12-19 | 2025-12-22 |
 | 37 | Miscellaneous | Finetune the ai agent process | High | Close | misc_37 | 2025-12-23 | 2025-12-23 |
 | 38 | Feature | Add a pre-filter job to filter out or expire news and transcript chunks | High | Close | feat_38 | 2025-12-23 | 2025-12-23 |
-| 39 | Miscellaneous | import Catalyst logic to have more bear cases | High | Close | feat_39 | 2025-12-28 | 2025-12-29 |
+| 39 | Miscellaneous | update Catalyst logic to have more bear cases | High | Close | feat_39 | 2025-12-28 | 2025-12-29 |
+| 40 | Miscellaneous | update catalyst logic to seperate stage 2 into a and b; rewrite the retriveal current catalysts logic to include embedding lookup | High | Close | feat_40 | 2025-12-30 | 2025-12-31 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous | Create a md doc for source | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1003 | Feature | Standardise the db columns | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |

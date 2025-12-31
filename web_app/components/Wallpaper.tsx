@@ -35,7 +35,7 @@ export const Wallpaper = () => {
                Since we made the cards wider, we might need to adjust the gap or scale slightly 
                to fit them nicely.
             */}
-            <div className="absolute left-1/2 top-1/2 h-[200vh] w-[200vw] -translate-x-1/2 -translate-y-1/2 -rotate-12 scale-125 opacity-[0.5]">
+            <div className="absolute left-1/2 top-1/2 h-[200vh] w-[200vw] -translate-x-1/2 -translate-y-1/2 -rotate-12 scale-125 opacity-[0.7]">
                 
                 <div className="flex w-full items-center justify-center gap-8"> 
                     {/* Increased gap from 6 to 8 for breathing room */}

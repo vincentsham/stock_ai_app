@@ -76,7 +76,12 @@ def insert_records(conn, data):
         return 0
 
 if __name__ == "__main__":
-    tickers = ["AAPL", "TSLA", "NVDA", "SOFI", "AMZN", "HOOD", "PLTR"]  # Example tickers
+    # tickers = ["AAPL", "TSLA", "NVDA", "SOFI", "AMZN", "HOOD", "PLTR"]  # Example tickers
+    tickers = [
+        "AAPL", "TSLA", "NVDA", "SOFI", "AMZN", "HOOD", "PLTR",  # Original 7
+        "COST", "MSFT", "GOOGL", "META", "JPM", "XOM", "LLY",    # Stability/Benchmarks
+        "GME", "COIN", "MSTR", "AMD", "INTC", "CRWD"             # Stress Tests
+    ]
     conn = connect_to_db()
     if conn:
         records = fetch_records(tickers)

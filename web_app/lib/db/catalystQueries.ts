@@ -28,6 +28,8 @@ const CATALYST_SEARCH_QUERY = `
     FROM mart.catalyst_master
     WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master)
         AND tic = $1 AND mention_count > 0 AND (sentiment = 1 OR sentiment = -1)
+        AND impact_magnitude <> -1
+        AND date >= as_of_date - INTERVAL '3 months'
     ORDER BY date DESC, impact_magnitude DESC, updated_at DESC, catalyst_id DESC
     LIMIT $2 OFFSET $3;
   `;
@@ -56,6 +58,8 @@ const CATALYST_SEARCH_QUERY_BULL = `
     FROM mart.catalyst_master
     WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master) 
         AND tic = $1 AND mention_count > 0 AND sentiment = 1
+        AND impact_magnitude <> -1
+        AND date >= as_of_date - INTERVAL '3 months'
     ORDER BY date DESC, impact_magnitude DESC, updated_at DESC, catalyst_id DESC
     LIMIT $2 OFFSET $3;
   `;
@@ -84,6 +88,8 @@ const CATALYST_SEARCH_QUERY_BEAR =  `
     FROM mart.catalyst_master
     WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master) 
         AND tic = $1 AND mention_count > 0 AND sentiment = -1
+        AND impact_magnitude <> -1
+        AND date >= as_of_date - INTERVAL '3 months'
     ORDER BY date DESC, impact_magnitude DESC, updated_at DESC, catalyst_id DESC
     LIMIT $2 OFFSET $3;
   `;
@@ -91,19 +97,25 @@ const CATALYST_SEARCH_QUERY_BEAR =  `
 const CATALYST_COUNT_QUERY = `
     SELECT COUNT(*) FROM mart.catalyst_master
     WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master) 
-        AND tic = $1 AND mention_count > 0 AND (sentiment = 1 OR sentiment = -1);
+        AND tic = $1 AND mention_count > 0 
+        AND (sentiment = 1 OR sentiment = -1) AND impact_magnitude <> -1
+        AND date >= as_of_date - INTERVAL '3 months';
   `;
 
 const CATALYST_COUNT_QUERY_BULL = `
     SELECT COUNT(*) FROM mart.catalyst_master
     WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master) 
-        AND tic = $1 AND mention_count > 0 AND sentiment = 1;
+        AND tic = $1 AND mention_count > 0 
+        AND sentiment = 1 AND impact_magnitude <> -1
+        AND date >= as_of_date - INTERVAL '3 months';
   `;
 
 const CATALYST_COUNT_QUERY_BEAR = `
     SELECT COUNT(*) FROM mart.catalyst_master
     WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master) 
-        AND tic = $1 AND mention_count > 0 AND sentiment = -1;
+        AND tic = $1 AND mention_count > 0 
+        AND sentiment = -1 AND impact_magnitude <> -1
+        AND date >= as_of_date - INTERVAL '3 months';
   `;
 
 const searchCatalysts = cache(async (tic: string, page: number, limit: number, sentiment?: number): Promise<Catalyst[]> => {
