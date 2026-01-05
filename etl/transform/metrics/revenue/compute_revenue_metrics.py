@@ -5,6 +5,17 @@ from etl.transform.metrics.gsa_framework.compute_accel_metrics import compute_ac
 import pandas as pd
 
 def read_records(conn, tic: str) -> pd.DataFrame:
+    # query = f"""
+    #     SELECT e.event_id, e.tic, e.calendar_year, e.calendar_quarter, e.revenue, e.raw_json_sha256
+    #     FROM core.earnings as e
+    #     LEFT JOIN core.revenue_metrics as r 
+    #     ON e.tic = r.tic
+    #         AND e.calendar_year = r.calendar_year
+    #         AND e.calendar_quarter = r.calendar_quarter
+    #     WHERE e.tic = '{tic}'
+    #         AND (r.raw_json_sha256 IS NULL OR r.raw_json_sha256 <> e.raw_json_sha256)
+    #     ORDER BY e.tic, e.calendar_year, e.calendar_quarter;
+    # """
     query = f"""
         SELECT e.event_id, e.tic, e.calendar_year, e.calendar_quarter, e.revenue, e.raw_json_sha256
         FROM core.earnings as e
@@ -13,7 +24,6 @@ def read_records(conn, tic: str) -> pd.DataFrame:
             AND e.calendar_year = r.calendar_year
             AND e.calendar_quarter = r.calendar_quarter
         WHERE e.tic = '{tic}'
-            AND (r.raw_json_sha256 IS NULL OR r.raw_json_sha256 <> e.raw_json_sha256)
         ORDER BY e.tic, e.calendar_year, e.calendar_quarter;
     """
     df = read_sql_query(query, conn)

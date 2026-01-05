@@ -38,7 +38,6 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-| 20 | Feature | Optimize the live price using yfinance; Allow to download and use the local stock logo; Show the last updated date; Add contact at footer | High | Open | | | |
 | 1005 | Feature | Add loading spinner and error page | Medium | Open |  | | |
 | 1006 | Feature | Add tooltips for metrics session, including the % change | Medium | Open |  | | |
 | 10001 | Technical | Finetune metadata for SEO | Low | Open | | | |
@@ -72,6 +71,7 @@ examples:
 | 17 | Feature | Fix the lint issues | High | Close | w_feat_17 | 2025-12-24 | 2025-12-24 |
 | 18 | Feature | Add the comparison tool | High | Close | w_feat_18 | 2025-12-25 | 2025-12-28 |
 | 19 | Feature | Front page renovation - background, top stocks, popular stocks | High | Open | w_feat_19 | 2025-12-28 | 2025-12-29 |
+| 20 | Feature | Optimize the live price using yfinance; Allow to download and use the local stock logo; Show the last updated date; Add contact at footer | High | Close | w_feat_20 | 2026-01-01 | 2026-01-05 |
 | 1001 | Feature | Search bar key Enter for selecting the first item | Medium | Close | w_feat_1001 | 2025-12-04 | 2025-12-04 |
 | 1002 | Feature | Fix the flickering by hidden the inactive tabs | Medium | Close | w_feat_1002 |2025-12-09 | 2025-12-09 |
 | 1003 | Miscellaneous | Add a short text under session headers and fix some color | Medium | Close | w_misc_1003 |2025-12-09 | 2025-12-09 |
