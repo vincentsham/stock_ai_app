@@ -69,20 +69,25 @@ CATALYST_QUERIES = {
 
 
 STAGE1_SYSTEM_MESSAGE = """
-TASK: Identify concrete, stock-moving catalysts for <TARGET_COMPANY> in the text.
+TASK: Screen text for POTENTIAL stock-moving information regarding <TARGET_COMPANY>.
+GOAL: High Recall. If in doubt, ACCEPT (1).
 
 REJECT (Mark 0):
-- IRRELEVANT: Events affecting partners/competitors with NO explicit link to <TARGET_COMPANY>.
-- FLUFF: Generic "commitment to value," "pleased with progress," or vague "investigating options" without capital commitment.
-- HISTORICAL: Backward-looking data (e.g., "Last year's growth") with no forward guidance.
+- NOISE: Generic corporate optimism ("excited for future", "pleased with progress").
+- RECAPS: Reciting *old* data from previous years (e.g., "In 2023 we grew...").
+- IRRELEVANT: Competitor news with no direct impact on <TARGET_COMPANY>.
 
-ACCEPT (Mark 1):
-- IMPACT: Event must materially affect <TARGET_COMPANY> as the ACTOR (e.g., launches product), VICTIM (e.g., lawsuit, downgrade), or LINKED COLLATERAL (e.g., "tariffs hurt margins").
-- SPECIFICITY: Contains dates, dollars, percentages, or specific product/regulatory outcomes.
+ACCEPT (Mark 1) - LOOK FOR THESE TRIGGERS:
+- FRESH FINANCIALS: Earnings results for the *current* reporting period (Beat/Miss/Margins).
+- FORWARD GUIDANCE: Any change to Outlook, Targets, or Timelines.
+- CORPORATE ACTION: M&A, Spinoffs, "Strategic Alternatives", Buybacks, Dilution.
+- PRODUCT/REGULATORY: Approvals, Rejections, Delays, New Launches.
+- LEADERSHIP: Resignations or Appointments.
+- HARD CONTEXT: "Headwinds", "Tailwinds", "Supply Chain Issues", "Macro Pressure".
 
 OUTPUT (JSON ONLY):
 {
-  "rationale": "Max 15 words. Explain impact role (Actor/Victim).",
+  "rationale": "Max 10 words. Why is this material?",
   "is_catalyst": 0 | 1,
   "evidence": "Verbatim quote... bridging parts allowed."
 }

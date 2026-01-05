@@ -15,6 +15,61 @@ load_dotenv()
 # Helper function to build SQL query
 def get_sql_query(source_type: str, tic: str, calendar_year: int, calendar_quarter: Optional[int], 
                   calendar_month: Optional[int], vec_str: str, top_k: int = 3) -> str:
+    # if source_type == "earnings_transcript":
+    #     sql = f"""
+    #         SELECT
+    #         c.tic, t.earnings_date AS date, c.event_id, c.chunk_id, c.chunk,
+    #         1 - (e.embedding <=> '{vec_str}'::vector)   AS cosine_sim,
+    #         t.source, NULL AS url, e.embedding, t.raw_json_sha256
+    #         FROM core.earnings_transcript_chunks  AS c
+    #         JOIN core.earnings_transcript_chunk_signal AS s
+    #         ON c.event_id = s.event_id AND c.chunk_id = s.chunk_id
+    #         JOIN core.earnings_transcript_embeddings AS e
+    #         ON c.event_id = e.event_id AND c.chunk_id = e.chunk_id
+    #         JOIN core.earnings_transcripts AS t
+    #         ON c.event_id = t.event_id
+    #         WHERE c.tic = '{tic}' 
+    #             AND (s.is_signal = 1
+    #                 OR (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.5)
+    #             AND c.calendar_year = {calendar_year}
+    #             AND c.calendar_quarter = {calendar_quarter}
+    #             AND NOT EXISTS (
+    #                     SELECT 1 
+    #                     FROM core.catalyst_versions v 
+    #                     WHERE v.event_id = c.event_id 
+    #                     AND v.chunk_id = c.chunk_id
+    #                 )
+    #         ORDER BY cosine_sim DESC
+    #         LIMIT {top_k};
+    #     """
+
+    # elif source_type == "news":
+    #     sql = f"""
+    #         SELECT
+    #         c.tic, c.published_at::DATE as date, c.event_id, c.chunk_id, c.chunk,
+    #         1 - (e.embedding <=> '{vec_str}'::vector)  AS cosine_sim,
+    #         n.source, n.url, e.embedding, n.raw_json_sha256
+    #         FROM core.news_chunks  AS c
+    #         JOIN core.news_chunk_signal AS s
+    #         ON c.event_id = s.event_id AND c.chunk_id = s.chunk_id
+    #         JOIN core.news_embeddings AS e
+    #         ON c.event_id = e.event_id AND c.chunk_id = e.chunk_id
+    #         JOIN core.news AS n
+    #         ON c.event_id = n.event_id
+    #         WHERE c.tic = '{tic}' 
+    #             AND (s.is_signal = 1
+    #                 OR (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.5)
+    #             AND EXTRACT(YEAR FROM c.published_at) = {calendar_year}
+    #             AND EXTRACT(MONTH FROM c.published_at) = {calendar_month}
+    #             AND NOT EXISTS (
+    #                     SELECT 1 
+    #                     FROM core.catalyst_versions v 
+    #                     WHERE v.event_id = c.event_id 
+    #                     AND v.chunk_id = c.chunk_id
+    #                 )
+    #         ORDER BY cosine_sim DESC
+    #         LIMIT {top_k};
+    #     """
     if source_type == "earnings_transcript":
         sql = f"""
             SELECT
@@ -22,17 +77,14 @@ def get_sql_query(source_type: str, tic: str, calendar_year: int, calendar_quart
             1 - (e.embedding <=> '{vec_str}'::vector)   AS cosine_sim,
             t.source, NULL AS url, e.embedding, t.raw_json_sha256
             FROM core.earnings_transcript_chunks  AS c
-            JOIN core.earnings_transcript_chunk_signal AS s
-            ON c.event_id = s.event_id AND c.chunk_id = s.chunk_id
             JOIN core.earnings_transcript_embeddings AS e
             ON c.event_id = e.event_id AND c.chunk_id = e.chunk_id
             JOIN core.earnings_transcripts AS t
             ON c.event_id = t.event_id
             WHERE c.tic = '{tic}' 
-                AND (s.is_signal = 1
-                    OR (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.5)
                 AND c.calendar_year = {calendar_year}
                 AND c.calendar_quarter = {calendar_quarter}
+                AND (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.2
                 AND NOT EXISTS (
                         SELECT 1 
                         FROM core.catalyst_versions v 
@@ -50,17 +102,14 @@ def get_sql_query(source_type: str, tic: str, calendar_year: int, calendar_quart
             1 - (e.embedding <=> '{vec_str}'::vector)  AS cosine_sim,
             n.source, n.url, e.embedding, n.raw_json_sha256
             FROM core.news_chunks  AS c
-            JOIN core.news_chunk_signal AS s
-            ON c.event_id = s.event_id AND c.chunk_id = s.chunk_id
             JOIN core.news_embeddings AS e
             ON c.event_id = e.event_id AND c.chunk_id = e.chunk_id
             JOIN core.news AS n
             ON c.event_id = n.event_id
             WHERE c.tic = '{tic}' 
-                AND (s.is_signal = 1
-                    OR (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.5)
                 AND EXTRACT(YEAR FROM c.published_at) = {calendar_year}
                 AND EXTRACT(MONTH FROM c.published_at) = {calendar_month}
+                AND (1 - (e.embedding <=> '{vec_str}'::vector)) > 0.2
                 AND NOT EXISTS (
                         SELECT 1 
                         FROM core.catalyst_versions v 
@@ -393,6 +442,7 @@ def stage3_node(state: CatalystSession) -> dict:
             continue
 
         human_prompt = STAGE3_HUMAN_PROMPT[catalyst_type](
+            company_info=json.dumps(state.company_info.model_dump(), ensure_ascii=False),
             chunk_text=content,
             stage2_json_output=json.dumps(cand.model_dump(), ensure_ascii=False),
         )

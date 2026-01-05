@@ -11,6 +11,8 @@ import uuid
 from dotenv import load_dotenv
 from langchain_openai import OpenAIEmbeddings
 import os
+from etl.utils import fix_quotes
+
 
 # Load environment variables
 load_dotenv()
@@ -20,7 +22,115 @@ embedding_model_name = os.getenv("OPENAI_EMBEDDING_MODEL")
 embedding_model = OpenAIEmbeddings(model=embedding_model_name)
 
 
+
 QUERY = {
+    "news": {
+        "monthly": 
+        """
+            WITH news_summary AS (
+            SELECT
+                n.tic,
+                EXTRACT(YEAR FROM n.published_at)::INT AS year,
+                EXTRACT(MONTH FROM n.published_at)::INT AS month,
+                COUNT(*) AS record_count
+            FROM core.news n
+            GROUP BY n.tic, year, month
+            )
+            SELECT n.tic, n.year, NULL AS quarter, n.month, n.record_count,
+                sp.name, sp.sector, sp.industry, sp.short_summary
+            FROM news_summary n
+            JOIN core.stock_profiles AS sp
+                ON n.tic = sp.tic
+            WHERE n.tic = '{tic}'
+            ORDER BY n.tic, n.year, n.month;
+        """
+    }
+,
+    "earnings_transcript": {
+        "quarterly": 
+        """
+            SELECT e.tic, e.calendar_year AS year, e.calendar_quarter AS quarter, NULL AS month,
+                sp.name, sp.sector, sp.industry, sp.short_summary
+            FROM core.earnings_transcripts e
+            JOIN core.stock_profiles AS sp
+                ON e.tic = sp.tic
+            WHERE e.tic = '{tic}'
+            ORDER BY e.tic, e.calendar_year, e.calendar_quarter;
+        """
+    }
+}
+
+
+QUERY_UPDATE = {
+    "news": {
+        "monthly": 
+        """
+            WITH news_summary AS (
+                SELECT
+                    n.tic,
+                    EXTRACT(YEAR FROM n.published_at)::INT AS year,
+                    EXTRACT(MONTH FROM n.published_at)::INT AS month,
+                    COUNT(*) AS record_count
+                FROM core.news n
+                WHERE n.tic = '{tic}'
+                GROUP BY n.tic, year, month
+            ),
+            latest_catalyst AS (
+                SELECT tic, 
+                       EXTRACT(YEAR FROM c.date)::INT AS year,
+                       EXTRACT(MONTH FROM c.date)::INT AS month
+                FROM core.catalyst_versions c
+                WHERE c.tic = '{tic}'
+                    AND c.source_type = 'news'
+                ORDER BY c.date DESC
+                LIMIT 1
+            )
+            SELECT n.tic, n.year, NULL AS quarter, n.month, n.record_count,
+                sp.name, sp.sector, sp.industry, sp.short_summary
+            FROM news_summary n
+            JOIN core.stock_profiles AS sp
+                ON n.tic = sp.tic
+            LEFT JOIN latest_catalyst lc
+                ON n.tic = lc.tic
+            WHERE n.tic = '{tic}'
+               AND ((lc.year IS NULL) 
+                    OR (n.year, n.month) >= (lc.year, lc.month))
+            ORDER BY n.tic, n.year, n.month;
+        """
+    },
+    "earnings_transcript": {
+        "quarterly": 
+        """
+            WITH latest_catalyst AS (
+                SELECT c.tic, 
+                       e.calendar_year AS year,
+                       e.calendar_quarter AS quarter
+                FROM core.catalyst_versions c
+                JOIN core.earnings_transcripts e
+                    ON c.event_id = e.event_id
+                WHERE c.tic = '{tic}'
+                    AND c.source_type = 'earnings_transcript'
+                ORDER BY e.calendar_year DESC, e.calendar_quarter DESC
+                LIMIT 1
+            )
+            SELECT e.tic, e.calendar_year AS year, e.calendar_quarter AS quarter, NULL AS month,
+                sp.name, sp.sector, sp.industry, sp.short_summary
+            FROM core.earnings_transcripts e
+            JOIN core.stock_profiles AS sp
+                ON e.tic = sp.tic
+            LEFT JOIN latest_catalyst lc
+                ON e.tic = lc.tic
+            WHERE e.tic = '{tic}'
+                AND ((lc.year IS NULL) 
+                    OR (e.calendar_year, e.calendar_quarter) > (lc.year, lc.quarter))
+            ORDER BY e.tic, e.calendar_year, e.calendar_quarter;
+        """
+    }
+}
+
+
+
+QUERY_NO_TIC = {
     "news": {
         "monthly": 
         """
@@ -54,6 +164,7 @@ QUERY = {
         """
     }
 }
+
 
 columns = {
     "catalyst_master": ['catalyst_id', 'tic', 'date', 'catalyst_type', 'title', 'summary',
@@ -136,21 +247,30 @@ def get_catalyst_id_list(conn, tic: str, catalyst_type: str) -> list:
 
 
 
-def main(type: Literal["news", "earnings_transcript"] = "news",
+def main(tic: str, type: Literal["news", "earnings_transcript"] = "news",
          frequency: Literal["daily", "monthly", "quarterly"] = "monthly",
          top_k: int = 3, year: int = None, quarter: int = None, month: int = None,
-         batch_size: int = 10, sleep_time: int = 65):
+         batch_size: int = 10, sleep_time: int = 65, idx: int = 0):
     # Connect to the database
     conn = connect_to_db()
     if conn:
-        query = QUERY[type][frequency]
-        df = read_sql_query(query, conn)
         if year is not None:
-            df = df[df['year'] == year]
-        if quarter is not None:
-            df = df[df['quarter'] == quarter]
-        if month is not None:
-            df = df[df['month'] == month]
+            if tic is None:
+                query = QUERY_NO_TIC[type][frequency]
+            else:
+                query = QUERY[type][frequency].format(tic=tic)
+            df = read_sql_query(query, conn)
+            if year is not None:
+                df = df[df['year'] == year]
+            if quarter is not None:
+                df = df[df['quarter'] == quarter]
+            if month is not None:
+                df = df[df['month'] == month]
+        else:
+            query = QUERY_UPDATE[type][frequency].format(tic=tic)
+            df = read_sql_query(query, conn)
+        df = df[df['year'] >= 2025]
+        df = df[df['month'].isna() | (df['month'] >= 9)]
     else:
         print("Could not connect to database.")
         return
@@ -193,11 +313,11 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
     n_update = 0
     n_valid = 0
     n = 0
-    
 
     # Use tqdm to track progress
-    for i, state in enumerate(tqdm(states, desc=f"Processing states - {type} - {frequency} - {year} {"Q" + str(quarter) if quarter else ''}{month if month else ''}")):
-    
+    for i, state in enumerate(tqdm(states, desc=f"Processing states - {type}{' - ' + tic if tic else ''} - {frequency} - {year} {'Q' + str(quarter) if quarter else ''}{month if month else ''}")):
+        if i < idx - 1:
+            continue
         # Batch Sleep Logic
         if i > 0 and i % batch_size == 0:
             print(f"\n[Rate Limit Protection] Processed {batch_size} items. Sleeping for {sleep_time} seconds...")
@@ -243,9 +363,9 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
                         "tic": final_state.get("company_info", {}).tic,
                         "date": catalyst.chunk.date,
                         "catalyst_type": catalyst.candidate.catalyst_type,
-                        "title": catalyst.candidate.title,
-                        "summary": catalyst.candidate.summary,
-                        "evidence": catalyst.candidate.evidence,
+                        "title": fix_quotes(catalyst.candidate.title),
+                        "summary": fix_quotes(catalyst.candidate.summary),
+                        "evidence": fix_quotes(catalyst.candidate.evidence),
                         "state": catalyst.candidate.state,
                         "sentiment": catalyst.candidate.sentiment,
                         "time_horizon": catalyst.candidate.time_horizon,
@@ -253,7 +373,7 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
                         "certainty": catalyst.candidate.certainty,
                         "impact_area": catalyst.candidate.impact_area,
                         "is_valid": catalyst.candidate.is_valid,
-                        "rejection_reason": catalyst.candidate.rejection_reason,
+                        "rejection_reason": fix_quotes(catalyst.candidate.rejection_reason),
                         "ingestion_batch": frequency,
                         "source_type": final_state.get("query_params", {}).source_type,
                         "source": catalyst.chunk.source,
@@ -349,11 +469,18 @@ def main(type: Literal["news", "earnings_transcript"] = "news",
     return
 
 if __name__ == "__main__":
-    # main("earnings_transcript", "quarterly", top_k=1, year=2024, quarter=1)
-    # main("earnings_transcript", "quarterly", top_k=1, year=2024, quarter=2)
-    # main("earnings_transcript", "quarterly", top_k=1, year=2024, quarter=3)
-    # main("earnings_transcript", "quarterly", top_k=1, year=2024, quarter=4)
-    main("earnings_transcript", "quarterly", top_k=1, year=2025, quarter=1)
-    main("earnings_transcript", "quarterly", top_k=1, year=2025, quarter=2)
-    main("earnings_transcript", "quarterly", top_k=1, year=2025, quarter=3)
-    # main("news", "monthly", top_k=1, year=2025)
+    conn = connect_to_db()
+    if conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT tic FROM core.stock_profiles;")
+        records = cursor.fetchall()
+        for record in records:
+            tic = record[0]
+            # main(tic = tic, type="news", top_k=1, frequency="monthly", year=2025, batch_size=5, sleep_time=185)
+            main(tic=tic, type="earnings_transcript", frequency="quarterly", top_k=1, year=None, batch_size=5, sleep_time=125)
+            # time.sleep(125)
+            main(tic=tic, type="news", frequency="monthly", top_k=1, year=None, batch_size=5, sleep_time=125)
+            # time.sleep(125)
+        conn.close()
+
+

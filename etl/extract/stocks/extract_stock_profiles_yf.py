@@ -77,10 +77,33 @@ def insert_records(conn, data):
 
 if __name__ == "__main__":
     # tickers = ["AAPL", "TSLA", "NVDA", "SOFI", "AMZN", "HOOD", "PLTR"]  # Example tickers
+    # tickers = [
+    #     "AAPL", "TSLA", "NVDA", "SOFI", "AMZN", "HOOD", "PLTR",  # Original 7
+    #     "COST", "MSFT", "GOOGL", "META", "JPM", "XOM", "LLY",    # Stability/Benchmarks
+    #     "COIN", "AMD", "INTC", "CRWD"             # Stress Tests
+    # ]
     tickers = [
-        "AAPL", "TSLA", "NVDA", "SOFI", "AMZN", "HOOD", "PLTR",  # Original 7
-        "COST", "MSFT", "GOOGL", "META", "JPM", "XOM", "LLY",    # Stability/Benchmarks
-        "GME", "COIN", "MSTR", "AMD", "INTC", "CRWD"             # Stress Tests
+        # --- Original List (18) ---
+        "AAPL", "TSLA", "NVDA", "SOFI", "AMZN", "HOOD", "PLTR",
+        "COST", "MSFT", "GOOGL", "META", "JPM", "XOM", "LLY",
+        "COIN", "AMD", "INTC", "CRWD",
+
+        # --- New Additions (15) ---
+        
+        # AI & Hardware Supply Chain
+        "AVGO", "TSM", 
+        
+        # E-Commerce & Fintech (SHOP added here)
+        "SHOP", "PYPL", "V", 
+        
+        # Consumer Tech & Services
+        "NFLX", "DIS", "UBER", "ABNB",
+        
+        # Enterprise Software
+        "CRM", "ORCL",
+        
+        # Defensive & Healthcare
+        "KO", "UNH", "JNJ"
     ]
     conn = connect_to_db()
     if conn:

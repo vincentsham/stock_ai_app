@@ -1,0 +1,769 @@
+Processing states - news - monthly - 2025 6: 0it [00:00, ?it/s]Processing states - news - monthly - 2025 6: 0it [00:00, ?it/s]
+Total new records inserted: 0
+Total existing records updated: 0
+Total master records updated: 0
+ETL process completed in 0.01 seconds.
+Processing states - news - monthly - 2025 7: 0it [00:00, ?it/s]Processing states - news - monthly - 2025 7: 0it [00:00, ?it/s]
+Total new records inserted: 0
+Total existing records updated: 0
+Total master records updated: 0
+ETL process completed in 0.00 seconds.
+Processing states - news - monthly - 2025 8: 0it [00:00, ?it/s]Processing states - news - monthly - 2025 8: 0it [00:00, ?it/s]
+Total new records inserted: 0
+Total existing records updated: 0
+Total master records updated: 0
+ETL process completed in 0.00 seconds.
+Processing states - news - monthly - 2025 9:   0%|          | 0/18 [00:00<?, ?it/s]Processing states - news - monthly - 2025 9:   6%|▌         | 1/18 [01:16<21:42, 76.64s/it]Processing states - news - monthly - 2025 9:  11%|█         | 2/18 [02:14<17:27, 65.49s/it]Processing states - news - monthly - 2025 9:  17%|█▋        | 3/18 [02:41<12:02, 48.20s/it]Processing states - news - monthly - 2025 9:  22%|██▏       | 4/18 [03:22<10:32, 45.19s/it]Processing states - news - monthly - 2025 9:  28%|██▊       | 5/18 [04:39<12:18, 56.79s/it]Processing states - news - monthly - 2025 9:  33%|███▎      | 6/18 [07:11<17:49, 89.11s/it]Processing states - news - monthly - 2025 9:  39%|███▉      | 7/18 [07:44<12:58, 70.80s/it]Processing states - news - monthly - 2025 9:  44%|████▍     | 8/18 [08:12<09:29, 56.97s/it]Processing states - news - monthly - 2025 9:  50%|█████     | 9/18 [08:42<07:18, 48.76s/it]Processing states - news - monthly - 2025 9:  56%|█████▌    | 10/18 [09:07<05:30, 41.26s/it]Processing states - news - monthly - 2025 9:  61%|██████    | 11/18 [11:35<08:38, 74.08s/it]Processing states - news - monthly - 2025 9:  67%|██████▋   | 12/18 [12:03<05:58, 59.83s/it]Processing states - news - monthly - 2025 9:  72%|███████▏  | 13/18 [12:51<04:41, 56.31s/it]Processing states - news - monthly - 2025 9:  78%|███████▊  | 14/18 [13:17<03:09, 47.25s/it]Processing states - news - monthly - 2025 9:  83%|████████▎ | 15/18 [13:34<01:54, 38.20s/it]Processing states - news - monthly - 2025 9:  89%|████████▉ | 16/18 [16:04<02:23, 71.61s/it]Processing states - news - monthly - 2025 9:  94%|█████████▍| 17/18 [16:22<00:55, 55.52s/it]Processing states - news - monthly - 2025 9: 100%|██████████| 18/18 [16:41<00:00, 44.73s/it]Processing states - news - monthly - 2025 9: 100%|██████████| 18/18 [16:41<00:00, 55.65s/it]
+HOOD - guidance_outlook: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 2, Keep: 0, Create: 1, Update: 0, Valid: 1, Total Processed Catalysts: 3
+HOOD - product_initiative: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 4, Keep: 0, Create: 2, Update: 0, Valid: 2, Total Processed Catalysts: 6
+HOOD - cost_efficiency: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 8, Keep: 1, Create: 2, Update: 0, Valid: 3, Total Processed Catalysts: 11
+HOOD - capital_actions: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 10, Keep: 1, Create: 3, Update: 0, Valid: 4, Total Processed Catalysts: 14
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+SOFI - cost_efficiency: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 31, Keep: 2, Create: 3, Update: 0, Valid: 5, Total Processed Catalysts: 36
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+Total new records inserted: 3
+Total existing records updated: 2
+Total master records updated: 2
+ETL process completed in 1001.75 seconds.
+Processing states - news - monthly - 2025 10:   0%|          | 0/90 [00:00<?, ?it/s]Processing states - news - monthly - 2025 10:   1%|          | 1/90 [02:00<2:58:22, 120.25s/it]Processing states - news - monthly - 2025 10:   2%|▏         | 2/90 [03:09<2:11:58, 89.98s/it] Processing states - news - monthly - 2025 10:   3%|▎         | 3/90 [04:20<1:58:19, 81.61s/it]Processing states - news - monthly - 2025 10:   4%|▍         | 4/90 [06:16<2:16:22, 95.14s/it]Processing states - news - monthly - 2025 10:   6%|▌         | 5/90 [06:41<1:39:02, 69.91s/it]Processing states - news - monthly - 2025 10:   7%|▋         | 6/90 [10:36<2:56:06, 125.79s/it]Processing states - news - monthly - 2025 10:   8%|▊         | 7/90 [12:02<2:36:11, 112.91s/it]Processing states - news - monthly - 2025 10:   9%|▉         | 8/90 [13:11<2:15:13, 98.95s/it] Processing states - news - monthly - 2025 10:  10%|█         | 9/90 [14:40<2:09:23, 95.84s/it]Processing states - news - monthly - 2025 10:  11%|█         | 10/90 [16:10<2:05:34, 94.18s/it]Processing states - news - monthly - 2025 10:  12%|█▏        | 11/90 [18:53<2:31:43, 115.24s/it]Processing states - news - monthly - 2025 10:  13%|█▎        | 12/90 [21:09<2:37:54, 121.47s/it]Processing states - news - monthly - 2025 10:  14%|█▍        | 13/90 [23:14<2:37:11, 122.49s/it]Processing states - news - monthly - 2025 10:  16%|█▌        | 14/90 [25:13<2:33:46, 121.40s/it]Processing states - news - monthly - 2025 10:  17%|█▋        | 15/90 [27:16<2:32:16, 121.82s/it]Processing states - news - monthly - 2025 10:  18%|█▊        | 16/90 [31:49<3:26:31, 167.45s/it]Processing states - news - monthly - 2025 10:  19%|█▉        | 17/90 [34:50<3:28:31, 171.38s/it]Processing states - news - monthly - 2025 10:  20%|██        | 18/90 [36:05<2:51:13, 142.69s/it]Processing states - news - monthly - 2025 10:  21%|██        | 19/90 [37:44<2:33:19, 129.57s/it]Processing states - news - monthly - 2025 10:  22%|██▏       | 20/90 [40:47<2:49:36, 145.38s/it]Processing states - news - monthly - 2025 10:  23%|██▎       | 21/90 [45:25<3:32:56, 185.16s/it]Processing states - news - monthly - 2025 10:  24%|██▍       | 22/90 [47:52<3:17:01, 173.85s/it]Processing states - news - monthly - 2025 10:  26%|██▌       | 23/90 [49:01<2:39:05, 142.46s/it]Processing states - news - monthly - 2025 10:  27%|██▋       | 24/90 [49:39<2:02:10, 111.06s/it]Processing states - news - monthly - 2025 10:  28%|██▊       | 25/90 [50:54<1:48:40, 100.32s/it]Processing states - news - monthly - 2025 10:  29%|██▉       | 26/90 [53:47<2:10:08, 122.01s/it]Processing states - news - monthly - 2025 10:  30%|███       | 27/90 [55:45<2:06:46, 120.74s/it]Processing states - news - monthly - 2025 10:  31%|███       | 28/90 [57:43<2:04:04, 120.08s/it]Processing states - news - monthly - 2025 10:  32%|███▏      | 29/90 [59:15<1:53:22, 111.51s/it]Processing states - news - monthly - 2025 10:  33%|███▎      | 30/90 [1:00:24<1:38:47, 98.78s/it]Processing states - news - monthly - 2025 10:  34%|███▍      | 31/90 [1:04:07<2:13:45, 136.02s/it]Processing states - news - monthly - 2025 10:  36%|███▌      | 32/90 [1:04:41<1:41:53, 105.41s/it]Processing states - news - monthly - 2025 10:  37%|███▋      | 33/90 [1:06:18<1:37:45, 102.91s/it]Processing states - news - monthly - 2025 10:  38%|███▊      | 34/90 [1:06:46<1:15:03, 80.43s/it] Processing states - news - monthly - 2025 10:  39%|███▉      | 35/90 [1:07:29<1:03:21, 69.13s/it]Processing states - news - monthly - 2025 10:  40%|████      | 36/90 [1:09:55<1:23:04, 92.31s/it]Processing states - news - monthly - 2025 10:  41%|████      | 37/90 [1:12:01<1:30:25, 102.36s/it]Processing states - news - monthly - 2025 10:  42%|████▏     | 38/90 [1:12:48<1:14:23, 85.84s/it] AAPL - guidance_outlook: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 2, Keep: 0, Create: 1, Update: 1, Valid: 1, Total Processed Catalysts: 4
+AAPL - product_initiative: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 4, Keep: 0, Create: 2, Update: 1, Valid: 2, Total Processed Catalysts: 7
+Error processing AAPL: "'partnership_deal'". Retrying...
+AAPL - cost_efficiency: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 8, Keep: 0, Create: 4, Update: 1, Valid: 4, Total Processed Catalysts: 13
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+AAPL - regulatory_policy: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 12, Keep: 0, Create: 5, Update: 2, Valid: 5, Total Processed Catalysts: 19
+AAPL - demand_trends: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 15, Keep: 0, Create: 5, Update: 3, Valid: 6, Total Processed Catalysts: 23
+AAPL - risk_event: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 17, Keep: 0, Create: 6, Update: 3, Valid: 7, Total Processed Catalysts: 26
+AAPL - macro_policy: Total records processed: 2, New records inserted: 1, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 18, Keep: 1, Create: 7, Update: 3, Valid: 9, Total Processed Catalysts: 29
+AMZN - guidance_outlook: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 18, Keep: 1, Create: 9, Update: 3, Valid: 11, Total Processed Catalysts: 31
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+AMZN - product_initiative: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 19, Keep: 2, Create: 9, Update: 3, Valid: 12, Total Processed Catalysts: 33
+AMZN - partnership_deal: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 21, Keep: 2, Create: 11, Update: 3, Valid: 14, Total Processed Catalysts: 37
+AMZN - cost_efficiency: Total records processed: 2, New records inserted: 0, Existing records updated: 2, Master records updated: 1
+Actions so far - Skip: 23, Keep: 3, Create: 11, Update: 4, Valid: 15, Total Processed Catalysts: 41
+AMZN - capital_actions: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 25, Keep: 3, Create: 13, Update: 4, Valid: 17, Total Processed Catalysts: 45
+AMZN - regulatory_policy: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 26, Keep: 3, Create: 15, Update: 4, Valid: 19, Total Processed Catalysts: 48
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+AMZN - demand_trends: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 27, Keep: 3, Create: 16, Update: 5, Valid: 21, Total Processed Catalysts: 51
+AMZN - risk_event: Total records processed: 3, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 28, Keep: 4, Create: 17, Update: 6, Valid: 24, Total Processed Catalysts: 55
+AMZN - macro_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 29, Keep: 4, Create: 18, Update: 6, Valid: 25, Total Processed Catalysts: 57
+COIN - guidance_outlook: Total records processed: 2, New records inserted: 1, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 30, Keep: 5, Create: 19, Update: 6, Valid: 27, Total Processed Catalysts: 60
+COIN - product_initiative: Total records processed: 3, New records inserted: 3, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 31, Keep: 5, Create: 22, Update: 6, Valid: 30, Total Processed Catalysts: 64
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+COIN - partnership_deal: Total records processed: 3, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 32, Keep: 6, Create: 24, Update: 6, Valid: 33, Total Processed Catalysts: 68
+COIN - cost_efficiency: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 34, Keep: 6, Create: 26, Update: 6, Valid: 35, Total Processed Catalysts: 72
+COIN - capital_actions: Total records processed: 2, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 36, Keep: 8, Create: 26, Update: 6, Valid: 37, Total Processed Catalysts: 76
+COIN - regulatory_policy: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 36, Keep: 9, Create: 26, Update: 6, Valid: 38, Total Processed Catalysts: 77
+COIN - demand_trends: Total records processed: 2, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 38, Keep: 11, Create: 26, Update: 6, Valid: 40, Total Processed Catalysts: 81
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+COIN - risk_event: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 39, Keep: 12, Create: 26, Update: 6, Valid: 41, Total Processed Catalysts: 83
+COIN - macro_policy: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 40, Keep: 12, Create: 28, Update: 6, Valid: 43, Total Processed Catalysts: 86
+CRWD - guidance_outlook: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 42, Keep: 12, Create: 30, Update: 6, Valid: 45, Total Processed Catalysts: 90
+CRWD - product_initiative: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 44, Keep: 13, Create: 31, Update: 6, Valid: 47, Total Processed Catalysts: 94
+CRWD - partnership_deal: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 46, Keep: 13, Create: 32, Update: 6, Valid: 48, Total Processed Catalysts: 97
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+CRWD - cost_efficiency: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 0
+Actions so far - Skip: 48, Keep: 13, Create: 32, Update: 7, Valid: 48, Total Processed Catalysts: 100
+CRWD - regulatory_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 54, Keep: 13, Create: 33, Update: 7, Valid: 49, Total Processed Catalysts: 107
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+HOOD - guidance_outlook: Total records processed: 3, New records inserted: 2, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 62, Keep: 14, Create: 35, Update: 7, Valid: 52, Total Processed Catalysts: 118
+HOOD - product_initiative: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 63, Keep: 14, Create: 36, Update: 7, Valid: 53, Total Processed Catalysts: 120
+No JSON object found in response.
+Error processing HOOD: 'NoneType' object has no attribute 'lower'. Retrying...
+HOOD - partnership_deal: Total records processed: 3, New records inserted: 3, Existing records updated: 0, Master records updated: 0Processing states - news - monthly - 2025 10:  43%|████▎     | 39/90 [1:17:36<2:04:31, 146.50s/it]Processing states - news - monthly - 2025 10:  44%|████▍     | 40/90 [1:18:19<1:36:07, 115.36s/it]Processing states - news - monthly - 2025 10:  46%|████▌     | 41/90 [1:21:55<1:58:58, 145.69s/it]Processing states - news - monthly - 2025 10:  47%|████▋     | 42/90 [1:23:18<1:41:20, 126.67s/it]Processing states - news - monthly - 2025 10:  48%|████▊     | 43/90 [1:24:10<1:21:51, 104.50s/it]Processing states - news - monthly - 2025 10:  49%|████▉     | 44/90 [1:25:02<1:08:00, 88.70s/it] Processing states - news - monthly - 2025 10:  50%|█████     | 45/90 [1:25:51<57:33, 76.73s/it]  Processing states - news - monthly - 2025 10:  51%|█████     | 46/90 [1:29:23<1:26:04, 117.38s/it]Processing states - news - monthly - 2025 10:  52%|█████▏    | 47/90 [1:31:32<1:26:37, 120.87s/it]Processing states - news - monthly - 2025 10:  53%|█████▎    | 48/90 [1:34:06<1:31:29, 130.71s/it]Processing states - news - monthly - 2025 10:  54%|█████▍    | 49/90 [1:36:12<1:28:16, 129.17s/it]Processing states - news - monthly - 2025 10:  56%|█████▌    | 50/90 [1:37:55<1:20:58, 121.47s/it]Processing states - news - monthly - 2025 10:  57%|█████▋    | 51/90 [1:40:43<1:27:55, 135.28s/it]Processing states - news - monthly - 2025 10:  58%|█████▊    | 52/90 [1:42:15<1:17:32, 122.44s/it]Processing states - news - monthly - 2025 10:  59%|█████▉    | 53/90 [1:44:14<1:14:51, 121.39s/it]Processing states - news - monthly - 2025 10:  60%|██████    | 54/90 [1:45:33<1:05:08, 108.57s/it]Processing states - news - monthly - 2025 10:  61%|██████    | 55/90 [1:47:01<59:49, 102.56s/it]  Processing states - news - monthly - 2025 10:  62%|██████▏   | 56/90 [1:51:56<1:30:53, 160.39s/it]Processing states - news - monthly - 2025 10:  63%|██████▎   | 57/90 [1:54:35<1:27:49, 159.69s/it]Processing states - news - monthly - 2025 10:  64%|██████▍   | 58/90 [1:56:09<1:14:45, 140.17s/it]Processing states - news - monthly - 2025 10:  66%|██████▌   | 59/90 [1:57:34<1:03:47, 123.48s/it]Processing states - news - monthly - 2025 10:  67%|██████▋   | 60/90 [1:59:26<1:00:06, 120.22s/it]Processing states - news - monthly - 2025 10:  68%|██████▊   | 61/90 [2:03:19<1:14:21, 153.85s/it]Processing states - news - monthly - 2025 10:  69%|██████▉   | 62/90 [2:08:32<1:34:03, 201.57s/it]Processing states - news - monthly - 2025 10:  70%|███████   | 63/90 [2:09:37<1:12:19, 160.74s/it]Processing states - news - monthly - 2025 10:  71%|███████   | 64/90 [2:11:50<1:05:59, 152.28s/it]Processing states - news - monthly - 2025 10:  72%|███████▏  | 65/90 [2:13:07<54:06, 129.85s/it]  Processing states - news - monthly - 2025 10:  73%|███████▎  | 66/90 [2:16:18<59:18, 148.27s/it]Processing states - news - monthly - 2025 10:  74%|███████▍  | 67/90 [2:16:44<42:42, 111.40s/it]Processing states - news - monthly - 2025 10:  76%|███████▌  | 68/90 [2:17:47<35:32, 96.92s/it] Processing states - news - monthly - 2025 10:  77%|███████▋  | 69/90 [2:20:22<40:04, 114.50s/it]Processing states - news - monthly - 2025 10:  78%|███████▊  | 70/90 [2:22:43<40:48, 122.44s/it]Processing states - news - monthly - 2025 10:  79%|███████▉  | 71/90 [2:25:40<43:52, 138.57s/it]Processing states - news - monthly - 2025 10:  80%|████████  | 72/90 [2:27:58<41:34, 138.56s/it]Processing states - news - monthly - 2025 10:  81%|████████  | 73/90 [2:28:51<31:59, 112.93s/it]Processing states - news - monthly - 2025 10:  82%|████████▏ | 74/90 [2:32:28<38:26, 144.18s/it]Processing states - news - monthly - 2025 10:  83%|████████▎ | 75/90 [2:33:09<28:19, 113.28s/it]Processing states - news - monthly - 2025 10:  84%|████████▍ | 76/90 [2:36:55<34:18, 147.03s/it]
+Actions so far - Skip: 64, Keep: 14, Create: 39, Update: 7, Valid: 56, Total Processed Catalysts: 124
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+HOOD - capital_actions: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 69, Keep: 14, Create: 40, Update: 7, Valid: 57, Total Processed Catalysts: 130
+HOOD - regulatory_policy: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 72, Keep: 15, Create: 40, Update: 7, Valid: 58, Total Processed Catalysts: 134
+HOOD - demand_trends: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 74, Keep: 16, Create: 40, Update: 7, Valid: 59, Total Processed Catalysts: 137
+HOOD - risk_event: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 76, Keep: 17, Create: 40, Update: 7, Valid: 60, Total Processed Catalysts: 140
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+NVDA - guidance_outlook: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 82, Keep: 17, Create: 41, Update: 7, Valid: 61, Total Processed Catalysts: 147
+NVDA - product_initiative: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 83, Keep: 17, Create: 43, Update: 7, Valid: 63, Total Processed Catalysts: 150
+NVDA - partnership_deal: Total records processed: 2, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 84, Keep: 18, Create: 43, Update: 8, Valid: 65, Total Processed Catalysts: 153
+NVDA - cost_efficiency: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 85, Keep: 19, Create: 44, Update: 8, Valid: 67, Total Processed Catalysts: 156
+NVDA - capital_actions: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 87, Keep: 19, Create: 44, Update: 9, Valid: 68, Total Processed Catalysts: 159
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+NVDA - demand_trends: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 93, Keep: 19, Create: 45, Update: 9, Valid: 69, Total Processed Catalysts: 166
+NVDA - risk_event: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 96, Keep: 19, Create: 46, Update: 9, Valid: 70, Total Processed Catalysts: 170
+NVDA - macro_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 98, Keep: 19, Create: 47, Update: 9, Valid: 71, Total Processed Catalysts: 173
+PLTR - guidance_outlook: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 99, Keep: 19, Create: 48, Update: 9, Valid: 72, Total Processed Catalysts: 175
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+PLTR - product_initiative: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 101, Keep: 19, Create: 50, Update: 9, Valid: 74, Total Processed Catalysts: 179
+PLTR - partnership_deal: Total records processed: 3, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 102, Keep: 20, Create: 51, Update: 10, Valid: 76, Total Processed Catalysts: 183
+PLTR - cost_efficiency: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 104, Keep: 20, Create: 52, Update: 10, Valid: 77, Total Processed Catalysts: 186
+PLTR - capital_actions: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 107, Keep: 20, Create: 53, Update: 10, Valid: 78, Total Processed Catalysts: 190
+PLTR - regulatory_policy: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 107, Keep: 21, Create: 54, Update: 10, Valid: 80, Total Processed Catalysts: 192
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+PLTR - demand_trends: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 109, Keep: 22, Create: 55, Update: 10, Valid: 82, Total Processed Catalysts: 196
+Error processing PLTR: "'risk_event'". Retrying...
+PLTR - risk_event: Total records processed: 3, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 110, Keep: 24, Create: 56, Update: 10, Valid: 85, Total Processed Catalysts: 200
+PLTR - macro_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 111, Keep: 24, Create: 57, Update: 10, Valid: 86, Total Processed Catalysts: 202
+SOFI - guidance_outlook: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 113, Keep: 24, Create: 59, Update: 10, Valid: 88, Total Processed Catalysts: 206
+SOFI - product_initiative: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 116, Keep: 24, Create: 60, Update: 10, Valid: 89, Total Processed Catalysts: 210
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+SOFI - partnership_deal: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 119, Keep: 25, Create: 60, Update: 10, Valid: 90, Total Processed Catalysts: 214
+SOFI - capital_actions: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 124, Keep: 26, Create: 60, Update: 10, Valid: 91, Total Processed Catalysts: 220
+SOFI - regulatory_policy: Total records processed: 3, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 125, Keep: 27, Create: 62, Update: 10, Valid: 94, Total Processed Catalysts: 224
+SOFI - demand_trends: Total records processed: 3, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 126, Keep: 28, Create: 64, Update: 10, Valid: 97, Total Processed Catalysts: 228
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+SOFI - macro_policy: Total records processed: 2, New records inserted: 1, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 132, Keep: 28, Create: 65, Update: 11, Valid: 99, Total Processed Catalysts: 236
+TSLA - guidance_outlook: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 133, Keep: 28, Create: 66, Update: 11, Valid: 100, Total Processed Catalysts: 238
+TSLA - product_initiative: Total records processed: 3, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 134, Keep: 28, Create: 68, Update: 12, Valid: 103, Total Processed Catalysts: 242
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+TSLA - cost_efficiency: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 140, Keep: 28, Create: 68, Update: 13, Valid: 103, Total Processed Catalysts: 249
+TSLA - capital_actions: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 143, Keep: 29, Create: 68, Update: 13, Valid: 104, Total Processed Catalysts: 253Processing states - news - monthly - 2025 10:  86%|████████▌ | 77/90 [2:38:08<27:00, 124.67s/it]Processing states - news - monthly - 2025 10:  87%|████████▋ | 78/90 [2:40:09<24:45, 123.80s/it]Processing states - news - monthly - 2025 10:  88%|████████▊ | 79/90 [2:42:58<25:09, 137.20s/it]Processing states - news - monthly - 2025 10:  89%|████████▉ | 80/90 [2:45:39<24:04, 144.46s/it]Processing states - news - monthly - 2025 10:  90%|█████████ | 81/90 [2:48:53<23:53, 159.28s/it]Processing states - news - monthly - 2025 10:  91%|█████████ | 82/90 [2:51:13<20:28, 153.57s/it]Processing states - news - monthly - 2025 10:  92%|█████████▏| 83/90 [2:52:18<14:47, 126.78s/it]Processing states - news - monthly - 2025 10:  93%|█████████▎| 84/90 [2:55:17<14:15, 142.59s/it]Processing states - news - monthly - 2025 10:  94%|█████████▍| 85/90 [2:57:41<11:54, 142.85s/it]Processing states - news - monthly - 2025 10:  96%|█████████▌| 86/90 [3:00:57<10:35, 158.84s/it]Processing states - news - monthly - 2025 10:  97%|█████████▋| 87/90 [3:02:54<07:19, 146.48s/it]Processing states - news - monthly - 2025 10:  98%|█████████▊| 88/90 [3:03:28<03:44, 112.47s/it]Processing states - news - monthly - 2025 10:  99%|█████████▉| 89/90 [3:05:11<01:49, 109.62s/it]Processing states - news - monthly - 2025 10: 100%|██████████| 90/90 [3:06:02<00:00, 92.06s/it] Processing states - news - monthly - 2025 10: 100%|██████████| 90/90 [3:06:02<00:00, 124.02s/it]
+
+TSLA - regulatory_policy: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 144, Keep: 29, Create: 69, Update: 14, Valid: 105, Total Processed Catalysts: 256
+TSLA - demand_trends: Total records processed: 3, New records inserted: 0, Existing records updated: 1, Master records updated: 0
+Actions so far - Skip: 145, Keep: 30, Create: 69, Update: 16, Valid: 107, Total Processed Catalysts: 260
+TSLA - risk_event: Total records processed: 3, New records inserted: 3, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 146, Keep: 30, Create: 72, Update: 16, Valid: 110, Total Processed Catalysts: 264
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+TSLA - macro_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 148, Keep: 30, Create: 73, Update: 16, Valid: 111, Total Processed Catalysts: 267
+XOM - guidance_outlook: Total records processed: 3, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 149, Keep: 31, Create: 75, Update: 16, Valid: 114, Total Processed Catalysts: 271
+XOM - product_initiative: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 152, Keep: 31, Create: 76, Update: 16, Valid: 115, Total Processed Catalysts: 275
+XOM - partnership_deal: Total records processed: 3, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 153, Keep: 31, Create: 78, Update: 17, Valid: 118, Total Processed Catalysts: 279
+XOM - cost_efficiency: Total records processed: 3, New records inserted: 1, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 154, Keep: 32, Create: 79, Update: 18, Valid: 121, Total Processed Catalysts: 283
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+XOM - capital_actions: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 157, Keep: 33, Create: 79, Update: 18, Valid: 122, Total Processed Catalysts: 287
+XOM - regulatory_policy: Total records processed: 3, New records inserted: 3, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 157, Keep: 33, Create: 82, Update: 18, Valid: 125, Total Processed Catalysts: 290
+XOM - risk_event: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 162, Keep: 33, Create: 84, Update: 18, Valid: 127, Total Processed Catalysts: 297
+Total new records inserted: 83
+Total existing records updated: 13
+Total master records updated: 10
+ETL process completed in 11162.14 seconds.
+Processing states - news - monthly - 2025 11:   0%|          | 0/135 [00:00<?, ?it/s]Processing states - news - monthly - 2025 11:   1%|          | 1/135 [00:12<27:13, 12.19s/it]Processing states - news - monthly - 2025 11:   1%|▏         | 2/135 [00:25<28:07, 12.69s/it]Processing states - news - monthly - 2025 11:   2%|▏         | 3/135 [00:33<23:51, 10.85s/it]Processing states - news - monthly - 2025 11:   3%|▎         | 4/135 [00:44<23:35, 10.81s/it]Processing states - news - monthly - 2025 11:   4%|▎         | 5/135 [00:56<23:53, 11.03s/it]Processing states - news - monthly - 2025 11:   4%|▍         | 6/135 [03:14<1:56:31, 54.20s/it]Processing states - news - monthly - 2025 11:   5%|▌         | 7/135 [03:26<1:26:13, 40.42s/it]Processing states - news - monthly - 2025 11:   6%|▌         | 8/135 [03:37<1:05:45, 31.07s/it]Processing states - news - monthly - 2025 11:   7%|▋         | 9/135 [03:52<55:05, 26.23s/it]  Processing states - news - monthly - 2025 11:   7%|▋         | 10/135 [04:35<1:05:14, 31.31s/it]Processing states - news - monthly - 2025 11:   8%|▊         | 11/135 [07:42<2:43:29, 79.11s/it]Processing states - news - monthly - 2025 11:   9%|▉         | 12/135 [08:35<2:25:34, 71.01s/it]Processing states - news - monthly - 2025 11:  10%|▉         | 13/135 [10:41<2:58:14, 87.66s/it]Processing states - news - monthly - 2025 11:  10%|█         | 14/135 [12:08<2:56:10, 87.36s/it]Processing states - news - monthly - 2025 11:  11%|█         | 15/135 [12:37<2:19:56, 69.97s/it]Processing states - news - monthly - 2025 11:  12%|█▏        | 16/135 [16:05<3:40:51, 111.36s/it]Processing states - news - monthly - 2025 11:  13%|█▎        | 17/135 [17:10<3:11:50, 97.55s/it] Processing states - news - monthly - 2025 11:  13%|█▎        | 18/135 [18:11<2:48:55, 86.63s/it]Processing states - news - monthly - 2025 11:  14%|█▍        | 19/135 [18:25<2:05:19, 64.83s/it]Processing states - news - monthly - 2025 11:  15%|█▍        | 20/135 [19:16<1:56:04, 60.56s/it]Processing states - news - monthly - 2025 11:  16%|█▌        | 21/135 [21:36<2:40:29, 84.47s/it]Processing states - news - monthly - 2025 11:  16%|█▋        | 22/135 [21:52<2:00:26, 63.95s/it]Processing states - news - monthly - 2025 11:  17%|█▋        | 23/135 [22:01<1:28:17, 47.30s/it]Processing states - news - monthly - 2025 11:  18%|█▊        | 24/135 [22:09<1:06:04, 35.71s/it]Processing states - news - monthly - 2025 11:  19%|█▊        | 25/135 [22:21<52:01, 28.38s/it]  Processing states - news - monthly - 2025 11:  19%|█▉        | 26/135 [24:39<1:51:32, 61.40s/it]Processing states - news - monthly - 2025 11:  20%|██        | 27/135 [24:52<1:24:16, 46.82s/it]Processing states - news - monthly - 2025 11:  21%|██        | 28/135 [27:15<2:14:47, 75.58s/it]Processing states - news - monthly - 2025 11:  21%|██▏       | 29/135 [29:38<2:49:41, 96.05s/it]Processing states - news - monthly - 2025 11:  22%|██▏       | 30/135 [31:56<3:09:42, 108.40s/it]Processing states - news - monthly - 2025 11:  23%|██▎       | 31/135 [35:28<4:01:59, 139.61s/it]Processing states - news - monthly - 2025 11:  24%|██▎       | 32/135 [36:22<3:15:15, 113.75s/it]Processing states - news - monthly - 2025 11:  24%|██▍       | 33/135 [38:30<3:21:05, 118.28s/it]Processing states - news - monthly - 2025 11:  25%|██▌       | 34/135 [39:07<2:37:41, 93.68s/it] Processing states - news - monthly - 2025 11:  26%|██▌       | 35/135 [40:27<2:29:15, 89.56s/it]Processing states - news - monthly - 2025 11:  27%|██▋       | 36/135 [43:11<3:04:39, 111.91s/it]Processing states - news - monthly - 2025 11:  27%|██▋       | 37/135 [43:31<2:18:02, 84.51s/it] Processing states - news - monthly - 2025 11:  28%|██▊       | 38/135 [44:45<2:11:27, 81.31s/it]Processing states - news - monthly - 2025 11:  29%|██▉       | 39/135 [44:54<1:35:26, 59.65s/it]Processing states - news - monthly - 2025 11:  30%|██▉       | 40/135 [45:06<1:11:47, 45.34s/it]Processing states - news - monthly - 2025 11:  30%|███       | 41/135 [47:51<2:07:16, 81.24s/it]Processing states - news - monthly - 2025 11:  31%|███       | 42/135 [48:53<1:56:51, 75.39s/it]Processing states - news - monthly - 2025 11:  32%|███▏      | 43/135 [50:16<1:59:13, 77.76s/it]Processing states - news - monthly - 2025 11:  33%|███▎      | 44/135 [51:41<2:01:18, 79.98s/it]Processing states - news - monthly - 2025 11:  33%|███▎      | 45/135 [52:02<1:33:19, 62.22s/it]Processing states - news - monthly - 2025 11:  34%|███▍      | 46/135 [54:58<2:22:41, 96.19s/it]Processing states - news - monthly - 2025 11:  35%|███▍      | 47/135 [56:04<2:08:11, 87.40s/it]Processing states - news - monthly - 2025 11:  36%|███▌      | 48/135 [59:05<2:47:01, 115.20s/it]Processing states - news - monthly - 2025 11:  36%|███▋      | 49/135 [1:00:54<2:42:42, 113.52s/it]Processing states - news - monthly - 2025 11:  37%|███▋      | 50/135 [1:02:23<2:30:21, 106.14s/it]Processing states - news - monthly - 2025 11:  38%|███▊      | 51/135 [1:06:10<3:19:08, 142.25s/it]Processing states - news - monthly - 2025 11:  39%|███▊      | 52/135 [1:07:55<3:01:22, 131.11s/it]Processing states - news - monthly - 2025 11:  39%|███▉      | 53/135 [1:08:42<2:24:52, 106.00s/it]Processing states - news - monthly - 2025 11:  40%|████      | 54/135 [1:10:04<2:13:10, 98.65s/it] Processing states - news - monthly - 2025 11:  41%|████      | 55/135 [1:12:41<2:35:09, 116.37s/it]Processing states - news - monthly - 2025 11:  41%|████▏     | 56/135 [1:16:57<3:28:19, 158.22s/it]Processing states - news - monthly - 2025 11:  42%|████▏     | 57/135 [1:18:45<3:06:04, 143.14s/it]Processing states - news - monthly - 2025 11:  43%|████▎     | 58/135 [1:20:10<2:41:09, 125.58s/it]Processing states - news - monthly - 2025 11:  44%|████▎     | 59/135 [1:23:26<3:05:58, 146.82s/it]
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+AMD - guidance_outlook: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 9, Keep: 0, Create: 1, Update: 0, Valid: 1, Total Processed Catalysts: 10
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+AMD - product_initiative: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 11, Keep: 0, Create: 2, Update: 0, Valid: 2, Total Processed Catalysts: 13
+AMD - partnership_deal: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 14, Keep: 1, Create: 2, Update: 0, Valid: 3, Total Processed Catalysts: 17
+AMD - cost_efficiency: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 15, Keep: 1, Create: 4, Update: 0, Valid: 5, Total Processed Catalysts: 20
+AMD - capital_actions: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 18, Keep: 1, Create: 5, Update: 0, Valid: 6, Total Processed Catalysts: 24
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+AMD - demand_trends: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 23, Keep: 1, Create: 5, Update: 1, Valid: 6, Total Processed Catalysts: 30
+AMD - risk_event: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 25, Keep: 1, Create: 6, Update: 1, Valid: 7, Total Processed Catalysts: 33
+AMD - macro_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 26, Keep: 1, Create: 7, Update: 1, Valid: 8, Total Processed Catalysts: 35
+Error processing AMZN: "'keep'". Retrying...
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+COIN - guidance_outlook: Total records processed: 3, New records inserted: 1, Existing records updated: 2, Master records updated: 1
+Actions so far - Skip: 36, Keep: 2, Create: 8, Update: 2, Valid: 11, Total Processed Catalysts: 48
+COIN - product_initiative: Total records processed: 3, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 36, Keep: 2, Create: 11, Update: 2, Valid: 14, Total Processed Catalysts: 51
+COIN - partnership_deal: Total records processed: 3, New records inserted: 1, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 37, Keep: 4, Create: 12, Update: 2, Valid: 17, Total Processed Catalysts: 55
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+Error processing COIN: "'cost_efficiency'". Retrying...
+COIN - cost_efficiency: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 39, Keep: 5, Create: 12, Update: 2, Valid: 18, Total Processed Catalysts: 58
+COIN - regulatory_policy: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 45, Keep: 5, Create: 14, Update: 2, Valid: 20, Total Processed Catalysts: 66
+COIN - risk_event: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 52, Keep: 5, Create: 15, Update: 2, Valid: 21, Total Processed Catalysts: 74
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+COST - product_initiative: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 60, Keep: 5, Create: 16, Update: 2, Valid: 22, Total Processed Catalysts: 83
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+COST - regulatory_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 67, Keep: 5, Create: 17, Update: 2, Valid: 23, Total Processed Catalysts: 91
+COST - demand_trends: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 69, Keep: 5, Create: 18, Update: 2, Valid: 24, Total Processed Catalysts: 94
+COST - risk_event: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 72, Keep: 5, Create: 19, Update: 2, Valid: 25, Total Processed Catalysts: 98
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+CRWD - guidance_outlook: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 77, Keep: 6, Create: 19, Update: 2, Valid: 26, Total Processed Catalysts: 104
+CRWD - product_initiative: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 79, Keep: 6, Create: 20, Update: 2, Valid: 27, Total Processed Catalysts: 107
+CRWD - partnership_deal: Total records processed: 3, New records inserted: 2, Existing records updated: 1, Master records updated: 0
+Actions so far - Skip: 80, Keep: 6, Create: 22, Update: 3, Valid: 29, Total Processed Catalysts: 111
+CRWD - cost_efficiency: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 81, Keep: 6, Create: 24, Update: 3, Valid: 31, Total Processed Catalysts: 114
+CRWD - capital_actions: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 84, Keep: 6, Create: 25, Update: 3, Valid: 32, Total Processed Catalysts: 118
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+CRWD - regulatory_policy: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 85, Keep: 7, Create: 26, Update: 3, Valid: 34, Total Processed Catalysts: 121
+CRWD - demand_trends: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 86, Keep: 8, Create: 27, Update: 3, Valid: 36, Total Processed Catalysts: 124
+CRWD - macro_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 93, Keep: 8, Create: 28, Update: 3, Valid: 37, Total Processed Catalysts: 132
+HOOD - guidance_outlook: Total records processed: 3, New records inserted: 2, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 93, Keep: 8, Create: 30, Update: 4, Valid: 40, Total Processed Catalysts: 135
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+HOOD - product_initiative: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 95, Keep: 8, Create: 31, Update: 5, Valid: 41, Total Processed Catalysts: 139
+HOOD - partnership_deal: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 96, Keep: 8, Create: 33, Update: 5, Valid: 43, Total Processed Catalysts: 142
+HOOD - cost_efficiency: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 97, Keep: 8, Create: 33, Update: 6, Valid: 44, Total Processed Catalysts: 144
+HOOD - capital_actions: Total records processed: 3, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 98, Keep: 8, Create: 35, Update: 7, Valid: 46, Total Processed Catalysts: 148
+HOOD - regulatory_policy: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0Processing states - news - monthly - 2025 11:  44%|████▍     | 60/135 [1:25:14<2:48:46, 135.02s/it]Processing states - news - monthly - 2025 11:  45%|████▌     | 61/135 [1:28:52<3:17:25, 160.08s/it]Processing states - news - monthly - 2025 11:  46%|████▌     | 62/135 [1:31:24<3:11:42, 157.56s/it]Processing states - news - monthly - 2025 11:  47%|████▋     | 63/135 [1:32:32<2:37:04, 130.89s/it]Processing states - news - monthly - 2025 11:  47%|████▋     | 64/135 [1:34:46<2:35:41, 131.57s/it]Processing states - news - monthly - 2025 11:  48%|████▊     | 65/135 [1:37:54<2:53:15, 148.50s/it]Processing states - news - monthly - 2025 11:  49%|████▉     | 66/135 [1:41:12<3:08:01, 163.50s/it]Processing states - news - monthly - 2025 11:  50%|████▉     | 67/135 [1:42:41<2:39:53, 141.08s/it]Processing states - news - monthly - 2025 11:  50%|█████     | 68/135 [1:43:12<2:00:47, 108.17s/it]Processing states - news - monthly - 2025 11:  51%|█████     | 69/135 [1:45:33<2:09:45, 117.96s/it]Processing states - news - monthly - 2025 11:  52%|█████▏    | 70/135 [1:47:07<1:59:50, 110.62s/it]Processing states - news - monthly - 2025 11:  53%|█████▎    | 71/135 [1:52:17<3:02:00, 170.63s/it]Processing states - news - monthly - 2025 11:  53%|█████▎    | 72/135 [1:53:41<2:31:46, 144.54s/it]Processing states - news - monthly - 2025 11:  54%|█████▍    | 73/135 [1:54:14<1:54:52, 111.17s/it]Processing states - news - monthly - 2025 11:  55%|█████▍    | 74/135 [1:55:24<1:40:24, 98.77s/it] Processing states - news - monthly - 2025 11:  56%|█████▌    | 75/135 [1:56:54<1:35:59, 95.99s/it]Processing states - news - monthly - 2025 11:  56%|█████▋    | 76/135 [1:59:25<1:50:50, 112.72s/it]Processing states - news - monthly - 2025 11:  57%|█████▋    | 77/135 [2:00:32<1:35:40, 98.97s/it] Processing states - news - monthly - 2025 11:  58%|█████▊    | 78/135 [2:01:06<1:15:33, 79.53s/it]Processing states - news - monthly - 2025 11:  59%|█████▊    | 79/135 [2:02:24<1:13:48, 79.09s/it]Processing states - news - monthly - 2025 11:  59%|█████▉    | 80/135 [2:04:23<1:23:20, 90.91s/it]Processing states - news - monthly - 2025 11:  60%|██████    | 81/135 [2:07:39<1:50:09, 122.40s/it]Processing states - news - monthly - 2025 11:  61%|██████    | 82/135 [2:08:47<1:33:42, 106.09s/it]Processing states - news - monthly - 2025 11:  61%|██████▏   | 83/135 [2:09:49<1:20:28, 92.85s/it] Processing states - news - monthly - 2025 11:  62%|██████▏   | 84/135 [2:11:43<1:24:25, 99.33s/it]Processing states - news - monthly - 2025 11:  63%|██████▎   | 85/135 [2:12:31<1:09:54, 83.90s/it]Processing states - news - monthly - 2025 11:  64%|██████▎   | 86/135 [2:15:09<1:26:44, 106.22s/it]Processing states - news - monthly - 2025 11:  64%|██████▍   | 87/135 [2:16:15<1:15:06, 93.89s/it] Processing states - news - monthly - 2025 11:  65%|██████▌   | 88/135 [2:17:47<1:13:13, 93.49s/it]Processing states - news - monthly - 2025 11:  66%|██████▌   | 89/135 [2:18:36<1:01:30, 80.23s/it]Processing states - news - monthly - 2025 11:  67%|██████▋   | 90/135 [2:19:40<56:30, 75.35s/it]  Processing states - news - monthly - 2025 11:  67%|██████▋   | 91/135 [2:21:59<1:09:04, 94.19s/it]Processing states - news - monthly - 2025 11:  68%|██████▊   | 92/135 [2:22:18<51:20, 71.63s/it]  Processing states - news - monthly - 2025 11:  69%|██████▉   | 93/135 [2:22:29<37:33, 53.67s/it]Processing states - news - monthly - 2025 11:  70%|██████▉   | 94/135 [2:22:41<27:58, 40.95s/it]Processing states - news - monthly - 2025 11:  70%|███████   | 95/135 [2:22:51<21:08, 31.72s/it]Processing states - news - monthly - 2025 11:  71%|███████   | 96/135 [2:25:07<41:02, 63.14s/it]Processing states - news - monthly - 2025 11:  72%|███████▏  | 97/135 [2:25:19<30:08, 47.60s/it]Processing states - news - monthly - 2025 11:  73%|███████▎  | 98/135 [2:25:33<23:10, 37.59s/it]Processing states - news - monthly - 2025 11:  73%|███████▎  | 99/135 [2:25:45<17:57, 29.94s/it]Processing states - news - monthly - 2025 11:  74%|███████▍  | 100/135 [2:28:00<35:54, 61.57s/it]Processing states - news - monthly - 2025 11:  75%|███████▍  | 101/135 [2:31:41<1:01:58, 109.38s/it]Processing states - news - monthly - 2025 11:  76%|███████▌  | 102/135 [2:33:21<58:36, 106.57s/it]  Processing states - news - monthly - 2025 11:  76%|███████▋  | 103/135 [2:35:08<56:51, 106.60s/it]Processing states - news - monthly - 2025 11:  77%|███████▋  | 104/135 [2:35:45<44:16, 85.68s/it] Processing states - news - monthly - 2025 11:  78%|███████▊  | 105/135 [2:36:17<34:47, 69.57s/it]Processing states - news - monthly - 2025 11:  79%|███████▊  | 106/135 [2:39:58<55:40, 115.18s/it]Processing states - news - monthly - 2025 11:  79%|███████▉  | 107/135 [2:40:35<42:45, 91.62s/it] Processing states - news - monthly - 2025 11:  80%|████████  | 108/135 [2:41:27<35:52, 79.71s/it]Processing states - news - monthly - 2025 11:  81%|████████  | 109/135 [2:42:51<35:03, 80.90s/it]Processing states - news - monthly - 2025 11:  81%|████████▏ | 110/135 [2:43:33<28:55, 69.42s/it]Processing states - news - monthly - 2025 11:  82%|████████▏ | 111/135 [2:46:51<43:10, 107.95s/it]Processing states - news - monthly - 2025 11:  83%|████████▎ | 112/135 [2:48:30<40:23, 105.36s/it]
+Actions so far - Skip: 100, Keep: 9, Create: 36, Update: 7, Valid: 48, Total Processed Catalysts: 152
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+HOOD - demand_trends: Total records processed: 2, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 102, Keep: 10, Create: 36, Update: 8, Valid: 50, Total Processed Catalysts: 156
+HOOD - risk_event: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 104, Keep: 10, Create: 38, Update: 8, Valid: 52, Total Processed Catalysts: 160
+HOOD - macro_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 106, Keep: 10, Create: 39, Update: 8, Valid: 53, Total Processed Catalysts: 163
+INTC - guidance_outlook: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 107, Keep: 10, Create: 40, Update: 9, Valid: 55, Total Processed Catalysts: 166
+INTC - product_initiative: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 109, Keep: 10, Create: 42, Update: 9, Valid: 57, Total Processed Catalysts: 170
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+INTC - partnership_deal: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 111, Keep: 10, Create: 42, Update: 10, Valid: 57, Total Processed Catalysts: 173
+INTC - cost_efficiency: Total records processed: 2, New records inserted: 1, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 112, Keep: 11, Create: 43, Update: 10, Valid: 59, Total Processed Catalysts: 176
+INTC - regulatory_policy: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 117, Keep: 11, Create: 44, Update: 11, Valid: 60, Total Processed Catalysts: 183
+INTC - demand_trends: Total records processed: 2, New records inserted: 1, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 118, Keep: 12, Create: 45, Update: 11, Valid: 62, Total Processed Catalysts: 186
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+INTC - risk_event: Total records processed: 3, New records inserted: 3, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 119, Keep: 12, Create: 48, Update: 11, Valid: 65, Total Processed Catalysts: 190
+INTC - macro_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 121, Keep: 12, Create: 49, Update: 11, Valid: 66, Total Processed Catalysts: 193
+JPM - product_initiative: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 126, Keep: 12, Create: 50, Update: 11, Valid: 67, Total Processed Catalysts: 199
+JPM - partnership_deal: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 129, Keep: 12, Create: 51, Update: 11, Valid: 68, Total Processed Catalysts: 203
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+JPM - capital_actions: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 134, Keep: 12, Create: 52, Update: 11, Valid: 69, Total Processed Catalysts: 209
+JPM - demand_trends: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 140, Keep: 12, Create: 53, Update: 11, Valid: 70, Total Processed Catalysts: 216
+JPM - risk_event: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 141, Keep: 12, Create: 55, Update: 11, Valid: 72, Total Processed Catalysts: 219
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+JPM - macro_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 144, Keep: 12, Create: 56, Update: 11, Valid: 73, Total Processed Catalysts: 223
+LLY - guidance_outlook: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 0
+Actions so far - Skip: 145, Keep: 12, Create: 56, Update: 12, Valid: 73, Total Processed Catalysts: 225
+LLY - product_initiative: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 148, Keep: 12, Create: 57, Update: 12, Valid: 74, Total Processed Catalysts: 229
+LLY - partnership_deal: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 150, Keep: 12, Create: 59, Update: 12, Valid: 76, Total Processed Catalysts: 233
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+LLY - regulatory_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 159, Keep: 12, Create: 60, Update: 12, Valid: 77, Total Processed Catalysts: 243
+LLY - demand_trends: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 0
+Actions so far - Skip: 162, Keep: 12, Create: 60, Update: 13, Valid: 77, Total Processed Catalysts: 247
+LLY - macro_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 168, Keep: 12, Create: 61, Update: 13, Valid: 78, Total Processed Catalysts: 254
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+PLTR - guidance_outlook: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 177, Keep: 12, Create: 63, Update: 13, Valid: 80, Total Processed Catalysts: 265
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+PLTR - product_initiative: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 180, Keep: 12, Create: 64, Update: 13, Valid: 81, Total Processed Catalysts: 269
+PLTR - partnership_deal: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 182, Keep: 12, Create: 65, Update: 13, Valid: 82, Total Processed Catalysts: 272
+PLTR - cost_efficiency: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 184, Keep: 12, Create: 65, Update: 14, Valid: 82, Total Processed Catalysts: 275
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+PLTR - demand_trends: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 191, Keep: 12, Create: 65, Update: 15, Valid: 82, Total Processed Catalysts: 283
+SOFI - guidance_outlook: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 0
+Actions so far - Skip: 200, Keep: 12, Create: 65, Update: 16, Valid: 82, Total Processed Catalysts: 293
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+SOFI - partnership_deal: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 205, Keep: 13, Create: 65, Update: 16, Valid: 83, Total Processed Catalysts: 299
+SOFI - cost_efficiency: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 207, Keep: 13, Create: 65, Update: 17, Valid: 84, Total Processed Catalysts: 302
+SOFI - capital_actions: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0Processing states - news - monthly - 2025 11:  84%|████████▎ | 113/135 [2:51:05<44:00, 120.04s/it]Processing states - news - monthly - 2025 11:  84%|████████▍ | 114/135 [2:52:44<39:51, 113.86s/it]Processing states - news - monthly - 2025 11:  85%|████████▌ | 115/135 [2:53:33<31:26, 94.30s/it] Processing states - news - monthly - 2025 11:  86%|████████▌ | 116/135 [2:57:51<45:24, 143.41s/it]Processing states - news - monthly - 2025 11:  87%|████████▋ | 117/135 [2:58:22<32:58, 109.93s/it]Processing states - news - monthly - 2025 11:  87%|████████▋ | 118/135 [2:59:31<27:39, 97.61s/it] Processing states - news - monthly - 2025 11:  88%|████████▊ | 119/135 [2:59:32<18:15, 68.47s/it]Processing states - news - monthly - 2025 11:  89%|████████▉ | 120/135 [2:59:32<12:00, 48.00s/it]Processing states - news - monthly - 2025 11:  90%|████████▉ | 121/135 [3:01:38<16:37, 71.24s/it]Processing states - news - monthly - 2025 11:  90%|█████████ | 122/135 [3:01:38<10:49, 49.94s/it]Processing states - news - monthly - 2025 11:  91%|█████████ | 123/135 [3:01:38<07:00, 35.03s/it]Processing states - news - monthly - 2025 11:  92%|█████████▏| 124/135 [3:01:38<04:31, 24.66s/it]Processing states - news - monthly - 2025 11:  93%|█████████▎| 125/135 [3:01:39<02:53, 17.34s/it]Processing states - news - monthly - 2025 11:  93%|█████████▎| 126/135 [3:03:44<07:28, 49.79s/it]Processing states - news - monthly - 2025 11:  94%|█████████▍| 127/135 [3:09:35<18:39, 139.97s/it]Processing states - news - monthly - 2025 11:  95%|█████████▍| 128/135 [3:12:37<17:49, 152.81s/it]Processing states - news - monthly - 2025 11:  96%|█████████▌| 129/135 [3:15:00<14:58, 149.78s/it]Processing states - news - monthly - 2025 11:  96%|█████████▋| 130/135 [3:15:39<09:42, 116.60s/it]Processing states - news - monthly - 2025 11:  97%|█████████▋| 131/135 [3:19:35<10:09, 152.47s/it]Processing states - news - monthly - 2025 11:  98%|█████████▊| 132/135 [3:21:20<06:54, 138.07s/it]Processing states - news - monthly - 2025 11:  99%|█████████▊| 133/135 [3:21:52<03:32, 106.25s/it]Processing states - news - monthly - 2025 11:  99%|█████████▉| 134/135 [3:23:06<01:36, 96.74s/it] Processing states - news - monthly - 2025 11: 100%|██████████| 135/135 [3:25:02<00:00, 102.45s/it]Processing states - news - monthly - 2025 11: 100%|██████████| 135/135 [3:25:02<00:00, 91.13s/it] 
+
+Actions so far - Skip: 209, Keep: 13, Create: 66, Update: 18, Valid: 86, Total Processed Catalysts: 306
+SOFI - regulatory_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 212, Keep: 13, Create: 67, Update: 18, Valid: 87, Total Processed Catalysts: 310
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+SOFI - risk_event: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 219, Keep: 13, Create: 68, Update: 18, Valid: 88, Total Processed Catalysts: 318
+TSLA - guidance_outlook: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 221, Keep: 13, Create: 69, Update: 18, Valid: 89, Total Processed Catalysts: 321
+No results found for query: news, TSLA, 2025, None, 11
+No results found for query: news, TSLA, 2025, None, 11
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+No results found for query: news, TSLA, 2025, None, 11
+No results found for query: news, TSLA, 2025, None, 11
+No results found for query: news, TSLA, 2025, None, 11
+No results found for query: news, TSLA, 2025, None, 11
+No results found for query: news, TSLA, 2025, None, 11
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+No results found for query: news, TSLA, 2025, None, 11
+Error processing XOM: "'keep'". Retrying...
+XOM - guidance_outlook: Total records processed: 3, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 222, Keep: 13, Create: 70, Update: 20, Valid: 92, Total Processed Catalysts: 325
+XOM - product_initiative: Total records processed: 3, New records inserted: 1, Existing records updated: 2, Master records updated: 1
+Actions so far - Skip: 222, Keep: 13, Create: 71, Update: 22, Valid: 95, Total Processed Catalysts: 328
+XOM - partnership_deal: Total records processed: 2, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 224, Keep: 13, Create: 72, Update: 23, Valid: 97, Total Processed Catalysts: 332
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+XOM - capital_actions: Total records processed: 2, New records inserted: 1, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 229, Keep: 14, Create: 73, Update: 23, Valid: 99, Total Processed Catalysts: 339
+XOM - regulatory_policy: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 232, Keep: 14, Create: 74, Update: 23, Valid: 100, Total Processed Catalysts: 343
+XOM - risk_event: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 238, Keep: 14, Create: 75, Update: 23, Valid: 101, Total Processed Catalysts: 350
+XOM - macro_policy: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 240, Keep: 15, Create: 76, Update: 23, Valid: 103, Total Processed Catalysts: 354
+Total new records inserted: 73
+Total existing records updated: 17
+Total master records updated: 11
+ETL process completed in 12302.77 seconds.
+Processing states - news - monthly - 2025 12:   0%|          | 0/162 [00:00<?, ?it/s]Processing states - news - monthly - 2025 12:   1%|          | 1/162 [00:49<2:11:49, 49.13s/it]Processing states - news - monthly - 2025 12:   1%|          | 2/162 [02:22<3:20:52, 75.33s/it]Processing states - news - monthly - 2025 12:   2%|▏         | 3/162 [03:45<3:28:22, 78.63s/it]Processing states - news - monthly - 2025 12:   2%|▏         | 4/162 [04:46<3:09:06, 71.81s/it]Processing states - news - monthly - 2025 12:   3%|▎         | 5/162 [06:34<3:41:30, 84.65s/it]Processing states - news - monthly - 2025 12:   4%|▎         | 6/162 [10:50<6:11:50, 143.02s/it]Processing states - news - monthly - 2025 12:   4%|▍         | 7/162 [12:34<5:36:17, 130.18s/it]Processing states - news - monthly - 2025 12:   5%|▍         | 8/162 [14:38<5:29:16, 128.29s/it]Processing states - news - monthly - 2025 12:   6%|▌         | 9/162 [15:15<4:14:11, 99.68s/it] Processing states - news - monthly - 2025 12:   6%|▌         | 10/162 [16:35<3:57:15, 93.66s/it]Processing states - news - monthly - 2025 12:   7%|▋         | 11/162 [20:16<5:33:57, 132.70s/it]Processing states - news - monthly - 2025 12:   7%|▋         | 12/162 [22:09<5:17:01, 126.81s/it]Processing states - news - monthly - 2025 12:   8%|▊         | 13/162 [26:01<6:34:03, 158.68s/it]Processing states - news - monthly - 2025 12:   9%|▊         | 14/162 [27:53<5:56:19, 144.45s/it]Processing states - news - monthly - 2025 12:   9%|▉         | 15/162 [30:16<5:52:44, 143.98s/it]Processing states - news - monthly - 2025 12:  10%|▉         | 16/162 [33:45<6:37:45, 163.46s/it]Processing states - news - monthly - 2025 12:  10%|█         | 17/162 [34:22<5:03:11, 125.46s/it]Processing states - news - monthly - 2025 12:  11%|█         | 18/162 [34:47<3:49:01, 95.43s/it] Processing states - news - monthly - 2025 12:  12%|█▏        | 19/162 [35:20<3:02:26, 76.55s/it]Processing states - news - monthly - 2025 12:  12%|█▏        | 20/162 [37:03<3:19:57, 84.49s/it]Processing states - news - monthly - 2025 12:  13%|█▎        | 21/162 [39:51<4:17:36, 109.62s/it]Processing states - news - monthly - 2025 12:  14%|█▎        | 22/162 [40:28<3:24:56, 87.83s/it] Processing states - news - monthly - 2025 12:  14%|█▍        | 23/162 [41:10<2:51:32, 74.05s/it]Processing states - news - monthly - 2025 12:  15%|█▍        | 24/162 [42:57<3:13:08, 83.97s/it]Processing states - news - monthly - 2025 12:  15%|█▌        | 25/162 [43:42<2:44:56, 72.23s/it]Processing states - news - monthly - 2025 12:  16%|█▌        | 26/162 [47:47<4:41:04, 124.00s/it]Processing states - news - monthly - 2025 12:  17%|█▋        | 27/162 [49:06<4:09:03, 110.69s/it]Processing states - news - monthly - 2025 12:  17%|█▋        | 28/162 [49:24<3:05:11, 82.92s/it] Processing states - news - monthly - 2025 12:  18%|█▊        | 29/162 [50:39<2:57:58, 80.29s/it]Processing states - news - monthly - 2025 12:  19%|█▊        | 30/162 [52:52<3:31:27, 96.12s/it]Processing states - news - monthly - 2025 12:  19%|█▉        | 31/162 [56:07<4:35:03, 125.98s/it]Processing states - news - monthly - 2025 12:  20%|█▉        | 32/162 [56:47<3:36:41, 100.01s/it]Processing states - news - monthly - 2025 12:  20%|██        | 33/162 [58:10<3:24:20, 95.04s/it] Processing states - news - monthly - 2025 12:  21%|██        | 34/162 [58:42<2:42:30, 76.17s/it]Processing states - news - monthly - 2025 12:  22%|██▏       | 35/162 [1:00:44<3:10:09, 89.84s/it]Processing states - news - monthly - 2025 12:  22%|██▏       | 36/162 [1:03:20<3:50:36, 109.81s/it]Processing states - news - monthly - 2025 12:  23%|██▎       | 37/162 [1:05:19<3:54:19, 112.48s/it]Processing states - news - monthly - 2025 12:  23%|██▎       | 38/162 [1:07:35<4:06:45, 119.40s/it]Processing states - news - monthly - 2025 12:  24%|██▍       | 39/162 [1:08:51<3:38:29, 106.58s/it]Processing states - news - monthly - 2025 12:  25%|██▍       | 40/162 [1:10:49<3:43:20, 109.84s/it]Processing states - news - monthly - 2025 12:  25%|██▌       | 41/162 [1:14:26<4:46:37, 142.13s/it]Processing states - news - monthly - 2025 12:  26%|██▌       | 42/162 [1:16:22<4:28:16, 134.14s/it]Processing states - news - monthly - 2025 12:  27%|██▋       | 43/162 [1:18:32<4:23:43, 132.97s/it]Processing states - news - monthly - 2025 12:  27%|██▋       | 44/162 [1:20:47<4:22:37, 133.54s/it]AAPL - guidance_outlook: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 2, Keep: 1, Create: 0, Update: 0, Valid: 1, Total Processed Catalysts: 3
+AAPL - product_initiative: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 5, Keep: 1, Create: 1, Update: 0, Valid: 2, Total Processed Catalysts: 7
+AAPL - partnership_deal: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 8, Keep: 2, Create: 1, Update: 0, Valid: 3, Total Processed Catalysts: 11
+AAPL - cost_efficiency: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 10, Keep: 3, Create: 1, Update: 0, Valid: 4, Total Processed Catalysts: 14
+AAPL - capital_actions: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 13, Keep: 3, Create: 2, Update: 0, Valid: 5, Total Processed Catalysts: 18
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+AAPL - regulatory_policy: Total records processed: 2, New records inserted: 1, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 15, Keep: 3, Create: 3, Update: 1, Valid: 7, Total Processed Catalysts: 22
+AAPL - demand_trends: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 18, Keep: 3, Create: 3, Update: 2, Valid: 8, Total Processed Catalysts: 26
+AAPL - risk_event: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 20, Keep: 3, Create: 5, Update: 2, Valid: 10, Total Processed Catalysts: 30
+AMD - guidance_outlook: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 24, Keep: 3, Create: 5, Update: 3, Valid: 11, Total Processed Catalysts: 35
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+AMD - product_initiative: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 27, Keep: 3, Create: 5, Update: 4, Valid: 12, Total Processed Catalysts: 39
+AMD - partnership_deal: Total records processed: 2, New records inserted: 1, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 29, Keep: 4, Create: 6, Update: 4, Valid: 14, Total Processed Catalysts: 43
+AMD - cost_efficiency: Total records processed: 4, New records inserted: 3, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 29, Keep: 4, Create: 9, Update: 5, Valid: 18, Total Processed Catalysts: 47
+AMD - capital_actions: Total records processed: 2, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 31, Keep: 5, Create: 9, Update: 6, Valid: 20, Total Processed Catalysts: 51
+AMD - regulatory_policy: Total records processed: 3, New records inserted: 3, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 32, Keep: 5, Create: 12, Update: 6, Valid: 23, Total Processed Catalysts: 55
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+AMD - demand_trends: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 35, Keep: 5, Create: 13, Update: 6, Valid: 24, Total Processed Catalysts: 59
+AMZN - product_initiative: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 49, Keep: 5, Create: 15, Update: 6, Valid: 26, Total Processed Catalysts: 75
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+AMZN - regulatory_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 64, Keep: 5, Create: 16, Update: 6, Valid: 27, Total Processed Catalysts: 91
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+AMZN - risk_event: Total records processed: 2, New records inserted: 1, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 70, Keep: 6, Create: 17, Update: 6, Valid: 29, Total Processed Catalysts: 99
+AMZN - macro_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 73, Keep: 6, Create: 18, Update: 6, Valid: 30, Total Processed Catalysts: 103
+COIN - product_initiative: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 77, Keep: 6, Create: 19, Update: 6, Valid: 31, Total Processed Catalysts: 108
+COIN - partnership_deal: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 78, Keep: 6, Create: 20, Update: 7, Valid: 33, Total Processed Catalysts: 111
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+COIN - cost_efficiency: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 80, Keep: 6, Create: 21, Update: 7, Valid: 34, Total Processed Catalysts: 114
+COIN - regulatory_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 86, Keep: 6, Create: 22, Update: 7, Valid: 35, Total Processed Catalysts: 121
+COIN - risk_event: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 90, Keep: 6, Create: 23, Update: 8, Valid: 36, Total Processed Catalysts: 127
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+COST - guidance_outlook: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 94, Keep: 6, Create: 24, Update: 9, Valid: 37, Total Processed Catalysts: 133
+COST - product_initiative: Total records processed: 2, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 96, Keep: 6, Create: 24, Update: 11, Valid: 39, Total Processed Catalysts: 137
+COST - partnership_deal: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 99, Keep: 6, Create: 24, Update: 12, Valid: 39, Total Processed Catalysts: 141
+COST - cost_efficiency: Total records processed: 2, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 101, Keep: 6, Create: 24, Update: 14, Valid: 41, Total Processed Catalysts: 145
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+COST - capital_actions: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 104, Keep: 6, Create: 25, Update: 14, Valid: 42, Total Processed Catalysts: 149
+COST - regulatory_policy: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 105, Keep: 6, Create: 27, Update: 14, Valid: 44, Total Processed Catalysts: 152
+COST - demand_trends: Total records processed: 2, New records inserted: 0, Existing records updated: 2, Master records updated: 1
+Actions so far - Skip: 107, Keep: 6, Create: 27, Update: 16, Valid: 45, Total Processed Catalysts: 156
+COST - risk_event: Total records processed: 3, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 107, Keep: 7, Create: 29, Update: 16, Valid: 48, Total Processed Catalysts: 159
+COST - macro_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 108, Keep: 7, Create: 30, Update: 16, Valid: 49, Total Processed Catalysts: 161Processing states - news - monthly - 2025 12:  28%|██▊       | 45/162 [1:22:10<3:51:00, 118.46s/it]Processing states - news - monthly - 2025 12:  28%|██▊       | 46/162 [1:27:13<5:36:03, 173.82s/it]Processing states - news - monthly - 2025 12:  29%|██▉       | 47/162 [1:29:53<5:25:13, 169.68s/it]Processing states - news - monthly - 2025 12:  30%|██▉       | 48/162 [1:32:43<5:22:34, 169.77s/it]Processing states - news - monthly - 2025 12:  30%|███       | 49/162 [1:35:13<5:08:35, 163.86s/it]Processing states - news - monthly - 2025 12:  31%|███       | 50/162 [1:36:04<4:02:42, 130.02s/it]Processing states - news - monthly - 2025 12:  31%|███▏      | 51/162 [1:40:40<5:21:26, 173.75s/it]Processing states - news - monthly - 2025 12:  32%|███▏      | 52/162 [1:41:52<4:22:28, 143.16s/it]Processing states - news - monthly - 2025 12:  33%|███▎      | 53/162 [1:43:58<4:11:01, 138.18s/it]Processing states - news - monthly - 2025 12:  33%|███▎      | 54/162 [1:44:32<3:12:04, 106.71s/it]Processing states - news - monthly - 2025 12:  34%|███▍      | 55/162 [1:45:08<2:32:23, 85.45s/it] Processing states - news - monthly - 2025 12:  35%|███▍      | 56/162 [1:48:11<3:22:44, 114.76s/it]Processing states - news - monthly - 2025 12:  35%|███▌      | 57/162 [1:51:15<3:57:13, 135.56s/it]Processing states - news - monthly - 2025 12:  36%|███▌      | 58/162 [1:52:31<3:24:16, 117.85s/it]Processing states - news - monthly - 2025 12:  36%|███▋      | 59/162 [1:53:11<2:42:13, 94.50s/it] Processing states - news - monthly - 2025 12:  37%|███▋      | 60/162 [1:55:00<2:47:44, 98.67s/it]Processing states - news - monthly - 2025 12:  38%|███▊      | 61/162 [1:57:36<3:15:18, 116.03s/it]Processing states - news - monthly - 2025 12:  38%|███▊      | 62/162 [1:59:24<3:09:25, 113.65s/it]Processing states - news - monthly - 2025 12:  39%|███▉      | 63/162 [2:00:54<2:55:36, 106.43s/it]Processing states - news - monthly - 2025 12:  40%|███▉      | 64/162 [2:02:28<2:47:49, 102.75s/it]Processing states - news - monthly - 2025 12:  40%|████      | 65/162 [2:04:34<2:57:07, 109.56s/it]Processing states - news - monthly - 2025 12:  41%|████      | 66/162 [2:07:47<3:35:30, 134.69s/it]Processing states - news - monthly - 2025 12:  41%|████▏     | 67/162 [2:09:54<3:29:27, 132.29s/it]Processing states - news - monthly - 2025 12:  42%|████▏     | 68/162 [2:11:36<3:13:01, 123.20s/it]Processing states - news - monthly - 2025 12:  43%|████▎     | 69/162 [2:13:04<2:54:52, 112.83s/it]Processing states - news - monthly - 2025 12:  43%|████▎     | 70/162 [2:16:51<3:45:24, 147.00s/it]Processing states - news - monthly - 2025 12:  44%|████▍     | 71/162 [2:20:22<4:12:02, 166.19s/it]Processing states - news - monthly - 2025 12:  44%|████▍     | 72/162 [2:20:54<3:09:05, 126.06s/it]Processing states - news - monthly - 2025 12:  45%|████▌     | 73/162 [2:21:50<2:35:41, 104.96s/it]Processing states - news - monthly - 2025 12:  46%|████▌     | 74/162 [2:23:56<2:42:57, 111.11s/it]Processing states - news - monthly - 2025 12:  46%|████▋     | 75/162 [2:26:56<3:11:05, 131.79s/it]Processing states - news - monthly - 2025 12:  47%|████▋     | 76/162 [2:31:52<4:19:52, 181.31s/it]Processing states - news - monthly - 2025 12:  48%|████▊     | 77/162 [2:35:46<4:39:08, 197.04s/it]Processing states - news - monthly - 2025 12:  48%|████▊     | 78/162 [2:38:32<4:22:56, 187.82s/it]Processing states - news - monthly - 2025 12:  49%|████▉     | 79/162 [2:40:31<3:51:01, 167.01s/it]Processing states - news - monthly - 2025 12:  49%|████▉     | 80/162 [2:42:59<3:40:18, 161.20s/it]Processing states - news - monthly - 2025 12:  50%|█████     | 81/162 [2:47:31<4:22:42, 194.60s/it]
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+CRWD - guidance_outlook: Total records processed: 3, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 109, Keep: 7, Create: 32, Update: 17, Valid: 51, Total Processed Catalysts: 165
+CRWD - product_initiative: Total records processed: 3, New records inserted: 1, Existing records updated: 1, Master records updated: 0
+Actions so far - Skip: 110, Keep: 8, Create: 33, Update: 18, Valid: 53, Total Processed Catalysts: 169
+CRWD - partnership_deal: Total records processed: 3, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 111, Keep: 9, Create: 35, Update: 18, Valid: 56, Total Processed Catalysts: 173
+CRWD - cost_efficiency: Total records processed: 2, New records inserted: 0, Existing records updated: 1, Master records updated: 0
+Actions so far - Skip: 113, Keep: 9, Create: 35, Update: 20, Valid: 56, Total Processed Catalysts: 177
+CRWD - capital_actions: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 115, Keep: 10, Create: 35, Update: 20, Valid: 57, Total Processed Catalysts: 180
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+CRWD - regulatory_policy: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 117, Keep: 10, Create: 37, Update: 20, Valid: 59, Total Processed Catalysts: 184
+CRWD - demand_trends: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 119, Keep: 10, Create: 38, Update: 20, Valid: 60, Total Processed Catalysts: 187
+CRWD - risk_event: Total records processed: 2, New records inserted: 1, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 121, Keep: 11, Create: 39, Update: 20, Valid: 62, Total Processed Catalysts: 191
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+GOOGL - product_initiative: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 129, Keep: 12, Create: 39, Update: 20, Valid: 63, Total Processed Catalysts: 200
+GOOGL - partnership_deal: Total records processed: 3, New records inserted: 2, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 130, Keep: 13, Create: 41, Update: 20, Valid: 65, Total Processed Catalysts: 204
+GOOGL - cost_efficiency: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 132, Keep: 13, Create: 42, Update: 20, Valid: 66, Total Processed Catalysts: 207
+GOOGL - regulatory_policy: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 138, Keep: 13, Create: 44, Update: 20, Valid: 68, Total Processed Catalysts: 215
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+GOOGL - risk_event: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 145, Keep: 13, Create: 45, Update: 20, Valid: 69, Total Processed Catalysts: 223
+GOOGL - macro_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 148, Keep: 13, Create: 46, Update: 20, Valid: 70, Total Processed Catalysts: 227
+HOOD - guidance_outlook: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 151, Keep: 13, Create: 47, Update: 20, Valid: 71, Total Processed Catalysts: 231
+HOOD - product_initiative: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 153, Keep: 13, Create: 49, Update: 20, Valid: 73, Total Processed Catalysts: 235
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+HOOD - partnership_deal: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 155, Keep: 13, Create: 50, Update: 20, Valid: 74, Total Processed Catalysts: 238
+Error processing HOOD: "'keep'". Retrying...
+HOOD - cost_efficiency: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 158, Keep: 14, Create: 50, Update: 20, Valid: 75, Total Processed Catalysts: 242
+HOOD - capital_actions: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 161, Keep: 14, Create: 50, Update: 21, Valid: 76, Total Processed Catalysts: 246
+HOOD - regulatory_policy: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 163, Keep: 14, Create: 50, Update: 22, Valid: 77, Total Processed Catalysts: 249
+Error processing HOOD: "'demand_trends'". Retrying...
+HOOD - demand_trends: Total records processed: 2, New records inserted: 0, Existing records updated: 1, Master records updated: 0
+Actions so far - Skip: 165, Keep: 14, Create: 50, Update: 24, Valid: 78, Total Processed Catalysts: 253
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+HOOD - risk_event: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 168, Keep: 14, Create: 51, Update: 24, Valid: 79, Total Processed Catalysts: 257
+INTC - guidance_outlook: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 173, Keep: 15, Create: 51, Update: 24, Valid: 80, Total Processed Catalysts: 263
+INTC - product_initiative: Total records processed: 3, New records inserted: 2, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 173, Keep: 16, Create: 53, Update: 24, Valid: 83, Total Processed Catalysts: 266
+INTC - partnership_deal: Total records processed: 3, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 173, Keep: 16, Create: 55, Update: 25, Valid: 86, Total Processed Catalysts: 269
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+INTC - cost_efficiency: Total records processed: 3, New records inserted: 2, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 173, Keep: 16, Create: 57, Update: 26, Valid: 89, Total Processed Catalysts: 272
+INTC - capital_actions: Total records processed: 4, New records inserted: 4, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 173, Keep: 16, Create: 61, Update: 26, Valid: 93, Total Processed Catalysts: 276
+INTC - regulatory_policy: Total records processed: 4, New records inserted: 3, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 173, Keep: 17, Create: 64, Update: 26, Valid: 97, Total Processed Catalysts: 280
+INTC - demand_trends: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 176, Keep: 17, Create: 64, Update: 27, Valid: 98, Total Processed Catalysts: 284
+INTC - risk_event: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 178, Keep: 17, Create: 66, Update: 27, Valid: 100, Total Processed Catalysts: 288
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+INTC - macro_policy: Total records processed: 4, New records inserted: 2, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 178, Keep: 19, Create: 68, Update: 27, Valid: 104, Total Processed Catalysts: 292
+Error processing JPM: "'keep'". Retrying...
+Error processing JPM: "'guidance_outlook'". Retrying...
+JPM - guidance_outlook: Total records processed: 2, New records inserted: 0, Existing records updated: 0, Master records updated: 0Processing states - news - monthly - 2025 12:  51%|█████     | 82/162 [2:51:49<4:44:46, 213.58s/it]Processing states - news - monthly - 2025 12:  51%|█████     | 83/162 [2:52:54<3:42:30, 168.99s/it]Processing states - news - monthly - 2025 12:  52%|█████▏    | 84/162 [2:53:42<2:52:21, 132.58s/it]Processing states - news - monthly - 2025 12:  52%|█████▏    | 85/162 [2:55:01<2:29:36, 116.57s/it]Processing states - news - monthly - 2025 12:  53%|█████▎    | 86/162 [2:57:44<2:45:23, 130.58s/it]Processing states - news - monthly - 2025 12:  54%|█████▎    | 87/162 [2:59:15<2:28:24, 118.72s/it]Processing states - news - monthly - 2025 12:  54%|█████▍    | 88/162 [3:00:35<2:12:13, 107.21s/it]Processing states - news - monthly - 2025 12:  55%|█████▍    | 89/162 [3:01:52<1:59:16, 98.04s/it] Processing states - news - monthly - 2025 12:  56%|█████▌    | 90/162 [3:02:33<1:37:04, 80.89s/it]Processing states - news - monthly - 2025 12:  56%|█████▌    | 91/162 [3:06:45<2:36:30, 132.26s/it]Processing states - news - monthly - 2025 12:  57%|█████▋    | 92/162 [3:08:08<2:17:00, 117.44s/it]Processing states - news - monthly - 2025 12:  57%|█████▋    | 93/162 [3:10:06<2:15:17, 117.65s/it]Processing states - news - monthly - 2025 12:  58%|█████▊    | 94/162 [3:10:48<1:47:38, 94.97s/it] Processing states - news - monthly - 2025 12:  59%|█████▊    | 95/162 [3:11:40<1:31:43, 82.14s/it]Processing states - news - monthly - 2025 12:  59%|█████▉    | 96/162 [3:16:21<2:35:45, 141.61s/it]Processing states - news - monthly - 2025 12:  60%|█████▉    | 97/162 [3:17:02<2:00:52, 111.58s/it]Processing states - news - monthly - 2025 12:  60%|██████    | 98/162 [3:17:46<1:37:26, 91.35s/it] Processing states - news - monthly - 2025 12:  61%|██████    | 99/162 [3:18:10<1:14:43, 71.16s/it]Processing states - news - monthly - 2025 12:  62%|██████▏   | 100/162 [3:19:27<1:15:16, 72.84s/it]Processing states - news - monthly - 2025 12:  62%|██████▏   | 101/162 [3:22:52<1:54:19, 112.45s/it]Processing states - news - monthly - 2025 12:  63%|██████▎   | 102/162 [3:24:37<1:50:07, 110.12s/it]Processing states - news - monthly - 2025 12:  64%|██████▎   | 103/162 [3:25:15<1:27:11, 88.67s/it] Processing states - news - monthly - 2025 12:  64%|██████▍   | 104/162 [3:26:39<1:24:21, 87.26s/it]Processing states - news - monthly - 2025 12:  65%|██████▍   | 105/162 [3:28:36<1:31:20, 96.15s/it]Processing states - news - monthly - 2025 12:  65%|██████▌   | 106/162 [3:32:06<2:01:40, 130.37s/it]Processing states - news - monthly - 2025 12:  66%|██████▌   | 107/162 [3:33:40<1:49:23, 119.34s/it]Processing states - news - monthly - 2025 12:  67%|██████▋   | 108/162 [3:35:43<1:48:17, 120.32s/it]Processing states - news - monthly - 2025 12:  67%|██████▋   | 109/162 [3:37:24<1:41:14, 114.62s/it]Processing states - news - monthly - 2025 12:  68%|██████▊   | 110/162 [3:38:42<1:29:50, 103.66s/it]Processing states - news - monthly - 2025 12:  69%|██████▊   | 111/162 [3:43:10<2:09:53, 152.82s/it]Processing states - news - monthly - 2025 12:  69%|██████▉   | 112/162 [3:43:47<1:38:36, 118.34s/it]Processing states - news - monthly - 2025 12:  70%|██████▉   | 113/162 [3:44:19<1:15:23, 92.33s/it] Processing states - news - monthly - 2025 12:  70%|███████   | 114/162 [3:46:03<1:16:41, 95.87s/it]Processing states - news - monthly - 2025 12:  71%|███████   | 115/162 [3:48:31<1:27:12, 111.34s/it]Processing states - news - monthly - 2025 12:  72%|███████▏  | 116/162 [3:52:03<1:48:37, 141.69s/it]Processing states - news - monthly - 2025 12:  72%|███████▏  | 117/162 [3:52:37<1:21:59, 109.33s/it]Processing states - news - monthly - 2025 12:  73%|███████▎  | 118/162 [3:53:22<1:05:59, 89.98s/it] Processing states - news - monthly - 2025 12:  73%|███████▎  | 119/162 [3:54:51<1:04:24, 89.87s/it]Processing states - news - monthly - 2025 12:  74%|███████▍  | 120/162 [3:56:07<59:56, 85.62s/it]  Processing states - news - monthly - 2025 12:  75%|███████▍  | 121/162 [3:59:18<1:20:00, 117.10s/it]Processing states - news - monthly - 2025 12:  75%|███████▌  | 122/162 [3:59:51<1:01:15, 91.89s/it] Processing states - news - monthly - 2025 12:  76%|███████▌  | 123/162 [4:01:48<1:04:39, 99.47s/it]Processing states - news - monthly - 2025 12:  77%|███████▋  | 124/162 [4:02:48<55:34, 87.74s/it]  Processing states - news - monthly - 2025 12:  77%|███████▋  | 125/162 [4:05:37<1:09:06, 112.07s/it]Processing states - news - monthly - 2025 12:  78%|███████▊  | 126/162 [4:08:14<1:15:14, 125.40s/it]Processing states - news - monthly - 2025 12:  78%|███████▊  | 127/162 [4:09:41<1:06:30, 114.01s/it]Processing states - news - monthly - 2025 12:  79%|███████▉  | 128/162 [4:12:37<1:15:07, 132.58s/it]
+Actions so far - Skip: 179, Keep: 19, Create: 68, Update: 29, Valid: 105, Total Processed Catalysts: 295
+JPM - product_initiative: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 182, Keep: 19, Create: 69, Update: 29, Valid: 106, Total Processed Catalysts: 299
+JPM - cost_efficiency: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 0
+Actions so far - Skip: 189, Keep: 19, Create: 69, Update: 30, Valid: 106, Total Processed Catalysts: 307
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+JPM - regulatory_policy: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 196, Keep: 19, Create: 70, Update: 30, Valid: 107, Total Processed Catalysts: 315
+JPM - demand_trends: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 199, Keep: 19, Create: 70, Update: 31, Valid: 107, Total Processed Catalysts: 319
+JPM - risk_event: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 202, Keep: 19, Create: 71, Update: 31, Valid: 108, Total Processed Catalysts: 323
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+LLY - guidance_outlook: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 206, Keep: 19, Create: 73, Update: 31, Valid: 110, Total Processed Catalysts: 329
+LLY - product_initiative: Total records processed: 2, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 208, Keep: 21, Create: 73, Update: 31, Valid: 112, Total Processed Catalysts: 333
+LLY - partnership_deal: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 210, Keep: 21, Create: 75, Update: 31, Valid: 114, Total Processed Catalysts: 337
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+LLY - regulatory_policy: Total records processed: 2, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 220, Keep: 21, Create: 75, Update: 33, Valid: 116, Total Processed Catalysts: 349
+META - guidance_outlook: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 233, Keep: 21, Create: 76, Update: 33, Valid: 117, Total Processed Catalysts: 363
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+META - product_initiative: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 236, Keep: 21, Create: 77, Update: 33, Valid: 118, Total Processed Catalysts: 367
+META - partnership_deal: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 0
+Actions so far - Skip: 239, Keep: 21, Create: 77, Update: 34, Valid: 118, Total Processed Catalysts: 371
+META - capital_actions: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 245, Keep: 21, Create: 78, Update: 34, Valid: 119, Total Processed Catalysts: 378
+META - regulatory_policy: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 247, Keep: 21, Create: 80, Update: 34, Valid: 121, Total Processed Catalysts: 382
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+META - demand_trends: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 250, Keep: 21, Create: 81, Update: 34, Valid: 122, Total Processed Catalysts: 386
+META - risk_event: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 253, Keep: 21, Create: 82, Update: 34, Valid: 123, Total Processed Catalysts: 390
+META - macro_policy: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 255, Keep: 21, Create: 84, Update: 34, Valid: 125, Total Processed Catalysts: 394
+MSFT - guidance_outlook: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 258, Keep: 21, Create: 85, Update: 34, Valid: 126, Total Processed Catalysts: 398
+MSFT - product_initiative: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 260, Keep: 21, Create: 86, Update: 34, Valid: 127, Total Processed Catalysts: 401
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+MSFT - partnership_deal: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 262, Keep: 21, Create: 88, Update: 34, Valid: 129, Total Processed Catalysts: 405
+MSFT - regulatory_policy: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 271, Keep: 22, Create: 89, Update: 34, Valid: 131, Total Processed Catalysts: 416
+MSFT - demand_trends: Total records processed: 2, New records inserted: 1, Existing records updated: 1, Master records updated: 0
+Actions so far - Skip: 273, Keep: 22, Create: 90, Update: 35, Valid: 132, Total Processed Catalysts: 420
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+MSFT - risk_event: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 276, Keep: 22, Create: 91, Update: 35, Valid: 133, Total Processed Catalysts: 424
+NVDA - product_initiative: Total records processed: 2, New records inserted: 1, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 285, Keep: 23, Create: 92, Update: 35, Valid: 135, Total Processed Catalysts: 435
+NVDA - partnership_deal: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 288, Keep: 23, Create: 93, Update: 35, Valid: 136, Total Processed Catalysts: 439
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+NVDA - cost_efficiency: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 291, Keep: 24, Create: 93, Update: 35, Valid: 137, Total Processed Catalysts: 443
+NVDA - regulatory_policy: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 296, Keep: 24, Create: 95, Update: 35, Valid: 139, Total Processed Catalysts: 450
+NVDA - demand_trends: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 299, Keep: 25, Create: 95, Update: 35, Valid: 140, Total Processed Catalysts: 454
+NVDA - risk_event: Total records processed: 3, New records inserted: 3, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 300, Keep: 25, Create: 98, Update: 35, Valid: 143, Total Processed Catalysts: 458
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+PLTR - guidance_outlook: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 305, Keep: 25, Create: 98, Update: 36, Valid: 144, Total Processed Catalysts: 464
+PLTR - product_initiative: Total records processed: 3, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 306, Keep: 26, Create: 100, Update: 36, Valid: 147, Total Processed Catalysts: 468
+PLTR - partnership_deal: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0Processing states - news - monthly - 2025 12:  80%|███████▉  | 129/162 [4:15:13<1:16:47, 139.62s/it]Processing states - news - monthly - 2025 12:  80%|████████  | 130/162 [4:18:26<1:23:00, 155.64s/it]Processing states - news - monthly - 2025 12:  81%|████████  | 131/162 [4:21:19<1:23:08, 160.91s/it]Processing states - news - monthly - 2025 12:  81%|████████▏ | 132/162 [4:23:06<1:12:15, 144.53s/it]Processing states - news - monthly - 2025 12:  82%|████████▏ | 133/162 [4:24:54<1:04:34, 133.59s/it]Processing states - news - monthly - 2025 12:  83%|████████▎ | 134/162 [4:26:27<56:40, 121.46s/it]  Processing states - news - monthly - 2025 12:  83%|████████▎ | 135/162 [4:28:03<51:13, 113.84s/it]Processing states - news - monthly - 2025 12:  84%|████████▍ | 136/162 [4:32:13<1:07:01, 154.69s/it]Processing states - news - monthly - 2025 12:  85%|████████▍ | 137/162 [4:33:23<53:54, 129.37s/it]  Processing states - news - monthly - 2025 12:  85%|████████▌ | 138/162 [4:34:50<46:37, 116.56s/it]Processing states - news - monthly - 2025 12:  86%|████████▌ | 139/162 [4:37:52<52:17, 136.40s/it]Processing states - news - monthly - 2025 12:  86%|████████▋ | 140/162 [4:40:45<54:02, 147.37s/it]Processing states - news - monthly - 2025 12:  87%|████████▋ | 141/162 [4:44:42<1:00:57, 174.17s/it]Processing states - news - monthly - 2025 12:  88%|████████▊ | 142/162 [4:45:37<46:09, 138.46s/it]  Processing states - news - monthly - 2025 12:  88%|████████▊ | 143/162 [4:46:50<37:38, 118.87s/it]Processing states - news - monthly - 2025 12:  89%|████████▉ | 144/162 [4:47:32<28:40, 95.59s/it] Processing states - news - monthly - 2025 12:  90%|████████▉ | 145/162 [4:50:06<32:04, 113.20s/it]Processing states - news - monthly - 2025 12:  90%|█████████ | 146/162 [4:55:36<47:29, 178.11s/it]Processing states - news - monthly - 2025 12:  91%|█████████ | 147/162 [4:57:39<40:26, 161.78s/it]Processing states - news - monthly - 2025 12:  91%|█████████▏| 148/162 [5:00:29<38:17, 164.10s/it]Processing states - news - monthly - 2025 12:  92%|█████████▏| 149/162 [5:02:29<32:43, 151.04s/it]Processing states - news - monthly - 2025 12:  93%|█████████▎| 150/162 [5:05:44<32:51, 164.27s/it]Processing states - news - monthly - 2025 12:  93%|█████████▎| 151/162 [5:09:16<32:42, 178.37s/it]Processing states - news - monthly - 2025 12:  94%|█████████▍| 152/162 [5:11:49<28:29, 170.94s/it]Processing states - news - monthly - 2025 12:  94%|█████████▍| 153/162 [5:12:38<20:07, 134.15s/it]Processing states - news - monthly - 2025 12:  95%|█████████▌| 154/162 [5:15:11<18:40, 140.01s/it]Processing states - news - monthly - 2025 12:  96%|█████████▌| 155/162 [5:19:08<19:43, 169.08s/it]Processing states - news - monthly - 2025 12:  96%|█████████▋| 156/162 [5:22:03<17:04, 170.76s/it]Processing states - news - monthly - 2025 12:  97%|█████████▋| 157/162 [5:23:56<12:47, 153.54s/it]Processing states - news - monthly - 2025 12:  98%|█████████▊| 158/162 [5:24:39<08:01, 120.36s/it]Processing states - news - monthly - 2025 12:  98%|█████████▊| 159/162 [5:26:35<05:56, 118.99s/it]Processing states - news - monthly - 2025 12:  99%|█████████▉| 160/162 [5:27:34<03:22, 101.06s/it]Processing states - news - monthly - 2025 12:  99%|█████████▉| 161/162 [5:30:16<01:59, 119.38s/it]Processing states - news - monthly - 2025 12: 100%|██████████| 162/162 [5:30:59<00:00, 96.46s/it] Processing states - news - monthly - 2025 12: 100%|██████████| 162/162 [5:30:59<00:00, 122.59s/it]
+
+Actions so far - Skip: 308, Keep: 26, Create: 102, Update: 36, Valid: 149, Total Processed Catalysts: 472
+Error processing PLTR: "'cost_efficiency'". Retrying...
+PLTR - cost_efficiency: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 311, Keep: 26, Create: 102, Update: 37, Valid: 150, Total Processed Catalysts: 476
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+PLTR - regulatory_policy: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 317, Keep: 26, Create: 102, Update: 38, Valid: 151, Total Processed Catalysts: 483
+PLTR - demand_trends: Total records processed: 2, New records inserted: 0, Existing records updated: 2, Master records updated: 1
+Actions so far - Skip: 319, Keep: 27, Create: 102, Update: 39, Valid: 153, Total Processed Catalysts: 487
+PLTR - risk_event: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 322, Keep: 27, Create: 102, Update: 40, Valid: 154, Total Processed Catalysts: 491
+PLTR - macro_policy: Total records processed: 2, New records inserted: 1, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 323, Keep: 28, Create: 103, Update: 40, Valid: 156, Total Processed Catalysts: 494
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+SOFI - guidance_outlook: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 325, Keep: 28, Create: 105, Update: 40, Valid: 158, Total Processed Catalysts: 498
+SOFI - product_initiative: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 328, Keep: 29, Create: 105, Update: 40, Valid: 159, Total Processed Catalysts: 502
+SOFI - partnership_deal: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 330, Keep: 29, Create: 106, Update: 40, Valid: 160, Total Processed Catalysts: 505
+SOFI - cost_efficiency: Total records processed: 3, New records inserted: 3, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 331, Keep: 29, Create: 109, Update: 40, Valid: 163, Total Processed Catalysts: 509
+SOFI - capital_actions: Total records processed: 4, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 331, Keep: 31, Create: 111, Update: 40, Valid: 167, Total Processed Catalysts: 513
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+SOFI - regulatory_policy: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 332, Keep: 32, Create: 112, Update: 40, Valid: 169, Total Processed Catalysts: 516
+SOFI - demand_trends: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 335, Keep: 33, Create: 112, Update: 40, Valid: 170, Total Processed Catalysts: 520
+SOFI - risk_event: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 338, Keep: 33, Create: 113, Update: 40, Valid: 171, Total Processed Catalysts: 524
+TSLA - guidance_outlook: Total records processed: 3, New records inserted: 3, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 342, Keep: 33, Create: 116, Update: 40, Valid: 174, Total Processed Catalysts: 531
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+Error processing TSLA: "'product_initiative'". Retrying...
+TSLA - product_initiative: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 344, Keep: 33, Create: 118, Update: 40, Valid: 176, Total Processed Catalysts: 535
+TSLA - partnership_deal: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 346, Keep: 33, Create: 119, Update: 41, Valid: 178, Total Processed Catalysts: 539
+TSLA - cost_efficiency: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 348, Keep: 33, Create: 121, Update: 41, Valid: 180, Total Processed Catalysts: 543
+TSLA - capital_actions: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 351, Keep: 33, Create: 122, Update: 41, Valid: 181, Total Processed Catalysts: 547
+TSLA - regulatory_policy: Total records processed: 4, New records inserted: 3, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 351, Keep: 34, Create: 125, Update: 41, Valid: 185, Total Processed Catalysts: 551
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+TSLA - demand_trends: Total records processed: 2, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 353, Keep: 36, Create: 125, Update: 41, Valid: 187, Total Processed Catalysts: 555
+TSLA - risk_event: Total records processed: 2, New records inserted: 2, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 355, Keep: 36, Create: 127, Update: 41, Valid: 189, Total Processed Catalysts: 559
+XOM - guidance_outlook: Total records processed: 2, New records inserted: 0, Existing records updated: 2, Master records updated: 2
+Actions so far - Skip: 361, Keep: 36, Create: 127, Update: 43, Valid: 191, Total Processed Catalysts: 567
+Error processing XOM: "'keep'". Retrying...
+XOM - product_initiative: Total records processed: 3, New records inserted: 1, Existing records updated: 2, Master records updated: 2
+Actions so far - Skip: 362, Keep: 38, Create: 128, Update: 43, Valid: 194, Total Processed Catalysts: 571
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+XOM - cost_efficiency: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 369, Keep: 38, Create: 129, Update: 43, Valid: 195, Total Processed Catalysts: 579
+XOM - regulatory_policy: Total records processed: 2, New records inserted: 1, Existing records updated: 1, Master records updated: 1
+Actions so far - Skip: 373, Keep: 39, Create: 130, Update: 43, Valid: 197, Total Processed Catalysts: 585
+XOM - demand_trends: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0
+Actions so far - Skip: 375, Keep: 40, Create: 130, Update: 43, Valid: 198, Total Processed Catalysts: 588
+
+[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...
+Total new records inserted: 130
+Total existing records updated: 38
+Total master records updated: 30
+ETL process completed in 19859.83 seconds.

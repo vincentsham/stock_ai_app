@@ -38,6 +38,7 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
+| 20 | Feature | Optimize the live price using yfinance; Allow to download and use the local stock logo; Show the last updated date; Add contact at footer | High | Open | | | |
 | 1005 | Feature | Add loading spinner and error page | Medium | Open |  | | |
 | 1006 | Feature | Add tooltips for metrics session, including the % change | Medium | Open |  | | |
 | 10001 | Technical | Finetune metadata for SEO | Low | Open | | | |

@@ -30,9 +30,21 @@ def connect_to_db():
         print(f"Error connecting to the database: {e}")
         return None
     
-def escape_sql_literal(s: str) -> str:
-    """Very basic escape for SQL string literals (single quotes)."""
-    return s.replace("'", "''") if s is not None else s
+def escape_sql_literal(val):
+    if val is None:
+        return None
+    if isinstance(val, str):
+        return val.replace("'", "''")
+    # Avoid converting lists, dicts, or other non-string types to string
+    return val
+
+def escape_sql_backslash(val):
+    if val is None:
+        return None
+    if isinstance(val, str):
+        return val.replace('\\', '\\\\')
+    # Avoid converting lists, dicts, or other non-string types to string
+    return val
 
 def execute_query(sql: str, params: Optional[dict] = None):
     """Execute a SQL query with optional parameters."""
@@ -74,6 +86,12 @@ def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[],
     """
     Fast and minimal insert/upsert using psycopg cursor.execute with tuples.
     """
+
+    # apply safe_str to all string columns
+    # for col in df.select_dtypes(include=['object', 'string']).columns:
+    #     df.loc[:, col] = df[col].apply(escape_sql_literal)
+    #     df.loc[:, col] = df[col].apply(escape_sql_backslash)
+
     # Replace NaN/NA with None for PostgreSQL compatibility
     df = df.astype(object)
     df = df.where(pd.notnull(df), None)
@@ -127,7 +145,12 @@ def insert_record(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[],
     """
     Fast and minimal insert/upsert using psycopg cursor.execute with tuples.
     """
+    # for col in df.select_dtypes(include=['object', 'string']).columns:
+    #     df.loc[:, col] = df[col].apply(escape_sql_literal)
+    #     df.loc[:, col] = df[col].apply(escape_sql_backslash)
+
     # Replace NaN/NA with None for PostgreSQL compatibility
+    df = df.astype(object)
     df = df.replace({pd.NA: None, float('nan'): None, np.nan: None})
 
     cols = list(df.columns)
@@ -173,3 +196,4 @@ def insert_record(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[],
         return 0
 
     
+

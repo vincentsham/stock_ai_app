@@ -91,7 +91,7 @@ def main(type: Literal["news", "earnings_transcript"] = "news"):
     retries = 3
 
     # Use tqdm to track progress
-    for state in tqdm(states, desc="Processing company profiles"):
+    for state in tqdm(states, desc=f"Processing {type} signals"):
         while retries > 0:
             try:
                 final_state = app.invoke(state[0])
@@ -124,4 +124,4 @@ def main(type: Literal["news", "earnings_transcript"] = "news"):
 
 if __name__ == "__main__":
     main("news")
-    # main("earnings_transcript")
+    main("earnings_transcript")

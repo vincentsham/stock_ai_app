@@ -39,6 +39,7 @@ examples:
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
 | 27 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
+| 41 | Miscellaneous | Add shell scripts for running etl jobs; small update on catalyst prompt; small update on catalyst query; small update on ETL processing | High | Open | feat_41 | 2025-12-31 | 2026-01-01 |
 | 1007 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1008 | Feature | Add a consolidated tag logic| Medium | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
