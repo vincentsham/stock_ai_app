@@ -8,22 +8,30 @@ interface CatalystCardProps {
   catalyst: Catalyst;
 }
 
-const ensureDoubleQuotes = (str: string) =>{
+const ensureDoubleQuotes = (str: string) => {
   str = str.trim();
 
   // If wrapped in single quotes → convert to double quotes
   if (str.startsWith("'") && str.endsWith("'")) {
-    return `"${str.slice(1, -1)}"`;
+    str = `"${str.slice(1, -1)}"`;
+  } else if (str.startsWith('"') && str.endsWith('"')) {
+    // If already wrapped in double quotes → return as-is
+    // do nothing
+  } else {
+    // Otherwise wrap in double quotes
+    str = `"${str}"`;
   }
-
-  // If already wrapped in double quotes → return as-is
-  if (str.startsWith('"') && str.endsWith('"')) {
-    return str;
-  }
-
-  // Otherwise wrap in double quotes
-  return `"${str}"`;
+  return str.replace(/'+/g, "'").replace(/"+/g, '"');
 }
+
+// Truncate a string to a max number of words, appending '...' if truncated
+const truncateWords = (str: string, maxWords: number) => {
+  const words = str.split(/\s+/);
+  if (words.length > maxWords) {
+    return words.slice(0, maxWords).join(' ') + '...';
+  }
+  return str;
+};
 
 
 export const CatalystCard: React.FC<CatalystCardProps> = ({ catalyst }) => {
@@ -128,7 +136,7 @@ export const CatalystCard: React.FC<CatalystCardProps> = ({ catalyst }) => {
                         key={`catalyst-${catalyst.catalyst_id}-evidence-${index}`}
                         className="mb-2 last:mb-0 text-xs text-gray-400"
                         >
-                        <span className="italic">{ensureDoubleQuotes(item)}</span>
+                        <span className="italic">{ensureDoubleQuotes(truncateWords(item, 50))}</span>
                         {<a
                             href={url}
                             target="_blank"

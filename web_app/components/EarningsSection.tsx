@@ -5,12 +5,13 @@ import { DollarSign } from 'lucide-react';
 import { EarningsGraph, EarningsLegend } from './EarningsGraph';
 import { EarningsGrowthGraph, EarningsGrowthLegend } from './EarningsGrowthGraph';
 import { EarningsTag } from './EarningsTag';
-import { searchEarnings, searchEarningsRegimes, searchEPSRegimes, searchRevenueRegimes } from '@/lib/db/earningsQueries';
+import { getLatestEarningsDate, searchEarnings, searchEarningsRegimes, searchEPSRegimes, searchRevenueRegimes } from '@/lib/db/earningsQueries';
 import { Earnings, EarningsRegime, EPSRegime, RevenueRegime } from '@/types';
 import { EARNINGS_TAG_METADATA } from '@/lib/constants';
 
 
 export const EarningsSection: React.FC<{ tic: string }> = ({ tic }) => {
+    const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
     const [isMounted, setIsMounted] = useState(false);
     const [viewMode, setViewMode] = useState<'trend' | 'growth' | 'acceleration'>('trend');
     const [chartData, setChartData] = useState<(Earnings & { name: string })[]>([]);
@@ -20,6 +21,8 @@ export const EarningsSection: React.FC<{ tic: string }> = ({ tic }) => {
 
     useEffect(() => {
         const fetchData = async () => {
+            const updatedAt = await getLatestEarningsDate(tic.trim().toUpperCase());
+            setLastUpdatedAt(updatedAt);
             const data = await searchEarnings(tic);
             const dataWithNames = data.slice(-9).map(item => ({
               name: `${item.calendar_year.toString().slice(-2)}Q${item.calendar_quarter}`,
@@ -89,14 +92,20 @@ export const EarningsSection: React.FC<{ tic: string }> = ({ tic }) => {
                 </div>
               </div>
 
+                
 
+              <div className="text-xs text-gray-500 flex items-center gap-1 md:w-1/3 md:justify-end">
+                  {lastUpdatedAt ? (
+                      <>Last updated: <span className="font-mono">{new Date(lastUpdatedAt).toLocaleDateString()}</span></>
+                  ) : (
+                      null
+                  )}
+              </div>
 
-              {/* Legend */}
-              <div className="md:w-1/3 md:ml-auto">
+            </div>
+            <div className="md:w-1/3 md:ml-auto">
                 {viewMode === 'trend'? <EarningsLegend />: <EarningsGrowthLegend />}
-              </div>
-              </div>
-
+            </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               
               {/* EPS Chart */}

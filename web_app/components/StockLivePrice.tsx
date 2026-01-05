@@ -1,13 +1,13 @@
 'use client';
 
-import { useFinnhubAPI } from '@/hooks/useFinnhubAPI';
+import { useStockLivePrice } from '@/hooks/useYahooFinance';
 
 interface StockLivePriceProps {
   tic: string;
 }
 
 export const StockLivePrice: React.FC<StockLivePriceProps> = ({ tic }) => {
-    const { data, isLoading, error } = useFinnhubAPI(tic, null);
+    const { data, isLoading, error } = useStockLivePrice(tic, null);
 
     if (error) {
         return (

@@ -48,7 +48,8 @@ const searchStocks = cache(async (query: string): Promise<StockProfile[]> => {
 const STOCK_SEARCH_QUERY = `
   SELECT tic, name, exchange, sector, industry
   FROM mart.stock_profiles
-  WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.stock_profiles) AND (tic = $1)
+  WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.stock_profiles WHERE tic = $1) 
+        AND tic = $1
   LIMIT 1;
 `;
 

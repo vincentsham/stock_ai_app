@@ -8,12 +8,15 @@ import {
   searchGrowthMetrics,
   searchEfficiencyMetrics,
   searchFinancialHealthMetrics,
+  getLatestStockScoresDate
 } from '@/lib/db/metricsQueries';
 import { MetricList } from '@/types';
 import { MetricCard } from './MetricCard';
 import { AllMetrics } from '@/types/metrics';
+import { NUM_STOCKS } from '@/lib/constants';
 
 export const MetricsSection: React.FC<{ tic: string }> = ({ tic }) => {
+    const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
     const [allMetrics, setAllMetrics] = useState<AllMetrics>({
         valuation: null,
         profitability: null,
@@ -26,6 +29,8 @@ export const MetricsSection: React.FC<{ tic: string }> = ({ tic }) => {
     useEffect(() => {
       const fetchAllData = async () => {
         try {
+          const updatedAt = await getLatestStockScoresDate(tic.trim().toUpperCase());
+          setLastUpdatedAt(updatedAt);
           const [
               valuation, 
               profitability, 
@@ -80,10 +85,17 @@ export const MetricsSection: React.FC<{ tic: string }> = ({ tic }) => {
                   Fundamental Metrics
               </h2>
               <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
-                  <span>Percentile rankings vs 100+ Selected Stocks</span>
+                  <span>Percentile rankings vs {NUM_STOCKS}+ Selected Stocks</span>
               </div>
           </div>
-          
+                <div className="text-xs text-gray-500 flex flex-col md:flex-row items-start md:items-center gap-1 md:justify-end mt-2 md:mt-0">
+                    {lastUpdatedAt ? (
+                        <>
+                            <span>Last updated:</span>
+                            <span className="font-mono">{new Date(lastUpdatedAt).toLocaleDateString()}</span>
+                        </>
+                    ) : null}
+                </div>
         </div>
 
         <div className="grid grid-cols-1 gap-6 items-start md:hidden">

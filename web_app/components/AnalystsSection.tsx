@@ -6,14 +6,17 @@ import { AnalystPTGraph } from './AnalystPTGraph';
 import { AnalystGradeCard } from './AnalystGradeCard';
 import { AnalystPTCard } from './AnalystPTCard';
 import { AnalystAnalysis } from '@/types';
-import { searchAnalystAnalysis } from '@/lib/db/analystQueries';
+import { searchAnalystAnalysis, getLatestAnalystAnalysisDate } from '@/lib/db/analystQueries';
 
 
 export const AnalystsSection: React.FC<{ tic: string }> = ({ tic }) => {
     const [analystData, setAnalystData] = useState<AnalystAnalysis[]>([]);
+    const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
     
     useEffect(() => {
         const fetchData = async () => {
+            const updatedAt = await getLatestAnalystAnalysisDate(tic.trim().toUpperCase());
+            setLastUpdatedAt(updatedAt);
             const data = await searchAnalystAnalysis(tic);
             setAnalystData(data);
         };
@@ -38,6 +41,14 @@ export const AnalystsSection: React.FC<{ tic: string }> = ({ tic }) => {
                   Aggregated ratings & 12-month price forecasts from Wall Street analysts
               </div>
             </div>
+                <div className="text-xs text-gray-500 flex flex-col md:flex-row items-start md:items-center gap-1 md:justify-end mt-2 md:mt-0">
+                    {lastUpdatedAt ? (
+                        <>
+                            <span>Last updated:</span>
+                            <span className="font-mono">{new Date(lastUpdatedAt).toLocaleDateString()}</span>
+                        </>
+                    ) : null}
+                </div>
           </div>
 
           {/* Top Cards Section */}

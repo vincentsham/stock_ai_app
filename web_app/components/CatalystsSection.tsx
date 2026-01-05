@@ -4,12 +4,13 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Catalyst } from '@/types';
 import { CatalystCard } from './CatalystCard';
 import { Zap, TrendingUp, TrendingDown, Loader2, ChevronDown} from 'lucide-react';
-import { searchCatalysts, countCatalysts} from "@/lib/db/catalystQueries";
+import { searchCatalysts, countCatalysts, getLatestCatalystDate } from "@/lib/db/catalystQueries";
 
 
 export const CatalystsSection: React.FC<{ tic: string }> = ( {tic} ) => {
     const [catalystsBull, setCatalystsBull] = useState<Catalyst[]>([]);
     const [catalystsBear, setCatalystsBear] = useState<Catalyst[]>([]);
+    const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
 
     const pageBull = useRef(2);
     const pageBear = useRef(2);
@@ -31,6 +32,8 @@ export const CatalystsSection: React.FC<{ tic: string }> = ( {tic} ) => {
 
     useEffect(() => {
         const fetchInitialData = async () => {
+            const updatedAt = await getLatestCatalystDate(tic.trim().toUpperCase());
+            setLastUpdatedAt(updatedAt);
             const [initialCountBull, initialCountBear] = await Promise.all([
                 countCatalysts(tic.trim().toUpperCase(), 1),
                 countCatalysts(tic.trim().toUpperCase(), -1),
@@ -106,10 +109,14 @@ export const CatalystsSection: React.FC<{ tic: string }> = ( {tic} ) => {
                         Events ranked by recency and potential market impact
                     </div>
                 </div>
-                {/* <div className="text-xs text-gray-500 flex items-center gap-1">
-                    <Info size={12}/>
-                    <span>Sorted by Impact & Recency</span>
-                </div> */}
+                <div className="text-xs text-gray-500 flex flex-col md:flex-row items-start md:items-center gap-1 md:justify-end mt-2 md:mt-0">
+                    {lastUpdatedAt ? (
+                        <>
+                            <span>Last updated:</span>
+                            <span className="font-mono">{new Date(lastUpdatedAt).toLocaleDateString()}</span>
+                        </>
+                    ) : null}
+                </div>
             </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">

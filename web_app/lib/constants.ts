@@ -1,9 +1,13 @@
 import { formatCurrency, formatPercentage, formatRatio } from '@/lib/formatters';
 import { coerceNumber } from './utils';
 
-export const MAX_STOCKS = 5;
+export const NUM_STOCKS = 30;
 
-export const POPULAR_STOCKS = ['AAPL', 'TSLA', 'NVDA', 'PLTR'];
+export const MAX_COMPARE_STOCKS = 5;
+
+export const MAX_DISPLAY_STOCKS = 4;
+
+export const POPULAR_STOCKS = ['AAPL', 'GOOGL', 'NVDA', 'TSLA'];
 
 export const DISCLAIMER_TEXT = `This is for informational purposes only, not financial advice. 
       Be aware: The AI system may occasionally generate incorrect or incomplete information. 

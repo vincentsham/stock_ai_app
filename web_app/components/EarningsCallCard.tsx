@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   ChevronDown, 
   TrendingUp, 
@@ -154,7 +154,7 @@ export const EarningsCallCard = ({ report }: { report: EarningsCallAnalysis }) =
           </button>
         </div>
 
-        <p className="text-gray-300 text-sm leading-relaxed line-clamp-2">
+        <p className={`text-gray-300 text-sm leading-relaxed ${isExpanded ? '' : 'line-clamp-2'}`}>
           {report.past_summary}
         </p>
 

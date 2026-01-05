@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts';
-import { formatCurrency } from '@/lib/formatters';
+import { formatCurrency, formatPercentage } from '@/lib/formatters';
 
 
 
@@ -108,9 +108,10 @@ const CustomTooltip = ({ active, payload, label, type }: CustomTooltipProps) => 
     let diffText = null;
     if (diff !== null && percentChange !== null) {
         const diffValueStr = type === 'currency' ? formatCurrency(Math.abs(diff)) : `$${Math.abs(diff).toFixed(2)}`;
+
         let percentStr = 'N/A';
         if (estimated !== 0) {
-            percentStr = `${percentChange.toFixed(2)}%`;
+          percentStr = formatPercentage(percentChange / 100);
         }
 
         diffText = `Diff: ${diff >= 0 ? '+' : '-'}${diffValueStr} (${percentStr}) ${status}`;
@@ -141,7 +142,7 @@ const CustomTooltip = ({ active, payload, label, type }: CustomTooltipProps) => 
                entry.dataKey === 'eps_estimated' ? 'EPS Est.' :
                entry.dataKey === 'revenue' ? 'Rev' :
                entry.dataKey === 'revenue_estimated' ? 'Rev Est.' :
-                   (entry?.name ?? entry.dataKey)}:
+                   entry.dataKey}:
             </span>
             <span className="text-white font-mono text-xs">
               {type === 'currency' 

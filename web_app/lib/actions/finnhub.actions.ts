@@ -1,6 +1,8 @@
 'use server';
 
 import { cache } from 'react';
+import { promises as fs } from 'fs';
+import path from 'path';
 import { StockPrice } from '@/types/stock';
 
 const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY; 
@@ -22,13 +24,44 @@ async function fetchJSON<T>(url: string, revalidateSeconds?: number): Promise<T>
 
 export const fetchStockLogo = cache(async (tic: string): Promise<string | null> => {
     try {
+        const fileName = `${tic}.png`;
+        // Public URL path (what the browser should request)
+        const publicLogoPath = `/assets/stocks/${fileName}`;
+        // Filesystem path (where we actually store the file)
+        const absoluteLogoPath = path.join(process.cwd(), 'public', 'assets', 'stocks', fileName);
+
+        // If logo already exists locally, return its path
+        try {
+            await fs.access(absoluteLogoPath);
+            return publicLogoPath;
+        } catch {
+            // File does not exist; continue to fetch and download
+        }
+
         const token = FINNHUB_API_KEY;
         if (!token) {
-        throw new Error('FINNHUB API key is not configured');
+            throw new Error('FINNHUB API key is not configured');
         }
+
         const url = `${FINNHUB_BASE_URL}/stock/profile2?symbol=${encodeURIComponent(tic)}&token=${token}`;
         const data = await fetchJSON<{ logo: string | null }>(url, 86400); // Cache for 24 hours
-        return data.logo;
+
+        if (!data.logo) {
+            return null;
+        }
+
+        const imageResponse = await fetch(data.logo);
+        if (!imageResponse.ok) {
+            throw new Error(`Failed to download logo image for ${tic}: ${imageResponse.status}`);
+        }
+
+        const arrayBuffer = await imageResponse.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        await fs.mkdir(path.dirname(absoluteLogoPath), { recursive: true });
+        await fs.writeFile(absoluteLogoPath, buffer);
+
+        return publicLogoPath;
     } catch (error) {
         console.error(`Error fetching stock logo for ${tic}:`, error);
         return null;
