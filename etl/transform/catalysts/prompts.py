@@ -344,54 +344,51 @@ STAGE2B_SYSTEM_MESSAGE = {
 }
 
 
-
 STAGE3_SYSTEM_MESSAGE = """
-You are a Financial Auditor. Your ONLY goal is to validate the findings of an Equity Analyst.
+You are a Sanity Checker. GOAL: Catch hallucinations (lies), but ALLOW all reasonable interpretations.
 
 INPUTS:
-1. SOURCE_TEXT: Raw news/filing text.
+1. SOURCE_TEXT: Raw news/filing text related to <TARGET_COMPANY>.
 2. CATALYST: The Analyst's extracted event.
-3. CATALYST_TYPE & DEFINITION: The specific category scope.
+3. CATALYST_TYPE: The category.
 
-PROTOCOL (PASS=1 | FAIL=0):
+PROTOCOL (BIAS: EXTREME LENIENCY):
 
-1. QUOTE FIDELITY:
-   - 'evidence' must exist in <SOURCE_TEXT_CHUNK>.
-   - IGNORE minor whitespace/punctuation differences.
-   - REJECT if words are altered or combined without "..." bridging.
+1. EVIDENCE CHECK (Fuzzy Matching Allowed):
+   - **FAIL:** If the 'evidence' text is completely absent from <SOURCE_TEXT>. (The Analyst cannot invent a quote).
+   - **PASS:** If the 'evidence' is present but has minor truncation ("..."), whitespace changes, or capitalization differences.
 
-2. DATA INTEGRITY (Strict):
-   - FAIL if 'summary' adds specific numbers, dates, or names NOT in 'evidence'.
-   - EXCEPTION: Standard calendar inferences (e.g., "Q3" -> "Sept") are ALLOWED.
+2. CONCEPTUAL ALIGNMENT (Relaxed):
+   - Do NOT require exact word matches.
+   - PASS if the 'summary' accurately reflects the *meaning* or *implication* of the text.
+   - PASS "Translations" (e.g., Text="Efficiency Program" -> Summary="Cost Cutting/Layoffs").
+   - **PASS Entity Resolution:** Allow the use of parent companies, tickers, or widely known synonyms. This is NOT a hallucination.
 
-3. INTERPRETATION vs. HALLUCINATION (The "Bear" Filter):
-   - You must distinguish "financial decoding" from "inventing facts."
-   - CASE A (Valid Inference): Text="Headwinds" -> Summary="Weak Demand". (PASS: Standard translation).
-   - CASE B (Valid Inference): Text="ATM Facility" -> Summary="Dilution Risk". (PASS: Financial reality).
-   - CASE C (Invalid Hallucination): Text="Efficiency program" -> Summary="Firing 500 people". (FAIL: Number '500' invented).
-   - CASE D (Invalid Logic): Text="We aim to double sales" -> Summary="Sales doubled". (FAIL: Treating goal as fact).
+3. CATEGORY CHECK (Pass almost everything):
+   - Only FAIL if the event is ABSURDLY unrelated (e.g., Type="Product", Event="Dividend Payout").
+   - PASS all overlaps (e.g., A "Product Delay" is valid as "Guidance", "Risk", or "Product").
 
-4. SENTIMENT CHECK:
-   - Do NOT reject negative sentiment on positive-sounding spin (e.g., "Capital Optimization" = Negative Dilution is CORRECT).
-   - Only REJECT if sentiment is logically impossible (e.g., "Bankruptcy" marked Positive).
-   
-5. CATEGORY ALIGNMENT (Strict Scope):
-   - REJECT if the extracted event does not fit the provided <CATALYST_DEFINITION>.
-   - Example: Type="product_initiative" but Event="Dividend Cut". -> FAIL (Wrong category).
-   - Example: Type="guidance_outlook" but Event="New CEO Hired". -> FAIL (Wrong category).
+4. SENTIMENT CHECK (Pass almost everything):
+   - Only FAIL if logically impossible (e.g., "Bankruptcy declared" marked as Positive).
+   - PASS all subjective analyst calls (e.g., Marking "Strategic Alternatives" as Negative).
 
 OUTPUT (JSON ONLY):
 {
   "is_valid": 0 | 1,
-  "rejection_reason": "If 0, state specific error (e.g., 'Wrong category: Dividend is not a Product Initiative'). If 1, use empty string."
+  "rejection_reason": "If 0, state the specific HALLUCINATION. If 1, use empty string."
 }
 """
+
 
 STAGE3_HUMAN_PROMPT_TEMPLATE = """
 <CONTEXT_METADATA>
 Target Type: {catalyst_type}
 Target Definition: {definition}
 </CONTEXT_METADATA>
+
+<TARGET_COMPANY>
+{company_info}
+</TARGET_COMPANY>
 
 <SOURCE_TEXT_CHUNK>
 {chunk_text}
@@ -401,13 +398,14 @@ Target Definition: {definition}
 {stage2_json_output}
 </CANDIDATE_CATALYST>
 
-Instructions:
-1. QUOTE: Verify evidence exists (fuzzy match allowed).
-2. DATA: Ensure no numbers/names were invented.
-3. LOGIC: Check Case A-D rules (Decode spin = OK; Invent facts = FAIL).
-4. SENTIMENT: Confirm sentiment reflects financial reality.
-5. CATEGORY: Does the event strictly fit the 'Target Definition' above?
-6. Return JSON.
+Instructions (STRICT ON FACTS, RELAXED ON LOGIC):
+1. HALLUCINATION CHECK: Does the 'evidence' quote actually exist in the source? (Fuzzy match = OK).
+2. DATA CHECK: Does the 'summary' contain specific numbers/dates NOT found in the 'evidence'?
+   - **FAIL:** If the model invented a price target ($150) or date (Q3 2025) not in the text.
+   - **PASS:** If the model used World Knowledge to name an entity (e.g., "Google" -> "Alphabet").
+3. LOGIC CHECK: Accept "spin decoding" and reasonable inferences (e.g. "Right-sizing" -> "Layoffs" is VALID).
+4. CATEGORY CHECK: Accept if the event loosely fits or overlaps with the definition. Only reject if completely unrelated.
+5. Return JSON.
 """
 
 

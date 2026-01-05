@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from database.utils import connect_to_db, insert_records, execute_query
 from utils import delete_published_records
+from etl.utils import fix_quotes
 
 
 
@@ -89,6 +90,11 @@ def main():
             for record in records:
                 tic = record[0]
                 df = read_records(tic)
+                # Remove "Delta: "
+                df['summary'] = df['summary'].str.replace("delta: ", "", case=False, regex=False)
+                df['summary'] = df['summary'].apply(lambda x: fix_quotes(x) if isinstance(x, str) else x)
+                df['title'] = df['title'].apply(lambda x: fix_quotes(x) if isinstance(x, str) else x)
+                df['evidences'] = df['evidences'].apply(lambda x: [fix_quotes(item) for item in x] if isinstance(x, list) else x)
                 df['as_of_date'] = today
                 cols = ['catalyst_id', 'tic', 'date', 'catalyst_type', 'title', 'summary',
                         'state', 'sentiment', 'time_horizon', 'impact_magnitude', 'certainty',

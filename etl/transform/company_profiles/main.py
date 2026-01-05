@@ -4,6 +4,7 @@ from database.utils import connect_to_db, read_sql_query, insert_records
 from states import CompanyProfileState
 from graph import create_graph
 from tqdm import tqdm
+from etl.utils import fix_quotes
 
 
 
@@ -83,10 +84,14 @@ def main():
     total_records = 0
     if conn:
         processed_data = pd.DataFrame(processed_data)
-        processed_data = processed_data[["tic","company_name","sector","industry","country",
+        processed_data.rename(columns={"company_name": "name"}, inplace=True)
+        processed_data['summary'] = processed_data['summary'].apply(lambda x: fix_quotes(x) if isinstance(x, str) else x)
+        processed_data['short_summary'] = processed_data['short_summary'].apply(lambda x: fix_quotes(x) if isinstance(x, str) else x)
+        processed_data = processed_data[["tic","name","sector","industry","country",
                                          "market_cap","employees","exchange","currency",
                                          "website","description","summary","short_summary",
                                          "raw_json_sha256"]]
+        
         total_records = insert_records(conn, processed_data, 'core.stock_profiles', ['tic'])
         
 

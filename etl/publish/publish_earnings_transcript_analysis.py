@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from database.utils import connect_to_db, insert_records, execute_query
 from utils import delete_published_records
+from etl.utils import fix_quotes
 
 
 
@@ -72,6 +73,11 @@ def main():
                 tic = record[0]
                 df = read_records(tic)
                 df['as_of_date'] = today
+                df['past_summary'] = df['past_summary'].apply(lambda x: fix_quotes(x) if isinstance(x, str) else x)
+                df['future_summary'] = df['future_summary'].apply(lambda x: fix_quotes(x) if isinstance(x, str) else x)
+                df['risk_summary'] = df['risk_summary'].apply(lambda x: fix_quotes(x) if isinstance(x, str) else x)
+                df['mitigation_summary'] = df['mitigation_summary'].apply(lambda x: fix_quotes(x) if isinstance(x, str) else x)
+                
                 cols = ['inference_id', 'event_id',
                         'tic', 'calendar_year', 'calendar_quarter', 'earnings_date', 
                         'sentiment', 'durability', 'performance_factors',

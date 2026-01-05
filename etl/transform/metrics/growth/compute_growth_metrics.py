@@ -278,8 +278,17 @@ def transform_records(conn, tic: str, date: str) -> pd.DataFrame:
         'forward_eps_growth', 'forward_revenue_growth'
     ]]
 
+
     # Ensure DB inserts get Python np.nan instead of NaN.
     transformed_df = transformed_df.where(pd.notna(transformed_df), np.nan)
+
+    # Remove complex numbers (replace with np.nan)
+    for col in transformed_df.columns:
+        if np.issubdtype(transformed_df[col].dtype, np.complexfloating):
+            transformed_df[col] = transformed_df[col].apply(lambda x: x.real if np.isreal(x) else np.nan)
+        else:
+            # If any value is complex, replace with np.nan
+            transformed_df[col] = transformed_df[col].apply(lambda x: x if not isinstance(x, complex) else np.nan)
 
     return transformed_df
 

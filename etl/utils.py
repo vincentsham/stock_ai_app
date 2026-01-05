@@ -11,6 +11,7 @@ import numpy as np
 import re
 import math
 from decimal import Decimal
+import ast
 
 load_dotenv()
 
@@ -348,3 +349,55 @@ def convert_decimals_to_float(df):
             df[col] = df[col].astype(float)
             
     return df
+
+
+
+def ensure_list(val):
+    if isinstance(val, list):
+        return val
+    if isinstance(val, dict) and 0 in val and isinstance(val[0], str) and val[0].startswith('['):
+        try:
+            return ast.literal_eval(val[0])
+        except Exception:
+            return []
+    if isinstance(val, str) and val.startswith('['):
+        try:
+            return ast.literal_eval(val)
+        except Exception:
+            return []
+    if val is None or val == '':
+        return []
+    return [val]  # fallback: wrap single value in a list
+
+
+def fix_quotes(text) -> str:
+    """Convert single-quote delimiters to double quotes while
+    preserving apostrophes inside words (e.g., they're, it's).
+
+    Also normalizes runs of repeated quotes down to a single character
+    before applying the delimiter logic.
+    """
+    if text is None or pd.isnull(text):
+        return text
+
+    # Normalize multiple quotes of the same type to a single one
+    text = re.sub(r"'+", "'", text)
+    text = re.sub(r'"+', '"', text)
+
+    def _replace(match: re.Match) -> str:
+        idx = match.start()
+        prev = text[idx - 1] if idx > 0 else ''
+        next_char = text[idx + 1] if idx < len(text) - 1 else ''
+        is_prev_word = prev.isalnum()
+        is_next_word = next_char.isalnum()
+
+        # Apostrophe inside a word (e.g., they're, it's) → keep as single quote
+        if is_prev_word and is_next_word:
+            return "'"
+
+        # Otherwise treat as quote delimiter → convert to double quote
+        return '"'
+
+    return re.sub(r"'", _replace, text)
+
+

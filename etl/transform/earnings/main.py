@@ -18,7 +18,6 @@ def read_earnings(conn, tic: str) -> pd.DataFrame:
     Returns:
         pd.DataFrame: DataFrame containing earnings data for the given ticker.
     """
-
     query = f"""
         SELECT e.event_id, e.tic, e.calendar_year, e.calendar_quarter,
                e.eps, e.eps_estimated, e.revenue, e.revenue_estimated,
@@ -31,9 +30,23 @@ def read_earnings(conn, tic: str) -> pd.DataFrame:
         WHERE e.tic = '{tic}' 
             AND e.eps IS NOT NULL 
             AND e.revenue IS NOT NULL
-            AND e.raw_json_sha256 IS DISTINCT FROM r.raw_json_sha256
         ORDER BY e.calendar_year, e.calendar_quarter;
     """
+    # query = f"""
+    #     SELECT e.event_id, e.tic, e.calendar_year, e.calendar_quarter,
+    #            e.eps, e.eps_estimated, e.revenue, e.revenue_estimated,
+    #            e.raw_json_sha256
+    #     FROM core.earnings AS e
+    #     LEFT JOIN core.earnings_metrics AS r 
+    #     ON e.tic = r.tic
+    #         AND e.calendar_year = r.calendar_year
+    #         AND e.calendar_quarter = r.calendar_quarter       
+    #     WHERE e.tic = '{tic}' 
+    #         AND e.eps IS NOT NULL 
+    #         AND e.revenue IS NOT NULL
+    #         AND e.raw_json_sha256 IS DISTINCT FROM r.raw_json_sha256
+    #     ORDER BY e.calendar_year, e.calendar_quarter;
+    # """
     df = read_sql_query(query, conn)
     df['eps'] = pd.to_numeric(df['eps'], errors='coerce')
     df['eps_estimated'] = pd.to_numeric(df['eps_estimated'], errors='coerce')

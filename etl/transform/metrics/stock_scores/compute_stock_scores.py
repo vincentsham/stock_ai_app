@@ -36,14 +36,15 @@ def _nanmean(values) -> float:
 
 
 def compute_valuation_score(row):
-    cols = [
-        row['pe_ttm_percentile'],
-        row['pe_forward_percentile'],
-        row['peg_ratio_forward_percentile'],
-        row['p_to_fcf_ttm_percentile'],
-    ]
+    cols = []
+    cols.append(100 - _to_float_or_nan(row['pe_ttm_percentile']))
+    cols.append(100 - _to_float_or_nan(row['pe_forward_percentile']))
+    cols.append(100 - _to_float_or_nan(row['peg_ratio_forward_percentile']))
+    cols.append(100 - _to_float_or_nan(row['p_to_fcf_ttm_percentile']))
+
+    max_score = _nanmax(cols)
     min_score = _nanmin(cols)
-    return 100 - min_score
+    return 0.75 * max_score + 0.25 * min_score
 
 def compute_profitability_score(row):
     cols = [
@@ -54,7 +55,7 @@ def compute_profitability_score(row):
     ]
     max_score = _nanmax(cols)
     min_score = _nanmin(cols)
-    return 0.6 * max_score + 0.4 * min_score
+    return 0.75 * max_score + 0.25 * min_score
 
 def compute_growth_score(row):
     cols = [
@@ -64,14 +65,14 @@ def compute_growth_score(row):
     ]
     if pd.notna(row.get('ebitda_growth_yoy_percentile')):
         cols.append(row['ebitda_growth_yoy_percentile'])
-    elif pd.notna(row.get('forward_eps_growth_percentile')):
+    if pd.notna(row.get('forward_eps_growth_percentile')):
         cols.append(row['forward_eps_growth_percentile'])
     elif pd.notna(row.get('eps_growth_yoy_percentile')):
         cols.append(row['eps_growth_yoy_percentile'])
 
     max_score = _nanmax(cols)
     min_score = _nanmin(cols)
-    return 0.6 * max_score + 0.4 * min_score
+    return 0.75 * max_score + 0.25 * min_score
 
 def compute_efficiency_score(row):
     cols = [
@@ -95,7 +96,7 @@ def compute_efficiency_score(row):
 
     max_score = _nanmax(cols)
     min_score = _nanmin(cols)
-    return 0.6 * max_score + 0.4 * min_score
+    return 0.75 * max_score + 0.25 * min_score
 
 def compute_financial_health_score(row):
     cols = [row['interest_coverage_ttm_percentile']]
@@ -114,7 +115,7 @@ def compute_financial_health_score(row):
 
     max_score = _nanmax(cols)
     min_score = _nanmin(cols)
-    return 0.6 * max_score + 0.4 * min_score
+    return 0.75 * max_score + 0.25 * min_score
 
     
 
@@ -144,8 +145,8 @@ def transform_records(conn, tic: str) -> pd.DataFrame:
     df['growth_score'] = df.apply(compute_growth_score, axis=1)
     df['efficiency_score'] = df.apply(compute_efficiency_score, axis=1)
     df['financial_health_score'] = df.apply(compute_financial_health_score, axis=1)
-    df['total_score'] = df[['valuation_score', 'profitability_score', 'growth_score',
-                            'efficiency_score', 'financial_health_score']].mean(axis=1)
+    df['total_score'] = (df['valuation_score'] + df['profitability_score'] +
+                         0.8 * df['growth_score'] + 0.25 * df['efficiency_score'] + 0.25 * df['financial_health_score']) / 3.3
  
     transformed_df = df[['tic', 'date', 'valuation_score', 'profitability_score',
                          'growth_score', 'efficiency_score', 'financial_health_score', 'total_score']]

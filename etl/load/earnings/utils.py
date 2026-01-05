@@ -68,25 +68,27 @@ def fuzzy_lookup_earnings_calendar(tic, df, calendar_df, cols):
     merged_df['fiscal_date'] = merged_df['_fiscal_date']
     merged_df['session'] = merged_df['_session']
 
-    # Drop rows where no match was foun
+    # Drop rows where no match was found
     merged_df = merged_df.dropna(subset=['index'])
     merged_df = merged_df.sort_values('earnings_date', ascending=False)
 
     # Validate that there is no duplicate or missing matches after the merge
-    index = merged_df.iloc[0]['index']
-    for i in range(1, len(merged_df)): 
-        if merged_df.iloc[i]['index'] != index - 1:
-            merged_df = merged_df.iloc[:i-1]
-            break
-        index = merged_df.iloc[i]['index']
+    if merged_df.shape[0] == 0:
+        pass
+    else:
+        index = merged_df.iloc[0]['index']
+        for i in range(1, len(merged_df)): 
+            if merged_df.iloc[i]['index'] != index - 1:
+                merged_df = merged_df.iloc[:i-1]
+                break
+            index = merged_df.iloc[i]['index']
 
-    
     # check again whether there are any duplicates for col index
     if merged_df['index'].duplicated().any():
         raise ValueError(f"Duplicate matches found for tic {tic} after fuzzy lookup.")
     if merged_df['index'].isnull().any():
         raise ValueError(f"Missing matches found for tic {tic} after fuzzy lookup.")
-    if len(merged_df) < 10:
+    if len(merged_df) < 3:
         raise ValueError(f"Too few matches ({len(merged_df)}) found for tic {tic} after fuzzy lookup.")
 
 

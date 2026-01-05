@@ -21,7 +21,7 @@ def fetch_records_fmp(tic):
     if response.status_code == 200:
         return response.json(), url
     else:
-        print(f"Failed to fetch data for {tic}: {response.status_code}")
+        print(f"Failed to fetch data from {url} for {tic}: {response.status_code}")
         return [], None
 
 def process_records_fmp(raw_json, tic):
@@ -63,13 +63,16 @@ def fix_data_types(df):
 
 # Fetch historical earnings data
 def fetch_records_coincodex(tic, exchange):
+    if exchange == "NYQ":
+        exchange = "NYSE"
     url = f"{BASE_URL_COINCODEX}?symbol={exchange}:{tic}"
     response = requests.get(url)
     if response.status_code == 200:
         return response.json(), url
     else:
-        print(f"Failed to fetch data for {tic}: {response.status_code}")
-        return [], None
+        print(f"Failed to fetch data from {url} for {tic}: {response.status_code}")
+        raise
+        # return [], None
 
 def process_records_coincodex(raw_json, tic):
     df = pd.DataFrame(raw_json)
@@ -106,8 +109,6 @@ def fetch_forecast_records_defeatbeta(tic):
         return None, None
     else:
         return eps_forecast, rev_forecast
-
-
 
 def process_forecast_records_defeatbeta(df_eps_est, df_rev_est, tic):
     eps_forecast = df_eps_est[df_eps_est["period_type"] == "quarterly"].copy()
@@ -154,30 +155,40 @@ def process_forecast_records_defeatbeta(df_eps_est, df_rev_est, tic):
     return df
 
 
-def merge_all(df_fmp, df_coincodex, df_forecast):
+def merge_all(df_fmp, df_coincodex, df_forecast=None):
     df_fmp = df_fmp.sort_values(by=["tic", "earnings_date"])
     df_coincodex = df_coincodex.sort_values(by=["tic", "earnings_date"])
-    df_forecast = df_forecast.sort_values(by=["tic", "fiscal_date"])
+    if df_forecast is not None:
+        df_forecast = df_forecast.sort_values(by=["tic", "fiscal_date"])
 
-    df = pd.merge_asof(
-        df_fmp, df_coincodex,
-        left_on="earnings_date",
-        right_on="earnings_date",
-        by="tic",
-        suffixes=('', '_coincodex'),
-        direction="backward",
-        allow_exact_matches=True
-    )
-    
-    df['fiscal_date'] = df['fiscal_date'].combine_first(df['fiscal_date_coincodex'])
-    df['session'] = df['session'].combine_first(df['session_coincodex'])
-    df['source'] = df['source'].combine_first(df['source_coincodex'])
-    df['eps'] = df['eps'].combine_first(df['eps_coincodex'])    
-    df['eps_estimated'] = df['eps_estimated'].combine_first(df['eps_estimated_coincodex'])
-    df['revenue'] = df['revenue'].combine_first(df['revenue_coincodex'])
-    df['revenue_estimated'] = df['revenue_estimated'].combine_first(df['revenue_estimated_coincodex'])
-    df['raw_json'] = df['raw_json'].combine_first(df['raw_json_coincodex'])
-    df['raw_json_sha256'] = df['raw_json_sha256'].combine_first(df['raw_json_sha256_coincodex'])
+    # If there is no CoinCodex data, just use FMP as-is to
+    # avoid combining against effectively empty CoinCodex series
+    # (which can trigger pandas FutureWarnings about empty entries).
+    if df_coincodex is None or df_coincodex.empty:
+        df = df_fmp.copy()
+    else:
+        df = pd.merge_asof(
+            df_fmp, df_coincodex,
+            left_on="earnings_date",
+            right_on="earnings_date",
+            by="tic",
+            suffixes=('', '_coincodex'),
+            direction="backward",
+            allow_exact_matches=True
+        )
+
+        if df.empty:
+            return df
+
+        df['fiscal_date'] = df['fiscal_date'].combine_first(df['fiscal_date_coincodex'])
+        df['session'] = df['session'].combine_first(df['session_coincodex'])
+        df['source'] = df['source'].combine_first(df['source_coincodex'])
+        df['eps'] = df['eps'].combine_first(df['eps_coincodex'])    
+        df['eps_estimated'] = df['eps_estimated'].combine_first(df['eps_estimated_coincodex'])
+        df['revenue'] = df['revenue'].combine_first(df['revenue_coincodex'])
+        df['revenue_estimated'] = df['revenue_estimated'].combine_first(df['revenue_estimated_coincodex'])
+        df['raw_json'] = df['raw_json'].combine_first(df['raw_json_coincodex'])
+        df['raw_json_sha256'] = df['raw_json_sha256'].combine_first(df['raw_json_sha256_coincodex'])
 
     df['fiscal_date_est'] = df["fiscal_date"].shift(4)
     df['fiscal_date_est'] = df['fiscal_date_est'] + pd.DateOffset(years=1)
@@ -186,6 +197,10 @@ def merge_all(df_fmp, df_coincodex, df_forecast):
     df = df[["tic", "earnings_date", "fiscal_date", "session", "source", 
              "eps", "eps_estimated", "revenue", "revenue_estimated", 
              "raw_json", "raw_json_sha256"]]
+    
+    if df_forecast is None or df_forecast.empty:
+        df = df.sort_values(by=["tic", "earnings_date"])
+        return df
     
     j = 0
     i = 5
@@ -325,10 +340,10 @@ if __name__ == "__main__":
             data, url = fetch_records_coincodex(tic, exchange)
             df_coincodex = process_records_coincodex(data, tic)
             
-            eps_forecast, rev_forecast = fetch_forecast_records_defeatbeta(tic)
-            df_forecast = process_forecast_records_defeatbeta(eps_forecast, rev_forecast, tic)
+            # eps_forecast, rev_forecast = fetch_forecast_records_defeatbeta(tic)
+            # df_forecast = process_forecast_records_defeatbeta(eps_forecast, rev_forecast, tic)
 
-            df = merge_all(df_fmp, df_coincodex, df_forecast)
+            df = merge_all(df_fmp, df_coincodex, None)
             df = filter_complete_years(df, tic)
             calendar_year, calendar_quarter = zip(*[get_calendar_year_quarter(date) for date in df['earnings_date']])
             df.loc[:, 'calendar_year'] = calendar_year
