@@ -46,7 +46,7 @@ const VALUATION_METRICS_SEARCH_QUERY = `
       revenue_yield_ttm_percentile,
       total_shareholder_yield_ttm_percentile
     FROM mart.valuation_metrics
-    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.valuation_metrics)
+    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.valuation_metrics WHERE tic = $1)
           AND tic = $1
     ORDER BY date DESC
     LIMIT 1;
@@ -84,7 +84,7 @@ const PROFITABILITY_METRICS_SEARCH_QUERY = `
       fcf_margin_percentile
 
     FROM mart.profitability_metrics
-    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.profitability_metrics)
+    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.profitability_metrics WHERE tic = $1)
           AND tic = $1
     ORDER BY date DESC
     LIMIT 1;
@@ -140,7 +140,7 @@ const GROWTH_METRICS_SEARCH_QUERY = `
       forward_eps_growth_percentile
 
     FROM mart.growth_metrics
-    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.growth_metrics)
+    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.growth_metrics WHERE tic = $1)
           AND tic = $1
     ORDER BY date DESC
     LIMIT 1;
@@ -176,7 +176,7 @@ const EFFICIENCY_METRICS_SEARCH_QUERY = `
       opex_ratio_percentile
 
     FROM mart.efficiency_metrics 
-    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.efficiency_metrics)
+    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.efficiency_metrics WHERE tic = $1)
           AND tic = $1
     ORDER BY date DESC
     LIMIT 1;
@@ -210,7 +210,7 @@ const FINANCIAL_HEALTH_METRICS_SEARCH_QUERY = `
       debt_to_assets_percentile,
       altman_z_score_percentile
     FROM mart.financial_health_metrics
-    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.financial_health_metrics)
+    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.financial_health_metrics WHERE tic = $1)
           AND tic = $1
     ORDER BY date DESC
     LIMIT 1;
@@ -294,7 +294,7 @@ const STOCK_SCORES_SEARCH_QUERY = `
       ss.financial_health_score,
       ss.total_score
     FROM mart.stock_scores ss
-    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.stock_scores)
+    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.stock_scores WHERE tic = $1)
           AND ss.tic = $1
     ORDER BY ss.date DESC
     LIMIT 1;
@@ -363,6 +363,46 @@ const TOP_STOCKS_SEARCH_QUERY = `
       LIMIT $1;
 `;
 
+const STOCK_SCORES_LATEST_DATE_WITH_TIC_QUERY = `
+    SELECT MAX(as_of_date) AS latest_date
+    FROM mart.stock_scores
+    WHERE tic = $1;
+`;
+
+const STOCK_SCORES_LATEST_DATE_QUERY = `
+    SELECT MAX(as_of_date) AS latest_date
+    FROM mart.stock_scores;
+`;
+
+export const getLatestStockScoresDate = cache(async (tic: string | null): Promise<string | null> => {
+  let client;
+  try {
+    // 1. Acquire a client (connection) from the pool
+    client = await pool.connect();
+    let result;
+    if (tic && tic.trim() !== '') {
+      result = await client.query<{ latest_date: Date | null }>(STOCK_SCORES_LATEST_DATE_WITH_TIC_QUERY, [tic.trim().toUpperCase()]);
+    } else {
+      result = await client.query<{ latest_date: Date | null }>(STOCK_SCORES_LATEST_DATE_QUERY);
+    }
+
+    if (result.rows.length > 0 && result.rows[0].latest_date) {
+      return result.rows[0].latest_date.toISOString().slice(0, 10);
+    } else {
+      return null;
+    }
+
+  } catch (err) {
+    console.error('Database query error:', err);
+    return null;
+
+  } finally {
+    // 3. IMPORTANT: Release the client back to the pool
+    if (client) {
+      client.release();
+    }
+  }
+});
 
 export const searchTopStocks = cache(async (limit: number) => {
   let client;

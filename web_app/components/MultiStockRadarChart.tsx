@@ -176,7 +176,8 @@ useEffect(() => {
                             <Legend 
                                 wrapperStyle={{ paddingTop: '10px' }}
                                 iconType="circle"
-                                formatter={(value) => <span className="text-sm text-slate-300 font-medium ml-1">{value}</span>}
+                                iconSize={8}
+                                formatter={(value) => <span className="text-xs text-slate-300 font-medium ml-1">{value}</span>}
                             />
                             
                             <Tooltip content={<CustomTooltip />} />

@@ -5,13 +5,13 @@ const Layout = async ({ children }: { children : React.ReactNode }) => {
 
     return (
         <main className="min-h-screen flex flex-col text-gray-400">
-            <div className="relative z-10">
+            <div className="relative z-50">
                 <Header  />
             </div>
             <div className="container py-10 flex-grow">
                 {children}
             </div>
-            <div className="relative z-10">
+            <div className="relative z-50">
                 <Footer />
             </div>
             

@@ -17,11 +17,41 @@ const EARNINGS_SEARCH_QUERY = `
         revenue_yoy_growth,
         revenue_yoy_acceleration
     FROM mart.earnings
-    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.earnings)
+    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.earnings WHERE tic = $1)
           AND tic = $1 AND eps_estimated IS NOT NULL
     ORDER BY calendar_year ASC, calendar_quarter ASC
     LIMIT 10;
 `;
+
+const EARNINGS_LATEST_DATE_QUERY = `
+    SELECT MAX(as_of_date) AS latest_date
+    FROM mart.earnings
+    WHERE tic = $1;
+`; 
+
+const getLatestEarningsDate = cache(async (tic: string): Promise<string | null> => {
+  let client;
+  try {
+    client = await pool.connect();
+
+    const result = await client.query<{ latest_date: string | null }>(EARNINGS_LATEST_DATE_QUERY, [tic.trim().toUpperCase()]);
+
+    if (result.rows.length > 0) {
+      return result.rows[0].latest_date;
+    } else {
+      return null;
+    }
+
+  } catch (err) {
+    console.error('Database query error:', err);
+    return null;
+
+  } finally {
+    if (client) {
+      client.release();
+    }
+  }
+});
 
 // const EARNINGS_SEARCH_QUERY = `
 //     SELECT *
@@ -47,6 +77,8 @@ const EARNINGS_SEARCH_QUERY = `
 //         LIMIT 9) AS subquery
 //     ORDER BY calendar_year ASC, calendar_quarter ASC;
 // `;
+
+
 
 const searchEarnings = cache(async (tic: string): Promise<Earnings[]> => {
   let client;
@@ -265,4 +297,4 @@ const searchRevenueRegimes = cache(async (tic: string): Promise<RevenueRegime> =
 
 
 
-export { searchEarnings, searchEarningsRegimes, searchEPSRegimes, searchRevenueRegimes };
+export { searchEarnings, searchEarningsRegimes, searchEPSRegimes, searchRevenueRegimes, getLatestEarningsDate };

@@ -7,6 +7,7 @@ import { StockProfile } from '@/types';
 import { StockScores } from '@/types/metrics';
 import Link from 'next/link';
 import { Wallpaper } from '@/components/Wallpaper';
+import { MAX_DISPLAY_STOCKS, NUM_STOCKS } from '@/lib/constants';
 
 // Helper function to fetch details for a list of tickers
 async function getStockDetails(tickers: string[]) {
@@ -35,7 +36,7 @@ async function getStockDetails(tickers: string[]) {
 
 export default async function Home() {
     // 1. Fetch Top Tickers
-    const topTics = await searchTopStocks(4);
+    const topTics = await searchTopStocks(MAX_DISPLAY_STOCKS);
     
     // 2. Fetch full data for both categories in parallel
     const [topStocksData, popularStocksData] = await Promise.all([
@@ -56,7 +57,7 @@ export default async function Home() {
                 </h1>
                 
                 <div className="text-base leading-relaxed text-center max-w-2xl text-gray-400 mb-32 px-4">
-                    <strong>Over 100+ stock analysis reports</strong> are powered by a 
+                    <strong>Over {NUM_STOCKS}+ stock analysis reports</strong> are powered by a 
                     <strong className="text-yellow-300"> Multi-AI Agent System</strong>, delivering collaborative and precise insights to give you an unparalleled edge in the markets.
                 </div>
 

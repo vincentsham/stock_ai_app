@@ -11,10 +11,18 @@ import {
   ReferenceLine,
 } from 'recharts';
 import { Earnings } from '@/types';
+import { coerceNumber } from '@/lib/utils';
 
 // --- Helpers ---
 
-const formatPercent = (value: number) => `${value > 0 ? '+' : ''}${value.toFixed(2)}%`;
+const formatPercent = (value: unknown) => {
+  const n = coerceNumber(value);
+  if (n === null || typeof n !== 'number' || isNaN(n)) {
+    return 'N/A';
+  }
+  const sign = n > 0 ? '+' : '';
+  return `${sign}${n.toFixed(2)}%`;
+};
 
 // --- Custom Components ---
 
@@ -156,7 +164,13 @@ export const EarningsGrowthGraph: React.FC<EarningsGrowthGraphProps> = ({ data, 
             axisLine={false}
             tickLine={false}
             tick={{ fill: '#6b7280', fontSize: 10, fontFamily: 'monospace' }}
-            tickFormatter={(value) => `${value.toFixed(1)}%`}
+            tickFormatter={(value) => {
+              const n = coerceNumber(value);
+              if (n === null || typeof n !== 'number' || isNaN(n)) {
+                return '';
+              }
+              return `${n.toFixed(1)}%`;
+            }}
           />
           <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }} />
           <ReferenceLine y={0} stroke="#374151" />

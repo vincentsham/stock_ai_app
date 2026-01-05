@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { fetchStockLivePrice } from '@/lib/actions/finnhub.actions';
+// UPDATE THIS PATH: Point to the file where you saved the Yahoo version of fetchStockLivePrice
+import { fetchStockLivePrice } from '@/lib/actions/yfinance.actions'; 
 import { StockPrice } from '@/types/stock';
 
 export function useStockLivePrice(tic: string, initialData?: StockPrice | null) {
@@ -14,36 +15,46 @@ export function useStockLivePrice(tic: string, initialData?: StockPrice | null) 
 
     const pollPrice = async () => {
       if (!isMounted) return;
-      setIsLoading(true);
+      
+      // Optional: Only show loading state if we don't have data yet (prevents UI flashing on updates)
+      if (!data) setIsLoading(true); 
+      
       setError(null);
+      
       try {
         const newData = await fetchStockLivePrice(tic);
-        if (isMounted && newData) {
-          setData(newData);
+        
+        if (isMounted) {
+          if (newData) {
+            setData(newData);
+          } else {
+            // Handle case where Yahoo returns null (e.g. invalid ticker)
+            setError('No data found');
+          }
         }
       } catch (err: any) {
-        const msg = err?.message || '';
-        if (msg.includes('429')) {
-          setError('API rate limit reached. Please try again later.');
-        } else {
-          setError('Failed to fetch price.');
+        if (isMounted) {
+            console.error('Yahoo Finance Poll Error:', err);
+            setError('Failed to fetch price.');
         }
       } finally {
         if (isMounted) setIsLoading(false);
       }
     };
 
+    // 1. If we have no initial data, fetch immediately
     if (!initialData) {
       pollPrice();
     }
 
+    // 2. Poll every 10 minutes (60000ms * 10)
     const intervalId = setInterval(pollPrice, 60000 * 10);
 
     return () => {
       isMounted = false;
       clearInterval(intervalId);
     };
-  }, [tic, initialData]);
+  }, [tic, initialData]); // Note: removing 'data' from dependency array avoids infinite loops
 
   return { data, isLoading, error };
 }

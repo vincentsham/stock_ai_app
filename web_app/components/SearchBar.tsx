@@ -14,7 +14,7 @@ import Link from "next/link";
 import { StockProfile } from "@/types"; // Ensure this path is correct
 import type { KeyboardEvent } from "react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
-import { MAX_STOCKS } from "@/lib/constants";
+import { MAX_COMPARE_STOCKS } from "@/lib/constants";
 
 const SearchBar = () => {
   const router = useRouter();
@@ -69,8 +69,8 @@ const SearchBar = () => {
       if (!existingStocks.includes(ticker)) {
         existingStocks.push(ticker);
         
-        // 3. Limit to MAX_STOCKS (Check limit BEFORE saving)
-        if (existingStocks.length > MAX_STOCKS) {
+        // 3. Limit to MAX_COMPARE_STOCKS (Check limit BEFORE saving)
+        if (existingStocks.length > MAX_COMPARE_STOCKS) {
             // Optional: alert user or just ignore the add
             // For now, let's just keep the list at max size
             return `${pathname}?${currentParams.toString()}`; 
@@ -150,7 +150,7 @@ const SearchBar = () => {
         ) : (
           <ul>
             {stocks.map((stock) => (
-              <li key={stock.tic} className="search-item">
+              <li key={stock.tic} className="search-item hover:bg-slate-800 hover:scale-[1.02] transition-transform">
                 <Link
                   href={getDestination(stock.tic)} // Dynamic HREF based on page
                   onClick={handleSelectStock}

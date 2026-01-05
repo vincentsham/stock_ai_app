@@ -27,9 +27,15 @@ const ANALYST_ANALYSIS_SEARCH_QUERY = `
         grade_reiterate_n,
         grade_init_n
     FROM mart.analyst_rating_yearly_summary 
-    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.analyst_rating_yearly_summary) 
+    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.analyst_rating_yearly_summary WHERE tic = $1) 
         AND tic = $1
     ORDER BY date DESC;
+`;
+
+const ANALYST_ANALYSIS_LATEST_DATE_QUERY = `
+    SELECT MAX(as_of_date) AS latest_date
+    FROM mart.analyst_rating_yearly_summary
+    WHERE tic = $1;
 `;
 
 // const ANALYST_ANALYSIS_SEARCH_QUERY = `
@@ -119,8 +125,32 @@ const searchAnalystAnalysis = cache(async (tic: string): Promise<AnalystAnalysis
   }
 });
 
+const getLatestAnalystAnalysisDate = cache(async (tic: string): Promise<string | null> => {
+  let client;
+  try {
+    // 1. Acquire a client (connection) from the pool
+    client = await pool.connect();
+
+    const result = await client.query<{ latest_date: Date | null }>(ANALYST_ANALYSIS_LATEST_DATE_QUERY, [tic.trim().toUpperCase()]);
+
+    if (result.rows.length > 0 && result.rows[0].latest_date) {
+      return result.rows[0].latest_date.toISOString().slice(0, 10);
+    } else {
+      return null;
+    }
+
+  } catch (err) {
+    console.error('Database query error:', err);
+    return null;
+
+  } finally {
+    // 3. IMPORTANT: Release the client back to the pool
+    if (client) {
+      client.release();
+    }
+  }
+});
 
 
 
-
-export { searchAnalystAnalysis };
+export { searchAnalystAnalysis, getLatestAnalystAnalysisDate };

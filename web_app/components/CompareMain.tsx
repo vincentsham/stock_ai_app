@@ -10,8 +10,8 @@ import { searchStock } from '@/lib/db/stockQueries';
 import { searchValuationMetrics, searchProfitabilityMetrics, 
          searchGrowthMetrics, searchEfficiencyMetrics, 
          searchFinancialHealthMetrics } from '@/lib/db/metricsQueries';
-import { searchStockScores } from '@/lib/db/metricsQueries';
-import { MAX_STOCKS } from '@/lib/constants';
+import { searchStockScores, getLatestStockScoresDate } from '@/lib/db/metricsQueries';
+import { MAX_COMPARE_STOCKS, NUM_STOCKS } from '@/lib/constants';
 
 
 
@@ -20,6 +20,7 @@ export const CompareMain = () => {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
+    const [lastUpdatedAt, setLastUpdatedAt] = useState<string | null>(null);
 
     // 1. URL is the Driver (Order & Existence)
     const urlTickers = useMemo(() => {
@@ -27,6 +28,15 @@ export const CompareMain = () => {
         return param ? param.split(',').filter(Boolean) : [];
     }, [searchParams]);
 
+    useEffect(() => {
+        const fetchLatestDate = async () => {
+            const updatedAt = await getLatestStockScoresDate(null);
+            setLastUpdatedAt(updatedAt);
+        };
+        fetchLatestDate();
+    }, []);
+
+    // --- EFFECT: Ensure at least 3 stocks in URL on first load ---
     useEffect(() => {
         const defaultTics = ['NVDA', 'AAPL', 'TSLA'];
         if (!searchParams.has('stocks')) {
@@ -214,27 +224,37 @@ export const CompareMain = () => {
         router.push(`${pathname}?${params.toString()}`);
     };
 
-    const isLimitReached = urlTickers.length >= MAX_STOCKS;
+    const isLimitReached = urlTickers.length >= MAX_COMPARE_STOCKS;
 
     return (
         <div className="w-full bg-[#0c0e15] border border-gray-800 rounded-xl p-6 pt-1">
-          {/* View Tabs */}
-          <div className="flex justify-center w-auto mx-auto items-center">
-            <div className="flex bg-black rounded-lg p-1">
-              {['Metrics', 'Radar'].map((tab, idx) => (
-                <button
-                  key={tab}
-                  onClick={() => setViewMode(tab.toLowerCase() as 'metrics' | 'radar')}
-                  className={`px-3 py-1 text-xs font-medium rounded-md transition-all mx-0.5 ${
-                    viewMode === tab.toLowerCase()
-                    ? 'bg-gray-600 text-white shadow-sm'
-                    : 'text-gray-400 hover:text-white hover:bg-gray-700 cursor-pointer'
-                  }`}
-                >
-                  {tab}
-                </button>
-              ))}
+            {/* View Tabs */}
+            <div>
+              <div className="relative flex justify-center items-center w-full">
+                <div className="flex bg-black rounded-lg p-1">
+                  {['Metrics', 'Radar'].map((tab, idx) => (
+                    <button
+                      key={tab}
+                      onClick={() => setViewMode(tab.toLowerCase() as 'metrics' | 'radar')}
+                      className={`px-3 py-1 text-xs font-medium rounded-md transition-all mx-0.5 ${
+                        viewMode === tab.toLowerCase()
+                        ? 'bg-gray-600 text-white shadow-sm'
+                        : 'text-gray-400 hover:text-white hover:bg-gray-700 cursor-pointer'
+                      }`}
+                    >
+                      {tab}
+                    </button>
+                  ))}
+                </div>
+                <div className="absolute right-0 text-xs text-gray-500 flex items-center gap-1">
+                    {lastUpdatedAt ? (
+                        <>Last updated: <span className="font-mono">{new Date(lastUpdatedAt).toLocaleDateString()}</span></>
+                    ) : (
+                        null
+                    )}
+                </div>
             </div>
+            
           </div>
 
         {/* Main Comparison Area */}
@@ -277,6 +297,9 @@ export const CompareMain = () => {
             </div>
           )}
         </div>
+        {viewMode == 'metrics' && (<div className="w-full text-xs text-gray-500 flex items-center justify-end gap-1 mt-1">
+			    <span>* Percentile rankings vs {NUM_STOCKS}+ Selected Stocks</span>
+		    </div>)}
       </div>
     );
 }
