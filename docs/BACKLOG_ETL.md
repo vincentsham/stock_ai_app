@@ -38,9 +38,9 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-| 27 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
 | 1007 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1008 | Feature | Add a consolidated tag logic| Medium | Open |  |  |  |
+| 1013 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |
 | 10002 | Feature | Analyze popularity trends | Low | Open |  |  |  |
 | 10003 | Feature | Create an advanced ai agent to find the important news, reddit post, tweets | Low | Open |  |  |  |
 | 10004 |  |  | Low | Open |  |  |  |
@@ -106,6 +106,7 @@ examples:
 | 39 | Miscellaneous | update Catalyst logic to have more bear cases | High | Close | feat_39 | 2025-12-28 | 2025-12-29 |
 | 40 | Miscellaneous | update catalyst logic to seperate stage 2 into a and b; rewrite the retriveal current catalysts logic to include embedding lookup | High | Close | feat_40 | 2025-12-30 | 2025-12-31 |
 | 41 | Miscellaneous | Add shell scripts for running etl jobs; small update on catalyst prompt; small update on catalyst query; small update on ETL processing | High | Close | feat_41 | 2025-12-31 | 2026-01-05 |
+| 42 | Miscellaneous | Integrate with Supabase psql and run script logs | High | Close | feat_42  | 2026-01-05 | 2026-01-06 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous | Create a md doc for source | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1003 | Feature | Standardise the db columns | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |

@@ -6,7 +6,7 @@ from psycopg import connect
 import numpy as np
 
 # Load environment variables from .env file
-load_dotenv()
+load_dotenv(override=True)
 
 # Database credentials
 DB_NAME = os.getenv("PGNAME")
@@ -18,16 +18,38 @@ DB_PORT = os.getenv("PGPORT")
 # Connect to PostgreSQL
 def connect_to_db():
     try:
+        # conn = connect(
+        #     dbname=DB_NAME,
+        #     user=DB_USER,
+        #     password=DB_PASSWORD,
+        #     host=DB_HOST,
+        #     port=DB_PORT
+        # )
+
+        # 2. explicit Debugging
+        connection_string = os.getenv("PGCONNECTION_SESSION")
+        
+        # Check if the variable is empty
+        if not connection_string:
+            print("❌ CRITICAL ERROR: 'PGCONNECTION_SESSION' is missing.")
+            print("   - Check if .env file exists in the root folder.")
+            print(f"   - Current Working Directory: {os.getcwd()}")
+            return None
+
+        # 3. Connect using the string
+        # print(f"🔌 Connecting to DB...") # Optional: Uncomment to debug
         conn = connect(
-            dbname=DB_NAME,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            host=DB_HOST,
-            port=DB_PORT
+            connection_string, 
+            connect_timeout=120, 
+            keepalives=1, 
+            keepalives_idle=30, 
+            keepalives_interval=10, 
+            keepalives_count=5
         )
         return conn
+
     except Exception as e:
-        print(f"Error connecting to the database: {e}")
+        print(f"❌ Connection Failed: {e}")
         return None
     
 def escape_sql_literal(val):
@@ -82,7 +104,8 @@ def read_sql_query(query: str, conn) -> pd.DataFrame:
 
 
 def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[], 
-                   updated_at: bool = True, where: list[str]=[], commit=True) -> int:
+                   updated_at: bool = True, where: list[str]=[], commit=True,
+                   batch_size: int = 100) -> int:
     """
     Fast and minimal insert/upsert using psycopg cursor.execute with tuples.
     """
@@ -125,13 +148,28 @@ def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[],
     sql += ";"
 
     try:
+        total_records = 0
         with conn.cursor() as cursor:
-            # Convert DataFrame to a sequence of tuples and execute in bulk
-            data = tuple(df.itertuples(index=False, name=None))
-            cursor.executemany(sql, data)  # ✅ psycopg safe bulk method
-            total_records = cursor.rowcount
-        if commit:
-            conn.commit()
+            # Convert DataFrame to a list of tuples (Must be a list to slice it for batches)
+            data = list(df.itertuples(index=False, name=None))
+            total_len = len(data)
+            
+            # --- BATCHING LOGIC STARTS HERE ---
+            # We default to 100, but for transcripts, you might want to pass batch_size=10
+            for i in range(0, total_len, batch_size):
+                batch = data[i : i + batch_size]
+                cursor.executemany(sql, batch)
+                
+                # Vital: Commit after every batch to release memory and DB locks
+                if commit:
+                    conn.commit()
+                    
+                total_records += cursor.rowcount
+                # Optional: Print progress for large jobs
+                if total_len > 100:
+                    print(f"   - Batch {i//batch_size + 1}: Processed {min(i + batch_size, total_len)}/{total_len} rows")
+            # ----------------------------------
+
         return total_records
         
     except Exception as e:
