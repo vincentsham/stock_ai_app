@@ -6,11 +6,14 @@ import TradingViewWidget from '@/components/TradingViewWidget';
 import { StockMain } from '@/components/StockMain';
 import StockRadarChart from '@/components/StockRadarChart';
 
+export const dynamic = 'force-dynamic';
+
 interface PageParams {
     params: {
         symbol: string;
     };
 }
+
 
 const StockPage = async ({ params }: PageParams) => {
     const { symbol } = await params;

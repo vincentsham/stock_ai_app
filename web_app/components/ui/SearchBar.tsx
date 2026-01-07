@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+// ✅ Correct: Import from your local components folder
 import {
   CommandDialog,
   CommandEmpty,
   CommandInput,
   CommandList,
-} from "@shadcn/ui";
-import { Button } from "@shadcn/ui";
+} from "@/components/ui/command"; 
+import { Button } from "@/components/ui/button";
 
 const SearchBar = () => {
   const [open, setOpen] = useState(false);

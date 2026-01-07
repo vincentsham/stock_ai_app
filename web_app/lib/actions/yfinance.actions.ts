@@ -1,10 +1,8 @@
 'use server';
 
 import { cache } from 'react';
-import YahooFinance from 'yahoo-finance2';
+import yahooFinance from '@/lib/yahoo';
 import { StockPrice } from '@/types/stock';
-
-const yahooFinance = new YahooFinance();
 
 type YahooQuote = {
     regularMarketPrice?: number | null;

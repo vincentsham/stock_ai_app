@@ -5,7 +5,7 @@ export type StockProfile = {
   exchange: string;
   sector: string;
   industry: string;
-  logo: string | null;
+  logo?: string | null;
 };
 
 export type StockPrice = {
