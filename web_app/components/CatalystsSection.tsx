@@ -109,7 +109,7 @@ export const CatalystsSection: React.FC<{ tic: string }> = ( {tic} ) => {
                         Events ranked by recency and potential market impact
                     </div>
                 </div>
-                <div className="text-xs text-gray-500 flex flex-col md:flex-row items-start md:items-center gap-1 md:justify-end mt-2 md:mt-0">
+                <div className="text-xs text-gray-500 flex flex-row items-start md:items-center gap-1 md:justify-end mt-2 md:mt-0">
                     {lastUpdatedAt ? (
                         <>Last updated: <span className="font-mono">{new Date(lastUpdatedAt).toLocaleDateString()}</span></>
                     ) : null}
