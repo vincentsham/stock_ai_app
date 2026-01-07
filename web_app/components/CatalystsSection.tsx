@@ -96,12 +96,12 @@ export const CatalystsSection: React.FC<{ tic: string }> = ( {tic} ) => {
 
     return (
         <>
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
                 <div>
                     <h2 className="text-xl font-bold text-white flex items-center gap-2">
                         <Zap size={16}/>
                         Catalyst Events
-                        <span className="text-xs font-normal text-gray-500 bg-gray-800/50 px-2 py-1 rounded-full border border-gray-700">
+                        <span className="text-[10px] md:text-xs font-normal text-gray-500 bg-gray-800/50 px-1.5 md:px-2 py-0.5 md:py-1 rounded-full border border-gray-700">
                             AI Generated
                         </span>
                     </h2>
@@ -111,10 +111,7 @@ export const CatalystsSection: React.FC<{ tic: string }> = ( {tic} ) => {
                 </div>
                 <div className="text-xs text-gray-500 flex flex-col md:flex-row items-start md:items-center gap-1 md:justify-end mt-2 md:mt-0">
                     {lastUpdatedAt ? (
-                        <>
-                            <span>Last updated:</span>
-                            <span className="font-mono">{new Date(lastUpdatedAt).toLocaleDateString()}</span>
-                        </>
+                        <>Last updated: <span className="font-mono">{new Date(lastUpdatedAt).toLocaleDateString()}</span></>
                     ) : null}
                 </div>
             </div>

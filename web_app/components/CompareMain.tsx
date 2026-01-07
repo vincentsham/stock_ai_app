@@ -230,7 +230,7 @@ export const CompareMain = () => {
         <div className="w-full bg-[#0c0e15] border border-gray-800 rounded-xl p-6 pt-1">
             {/* View Tabs */}
             <div>
-              <div className="relative flex justify-center items-center w-full">
+              <div className="relative flex flex-col md:flex-row justify-center items-center w-full">
                 <div className="flex bg-black rounded-lg p-1">
                   {['Metrics', 'Radar'].map((tab, idx) => (
                     <button
@@ -246,7 +246,7 @@ export const CompareMain = () => {
                     </button>
                   ))}
                 </div>
-                <div className="absolute right-0 text-xs text-gray-500 flex items-center gap-1">
+                <div className="mt-2 md:mt-0 md:absolute md:right-0 text-xs text-gray-500 flex items-center gap-1">
                     {lastUpdatedAt ? (
                         <>Last updated: <span className="font-mono">{new Date(lastUpdatedAt).toLocaleDateString()}</span></>
                     ) : (
