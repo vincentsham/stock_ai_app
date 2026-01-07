@@ -9,6 +9,8 @@ import Link from 'next/link';
 import { Wallpaper } from '@/components/Wallpaper';
 import { MAX_DISPLAY_STOCKS, NUM_STOCKS } from '@/lib/constants';
 
+export const dynamic = 'force-dynamic';
+
 // Helper function to fetch details for a list of tickers
 async function getStockDetails(tickers: string[]) {
   const results = await Promise.all(
