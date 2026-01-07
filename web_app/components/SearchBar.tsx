@@ -135,7 +135,7 @@ const SearchBar = () => {
   }, [loading, stocks, handleSelectStock]);
 
   return (
-    <Command shouldFilter={false} className="group rounded-lg border shadow-md md:min-w-[450px] focus-within:border-white">
+    <Command shouldFilter={false} className="group rounded-lg border shadow-md md:min-w-[450px] focus-within:border-white overflow-visible h-auto relative">
       <CommandInput
         ref={inputRef}
         value={searchTerm}
@@ -146,11 +146,11 @@ const SearchBar = () => {
       />
 
       {searching && (
-        <CommandList className="hidden group-focus-within:block">
+        <CommandList className="absolute top-[calc(100%+4px)] left-0 w-full z-50 rounded-lg border shadow-lg bg-[#1e1e24] max-h-[300px] overflow-y-auto">
           {loading ? (
-            <CommandEmpty className="search-list-empty text-sm sm:text-base">Loading stocks...</CommandEmpty>
+            <CommandEmpty className="search-list-empty text-sm sm:text-lg p-2">Loading stocks...</CommandEmpty>
           ) : stocks.length === 0 ? (
-            <CommandEmpty className="search-list-empty text-sm sm:text-base">No results found.</CommandEmpty>
+            <CommandEmpty className="search-list-empty text-sm sm:text-lg p-2">No results found.</CommandEmpty>
           ) : (
             <CommandGroup>
               {stocks.map((stock) => (
@@ -158,7 +158,7 @@ const SearchBar = () => {
                   key={stock.tic} 
                   value={`${stock.tic}-${stock.name}`}
                   onSelect={() => handleSelectStock(stock)}
-                  className="cursor-pointer hover:bg-slate-800 hover:scale-[1.02] transition-transform"
+                  className="cursor-pointer hover:bg-slate-800 hover:scale-[1.02] transition-transform p-2"
                   onMouseDown={(e) => e.preventDefault()}
                 >
                     <TrendingUp className="h-4 w-4 text-gray-500 mr-2" />
