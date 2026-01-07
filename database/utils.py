@@ -8,49 +8,67 @@ import numpy as np
 # Load environment variables from .env file
 load_dotenv(override=True)
 
-# Database credentials
-DB_NAME = os.getenv("PGNAME")
-DB_USER = os.getenv("PGUSER")
-DB_PASSWORD = os.getenv("PGPASSWORD")
-DB_HOST = os.getenv("PGHOST")
-DB_PORT = os.getenv("PGPORT")
-
 # Connect to PostgreSQL
-def connect_to_db():
+def connect_to_db(type: str = "localhost"):
     try:
-        # conn = connect(
-        #     dbname=DB_NAME,
-        #     user=DB_USER,
-        #     password=DB_PASSWORD,
-        #     host=DB_HOST,
-        #     port=DB_PORT
-        # )
+        if type == "localhost":
+            # 1. Fetch Variables
+            db_name = os.getenv("PGDATABASE")
+            db_user = os.getenv("PGUSER")
+            db_pass = os.getenv("PGPASSWORD")
+            db_host = os.getenv("PGHOST")
+            db_port = os.getenv("PGPORT")
 
-        # 2. explicit Debugging
-        connection_string = os.getenv("PGCONNECTION_SESSION")
+            # 2. Debug: Check for missing values
+            missing_vars = []
+            if not db_name: missing_vars.append("PGDATABASE")
+            if not db_user: missing_vars.append("PGUSER")
+            if not db_pass: missing_vars.append("PGPASSWORD")
+            if not db_host: missing_vars.append("PGHOST")
+            if not db_port: missing_vars.append("PGPORT")
+
+            if missing_vars:
+                print(f"❌ ERROR: Missing environment variables for localhost: {', '.join(missing_vars)}")
+                return None
+
+            # 3. Connect
+            conn = connect(
+                dbname=db_name,
+                user=db_user,
+                password=db_pass,
+                host=db_host,
+                port=db_port
+            )
+
+        elif type == "supabase":
+            # 1. Fetch Variable
+            connection_string = os.getenv("PGCONNECTION_SESSION")
+
+            # 2. Debug: Check if missing
+            if not connection_string:
+                print("❌ ERROR: Missing environment variable 'PGCONNECTION_SESSION'")
+                return None
+
+            # 3. Connect
+            conn = connect(
+                connection_string, 
+                connect_timeout=120, 
+                keepalives=1, 
+                keepalives_idle=30, 
+                keepalives_interval=10, 
+                keepalives_count=5,
+                sslmode='require'
+            )
+        else:
+            raise ValueError(f"Invalid connection type specified: {type}")
         
-        # Check if the variable is empty
-        if not connection_string:
-            print("❌ CRITICAL ERROR: 'PGCONNECTION_SESSION' is missing.")
-            print("   - Check if .env file exists in the root folder.")
-            print(f"   - Current Working Directory: {os.getcwd()}")
-            return None
-
-        # 3. Connect using the string
-        # print(f"🔌 Connecting to DB...") # Optional: Uncomment to debug
-        conn = connect(
-            connection_string, 
-            connect_timeout=120, 
-            keepalives=1, 
-            keepalives_idle=30, 
-            keepalives_interval=10, 
-            keepalives_count=5
-        )
         return conn
 
     except Exception as e:
-        print(f"❌ Connection Failed: {e}")
+        print(f"❌ Connection Failed ({type}): {e}")
         return None
+    
+    
     
 def escape_sql_literal(val):
     if val is None:

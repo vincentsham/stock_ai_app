@@ -103,6 +103,6 @@ if __name__ == "__main__":
             else:
                 print(f"{tic[0]} does not exist in the database, fetching all historical data.")
                 stock_data = fetch_records(tic[0], start_date=None)
-            total_records = insert_records(conn, stock_data, batch_size=10)
+            total_records = insert_records(conn, stock_data)
             print(f"For {tic[0]}: Total records processed = {total_records}")
         conn.close()
