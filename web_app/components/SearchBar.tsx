@@ -155,7 +155,7 @@ const SearchBar = () => {
             {stocks.map((stock) => (
               <CommandItem 
                 key={stock.tic} 
-                value={`${stock.tic}-${stock.type}-${stock.name}`}
+                value={`${stock.tic}-${stock.name}`}
                 onSelect={() => handleSelectStock(stock)}
                 className="cursor-pointer hover:bg-slate-800 hover:scale-[1.02] transition-transform"
                 onMouseDown={(e) => e.preventDefault()}
