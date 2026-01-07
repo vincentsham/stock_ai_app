@@ -139,7 +139,6 @@ def transform_records(raw_df):
         transformed_df.at[i, 'raw_json'] = json.dumps(raw_df.iloc[i]['raw_json'])
         transformed_df.at[i, 'raw_json_sha256'] = raw_df.iloc[i]['raw_json_sha256']
 
-    transformed_df = transformed_df[transformed_df['fiscal_quarter'] != 0]
     return transformed_df
 
 

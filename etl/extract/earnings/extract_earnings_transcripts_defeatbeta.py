@@ -66,7 +66,7 @@ if __name__ == "__main__":
             df_transcripts.loc[:, 'calendar_year'] = calendar_year
             df_transcripts.loc[:, 'calendar_quarter'] = calendar_quarter
 
-            total_inserted = insert_records(conn, df_transcripts, "raw.earnings_transcripts", ["tic", "calendar_year", "calendar_quarter"], where=["raw_json_sha256"])
+            total_inserted = insert_record(conn, df_transcripts, "raw.earnings_transcripts", ["tic", "calendar_year", "calendar_quarter"], where=["raw_json_sha256"])
             print(f"For {tic}: Total records processed = {total_inserted}")  
             # for i in range(df_transcripts.shape[0]):
             #     df_row = df_transcripts.iloc[i:i+1]

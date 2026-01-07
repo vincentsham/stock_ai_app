@@ -43,30 +43,6 @@ def transform_records(raw_df):
 
     # Map columns from raw to core schema
     for i in range(len(raw_df)):
-
-        """
-        CREATE TABLE IF NOT EXISTS core.analyst_grades (
-            event_id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-            tic               varchar(10) NOT NULL,
-            published_at      timestamp NOT NULL,
-            title        text,
-            site    text,
-                       
-            company           text,
-            new_grade         SMALLINT,
-            previous_grade    SMALLINT,
-            action            text,
-            price_when_posted numeric(12,4),
-
-            url               text NOT NULL,
-            source          VARCHAR(255),
-            raw_json        JSONB        NOT NULL,
-            raw_json_sha256 CHAR(64)     NOT NULL,
-            updated_at      TIMESTAMPTZ DEFAULT now(),
-
-            UNIQUE (tic, url)
-        );
-        """
     
         data = raw_df.iloc[i]['raw_json']
 
@@ -90,6 +66,8 @@ def transform_records(raw_df):
 
 
 def normalize_analyst_grades(df):
+    if df.empty:
+        return df
     df['new_grade_normalized'] = df['new_grade'].apply(lambda x: grade_mapping.get(x, (None, None, None, None))[0])
     df['new_grade_value'] = df['new_grade'].apply(lambda x: grade_mapping.get(x, (None, None, None, None))[1])
     df['previous_grade_normalized'] = df['previous_grade'].apply(lambda x: grade_mapping.get(x, (None, None, None, None))[0])
@@ -143,7 +121,11 @@ def load_records(transformed_df):
     # Connect to the database
     with connect_to_db() as conn:
         # Insert records into core.analyst_grades
-        total_records = insert_records(conn, transformed_df, 'core.analyst_grades', ['tic', 'url'])
+        total_records = 0
+        if transformed_df.empty:
+            pass
+        else:
+            total_records = insert_records(conn, transformed_df, 'core.analyst_grades', ['tic', 'url'])
         print(f"Total records inserted/updated in core.analyst_grades: {total_records}")
 
 

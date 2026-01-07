@@ -104,7 +104,8 @@ def main():
                 df = df[cols]
                 total_inserted = insert_records(conn, df, "mart.catalyst_master", 
                                             ["catalyst_id", "as_of_date"], 
-                                            updated_at=False, commit=False)
+                                            updated_at=False, commit=False,
+                                            batch_size=10)
                 print(f"For {tic}: Total records inserted = {total_inserted}")
         except Exception as e:
             print(f"Error processing catalyst master data: {e}")

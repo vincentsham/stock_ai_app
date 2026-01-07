@@ -1,40 +1,69 @@
 #!/bin/bash
 
-# Activate your Python environment if needed
-# source /path/to/venv/bin/activate
+# --- Safety & Configuration ---
+set -euo pipefail
 
+# Path Configuration
+# Assuming script is in project/etl/transform/
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+LOG_DIR="$PROJECT_ROOT/logs"
+LOG_FILE="$LOG_DIR/transform_job_$(date +%F).log"
 
-# Run earnings metrics transformation
-echo "Running earnings metrics transformation main.py..."
-python "$SCRIPT_DIR/earnings/main.py"
+mkdir -p "$LOG_DIR"
 
-echo "Running EPS diluted metrics computation..."
-python "$SCRIPT_DIR/metrics/profitability/compute_eps_diluted_metrics.py"
+# --- Helper Functions ---
 
-echo "Running revenue metrics computation..."
-python "$SCRIPT_DIR/metrics/revenue/compute_revenue_metrics.py"
+log() {
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
+}
 
-echo "Running valuation metrics computation..."
-python "$SCRIPT_DIR/metrics/valuation/compute_valuation_metrics.py"
+handle_error() {
+    log "❌ ERROR: Transform job failed on line $1. Stopping pipeline."
+    log "Check details in: $LOG_FILE"
+    exit 1
+}
 
-echo "Running profitability metrics computation..."
-python "$SCRIPT_DIR/metrics/profitability/compute_profitability_metrics.py"
+trap 'handle_error $LINENO' ERR
 
-echo "Running growth metrics computation..."
-python "$SCRIPT_DIR/metrics/growth/compute_growth_metrics.py"
+run_task() {
+    local script_path="$1"
+    local full_path="$SCRIPT_DIR/$script_path"
 
-echo "Running efficiency metrics computation..."
-python "$SCRIPT_DIR/metrics/efficiency/compute_efficiency_metrics.py"
+    if [ -f "$full_path" ]; then
+        log "Running $script_path..."
+        python3 "$full_path"
+        log "Completed $script_path. Sleeping 5s..."
+        sleep 5
+    else
+        log "❌ CRITICAL: Script not found at $full_path"
+        exit 1
+    fi
+}
 
-echo "Running financial health metrics computation..."
-python "$SCRIPT_DIR/metrics/financial_health/compute_financial_health_metrics.py"
+# --- Main Execution ---
 
-echo "Running percentiles computation..."
-python "$SCRIPT_DIR/metrics/percentiles/compute_percentiles.py"
+log "🚀 Starting Metrics Transformation..."
 
-echo "Running stock scores computation..."
-python "$SCRIPT_DIR/metrics/stock_scores/compute_stock_scores.py"
+# 1. Base Transformation
+log "--- Phase 1: Base Data Preparation ---"
+run_task "earnings/main.py"
 
+# 2. Domain-Specific Metrics
+# These are likely independent of each other, but must complete before Phase 3
+log "--- Phase 2: Computing Domain Metrics ---"
+run_task "metrics/profitability/compute_eps_diluted_metrics.py"
+run_task "metrics/revenue/compute_revenue_metrics.py"
+run_task "metrics/valuation/compute_valuation_metrics.py"
+run_task "metrics/profitability/compute_profitability_metrics.py"
+run_task "metrics/growth/compute_growth_metrics.py"
+run_task "metrics/efficiency/compute_efficiency_metrics.py"
+run_task "metrics/financial_health/compute_financial_health_metrics.py"
 
+# 3. Aggregation & Scoring (Dependent on Phase 2)
+# If Phase 2 failed, these would calculate based on incomplete data, so strict error handling is vital.
+log "--- Phase 3: Aggregation & Scoring ---"
+run_task "metrics/percentiles/compute_percentiles.py"
+run_task "metrics/stock_scores/compute_stock_scores.py"
 
+log "✅ Transform Job and Scoring completed successfully."

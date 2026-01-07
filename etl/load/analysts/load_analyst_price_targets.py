@@ -106,7 +106,9 @@ def load_records(transformed_df):
     # Connect to the database
     with connect_to_db() as conn:
         # Insert records into core.analyst_price_targets
-        total_records = insert_records(conn, transformed_df, 'core.analyst_price_targets', ['tic', 'url'])
+        total_records = 0
+        if not transformed_df.empty:
+            total_records = insert_records(conn, transformed_df, 'core.analyst_price_targets', ['tic', 'url'])
         print(f"Total records inserted/updated in core.analyst_price_targets: {total_records}")
 
 
