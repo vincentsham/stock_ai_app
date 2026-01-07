@@ -92,7 +92,7 @@ def main():
                                          "website","description","summary","short_summary",
                                          "raw_json_sha256"]]
         
-        total_records = insert_records(conn, processed_data, 'core.stock_profiles', ['tic'])
+        total_records = insert_records(conn, processed_data, 'core.stock_profiles', ['tic'], batch_size=10)
         
 
         conn.close()

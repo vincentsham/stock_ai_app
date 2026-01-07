@@ -121,7 +121,7 @@ def load_records(transformed_df):
     # Connect to the database
     with connect_to_db() as conn:
         # Insert records into core.news
-        total_records = insert_records(conn, transformed_df, 'core.news', ['tic', 'url'])
+        total_records = insert_records(conn, transformed_df, 'core.news', ['tic', 'url'], batch_size=10)
         print(f"Total records inserted/updated in core.news: {total_records}")
 
 

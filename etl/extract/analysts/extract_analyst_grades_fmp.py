@@ -41,7 +41,8 @@ def insert_records(data, tic, url, conn):
                         source = EXCLUDED.source,
                         raw_json = EXCLUDED.raw_json,
                         raw_json_sha256 = EXCLUDED.raw_json_sha256,
-                        updated_at = NOW();
+                        updated_at = NOW()
+                    WHERE raw.analyst_grades.raw_json_sha256 IS DISTINCT FROM EXCLUDED.raw_json_sha256;
                 """,
                 (
                     tic,

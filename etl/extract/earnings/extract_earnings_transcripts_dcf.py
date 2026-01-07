@@ -15,7 +15,7 @@ from etl.utils import hash_dict, hash_text, get_calendar_year_quarter, filter_co
 import numpy as np
 from pathlib import Path
 import pandas as pd
-from database.utils import insert_records
+from database.utils import insert_records, insert_record
 
 def create_chrome_driver() -> webdriver.Chrome:
     """Create a Chrome driver with fallbacks to avoid macOS chromedriver crashes."""
@@ -275,6 +275,6 @@ if __name__ == "__main__":
             df_transcripts.loc[:, 'calendar_year'] = calendar_year
             df_transcripts.loc[:, 'calendar_quarter'] = calendar_quarter
 
-            total_inserted = insert_records(conn, df_transcripts, "raw.earnings_transcripts", ["tic", "calendar_year", "calendar_quarter"], where=["raw_json_sha256"])
+            total_inserted = insert_record(conn, df_transcripts, "raw.earnings_transcripts", ["tic", "calendar_year", "calendar_quarter"], where=["raw_json_sha256"])
             print(f"For {tic}: Total records processed = {total_inserted}")  
         conn.close()

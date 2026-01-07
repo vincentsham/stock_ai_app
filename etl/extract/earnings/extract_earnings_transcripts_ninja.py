@@ -6,7 +6,7 @@ import time
 import json
 from etl.utils import hash_dict, hash_text, filter_complete_years, get_calendar_year_quarter
 import pandas as pd
-from database.utils import insert_records
+from database.utils import insert_records, insert_record
 
 
 # Load environment variables
@@ -67,6 +67,6 @@ if __name__ == "__main__":
             df_transcripts.loc[:, 'calendar_quarter'] = calendar_quarter
 
 
-            total_inserted = insert_records(conn, df_transcripts, "raw.earnings_transcripts", ["tic", "calendar_year", "calendar_quarter"], where=["raw_json_sha256"])
+            total_inserted = insert_record(conn, df_transcripts, "raw.earnings_transcripts", ["tic", "calendar_year", "calendar_quarter"], where=["raw_json_sha256"])
             print(f"For {tic}: Total records processed = {total_inserted}")  
         conn.close()

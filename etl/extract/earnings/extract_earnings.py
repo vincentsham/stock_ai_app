@@ -1,5 +1,4 @@
 import requests
-from psycopg import connect
 from etl.utils import hash_dict, hash_text, get_calendar_year_quarter, filter_complete_years
 from database.utils import connect_to_db
 import os

@@ -1,6 +1,6 @@
 import pandas as pd
 import json
-from database.utils import connect_to_db, insert_records, execute_query
+from database.utils import connect_to_db, insert_records, insert_record, execute_query
 from utils import read_earnings_calendar, fuzzy_lookup_earnings_calendar
 
 def read_records(tic):
@@ -32,7 +32,7 @@ def load_records(df):
     """
     # Insert the transformed records into the database
     with connect_to_db() as conn:
-        total_inserted = insert_records(conn, df, "core.earnings_transcripts", ["tic", "calendar_year", "calendar_quarter"], where=["raw_json_sha256"])
+        total_inserted = insert_record(conn, df, "core.earnings_transcripts", ["tic", "calendar_year", "calendar_quarter"], where=["raw_json_sha256"])
         print(f"Total records inserted: {total_inserted}")
 
     # Close the database connection
