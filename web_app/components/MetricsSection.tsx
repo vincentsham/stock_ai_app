@@ -78,7 +78,7 @@ export const MetricsSection: React.FC<{ tic: string }> = ({ tic }) => {
 
     return (
       <div className="animate-slide-up-fade" style={{ animationDuration: '0.4s' }}>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
           <div>
               <h2 className="text-xl font-bold text-white flex items-center gap-2">
                   <BarChart3 size={16}/>
@@ -90,10 +90,7 @@ export const MetricsSection: React.FC<{ tic: string }> = ({ tic }) => {
           </div>
                 <div className="text-xs text-gray-500 flex flex-col md:flex-row items-start md:items-center gap-1 md:justify-end mt-2 md:mt-0">
                     {lastUpdatedAt ? (
-                        <>
-                            <span>Last updated:</span>
-                            <span className="font-mono">{new Date(lastUpdatedAt).toLocaleDateString()}</span>
-                        </>
+                        <>Last updated: <span className="font-mono">{new Date(lastUpdatedAt).toLocaleDateString()}</span></>
                     ) : null}
                 </div>
         </div>
