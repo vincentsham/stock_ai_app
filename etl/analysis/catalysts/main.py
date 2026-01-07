@@ -65,65 +65,71 @@ QUERY_UPDATE = {
     "news": {
         "monthly": 
         """
-            WITH news_summary AS (
+        WITH global_watermark AS (
+                -- 1. Find the SINGLE latest catalyst date for this stock
+                SELECT MAX(date) as last_run_date
+                FROM core.catalyst_versions
+                WHERE tic = '{tic}'
+                AND source_type = 'news'
+            ),
+            news_grouped AS (
+                -- 2. Group news by month (same as before)
                 SELECT
                     n.tic,
-                    EXTRACT(YEAR FROM n.published_at)::INT AS year,
-                    EXTRACT(MONTH FROM n.published_at)::INT AS month,
-                    COUNT(*) AS record_count
+                    DATE_TRUNC('month', n.published_at)::DATE AS news_month,
+                    COUNT(*) AS record_count,
+                    MAX(n.published_at) AS latest_news_ts
                 FROM core.news n
                 WHERE n.tic = '{tic}'
-                GROUP BY n.tic, year, month
-            ),
-            latest_catalyst AS (
-                SELECT tic, 
-                       EXTRACT(YEAR FROM c.date)::INT AS year,
-                       EXTRACT(MONTH FROM c.date)::INT AS month
-                FROM core.catalyst_versions c
-                WHERE c.tic = '{tic}'
-                    AND c.source_type = 'news'
-                ORDER BY c.date DESC
-                LIMIT 1
+                AND n.published_at >= '2025-09-01'
+                GROUP BY 1, 2
             )
-            SELECT n.tic, n.year, NULL AS quarter, n.month, n.record_count,
-                sp.name, sp.sector, sp.industry, sp.short_summary
-            FROM news_summary n
-            JOIN core.stock_profiles AS sp
-                ON n.tic = sp.tic
-            LEFT JOIN latest_catalyst lc
-                ON n.tic = lc.tic
-            WHERE n.tic = '{tic}'
-               AND ((lc.year IS NULL) 
-                    OR (n.year, n.month) >= (lc.year, lc.month))
-            ORDER BY n.tic, n.year, n.month;
+            SELECT 
+                ng.tic,
+                EXTRACT(YEAR FROM ng.news_month)::INT AS year,
+                NULL AS quarter,
+                EXTRACT(MONTH FROM ng.news_month)::INT AS month,
+                ng.record_count,
+                sp.name, 
+                sp.sector, 
+                sp.industry, 
+                sp.short_summary
+            FROM news_grouped ng
+            JOIN core.stock_profiles sp ON ng.tic = sp.tic
+            CROSS JOIN global_watermark gw
+            WHERE 
+                -- 3. ONLY select if news is newer than the global high water mark
+                -- (If no catalyst exists yet (NULL), we take everything)
+                gw.last_run_date IS NULL
+                OR ng.latest_news_ts > gw.last_run_date
+            ORDER BY ng.news_month ASC;
         """
     },
     "earnings_transcript": {
         "quarterly": 
         """
-            WITH latest_catalyst AS (
-                SELECT c.tic, 
-                       e.calendar_year AS year,
-                       e.calendar_quarter AS quarter
-                FROM core.catalyst_versions c
-                JOIN core.earnings_transcripts e
-                    ON c.event_id = e.event_id
-                WHERE c.tic = '{tic}'
-                    AND c.source_type = 'earnings_transcript'
-                ORDER BY e.calendar_year DESC, e.calendar_quarter DESC
-                LIMIT 1
-            )
-            SELECT e.tic, e.calendar_year AS year, e.calendar_quarter AS quarter, NULL AS month,
-                sp.name, sp.sector, sp.industry, sp.short_summary
+        SELECT 
+                e.tic, 
+                e.calendar_year AS year, 
+                e.calendar_quarter AS quarter, 
+                NULL AS month,
+                sp.name, 
+                sp.sector, 
+                sp.industry, 
+                sp.short_summary
             FROM core.earnings_transcripts e
-            JOIN core.stock_profiles AS sp
+            JOIN core.stock_profiles sp 
                 ON e.tic = sp.tic
-            LEFT JOIN latest_catalyst lc
-                ON e.tic = lc.tic
+            LEFT JOIN core.catalyst_versions c
+                ON c.event_id = e.event_id
+                AND c.source_type = 'earnings_transcript'
             WHERE e.tic = '{tic}'
-                AND ((lc.year IS NULL) 
-                    OR (e.calendar_year, e.calendar_quarter) > (lc.year, lc.quarter))
-            ORDER BY e.tic, e.calendar_year, e.calendar_quarter;
+            AND e.calendar_year >= 2025
+            AND (
+                c.event_id IS NULL
+                OR e.raw_json_sha256 IS DISTINCT FROM c.raw_json_sha256
+            )
+            ORDER BY e.calendar_year ASC, e.calendar_quarter ASC;
         """
     }
 }
