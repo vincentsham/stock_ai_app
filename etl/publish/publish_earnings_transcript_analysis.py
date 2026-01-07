@@ -60,14 +60,16 @@ def main():
     """
     Main function to orchestrate the ETL process for earnings.
     """
-    conn = connect_to_db()
-    if conn:
-        cursor = conn.cursor()
+    conn_local = connect_to_db("localhost")
+    conn_supabase = connect_to_db("supabase")
+    if conn_local and conn_supabase:
+        cursor = conn_local.cursor()
         cursor.execute("SELECT tic FROM core.stock_profiles;")
         records = cursor.fetchall()
         today = pd.Timestamp.now().date()
         try:
-            total_deleted = delete_published_records(conn, "mart.earnings_transcript_analysis", today, commit=False)
+            total_deleted = delete_published_records(conn_local, "mart.earnings_transcript_analysis", today, commit=False)
+            delete_published_records(conn_supabase, "mart.earnings_transcript_analysis", today, commit=False)
             print(f"Deleted {total_deleted} records from mart.earnings_transcript_analysis for as_of_date = {today}")
             for record in records:
                 tic = record[0]
@@ -91,18 +93,26 @@ def main():
                         'transcript_sha256', 'updated_at', 'as_of_date'
                         ]
                 df = df[cols]
-                total_inserted = insert_records(conn, df, "mart.earnings_transcript_analysis", 
+                total_inserted = insert_records(conn_local, df, "mart.earnings_transcript_analysis", 
+                                            ["tic", "calendar_year", "calendar_quarter", "as_of_date"], 
+                                            updated_at=False, commit=False,
+                                            batch_size=10)
+                insert_records(conn_supabase, df, "mart.earnings_transcript_analysis", 
                                             ["tic", "calendar_year", "calendar_quarter", "as_of_date"], 
                                             updated_at=False, commit=False,
                                             batch_size=10)
                 print(f"For {tic}: Total records inserted = {total_inserted}")
         except Exception as e:
             print(f"Error processing earnings_transcript_analysis data: {e}")
-            conn.rollback()
-            conn.close()
+            conn_local.rollback()
+            conn_local.close()
+            conn_supabase.rollback()
+            conn_supabase.close()
             return
-        conn.commit()
-        conn.close()
+        conn_local.commit()
+        conn_local.close()
+        conn_supabase.commit()
+        conn_supabase.close()
         return
     return
 
