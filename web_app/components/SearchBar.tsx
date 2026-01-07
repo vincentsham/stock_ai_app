@@ -145,33 +145,43 @@ const SearchBar = () => {
         onKeyDown={handleEnterKey}
       />
 
-      <CommandList className="hidden group-focus-within:block">
-        {!searching ? null : loading ? (
-          <CommandEmpty className="search-list-empty">Loading stocks...</CommandEmpty>
-        ) : stocks.length === 0 ? (
-          <CommandEmpty className="search-list-empty">No results found.</CommandEmpty>
-        ) : (
-          <CommandGroup>
-            {stocks.map((stock) => (
-              <CommandItem 
-                key={stock.tic} 
-                value={`${stock.tic}-${stock.name}`}
-                onSelect={() => handleSelectStock(stock)}
-                className="cursor-pointer hover:bg-slate-800 hover:scale-[1.02] transition-transform"
-                onMouseDown={(e) => e.preventDefault()}
-              >
-                  <TrendingUp className="h-4 w-4 text-gray-500 mr-2" />
-                  <div className="flex-1">
-                    <div className="font-semibold">{stock.name}</div>
-                    <div className="text-sm text-gray-500">
-                      {stock.tic} | {stock.exchange} | {stock.sector} | {stock.industry}
+      {searching && (
+        <CommandList className="hidden group-focus-within:block">
+          {loading ? (
+            <CommandEmpty className="search-list-empty text-sm sm:text-base">Loading stocks...</CommandEmpty>
+          ) : stocks.length === 0 ? (
+            <CommandEmpty className="search-list-empty text-sm sm:text-base">No results found.</CommandEmpty>
+          ) : (
+            <CommandGroup>
+              {stocks.map((stock) => (
+                <CommandItem 
+                  key={stock.tic} 
+                  value={`${stock.tic}-${stock.name}`}
+                  onSelect={() => handleSelectStock(stock)}
+                  className="cursor-pointer hover:bg-slate-800 hover:scale-[1.02] transition-transform"
+                  onMouseDown={(e) => e.preventDefault()}
+                >
+                    <TrendingUp className="h-4 w-4 text-gray-500 mr-2" />
+                    <div className="flex-1">
+                      <div className="hidden sm:flex flex-col">
+                        <div className="font-semibold">{stock.name}</div>
+                        <div className="text-sm text-gray-500">
+                          {stock.tic} | {stock.exchange} | {stock.sector} | {stock.industry}
+                        </div>
+                      </div>
+                      <div className="flex sm:hidden flex-col">
+                        <div className="text-sm font-semibold">{stock.name}</div>
+                        <div className="text-xs text-gray-500">
+                          {stock.tic} | {stock.exchange}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        )}
-      </CommandList>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )}
+        </CommandList>
+      )}
     </Command>
   )
 }
