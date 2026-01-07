@@ -53,7 +53,7 @@ const HeaderNavOptions = () => {
               : "text-gray-400 border-transparent hover:text-white hover:bg-gray-700 cursor-pointer" // Inactive state
           )}
         >
-          <item.icon className="w-4 h-4 mr-1" />
+          <item.icon className="w-4 h-4 mr-1 hidden sm:inline-block" />
           {item.label}
         </button>
       ))}

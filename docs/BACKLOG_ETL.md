@@ -99,7 +99,6 @@ examples:
 | 34 | Feature | Fix the earning transcript extraction (The old website blocks the access. Use https://discountingcashflows.com/company/AAPL/transcripts/) | High | Close | feat_34 | 2025-12-18 | 2025-12-18 |
 | 34 | Feature | Fix the earning transcript extraction with DefeatBeta | High | Close | feat_34 | 2025-12-18 | 2025-12-18 |
 | 35 | Feature | Working on the metric etl jobs | High | Close | feat_35 | 2025-12-15 | 2025-12-16 |
-| 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
 | 36 | Feature | Fully integrate with DefeatBeta | High | Close | feat_36 | 2025-12-19 | 2025-12-22 |
 | 37 | Miscellaneous | Finetune the ai agent process | High | Close | misc_37 | 2025-12-23 | 2025-12-23 |
 | 38 | Feature | Add a pre-filter job to filter out or expire news and transcript chunks | High | Close | feat_38 | 2025-12-23 | 2025-12-23 |
@@ -107,6 +106,9 @@ examples:
 | 40 | Miscellaneous | update catalyst logic to seperate stage 2 into a and b; rewrite the retriveal current catalysts logic to include embedding lookup | High | Close | feat_40 | 2025-12-30 | 2025-12-31 |
 | 41 | Miscellaneous | Add shell scripts for running etl jobs; small update on catalyst prompt; small update on catalyst query; small update on ETL processing | High | Close | feat_41 | 2025-12-31 | 2026-01-05 |
 | 42 | Miscellaneous | Integrate with Supabase psql and run script logs | High | Close | feat_42  | 2026-01-05 | 2026-01-06 |
+| 43 | Miscellaneous | moving raw, core, ref into local and mart into supabase | High | Close | misc_43  | 2026-01-07 | 2026-01-07 |
+| 44 | Bug | fix a bug in etl | High | Close | bug_44  | 2026-01-07 | 2026-01-07 |
+| 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous | Create a md doc for source | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1003 | Feature | Standardise the db columns | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |

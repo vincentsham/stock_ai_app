@@ -72,13 +72,7 @@ export const getLatestEarningsCallDate = cache(async (tic: string): Promise<stri
   }
 });
 
-// const EARNINGS_CALL_SEARCH_QUERY = `
-//     SELECT eta.*, et.earnings_date
-//     FROM core.earnings_transcript_analysis eta
-//     JOIN core.earnings_transcripts et 
-//     ON eta.event_id = et.event_id
-//     WHERE eta.tic = $1;
-// `;
+
 
 const searchEarningsCalls = cache(async (tic: string): Promise<EarningsCallAnalysis[]> => {
   let client;

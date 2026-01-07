@@ -73,6 +73,7 @@ examples:
 | 19 | Feature | Front page renovation - background, top stocks, popular stocks | High | Open | w_feat_19 | 2025-12-28 | 2025-12-29 |
 | 20 | Feature | Optimize the live price using yfinance; Allow to download and use the local stock logo; Show the last updated date; Add contact at footer | High | Close | w_feat_20 | 2026-01-01 | 2026-01-05 |
 | 21 | Feature | Modify for final production compilation | High | Close | w_feat_21 | 2026-01-07 | 2026-01-07 |
+| 22 | Bug | Search bar issue on iphone and some display optimization | High | Close | w_bug_22 | 2026-01-07 | 2026-01-07 |
 | 1001 | Feature | Search bar key Enter for selecting the first item | Medium | Close | w_feat_1001 | 2025-12-04 | 2025-12-04 |
 | 1002 | Feature | Fix the flickering by hidden the inactive tabs | Medium | Close | w_feat_1002 |2025-12-09 | 2025-12-09 |
 | 1003 | Miscellaneous | Add a short text under session headers and fix some color | Medium | Close | w_misc_1003 |2025-12-09 | 2025-12-09 |

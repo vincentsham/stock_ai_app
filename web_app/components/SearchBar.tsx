@@ -4,7 +4,9 @@ import { TrendingUp } from "lucide-react"
 import {
   Command,
   CommandEmpty,
+  CommandGroup,
   CommandInput,
+  CommandItem,
   CommandList,
 } from "@/components/ui/command"
 import { useDebounce } from "@/hooks/useDebounce"
@@ -107,12 +109,17 @@ const SearchBar = () => {
     debouncedSearch();
   }, [searchTerm, debouncedSearch]);
 
-  const handleSelectStock = useCallback(() => {
+  const handleSelectStock = useCallback((stock?: StockProfile) => {
     setSearching(false);
     setLoading(false);
     setSearchTerm("");
     setStocks([]);
-  }, []);
+
+    if (stock) {
+        const destination = getDestination(stock.tic);
+        router.push(destination, { scroll: !isCompareMode });
+    }
+  }, [getDestination, router, isCompareMode]);
 
   // --- LOGIC: Enter Key ---
   const handleEnterKey = useCallback((event: KeyboardEvent<HTMLInputElement>) => {
@@ -124,15 +131,11 @@ const SearchBar = () => {
     const [firstStock] = stocks;
     if (!firstStock) return;
 
-    handleSelectStock();
-
-    // Use the helper to determine where to go
-    const destination = getDestination(firstStock.tic);
-    router.push(destination);
-  }, [loading, stocks, getDestination, router, handleSelectStock]);
+    handleSelectStock(firstStock);
+  }, [loading, stocks, handleSelectStock]);
 
   return (
-    <Command className="group rounded-lg border shadow-md md:min-w-[450px] focus-within:border-white">
+    <Command shouldFilter={false} className="group rounded-lg border shadow-md md:min-w-[450px] focus-within:border-white">
       <CommandInput
         ref={inputRef}
         value={searchTerm}
@@ -148,26 +151,25 @@ const SearchBar = () => {
         ) : stocks.length === 0 ? (
           <CommandEmpty className="search-list-empty">No results found.</CommandEmpty>
         ) : (
-          <ul>
+          <CommandGroup>
             {stocks.map((stock) => (
-              <li key={stock.tic} className="search-item hover:bg-slate-800 hover:scale-[1.02] transition-transform">
-                <Link
-                  href={getDestination(stock.tic)} // Dynamic HREF based on page
-                  onClick={handleSelectStock}
-                  scroll={!isCompareMode} // Don't scroll to top if we are just adding to list
-                  className="search-item-link"
-                >
-                  <TrendingUp className="h-4 w-4 text-gray-500" />
+              <CommandItem 
+                key={stock.tic} 
+                value={`${stock.tic}-${stock.name}`}
+                onSelect={() => handleSelectStock(stock)}
+                className="cursor-pointer hover:bg-slate-800 hover:scale-[1.02] transition-transform"
+                onMouseDown={(e) => e.preventDefault()}
+              >
+                  <TrendingUp className="h-4 w-4 text-gray-500 mr-2" />
                   <div className="flex-1">
-                    <div className="search-item-name">{stock.name}</div>
+                    <div className="font-semibold">{stock.name}</div>
                     <div className="text-sm text-gray-500">
                       {stock.tic} | {stock.exchange} | {stock.sector} | {stock.industry}
                     </div>
                   </div>
-                </Link>
-              </li>
+              </CommandItem>
             ))}
-          </ul>
+          </CommandGroup>
         )}
       </CommandList>
     </Command>
