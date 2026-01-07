@@ -135,54 +135,59 @@ const SearchBar = () => {
   }, [loading, stocks, handleSelectStock]);
 
   return (
-    <Command shouldFilter={false} className="group rounded-lg border shadow-md md:min-w-[450px] focus-within:border-white overflow-visible h-auto relative">
-      <CommandInput
-        ref={inputRef}
-        value={searchTerm}
-        onValueChange={setSearchTerm}
-        placeholder={placeholder}
-        className="text-xs sm:text-sm placeholder:text-ellipsis"
-        onKeyDown={handleEnterKey}
-      />
+    <div className="group rounded-lg border shadow-md md:min-w-[450px] focus-within:border-white bg-popover text-popover-foreground overflow-hidden">
+      <div className="flex h-12 items-center gap-2 border-b px-3">
+        <TrendingUp className="h-4 w-4 shrink-0 opacity-50" />
+        <input
+            ref={inputRef}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder={placeholder}
+            className="flex h-11 w-full rounded-md bg-transparent py-3 text-xs sm:text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 placeholder:text-ellipsis"
+            onKeyDown={handleEnterKey}
+        />
+      </div>
 
       {searching && (
-        <CommandList className="absolute top-[calc(100%+4px)] left-0 w-full z-50 rounded-lg border shadow-lg bg-[#1e1e24] max-h-[300px] overflow-y-auto">
-          {loading ? (
-            <CommandEmpty className="search-list-empty text-sm sm:text-lg p-2">Loading stocks...</CommandEmpty>
-          ) : stocks.length === 0 ? (
-            <CommandEmpty className="search-list-empty text-sm sm:text-lg p-2">No results found.</CommandEmpty>
-          ) : (
-            <CommandGroup>
-              {stocks.map((stock) => (
-                <CommandItem 
-                  key={stock.tic} 
-                  value={`${stock.tic}-${stock.name}`}
-                  onSelect={() => handleSelectStock(stock)}
-                  className="cursor-pointer hover:bg-slate-800 hover:scale-[1.02] transition-transform p-2"
-                  onMouseDown={(e) => e.preventDefault()}
-                >
-                    <TrendingUp className="h-4 w-4 text-gray-500 mr-2" />
-                    <div className="flex-1">
-                      <div className="hidden sm:flex flex-col">
-                        <div className="font-semibold">{stock.name}</div>
-                        <div className="text-sm text-gray-500">
-                          {stock.tic} | {stock.exchange} | {stock.sector} | {stock.industry}
+        <Command shouldFilter={false} className="h-auto border-none shadow-none rounded-none">
+          <CommandList className="max-h-[300px] overflow-y-auto">
+            {loading ? (
+              <CommandEmpty className="search-list-empty text-sm sm:text-lg p-2">Loading stocks...</CommandEmpty>
+            ) : stocks.length === 0 ? (
+              <CommandEmpty className="search-list-empty text-sm sm:text-lg p-2">No results found.</CommandEmpty>
+            ) : (
+              <CommandGroup>
+                {stocks.map((stock) => (
+                  <CommandItem 
+                    key={stock.tic} 
+                    value={`${stock.tic}-${stock.name}`}
+                    onSelect={() => handleSelectStock(stock)}
+                    className="cursor-pointer hover:bg-slate-800 hover:scale-[1.02] transition-transform p-2"
+                    onMouseDown={(e) => e.preventDefault()}
+                  >
+                      <TrendingUp className="h-4 w-4 text-gray-500 mr-2" />
+                      <div className="flex-1">
+                        <div className="hidden sm:flex flex-col">
+                          <div className="font-semibold">{stock.name}</div>
+                          <div className="text-sm text-gray-500">
+                            {stock.tic} | {stock.exchange} | {stock.sector} | {stock.industry}
+                          </div>
+                        </div>
+                        <div className="flex sm:hidden flex-col">
+                          <div className="text-sm font-semibold">{stock.name}</div>
+                          <div className="text-xs text-gray-500">
+                            {stock.tic} | {stock.exchange}
+                          </div>
                         </div>
                       </div>
-                      <div className="flex sm:hidden flex-col">
-                        <div className="text-sm font-semibold">{stock.name}</div>
-                        <div className="text-xs text-gray-500">
-                          {stock.tic} | {stock.exchange}
-                        </div>
-                      </div>
-                    </div>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          )}
-        </CommandList>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
+          </CommandList>
+        </Command>
       )}
-    </Command>
+    </div>
   )
 }
 
