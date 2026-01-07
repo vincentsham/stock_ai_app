@@ -50,7 +50,7 @@ export default async function Home() {
         <div className="relative flex flex-col items-center justify-center w-full min-h-screen overflow-hidden"> 
             
             {/* 1. The Background Wallpaper */}
-            <Wallpaper />
+            {/* <Wallpaper /> */}
 
             {/* 2. Main Content - Wrapped in z-10 to sit on top of the background */}
             <div className="relative z-10 flex flex-col items-center w-full pt-20 pb-20">
