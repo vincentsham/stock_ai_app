@@ -1,13 +1,22 @@
-// lib/yahoo.ts
-import { YahooFinance } from 'yahoo-finance2'; // 1. Import the Class (named export)
+import yahooFinance from 'yahoo-finance2';
 
-const yahooFinance = new YahooFinance(); // 2. Create a specific instance
+let instance: any;
 
-// Force the suppression by casting to 'any' to bypass the TypeScript error
-// @ts-ignore
-if (typeof yahooFinance.suppressNotices === 'function') {
-    // @ts-ignore
-    yahooFinance.suppressNotices(['yahooSurvey', 'ripHistorical']);
+// 1. Check if the default import is already an instance (has .quote function)
+// This is usually true on Localhost
+if (typeof (yahooFinance as any).quote === 'function') {
+    instance = yahooFinance;
+} 
+// 2. If not, it's the Class Constructor (Common on Vercel)
+// So we must instantiate it manually.
+else {
+    // @ts-ignore: Bypass TS check to allow instantiation of default export
+    instance = new yahooFinance();
 }
 
-export default yahooFinance;
+// 3. Now we can safely suppress notices on the valid instance
+if (instance && typeof instance.suppressNotices === 'function') {
+    instance.suppressNotices(['yahooSurvey', 'ripHistorical']);
+}
+
+export default instance;
