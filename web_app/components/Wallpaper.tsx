@@ -21,12 +21,36 @@ const GRID_ITEMS = [...SCREENSHOTS, ...SCREENSHOTS, ...SCREENSHOTS];
 
 export const Wallpaper = () => {
     const [mounted, setMounted] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
         setMounted(true);
+        const checkMobile = () => {
+           setIsMobile(window.innerWidth < 768);
+        };
+        
+        // Check initially
+        checkMobile();
+
+        // Optional: Listen for resize, though for this specific crash fix (keyboard open),
+        // we mainly care about the initial state or orientation changes.
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
     if (!mounted) return null;
+
+    // MOBILE OPTIMIZATION: 
+    // Return a static simplified background on mobile to prevent memory crashes (Jetsam)
+    // when the virtual keyboard opens/resizes the viewport.
+    if (isMobile) {
+        return (
+            <div className="fixed inset-0 h-screen w-screen overflow-hidden bg-[#0a0a0a] z-0 pointer-events-none">
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-[#0a0a0a]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_#0a0a0a_100%)] opacity-80" />
+            </div>
+        );
+    }
 
     return (
         <div className="fixed inset-0 h-screen w-screen overflow-hidden bg-[#0a0a0a] z-0 pointer-events-none">
