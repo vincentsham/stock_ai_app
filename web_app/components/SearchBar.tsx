@@ -30,7 +30,7 @@ const SearchBar = () => {
   // 2. Ref for Focus Handling (from your previous request)
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [placeholder, setPlaceholder] = useState("Search Stocks (e.g. NVDA or Nvidia)");
+  const [placeholder, setPlaceholder] = useState("Search Stocks (e.g. AAPL or Apple)");
   const [searching, setSearching] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -40,7 +40,7 @@ const SearchBar = () => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const updatePlaceholder = () => {
-      setPlaceholder(window.innerWidth < 640 ? "e.g. NVDA, Nvidia" : "Search Stocks (e.g. NVDA or Nvidia)");
+      setPlaceholder(window.innerWidth < 640 ? "e.g. AAPL, Apple" : "Search Stocks (e.g. AAPL or Apple)");
     };
     updatePlaceholder();
     window.addEventListener('resize', updatePlaceholder);
