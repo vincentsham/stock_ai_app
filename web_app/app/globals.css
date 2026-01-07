@@ -276,7 +276,7 @@
   }
 
   .header-wrapper {
-    @apply flex justify-between items-center px-4 h-full text-gray-500;
+    @apply flex justify-between items-start px-4 py-4 text-gray-500;
   }
 
   .footer {

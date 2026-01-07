@@ -135,15 +135,15 @@ const SearchBar = () => {
   }, [loading, stocks, handleSelectStock]);
 
   return (
-    <div className="group rounded-lg border shadow-md md:min-w-[450px] focus-within:border-white bg-popover text-popover-foreground overflow-hidden">
-      <div className="flex h-12 items-center gap-2 border-b px-3">
+    <div className="group rounded-lg border shadow-md w-full max-w-[300px] md:max-w-none md:min-w-[450px] focus-within:border-white bg-popover text-popover-foreground overflow-hidden">
+      <div className="flex h-10 items-center gap-2 border-b px-3">
         <TrendingUp className="h-4 w-4 shrink-0 opacity-50" />
         <input
             ref={inputRef}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder={placeholder}
-            className="flex h-11 w-full rounded-md bg-transparent py-3 text-xs sm:text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 placeholder:text-ellipsis"
+            className="flex h-9 w-full rounded-md bg-transparent py-2 text-xs sm:text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 placeholder:text-ellipsis"
             onKeyDown={handleEnterKey}
         />
       </div>
