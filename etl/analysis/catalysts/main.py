@@ -81,7 +81,7 @@ QUERY_UPDATE = {
                     MAX(n.published_at) AS latest_news_ts
                 FROM core.news n
                 WHERE n.tic = '{tic}'
-                AND n.published_at >= '2025-09-01'
+                AND n.published_at >= '2026-01-01'
                 GROUP BY 1, 2
             )
             SELECT 
@@ -275,8 +275,7 @@ def main(tic: str, type: Literal["news", "earnings_transcript"] = "news",
         else:
             query = QUERY_UPDATE[type][frequency].format(tic=tic)
             df = read_sql_query(query, conn)
-        df = df[df['year'] >= 2025]
-        df = df[df['month'].isna() | (df['month'] >= 9)]
+
     else:
         print("Could not connect to database.")
         return
@@ -321,7 +320,7 @@ def main(tic: str, type: Literal["news", "earnings_transcript"] = "news",
     n = 0
 
     # Use tqdm to track progress
-    for i, state in enumerate(tqdm(states, desc=f"Processing states - {type}{' - ' + tic if tic else ''} - {frequency} - {year} {'Q' + str(quarter) if quarter else ''}{month if month else ''}")):
+    for i, state in enumerate(tqdm(states, desc=f"Processing states - {type}{' - ' + tic if tic else ''} - {frequency}")):
         if i < idx - 1:
             continue
         # Batch Sleep Logic
