@@ -14,6 +14,29 @@ export const DISCLAIMER_TEXT = `This is for informational purposes only, not fin
       Invest responsibly and conduct your own due diligence.`;
 
 
+// --- Tooltip Content Constants ---
+export const CATEGORY_TOOLTIP = (
+      <>
+            <div className="font-bold text-slate-100 text-[10px]">Category Score Calculation</div>
+            <span className="text-[10px]">
+                  Weighted average of the <span className="text-sky-400 font-bold">best (75%)</span> and{' '}
+                  <span className="text-sky-400 font-bold">worst (25%)</span> percentile scores for metrics within this category.
+            </span>
+      </>
+);
+
+export const OVERALL_TOOLTIP = (
+      <>
+            <div className="font-bold text-slate-100 text-[10px]">WIN Score Calculation</div>
+            <span className="text-[10px]">
+            (<span className="text-sky-400 font-bold">Valuation</span> + <span className="text-sky-400 font-bold">Profitability</span> + <span className="text-sky-400 font-bold">Growth</span> +{' '}
+            <span className="text-sky-400 font-bold">0.5 × Fin. Health</span> +{' '}
+            <span className="text-sky-400 font-bold">0.5 × Efficiency</span>) / <span className="text-sky-400 font-bold">4</span>
+            </span>
+      </>
+);
+
+      
 export const EARNINGS_TAG_METADATA: Record<string, { label: string; description: string; className: string }> = {
       'consistent-outperform': {
             label: 'Consistent Outperform',

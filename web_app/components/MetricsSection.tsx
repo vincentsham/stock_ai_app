@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { BarChart3 } from 'lucide-react';
+import { BarChart3, HelpCircle } from 'lucide-react';
 import {
   searchValuationMetrics,
   searchProfitabilityMetrics,
@@ -12,6 +12,7 @@ import {
 } from '@/lib/db/metricsQueries';
 import { MetricList } from '@/types';
 import { MetricCard } from './MetricCard';
+import { MetricInfoToolTip } from './MetricToolTip';
 import { AllMetrics } from '@/types/metrics';
 import { NUM_STOCKS } from '@/lib/constants';
 
@@ -84,8 +85,9 @@ export const MetricsSection: React.FC<{ tic: string }> = ({ tic }) => {
                   <BarChart3 size={16}/>
                   Fundamental Metrics
               </h2>
-              <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
-                  <span>Percentile rankings vs {NUM_STOCKS}+ Selected Stocks</span>
+              <div className="text-xs text-gray-500 flex items-center gap-1 mt-1 cursor-help group relative">
+                  <span>Percentile rankings vs {NUM_STOCKS}+ Selected Stocks <HelpCircle size={10} className="inline-block" /></span>
+                  <MetricInfoToolTip showOverall={false} />
               </div>
           </div>
                 <div className="text-xs text-gray-500 flex flex-row items-start md:items-center gap-1 md:justify-end mt-2 md:mt-0">

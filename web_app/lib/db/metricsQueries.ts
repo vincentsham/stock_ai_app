@@ -117,9 +117,7 @@ const GROWTH_METRICS_SEARCH_QUERY = `
 
       revenue_cagr_5y,
       eps_cagr_5y,
-      ebitda_cagr_5y,
-      fcf_cagr_5y,
-    
+
       -- growth percentiles
       revenue_growth_yoy_percentile,
       revenue_cagr_3y_percentile,
@@ -132,8 +130,7 @@ const GROWTH_METRICS_SEARCH_QUERY = `
 
       revenue_cagr_5y_percentile,
       eps_cagr_5y_percentile,
-      fcf_cagr_5y_percentile,
-      ebitda_cagr_5y_percentile,
+
       
       operating_income_growth_yoy_percentile,
       forward_revenue_growth_percentile,
