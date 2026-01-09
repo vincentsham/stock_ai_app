@@ -586,7 +586,7 @@ export const METRICS_METADATA: Record<string, {
             name: 'Total Shareholder Yield',
             display_fn: formatPercentage,
             inverse: false,
-            displayByDefault: true,
+            displayByDefault: false,
             description: 'Total Shareholder Yield, combining dividends, share buybacks, and debt reduction as a percentage of market value; higher values suggest greater returns to shareholders.',
       },
       'share_count_change_yoy': {
