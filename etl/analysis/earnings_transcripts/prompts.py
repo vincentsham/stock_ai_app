@@ -168,7 +168,7 @@ Encodings:
 
 Rules:
 - Use only explicit statements from excerpts (no inference).
-- Extract specific management actions (e.g., hedging, diversification, cost control, pricing changes, supply-chain shifts) (2–8 words each). 
+- Extract specific management actions (e.g., hedging, diversification, cost control, pricing changes, supply-chain shifts) (2–5 words each). 
 - If multiple actions exist, choose the dominant one (most impactful/emphasized) for top-level encodings and list others in mitigation_actions.
 - Include 1–2 short verbatim quotes to support findings.
 - Ignore vague optimism or intent without a clear action.
