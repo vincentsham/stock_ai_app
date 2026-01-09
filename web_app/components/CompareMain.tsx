@@ -12,6 +12,8 @@ import { searchValuationMetrics, searchProfitabilityMetrics,
          searchFinancialHealthMetrics } from '@/lib/db/metricsQueries';
 import { searchStockScores, getLatestStockScoresDate } from '@/lib/db/metricsQueries';
 import { MAX_COMPARE_STOCKS, NUM_STOCKS } from '@/lib/constants';
+import { HelpCircle } from 'lucide-react';
+import { MetricInfoToolTip } from './MetricToolTip';
 
 
 
@@ -297,9 +299,10 @@ export const CompareMain = () => {
             </div>
           )}
         </div>
-        {viewMode == 'metrics' && (<div className="w-full text-xs text-gray-500 flex items-center justify-end gap-1 mt-1">
-			    <span>* Percentile rankings vs {NUM_STOCKS}+ Selected Stocks</span>
-		    </div>)}
+        <div className="w-full text-xs text-gray-500 flex items-center justify-end gap-1 mt-1 cursor-help group relative">
+			    <span>* Percentile rankings vs {NUM_STOCKS}+ Selected Stocks <HelpCircle size={10} className='inline-block' /></span>
+          <MetricInfoToolTip align="right" side="top"/>
+		    </div>
       </div>
     );
 }

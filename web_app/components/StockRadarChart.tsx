@@ -3,6 +3,8 @@
 import { StockScores } from '@/types';
 import { useState, useEffect } from 'react';
 import { searchStockScores } from '@/lib/db/metricsQueries';
+import { MetricInfoToolTip } from './MetricToolTip';
+import { HelpCircle } from 'lucide-react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 
 type StockRadarChartProps = {
@@ -82,10 +84,18 @@ const StockRadarChart: React.FC<StockRadarChartProps> = ({ tic, height = 400 }) 
         <div className="h-full w-full" style={{ height }}>
             {/* Main Card Container */}
             <div className="h-full w-full bg-[#0c0e15] rounded-3xl border border-gray-800 shadow-2xl overflow-hidden relative">
+                <div className="absolute top-4 left-4 z-10 group">
+                    <div className="flex items-center space-x-1.5 text-slate-500 cursor-help group">
+                        <HelpCircle size={10}/>
+                        <span className="text-[10px] font-semibold tracking-wider uppercase">Metric Info</span>
+                    </div>
+                    <MetricInfoToolTip />
+                </div>
+                
                 {/* Overall Score - Top Right  */}
                 <div className="absolute top-4 right-4 flex items-center space-x-2 z-10">
-                    <div className="flex flex-col text-[12px] leading-tight text-slate-500 font-medium text-right">
-                        <span>OVERALL</span>
+                    <div className="flex flex-col text-[12px] leading-tight text-slate-500 font-medium text-right items-end">
+                        <span>WIN</span>
                         <span>SCORE</span>
                     </div>
                     <span className="text-3xl font-bold text-white">{Math.round(scores?.total_score ?? 0)}</span>

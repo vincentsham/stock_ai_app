@@ -34,7 +34,7 @@ export const EarningsCallsSection: React.FC<{ tic: string }> = ( {tic} ) => {
                 <h2 className="text-xl font-bold text-white flex items-center gap-2">
                     <Calendar size={16}/>
                     Earnings Call Analysis
-                    <span className="text-[10px] md:text-xs font-normal text-gray-500 bg-gray-800/50 px-1.5 md:px-2 py-0.5 md:py-1 rounded-full border border-gray-700">
+                    <span className="text-[8px] md:text-xs font-normal text-gray-500 bg-gray-800/50 px-1.5 md:px-2 py-0.5 md:py-1 rounded-full border border-gray-700">
                         AI Generated
                     </span>
                 </h2>

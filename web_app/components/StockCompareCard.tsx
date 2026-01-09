@@ -95,7 +95,7 @@ export const StockCompareCard: React.FC<StockCompareCardProps> = ({ tic, stockPr
                             tic={item.tic}
                             score={item.score}
                             metrics={item.metrics}
-                            defaultVisibleCount={item.defaultVisibleCount}
+                            defaultVisibleCount={Math.min(4, item.defaultVisibleCount)}
                             highlight={item.highlight ?? null}
                             expandedState={(expandedStates && typeof expandedStates[index] === 'boolean') ? [expandedStates[index], () => toggleMetric(index)] : null}
                             compact={true}
