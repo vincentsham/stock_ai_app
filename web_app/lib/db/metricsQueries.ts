@@ -254,6 +254,12 @@ const searchMetrics = cache(async (tic: string, category: string, query: string)
           }
           metricList.metrics.push(metric);
       }
+      // sort items in metricList where displayByDefault is true first
+      metricList.metrics.sort((a, b) => {
+          if (a.displayByDefault && !b.displayByDefault) return -1;
+          if (!a.displayByDefault && b.displayByDefault) return 1;
+          return 0;
+      });
       return metricList;
 
     }

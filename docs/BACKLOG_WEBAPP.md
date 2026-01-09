@@ -38,8 +38,8 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-| 1005 | Feature | Add loading spinner and error page | Medium | Open |  | | |
-| 1006 | Feature | Add tooltips for metrics session, including the % change | Medium | Open |  | | |
+| 1006 | Feature | Add loading spinner and error page | Medium | Open |  | | |
+| 1007 | Feature | Add tooltips for metrics session, including the % change | Medium | Open |  | | |
 | 10001 | Technical | Finetune metadata for SEO | Low | Open | | | |
 | 10002 | Feature | Collaspe all the extensions when the tab is inactive | Low | Open | | | |
 | 10003 | Feature | Add the revenue by products/geographics session, called (products/geographics) | Low | Open |  | | |
@@ -70,7 +70,7 @@ examples:
 | 16 | Feature | Add radar diagram | High | Close | w_feat_16 | 2025-12-19 | 2025-12-19 |
 | 17 | Feature | Fix the lint issues | High | Close | w_feat_17 | 2025-12-24 | 2025-12-24 |
 | 18 | Feature | Add the comparison tool | High | Close | w_feat_18 | 2025-12-25 | 2025-12-28 |
-| 19 | Feature | Front page renovation - background, top stocks, popular stocks | High | Open | w_feat_19 | 2025-12-28 | 2025-12-29 |
+| 19 | Feature | Front page renovation - background, top stocks, popular stocks | High | Close | w_feat_19 | 2025-12-28 | 2025-12-29 |
 | 20 | Feature | Optimize the live price using yfinance; Allow to download and use the local stock logo; Show the last updated date; Add contact at footer | High | Close | w_feat_20 | 2026-01-01 | 2026-01-05 |
 | 21 | Feature | Modify for final production compilation | High | Close | w_feat_21 | 2026-01-07 | 2026-01-07 |
 | 22 | Bug | Search bar issue on iphone and some display optimization | High | Close | w_bug_22 | 2026-01-07 | 2026-01-07 |
@@ -79,4 +79,5 @@ examples:
 | 1002 | Feature | Fix the flickering by hidden the inactive tabs | Medium | Close | w_feat_1002 |2025-12-09 | 2025-12-09 |
 | 1003 | Miscellaneous | Add a short text under session headers and fix some color | Medium | Close | w_misc_1003 |2025-12-09 | 2025-12-09 |
 | 1004 | Feature | Disable the redirect of the ticker widget | Medium | Close | feat_1004 | 2025-12-24 | 2025-12-24 |
+| 1005 | Miscellaneous | sort metic list where display by default show first | Medium | Close | w_misc_1005 | 2025-01-09 | 2025-01-09 |
 </div>
