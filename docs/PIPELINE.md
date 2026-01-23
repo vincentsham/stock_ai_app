@@ -1,159 +1,116 @@
-# Data Pipeline and Workflow  
-**Project:** AI Stock Intelligence System  
-**Author:** Vincent Sham  
+# Data Pipeline and Workflow
+**Project:** Stock AI App
+**Status:** Active
+**Pipeline Orchestration:** Python scripts triggered via Shell scripts
 
 ---
 
-## Overview  
+## Overview
 
-The AI Stock Intelligence System follows a **modular, multi-stage pipeline** that integrates data ingestion, AI-driven analysis, and multi-pillar scoring.  
-Each stage is designed for transparency, modularity, and reproducibility — enabling independent development, testing, and optimization of each AI agent and data layer.
+The Stock AI App data pipeline utilizes a **Linear ETL (Extract-Transform-Load) + Analysis** architecture. It is designed to progressively refine data from raw API responses into structured, AI-enriched insights served to the web application.
 
----
-
-
-## 1. Data Ingestion Layer  
-
-### Purpose  
-Collects structured and unstructured financial data from multiple APIs and feeds for downstream analysis.
-
-| Component | Description | Data Sources |
-|------------|--------------|---------------|
-| **Market Data ETL** | Fetches real-time and historical stock or crypto prices. | Yahoo Finance, Twelvedata, CoinCodex |
-| **Fundamentals ETL** | Gathers company earnings, balance sheets, and cash flow data. | FMP API, Nasdaq |
-| **News ETL** | Retrieves financial headlines, summaries, and metadata. | News API, Benzinga |
-| **Event & Catalyst ETL** | Collects information about corporate actions, M&A, or product launches. | Nasdaq, Benzinga |
-
-### Output  
-- Stored in **`raw` schema**  
-- Standardized fields: `tic`, `date`, `publisher`, `title`, `url`, `content`, `source`
+**Data Flow:**
+`External APIs` → **[Extract]** → `raw` Schema → **[Load]** → `core` Schema → **[Transform/Analysis]** → `core` (Enriched) → **[Publish]** → `mart` Schema
 
 ---
 
-## 2. Data Normalization & Storage  
+## 1. Extract (Ingestion)
+**Directory**: `etl/extract/`  
+**Schema Target**: `raw.*`
 
-### Purpose  
-Transforms raw data into standardized, queryable formats.  
-Uses **PostgreSQL with pgvector** for hybrid retrieval (semantic + keyword).
+### Purpose
+Responsible for connecting to external data providers, handling rate limits, fetching data, and storing it "as-is" in the database.
 
-| Schema | Role | Example Tables |
-|---------|------|----------------|
-| **raw** | Direct data ingestion, unprocessed JSON and text. | `raw.news`, `raw.earnings_transcripts` |
-| **core** | Cleaned, validated, and normalized structured data. | `core.financials`, `core.earnings`, `core.transcripts` |
-| **mart** | Aggregated features, model results, and pillar scores. | `mart.stock_scores`, `mart.ai_ratings` |
-
----
-
-## 3. AI Agent Layer  
-
-### Purpose  
-Analyzes different dimensions of company performance using domain-specific AI agents.
-
-| Agent | Description | Key Output |
-|--------|--------------|-------------|
-| **News Agent** | Classifies headlines by event type, sentiment, and market impact. | Category, sentiment, time horizon, magnitude |
-| **Earnings Transcript Agent** | Analyzes tone, management confidence, and risk mentions. | Risk signals, guidance tone, qualitative summary |
-| **Financial Report Agent** | Extracts financial KPIs from statements and ratios. | Growth metrics, profitability, leverage ratios |
-| **Analyst Forecast Agent** | Aggregates analyst PTs, upgrades/downgrades, and revisions. | Consensus targets, dispersion, directionality |
-| **Market Trend Agent** | Captures technical momentum, volume patterns, and volatility. | Momentum indicators, trend classification |
-
-All agents write structured JSON outputs into the **`core` or `mart`** schema, conforming to Pydantic data models.
+*   **Process**:
+    *   Fetches data from `FMP`, `Yahoo Finance`, `CoinCodex`, etc.
+    *   Hashes raw JSON blobs for lineage and change detection (`raw_json_sha256`).
+    *   Inserts new records into the `raw` schema (e.g., `raw.news`, `raw.earnings`, `raw.stock_prices`).
+*   **Key Scripts**:
+    *   `extract/news/extract_news_fmp.py`: Fetches latest news.
+    *   `extract/stocks/extract_stock_ohlcv_daily_yf.py`: Fetches daily price data.
+    *   `extract/earnings/extract_earnings.py`: Fetches earnings calendars and actuals.
 
 ---
 
-## 4. Feature Aggregation Layer  
+## 2. Load (Normalization & Standardization)
+**Directory**: `etl/load/`  
+**Schema Target**: `core.*`
 
-### Purpose  
-Combines agent outputs into unified, time-aligned feature sets for scoring and classification.
+### Purpose
+Reads raw data, cleans it, standardizes formats, and strictly validates it for downstream use.
 
-| Process | Description |
-|----------|-------------|
-| **Temporal Alignment** | Synchronizes agent results by fiscal date and ticker. |
-| **Feature Normalization** | Scales metrics using z-score, percentile, or min–max normalization. |
-| **Dimensional Tagging** | Maps each feature to its corresponding pillar and sub-pillar. |
-| **Feature Versioning** | Tracks data and model versions for reproducibility. |
-
-Output: aggregated feature table (e.g., `mart.features_combined`).
-
----
-
-## 5. Stock Type Classification  
-
-### Purpose  
-Groups companies by **structural and behavioral profiles** to enable type-specific comparisons.
-
-| Stage | Description |
-|--------|-------------|
-| **Archetype Identification** | Growth, Value, Defensive, Cyclical, High-Margin, Pre-Profit, etc. |
-| **Subtype Labeling** | Adds refinement (e.g., Hypergrowth, R&D-Led, Quality Value). |
-| **Tagging System** | Thematic and situational tags (e.g., AI_Beneficiary, Founder_Led). |
-
-The classification is used for **peer benchmarking** and **score normalization** in the next stage.
+*   **Process**:
+    *   **Fiscal Alignment**: Maps fiscal quarters to calendar quarters (e.g., `fiscal_year` vs `calendar_year`).
+    *   **Deduplication**: Ensures unique records per ticker/date using hash keys.
+    *   **Structure**: Moves data from `raw.*` JSON blobs into typed columns in `core.*` (e.g., `core.earnings`, `core.stock_profiles`).
+    *   **Embedding Prep**: Chunks text (transcripts) and prepares them for embedding (if applicable).
+*   **Key Scripts**:
+    *   `load/earnings/load_earnings.py`: Standardizes earnings reports.
+    *   `load/earnings/load_earnings_calendar_defeatbeta.py`: Manages forward-looking calendar.
 
 ---
 
-## 6. Multi-Pillar Scoring Engine  
+## 3. Transform (Metrics Calculation)
+**Directory**: `etl/transform/`  
+**Schema Target**: `core.*` / `mart.*` (Intermediate)
 
-### Purpose  
-Evaluates each company across structured, interpretable dimensions.
+### Purpose
+Calculates quantitative ratios, growth rates, and statistical percentiles on top of the clean `core` data.
 
-| Pillar | Example Sub-Pillars | Description |
-|---------|---------------------|--------------|
-| **Growth** | Revenue & EPS Growth, Market Share Gain | Measures business expansion and reinvestment. |
-| **Profitability** | Margins, ROIC, Efficiency | Evaluates earnings quality and cost structure. |
-| **Quality & Risk** | Balance Sheet, Stability, Risk Exposure | Assesses resilience and downside protection. |
-| **Valuation** | Absolute & Relative Multiples | Compares price levels versus fundamentals and peers. |
-| **Momentum** | Price Action, Volume Flow, Catalyst Reaction | Captures technical strength and sentiment. |
-| **Execution** | Earnings Surprise, Tone, Guidance | Evaluates management performance and strategy follow-through. |
-
-The scoring process integrates:
-- **Trend Awareness:** Detects improving or deteriorating metrics.  
-- **Peer Normalization:** Adjusts for sector and stock type context.  
-- **Weighted Aggregation:** Produces composite scores per pillar and overall rating.
+*   **Process**:
+    *   **Financial Ratios**: Computes PE, PS, ROE, Margins based on `core.financials`.
+    *   **Growth Metrics**: Calculates YoY growth, 3Y/5Y CAGRs for Revenue, EPS, FCF.
+    *   **Percentiles**: Ranks companies against peers to generate scoring inputs.
+*   **Key Scripts**:
+    *   `transform/earnings/main.py`: Earnings-specific transformations.
+    *   `transform/metrics/`: Calculation of Valuation, Profitability, and Efficiency metrics.
 
 ---
 
-## 7. AI Rating & Price Target Generation  
+## 4. Analysis (AI Agents)
+**Directory**: `etl/analysis/`  
+**Schema Target**: `core.*_analysis`
 
-### Purpose  
-Synthesizes quantitative and qualitative insights into **AI-generated ratings and PTs**.
+### Purpose
+Runs advanced AI agents (LangGraph/LLMs) to extract semantic meaning from unstructured text.
 
-| Component | Description |
-|------------|-------------|
-| **Rating Model** | Classifies stock as Buy/Hold/Sell or outputs numerical score (0–100). |
-| **Price Target Estimation** | Uses valuation models and peer metrics to derive AI PTs. |
-| **Rationale Generation** | Generates textual explanation citing key contributing pillars. |
-
-Output tables:  
-- `mart.ai_ratings`  
-- `mart.price_targets`  
-
----
-
-## 8. Web Application Layer (Planned)  
-
-### Purpose  
-Provides an interactive interface for users to explore insights, scores, and reports.
-
-| Component | Technology | Function |
-|------------|-------------|-----------|
-| **Backend API** | FastAPI | Serves data endpoints for scores, classifications, and analysis. |
-| **Frontend** | Next.js / React | Visualizes company dashboards, score breakdowns, and PT comparisons. |
-| **Visualization Libraries** | Plotly / Recharts | Graphical analytics and multi-pillar visualization. |
+*   **Process**:
+    *   **News Agent**: Reads `core.news`, classifies events, assigns sentiment/impact scores, and writes to `core.news_analysis`.
+    *   **Earnings Agent**: Reads `core.earnings_transcripts`, analyzes management tone, risks, and guidance, writing to `core.earnings_transcript_analysis`.
+    *   **Catalyst Agent**: Identifies and links catalysts to stock entities.
+*   **Key Scripts**:
+    *   `analysis/news/main.py`: processing news stream.
+    *   `analysis/earnings_transcripts/main.py`: analyzing earnings calls.
+    *   `analysis/analysts/main.py`: summarizing analyst consensus.
 
 ---
 
-## 9. Summary of Data Flow  
+## 5. Publish (Serving Layer)
+**Directory**: `etl/publish/`  
+**Schema Target**: `mart.*`
 
-| Stage | Input | Output | Destination |
-|--------|--------|---------|--------------|
-| **1. Ingestion** | APIs, feeds | Raw JSON/text | `raw` schema |
-| **2. Normalization** | Raw data | Structured tables | `core` schema |
-| **3. Agent Analysis** | Core tables | JSON insights | `core` / `mart` |
-| **4. Feature Aggregation** | Agent outputs | Unified feature table | `mart.features_combined` |
-| **5. Classification** | Features | Stock types, subtypes, tags | `mart.classifications` |
-| **6. Scoring** | Aggregated features | Pillar & total scores | `mart.stock_scores` |
-| **7. AI Ratings & PTs** | Scores + qualitative data | Rating, rationale, price target | `mart.ai_ratings` |
-| **8. Web Output** | API responses | Dashboard & reports | Frontend layer |
+### Purpose
+The final stage that aggregates all insights into consumer-ready "Data Mart" tables. This layer is optimized for the Web App's query patterns.
+
+*   **Process**:
+    *   **Scoring**: Aggregates normalized metrics into Pillar Scores (Growth, Value, etc.) and Total Scores.
+    *   **Versioning**: Snapshots data with `as_of_date` to allow historical point-in-time analysis.
+    *   **Denormalization**: Flattens complex relationships into single tables for fast UI loading.
+*   **Key Scripts**:
+    *   `publish/publish_stock_profiles.py`: Pushes canonical profiles.
+    *   `publish/publish_stock_scores.py`: Calculates and publishes final 0-100 scores.
+    *   `publish/run_publish.sh`: Orchestrates the sync to production tables.
 
 ---
+
+## 6. Orchestration
+**Directory**: `etl/` (Root scripts)
+
+The pipeline is triggered via shell scripts that manage dependencies and logging:
+*   `extract/run_extract.sh` → Runs daily ingestion.
+*   `load/run_load.sh` → Normalizes raw data.
+*   `transform/run_transform.sh` → Updates computed metrics.
+*   `analysis/run_analysis.sh` → Triggers AI agents.
+*   `publish/run_publish.sh` → Pushes updates to the web app DB (`mart`).
+
+All logs are stored in `logs/` with daily rotation.
