@@ -108,6 +108,7 @@ examples:
 | 42 | Miscellaneous | Integrate with Supabase psql and run script logs | High | Close | feat_42  | 2026-01-05 | 2026-01-06 |
 | 43 | Miscellaneous | moving raw, core, ref into local and mart into supabase | High | Close | misc_43  | 2026-01-07 | 2026-01-07 |
 | 44 | Bug | fix a bug in etl | High | Close | bug_44  | 2026-01-07 | 2026-01-07 |
+| 45 | Bug | fix a bug for null stock score in etl | High | Close | bug_45  | 2026-01-26 | 2026-01-26 |
 | 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous | Create a md doc for source | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |

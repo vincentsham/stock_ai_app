@@ -358,12 +358,12 @@ export const searchStockScores = cache(async (tic: string) => {
 
 
 const TOP_STOCKS_SEARCH_QUERY = `
-      SELECT
-        ss.tic
-      FROM mart.stock_scores ss
-      WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.stock_scores)
-      ORDER BY ss.total_score DESC
-      LIMIT $1;
+    SELECT
+      ss.tic
+    FROM mart.stock_scores ss
+    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.stock_scores)
+    ORDER BY ss.total_score DESC NULLS LAST
+    LIMIT $1;
 `;
 
 const STOCK_SCORES_LATEST_DATE_WITH_TIC_QUERY = `
