@@ -147,6 +147,10 @@ def transform_records(conn, tic: str) -> pd.DataFrame:
     df['financial_health_score'] = df.apply(compute_financial_health_score, axis=1)
     df['total_score'] = (df['valuation_score'] + df['profitability_score'] +
                          0.8 * df['growth_score'] + 0.25 * df['efficiency_score'] + 0.25 * df['financial_health_score']) / 3.3
+
+    df[['valuation_score', 'profitability_score', 'growth_score',
+        'efficiency_score', 'financial_health_score', 'total_score']] = df[['valuation_score', 'profitability_score', 'growth_score',
+                                                                          'efficiency_score', 'financial_health_score', 'total_score']].ffill()
  
     transformed_df = df[['tic', 'date', 'valuation_score', 'profitability_score',
                          'growth_score', 'efficiency_score', 'financial_health_score', 'total_score']]
