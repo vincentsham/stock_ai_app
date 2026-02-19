@@ -36,7 +36,7 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
-| 1 | Technical | Test AWS connection | High | Open | cicd_tech_1 | 2026-02-19 | 2026-02-19 |
+| 1 | Technical | Test AWS connection | High | Open | d_tech_1 | 2026-02-19 | 2026-02-19 |
 
 </div>
 
