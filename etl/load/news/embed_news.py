@@ -7,7 +7,17 @@ from tqdm import tqdm
 
 
 # Load environment variables
-load_dotenv()
+# 1. Look for 'APP_ENV'. If not found, default to 'local'
+app_env = os.getenv("APP_ENV", "local")
+
+# 2. Load the specific file based on the environment
+if app_env == "aws":
+    # This loads your RDS endpoint and 'db_admin' user
+    load_dotenv(".env.aws", override=True)
+else:
+    # This loads 'localhost' and 'vincentsham' user
+    load_dotenv(".env.local", override=True)
+
 
 # Initialize the embedding model
 embedding_model_name = os.getenv("OPENAI_EMBEDDING_MODEL")

@@ -2,7 +2,6 @@ from states import News
 from prompts import STAGE1_PROMPT, STAGE2_PROMPT, STAGE1_SYSTEM_MESSAGE, STAGE2_SYSTEM_MESSAGE
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
 from etl.utils import run_llm, parse_json_from_llm
-from dotenv import load_dotenv
 import json
 
 

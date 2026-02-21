@@ -1,0 +1,27 @@
+FROM python:3.13.5-slim
+
+WORKDIR /app
+
+# Install bash and db dependencies
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
+    bash \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy all folders
+COPY etl/ ./etl/
+COPY database/ ./database/
+COPY .env.aws .env.aws
+
+# Ensure all scripts are executable inside the container
+RUN find etl/ -name "*.sh" -exec chmod +x {} +
+
+ENV PYTHONPATH="/app"
+ENV APP_ENV="aws"
+
+# Run the master orchestrator
+CMD ["/bin/bash", "./etl/main.sh"]

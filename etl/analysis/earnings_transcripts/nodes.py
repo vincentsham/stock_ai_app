@@ -12,8 +12,19 @@ from langgraph.types import Command
 from dotenv import load_dotenv
 from functools import partial
 import json
+import os
 
-load_dotenv()
+# 1. Look for 'APP_ENV'. If not found, default to 'local'
+app_env = os.getenv("APP_ENV", "local")
+
+# 2. Load the specific file based on the environment
+if app_env == "aws":
+    # This loads your RDS endpoint and 'db_admin' user
+    load_dotenv(".env.aws", override=True)
+else:
+    # This loads 'localhost' and 'vincentsham' user
+    load_dotenv(".env.local", override=True)
+
 
 STAGES = {
     "past": {
