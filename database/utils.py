@@ -6,11 +6,22 @@ from psycopg import connect
 import numpy as np
 
 # Load environment variables from .env file
-load_dotenv(override=True)
+# 1. Look for 'APP_ENV'. If not found, default to 'local'
+app_env = os.getenv("APP_ENV", "local")
+
+# 2. Load the specific file based on the environment
+if app_env == "aws":
+    # This loads your RDS endpoint and 'db_admin' user
+    load_dotenv(".env.aws", override=True)
+else:
+    # This loads 'localhost' and 'vincentsham' user
+    load_dotenv(".env.local", override=True)
+
 
 # Connect to PostgreSQL
 def connect_to_db(type: str = "localhost"):
     try:
+
         if type == "localhost":
             # 1. Fetch Variables
             db_name = os.getenv("PGDATABASE")

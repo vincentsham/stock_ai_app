@@ -13,7 +13,17 @@ import math
 from decimal import Decimal
 import ast
 
-load_dotenv()
+# 1. Look for 'APP_ENV'. If not found, default to 'local'
+app_env = os.getenv("APP_ENV", "local")
+
+# 2. Load the specific file based on the environment
+if app_env == "aws":
+    # This loads your RDS endpoint and 'db_admin' user
+    load_dotenv(".env.aws")
+else:
+    # This loads 'localhost' and 'vincentsham' user
+    load_dotenv(".env.local")
+
 
 llm_chatgpt = ChatOpenAI(model=os.getenv("OPENAI_LLM_MODEL"), api_key=os.getenv("OPENAI_API_KEY"))
 llm_gemini = ChatGoogleGenerativeAI(model=os.getenv("GEMINI_LLM_MODEL"), google_api_key=os.getenv("GEMINI_API_KEY"))
