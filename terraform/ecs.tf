@@ -24,30 +24,28 @@ container_definitions = jsonencode([
         { name = "ENV",                    value = "production" },
         { name = "OPENAI_EMBEDDING_MODEL", value = "text-embedding-3-small" },
         { name = "OPENAI_LLM_MODEL",       value = "gpt-5-nano" },
-        { name = "OPENAI_API_KEY",         value = var.openai_api_key },
-        
-        # Adding the specific key name your Python logs were looking for
-        { name = "OPENAT_API_KEY",         value = var.openai_api_key },
         { name = "OPENAT_LLM_MODEL",       value = "gpt-5-nano" },
-
-        { name = "GEMINI_API_KEY",         value = var.gemini_api_key },
         { name = "GEMINI_LLM_MODEL",       value = "models/gemini-2.5-flash-lite" },
         { name = "LLM_MODEL",              value = "chatgpt" },
-        { name = "TAVILY_API_KEY",         value = var.tavily_api_key },
-        { name = "NINJA_API_KEY",          value = var.ninja_api_key },
-        { name = "FMP_API_KEY",            value = var.fmp_api_key },
-        { name = "FINNHUB_API_KEY",        value = var.finnhub_api_key },
         
-        # Database variables
+        # Database variables (Non-sensitive)
         { name = "PGDATABASE",             value = var.db_name },
         { name = "PGUSER",                 value = var.db_username },
-        { name = "PGPASSWORD",             value = var.db_password },
         { name = "PGHOST",                 value = split(":", aws_db_instance.winsanity_db.endpoint)[0] },
         { name = "PGPORT",                 value = "5432" },
-        
-        # Connection strings
-        { name = "PGCONNECTION_TRANSACTION", value = "postgresql://${var.db_username}:${var.db_password}@${split(":", aws_db_instance.winsanity_db.endpoint)[0]}:5432/${var.db_name}?sslmode=require" },
-        { name = "PGCONNECTION_SESSION",     value = "postgresql://${var.db_username}:${var.db_password}@${split(":", aws_db_instance.winsanity_db.endpoint)[0]}:5432/${var.db_name}?sslmode=require" }
+      ]
+
+      secrets = [
+        { name = "OPENAI_API_KEY",         valueFrom = aws_secretsmanager_secret.openai_key.arn },
+        { name = "OPENAT_API_KEY",         valueFrom = aws_secretsmanager_secret.openai_key.arn },
+        { name = "GEMINI_API_KEY",         valueFrom = aws_secretsmanager_secret.gemini_key.arn },
+        { name = "TAVILY_API_KEY",         valueFrom = aws_secretsmanager_secret.tavily_key.arn },
+        { name = "NINJA_API_KEY",          valueFrom = aws_secretsmanager_secret.ninja_key.arn },
+        { name = "FMP_API_KEY",            valueFrom = aws_secretsmanager_secret.fmp_key.arn },
+        { name = "FINNHUB_API_KEY",        valueFrom = aws_secretsmanager_secret.finnhub_key.arn },
+        { name = "PGPASSWORD",             valueFrom = aws_secretsmanager_secret.db_password.arn },
+        { name = "PGCONNECTION_TRANSACTION", valueFrom = aws_secretsmanager_secret.db_connection_string.arn },
+        { name = "PGCONNECTION_SESSION",     valueFrom = aws_secretsmanager_secret.db_connection_string.arn }
       ]
 
       # Log configuration set to camelCase for AWS API compliance
