@@ -1,11 +1,11 @@
 resource "aws_db_instance" "winsanity_db" {
   allocated_storage      = 20
-  db_name                = "stock_ai_db"
+  db_name                = var.db_name
   engine                 = "postgres"
   engine_version         = "16.3"
   instance_class         = "db.t3.micro"
   
-  username               = "db_admin"
+  username               = var.db_username
   password               = var.db_password
   
   parameter_group_name   = "default.postgres16"
