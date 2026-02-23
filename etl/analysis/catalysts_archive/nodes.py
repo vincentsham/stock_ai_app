@@ -1,7 +1,6 @@
 import uuid
 from database.utils import execute_query
 from langchain_openai import OpenAIEmbeddings
-from dotenv import load_dotenv
 from typing import Literal, Optional, Union
 from prompts import CATALYST_QUERIES, STAGE1_HUMAN_PROMPT, STAGE2_HUMAN_PROMPT, \
     STAGE1_SYSTEM_MESSAGE, STAGE2_SYSTEM_MESSAGE, STAGE3_HUMAN_PROMPT, STAGE3_SYSTEM_MESSAGE
@@ -10,19 +9,7 @@ from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AI
 from etl.utils import run_llm, parse_json_from_llm
 import json
 import os
-
-
-# 1. Look for 'APP_ENV'. If not found, default to 'local'
-app_env = os.getenv("APP_ENV", "local")
-
-# 2. Load the specific file based on the environment
-if app_env == "aws":
-    # This loads your RDS endpoint and 'db_admin' user
-    load_dotenv(".env.aws", override=True)
-else:
-    # This loads 'localhost' and 'vincentsham' user
-    load_dotenv(".env.local", override=True)
-
+import database.config
 
 # Helper function to build SQL query
 def get_sql_query(source_type: str, tic: str, calendar_year: int, calendar_quarter: Optional[int], 

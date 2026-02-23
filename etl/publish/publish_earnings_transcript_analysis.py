@@ -4,7 +4,8 @@ import numpy as np
 from database.utils import connect_to_db, insert_records, execute_query
 from utils import delete_published_records
 from etl.utils import fix_quotes
-
+import os
+app_env = os.getenv("APP_ENV", "local")
 
 
 def read_records(tic):
@@ -61,7 +62,9 @@ def main():
     Main function to orchestrate the ETL process for earnings.
     """
     conn_local = connect_to_db("localhost")
-    conn_supabase = connect_to_db("supabase")
+    conn_supabase = True
+    if app_env == "local":
+        conn_supabase = connect_to_db("supabase")
     if conn_local and conn_supabase:
         cursor = conn_local.cursor()
         cursor.execute("SELECT tic FROM core.stock_profiles;")
@@ -69,7 +72,8 @@ def main():
         today = pd.Timestamp.now().date()
         try:
             total_deleted = delete_published_records(conn_local, "mart.earnings_transcript_analysis", today, commit=False)
-            delete_published_records(conn_supabase, "mart.earnings_transcript_analysis", today, commit=False)
+            if app_env == "local":
+                delete_published_records(conn_supabase, "mart.earnings_transcript_analysis", today, commit=False)
             print(f"Deleted {total_deleted} records from mart.earnings_transcript_analysis for as_of_date = {today}")
             for record in records:
                 tic = record[0]
@@ -97,22 +101,25 @@ def main():
                                             ["tic", "calendar_year", "calendar_quarter", "as_of_date"], 
                                             updated_at=False, commit=False,
                                             batch_size=10)
-                insert_records(conn_supabase, df, "mart.earnings_transcript_analysis", 
-                                            ["tic", "calendar_year", "calendar_quarter", "as_of_date"], 
-                                            updated_at=False, commit=False,
-                                            batch_size=10)
+                if app_env == "local":
+                    insert_records(conn_supabase, df, "mart.earnings_transcript_analysis", 
+                                                ["tic", "calendar_year", "calendar_quarter", "as_of_date"], 
+                                                updated_at=False, commit=False,
+                                                batch_size=10)
                 print(f"For {tic}: Total records inserted = {total_inserted}")
         except Exception as e:
             print(f"Error processing earnings_transcript_analysis data: {e}")
             conn_local.rollback()
             conn_local.close()
-            conn_supabase.rollback()
-            conn_supabase.close()
+            if app_env == "local":
+                conn_supabase.rollback()
+                conn_supabase.close()
             return
         conn_local.commit()
         conn_local.close()
-        conn_supabase.commit()
-        conn_supabase.close()
+        if app_env == "local":
+            conn_supabase.commit()
+            conn_supabase.close()
         return
     return
 

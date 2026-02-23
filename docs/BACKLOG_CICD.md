@@ -41,6 +41,7 @@ examples:
 | 11 | Technical | 10-Hour AI Agent Production Run | Critical | In-Progress | d_tech_2 | 2026-02-20 | - |
 | 12 | Technical | Implement Sync Utility (Delta-Sync logic) | Critical | Open | - | 2026-02-20 | - |
 | 13 | Technical | Refactor Secrets to AWS Secrets Manager (Code side) | High | Open | - | 2026-02-21 | - |
+| 13.1 | Technical | Refactor duplicated env logic into config.py | High | Open | - | 2026-02-21 | - |
 | 14 | Security | Restrict RDS SG from 0.0.0.0/0 to Task IP only | Medium | Open | - | 2026-02-21 | - |
 </div>
 

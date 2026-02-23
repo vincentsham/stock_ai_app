@@ -1,23 +1,8 @@
 import os
 from database.utils import connect_to_db
-from dotenv import load_dotenv
 from langchain_openai import OpenAIEmbeddings
 from tqdm import tqdm
-
-
-
-# Load environment variables
-# 1. Look for 'APP_ENV'. If not found, default to 'local'
-app_env = os.getenv("APP_ENV", "local")
-
-# 2. Load the specific file based on the environment
-if app_env == "aws":
-    # This loads your RDS endpoint and 'db_admin' user
-    load_dotenv(".env.aws", override=True)
-else:
-    # This loads 'localhost' and 'vincentsham' user
-    load_dotenv(".env.local", override=True)
-
+import database.config
 
 # Initialize the embedding model
 embedding_model_name = os.getenv("OPENAI_EMBEDDING_MODEL")

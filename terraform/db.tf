@@ -55,3 +55,4 @@ resource "aws_security_group_rule" "allow_my_mac" {
   cidr_blocks       = ["142.198.248.69/32"]
   security_group_id = aws_security_group.db_sg.id 
 }
+

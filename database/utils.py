@@ -1,27 +1,13 @@
 import pandas as pd
 from typing import Optional
-from dotenv import load_dotenv
 import os
 from psycopg import connect
 import numpy as np
-
-# Load environment variables from .env file
-# 1. Look for 'APP_ENV'. If not found, default to 'local'
-app_env = os.getenv("APP_ENV", "local")
-
-# 2. Load the specific file based on the environment
-if app_env == "aws":
-    # This loads your RDS endpoint and 'db_admin' user
-    load_dotenv(".env.aws", override=True)
-else:
-    # This loads 'localhost' and 'vincentsham' user
-    load_dotenv(".env.local", override=True)
-
+import database.config
 
 # Connect to PostgreSQL
 def connect_to_db(type: str = "localhost"):
     try:
-
         if type == "localhost":
             # 1. Fetch Variables
             db_name = os.getenv("PGDATABASE")
@@ -29,6 +15,7 @@ def connect_to_db(type: str = "localhost"):
             db_pass = os.getenv("PGPASSWORD")
             db_host = os.getenv("PGHOST")
             db_port = os.getenv("PGPORT")
+            sslmode = os.getenv("PGSSLMODE")
 
             # 2. Debug: Check for missing values
             missing_vars = []
@@ -37,6 +24,7 @@ def connect_to_db(type: str = "localhost"):
             if not db_pass: missing_vars.append("PGPASSWORD")
             if not db_host: missing_vars.append("PGHOST")
             if not db_port: missing_vars.append("PGPORT")
+            if not sslmode: missing_vars.append("PGSSLMODE")
 
             if missing_vars:
                 print(f"❌ ERROR: Missing environment variables for localhost: {', '.join(missing_vars)}")
@@ -48,7 +36,8 @@ def connect_to_db(type: str = "localhost"):
                 user=db_user,
                 password=db_pass,
                 host=db_host,
-                port=db_port
+                port=db_port,
+                sslmode=sslmode
             )
 
         elif type == "supabase":
