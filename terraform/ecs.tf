@@ -21,10 +21,10 @@ container_definitions = jsonencode([
       
       # All variables moved to environment for immediate execution
       environment = [
+        { name = "APP_ENV",                    value = "aws" },
         { name = "ENV",                    value = "production" },
         { name = "OPENAI_EMBEDDING_MODEL", value = "text-embedding-3-small" },
         { name = "OPENAI_LLM_MODEL",       value = "gpt-5-nano" },
-        { name = "OPENAT_LLM_MODEL",       value = "gpt-5-nano" },
         { name = "GEMINI_LLM_MODEL",       value = "models/gemini-2.5-flash-lite" },
         { name = "LLM_MODEL",              value = "chatgpt" },
         
@@ -33,11 +33,11 @@ container_definitions = jsonencode([
         { name = "PGUSER",                 value = var.db_username },
         { name = "PGHOST",                 value = split(":", aws_db_instance.winsanity_db.endpoint)[0] },
         { name = "PGPORT",                 value = "5432" },
+        { name = "PGSSLMODE",              value = "require" },
       ]
 
       secrets = [
         { name = "OPENAI_API_KEY",         valueFrom = aws_secretsmanager_secret.openai_key.arn },
-        { name = "OPENAT_API_KEY",         valueFrom = aws_secretsmanager_secret.openai_key.arn },
         { name = "GEMINI_API_KEY",         valueFrom = aws_secretsmanager_secret.gemini_key.arn },
         { name = "TAVILY_API_KEY",         valueFrom = aws_secretsmanager_secret.tavily_key.arn },
         { name = "NINJA_API_KEY",          valueFrom = aws_secretsmanager_secret.ninja_key.arn },

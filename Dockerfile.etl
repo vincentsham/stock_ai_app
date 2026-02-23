@@ -15,13 +15,15 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy all folders
 COPY etl/ ./etl/
 COPY database/ ./database/
-COPY .env.aws .env.aws
+# COPY .env.aws .env.aws
 
 # Ensure all scripts are executable inside the container
 RUN find etl/ -name "*.sh" -exec chmod +x {} +
 
 ENV PYTHONPATH="/app"
 ENV APP_ENV="aws"
+# ENV PYTHONUNBUFFERED=1
 
 # Run the master orchestrator
 CMD ["/bin/bash", "./etl/main.sh"]
+# CMD ["/bin/bash", "./etl/publish/run_publish.sh"]

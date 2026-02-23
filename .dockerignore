@@ -37,3 +37,7 @@ assets/
 README.md
 LICENSE
 logs/
+
+
+# SQL files
+*.sql
