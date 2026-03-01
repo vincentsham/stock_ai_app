@@ -10,12 +10,13 @@ declare global {
 
 function createPool(): Pool {
   // 1. Identify Environment
-  const appEnv = process.env.APP_ENV || 'local';
+  const appEnv = process.env.APP_ENV || (process.env.VERCEL ? 'vercel' : 'local');
   const isAWS = appEnv === 'aws';
 
   // 2. Select Connection String based on environment
-  //   - AWS:   PGCONNECTION_TRANSACTION → RDS (injected by ECS / Secrets Manager)
-  //   - Local: SUPABASE_TRANSACTION     → Supabase (loaded from .env.local)
+  //   - AWS:    PGCONNECTION_TRANSACTION → RDS (injected by ECS / Secrets Manager)
+  //   - Vercel: SUPABASE_TRANSACTION     → Supabase (set in Vercel env vars)
+  //   - Local:  SUPABASE_TRANSACTION     → Supabase (loaded from .env.local)
   const connectionString = isAWS
     ? process.env.PGCONNECTION_TRANSACTION
     : process.env.SUPABASE_TRANSACTION;
