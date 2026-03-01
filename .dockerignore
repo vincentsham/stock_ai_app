@@ -8,6 +8,7 @@
 # Environments and Secrets
 .env
 .env.local
+.env.aws
 *.tfstate
 *.tfstate.backup
 .terraform/

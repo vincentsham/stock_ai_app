@@ -36,7 +36,8 @@ resource "aws_iam_role_policy" "secrets_policy" {
         aws_secretsmanager_secret.ninja_key.arn,
         aws_secretsmanager_secret.fmp_key.arn,
         aws_secretsmanager_secret.finnhub_key.arn,
-        aws_secretsmanager_secret.db_connection_string.arn
+        aws_secretsmanager_secret.db_connection_string.arn,
+        aws_secretsmanager_secret.supabase_connection_string.arn
       ]
     }]
   })

@@ -70,3 +70,12 @@ resource "aws_secretsmanager_secret_version" "db_connection_string_val" {
   secret_string = "postgresql://${var.db_username}:${var.db_password}@${split(":", aws_db_instance.winsanity_db.endpoint)[0]}:5432/${var.db_name}?sslmode=require"
 }
 
+resource "aws_secretsmanager_secret" "supabase_connection_string" {
+  name = "winsanity/supabase_connection_string"
+}
+
+resource "aws_secretsmanager_secret_version" "supabase_connection_string_val" {
+  secret_id     = aws_secretsmanager_secret.supabase_connection_string.id
+  secret_string = var.supabase_connection_string
+}
+
