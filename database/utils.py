@@ -42,14 +42,16 @@ def connect_to_db(type: str = "localhost"):
 
         elif type == "supabase":
             # 1. Fetch Variable
-            connection_string = os.getenv("PGCONNECTION_SESSION")
+            connection_string = os.getenv("SUPABASE_TRANSACTION")
 
             # 2. Debug: Check if missing
             if not connection_string:
-                print("❌ ERROR: Missing environment variable 'PGCONNECTION_SESSION'")
+                print("❌ ERROR: Missing environment variable 'SUPABASE_TRANSACTION'")
                 return None
 
-            # 3. Connect
+            # 3. Connect with prepare_threshold=None to DISABLE prepared statements.
+            #    In psycopg3: 0 = prepare immediately, None = NEVER prepare.
+            #    PgBouncer transaction mode cannot handle named prepared statements.
             conn = connect(
                 connection_string, 
                 connect_timeout=120, 
@@ -57,7 +59,8 @@ def connect_to_db(type: str = "localhost"):
                 keepalives_idle=30, 
                 keepalives_interval=10, 
                 keepalives_count=5,
-                sslmode='require'
+                sslmode='require',
+                prepare_threshold=None
             )
         else:
             raise ValueError(f"Invalid connection type specified: {type}")
@@ -167,6 +170,12 @@ def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[],
 
     try:
         total_records = 0
+        # PgBouncer (Supabase) check: executemany() uses pipeline mode which
+        # sends named PREPARE statements (_pg3_X) that collide on recycled
+        # PgBouncer backends. Fall back to individual execute() calls.
+        # prepare_threshold=None means "never prepare" in psycopg3.
+        use_executemany = getattr(conn, 'prepare_threshold', 5) is not None
+
         with conn.cursor() as cursor:
             # Convert DataFrame to a list of tuples (Must be a list to slice it for batches)
             data = list(df.itertuples(index=False, name=None))
@@ -176,13 +185,20 @@ def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[],
             # We default to 100, but for transcripts, you might want to pass batch_size=10
             for i in range(0, total_len, batch_size):
                 batch = data[i : i + batch_size]
-                cursor.executemany(sql, batch)
+
+                if use_executemany:
+                    cursor.executemany(sql, batch)
+                else:
+                    # Individual execute() calls respect prepare_threshold=0
+                    # and use the simple query protocol (no PREPARE statements)
+                    for row in batch:
+                        cursor.execute(sql, row)
                 
                 # Vital: Commit after every batch to release memory and DB locks
                 if commit:
                     conn.commit()
                     
-                total_records += cursor.rowcount
+                total_records += len(batch) if not use_executemany else cursor.rowcount
                 # Optional: Print progress for large jobs
                 if total_len > 100:
                     print(f"   - Batch {i//batch_size + 1}: Processed {min(i + batch_size, total_len)}/{total_len} rows")

@@ -76,9 +76,7 @@ def main():
     Main function to orchestrate the ETL process for valuation metrics.
     """
     conn_local = connect_to_db("localhost")
-    conn_supabase = True
-    if app_env == "local":
-        conn_supabase = connect_to_db("supabase")
+    conn_supabase = connect_to_db("supabase")
     if conn_local and conn_supabase:
         cursor = conn_local.cursor()
         cursor.execute("SELECT tic FROM core.stock_profiles;")
@@ -86,8 +84,7 @@ def main():
         today = pd.Timestamp.now().date()
         try:
             total_deleted = delete_published_records(conn_local, "mart.valuation_metrics", today, commit=False)
-            if app_env == "local":
-                delete_published_records(conn_supabase, "mart.valuation_metrics", today, commit=False)
+            delete_published_records(conn_supabase, "mart.valuation_metrics", today, commit=False)
             print(f"Deleted {total_deleted} records from mart.valuation_metrics for as_of_date = {today}")
             for record in records:
                 tic = record[0]
@@ -110,24 +107,21 @@ def main():
                 total_inserted = insert_records(conn_local, df, "mart.valuation_metrics", 
                                             ["tic", "date", "as_of_date"], 
                                             updated_at=False, commit=False)
-                if app_env == "local":
-                    insert_records(conn_supabase, df, "mart.valuation_metrics", 
-                                                ["tic", "date", "as_of_date"], 
-                                                updated_at=False, commit=False)
+                insert_records(conn_supabase, df, "mart.valuation_metrics", 
+                                            ["tic", "date", "as_of_date"], 
+                                            updated_at=False, commit=False)
                 print(f"For {tic}: Total records inserted = {total_inserted}")
         except Exception as e:
             print(f"Error processing valuation metrics data: {e}")
             conn_local.rollback()
             conn_local.close()
-            if app_env == "local":
-                conn_supabase.rollback()
-                conn_supabase.close()
+            conn_supabase.rollback()
+            conn_supabase.close()
             return
         conn_local.commit()
         conn_local.close()
-        if app_env == "local":
-            conn_supabase.commit()
-            conn_supabase.close()
+        conn_supabase.commit()
+        conn_supabase.close()
         return
     return
 

@@ -36,13 +36,9 @@ examples:
 
 | ID | Category | Description | Priority | Status | Branch | Open Date | Close Date |
 |---|---|---|---|---|---|---|---|
-| 9 | Technical | Dockerize Next.js Web App | Medium | Open | - | 2026-02-20 | - |
 | 10 | Technical | GitHub Actions CI/CD Pipeline | Medium | Open | - | 2026-02-20 | - |
 | 11 | Technical | 10-Hour AI Agent Production Run | Critical | In-Progress | d_tech_2 | 2026-02-20 | - |
 | 12 | Technical | Implement Sync Utility (Delta-Sync logic) | Critical | Open | - | 2026-02-20 | - |
-| 13 | Technical | Refactor Secrets to AWS Secrets Manager (Code side) | High | Open | - | 2026-02-21 | - |
-| 13.1 | Technical | Refactor duplicated env logic into config.py | High | Open | - | 2026-02-21 | - |
-| 14 | Security | Restrict RDS SG from 0.0.0.0/0 to Task IP only | Medium | Open | - | 2026-02-21 | - |
 </div>
 
 ### Closed Backlog Items
@@ -58,5 +54,14 @@ examples:
 | 6 | Technical | Dockerize ETL Agent (Python 3.13.5) | High | Closed | d_tech_2 | 2026-02-20 | 2026-02-21 |
 | 7 | Technical | Sync Local Data to RDS (Migration) | High | Closed | d_tech_2 | 2026-02-20 | 2026-02-21 |
 | 8 | Technical | ECS Fargate Cluster & Task Definition | High | Closed | d_tech_2 | 2026-02-20 | 2026-02-21 |
-
+| 9 | Technical | Dockerize Next.js Web App | Medium | Closed | d_tech_3 | 2026-02-28 | 2026-02-28 |
+| 9.1 | Technical | Deploy Web App to ECS Fargate (SG, Task Def, Secrets) | Medium | Closed | d_tech_3 | 2026-02-28 | 2026-02-28 |
+| 13 | Technical | Refactor Secrets to AWS Secrets Manager (Code side) | High | Closed | d_tech_3 | 2026-02-21 | 2026-02-28 |
+| 13.1 | Technical | Refactor duplicated env logic into config.py | High | Closed | d_tech_3 | 2026-02-21 | 2026-02-28 |
+| 15 | Technical | Provision ALB + Target Group + Listener for Web App | High | Closed | d_tech_3 | 2026-02-28 | 2026-02-28 |
+| 16 | Technical | Create ECS Service for Web App (Fargate, ALB-attached) | High | Closed | d_tech_3 | 2026-02-28 | 2026-02-28 |
+| 14 | Security | Restrict RDS SG from 0.0.0.0/0 to Task IP only | Medium | Closed | d_tech_3 | 2026-02-21 | 2026-02-28 |
+| 17 | Technical | ETL dual-write to RDS + Supabase (updated 12 publish files) | High | Closed | d_tech_3 | 2026-02-28 | 2026-02-28 |
+| 18 | Technical | Add Supabase secret to Secrets Manager + ETL task definition | High | Closed | d_tech_3 | 2026-02-28 | 2026-02-28 |
+| 19 | Technical | Fix web app DB connection (SUPABASE_TRANSACTION local, PGCONNECTION_TRANSACTION AWS) | High | Closed | d_tech_3 | 2026-02-28 | 2026-02-28 |
 </div>

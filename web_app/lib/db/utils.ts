@@ -1,51 +1,52 @@
 import { Pool, PoolConfig } from 'pg';
 import '@/lib/loadEnv';
 
-// 1. Extend global type for Singleton
 declare global {
   var postgres: Pool | undefined;
 }
 
-// 2. Strict Connection Setup
-// We ONLY use the connection string. No fallbacks.
-const connectionString = process.env.PGCONNECTION_TRANSACTION;
+// 1. Identify Environment
+const appEnv = process.env.APP_ENV || 'local';
+const isAWS = appEnv === 'aws';
+
+// 2. Select Connection String based on environment
+//   - AWS:   PGCONNECTION_TRANSACTION → RDS (injected by ECS / Secrets Manager)
+//   - Local: SUPABASE_TRANSACTION     → Supabase (loaded from .env.local)
+const connectionString = isAWS
+  ? process.env.PGCONNECTION_TRANSACTION
+  : process.env.SUPABASE_TRANSACTION;
 
 if (!connectionString) {
-  throw new Error('❌ FATAL: PGCONNECTION_TRANSACTION is missing from environment variables.');
+  throw new Error(
+    `❌ FATAL: Connection string missing. APP_ENV=${appEnv}, ` +
+    `expected ${isAWS ? 'PGCONNECTION_TRANSACTION' : 'SUPABASE_TRANSACTION'}`
+  );
 }
 
+// 3. Environment-Specific Config
 const config: PoolConfig = {
   connectionString: connectionString,
-  
-  // Standard Pool Settings
-  max: 20,
+  max: isAWS ? 20 : 10, // Higher pool limit for production AWS
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000,
+  connectionTimeoutMillis: isAWS ? 10000 : 5000,
 
-  // 3. SSL Logic
-  // Supabase requires SSL. We enable it if the URL looks like a cloud URL or we are in production.
-  ssl: (process.env.NODE_ENV === 'production' || connectionString.includes('supabase')) 
-    ? { rejectUnauthorized: false } 
-    : undefined,
+  // 4. SSL — required for both RDS and Supabase
+  ssl: { rejectUnauthorized: false },
 };
 
+// 5. Singleton Pattern
 let pool: Pool;
 
-// 4. Singleton Pattern (Prevents connection leaks during Hot Reloads)
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production' || isAWS) {
   pool = new Pool(config);
 } else {
   if (!global.postgres) {
-    console.log("🔌 Initializing database pool...");
+    console.log(`🔌 Initializing ${isAWS ? 'AWS RDS' : 'Local/Supabase'} pool...`);
     global.postgres = new Pool(config);
   }
   pool = global.postgres;
 }
 
-// 5. Error Listener
-pool.on('error', (error: Error) => {
-  console.error('❌ Unexpected error on idle client', error);
-});
+pool.on('error', (err) => console.error('❌ DB Pool Error:', err));
 
 export default pool;
-

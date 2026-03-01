@@ -43,3 +43,8 @@ variable "db_name" {
   type    = string
   default = "stock_ai_db"
 }
+
+variable "supabase_connection_string" {
+  type      = string
+  sensitive = true
+}
