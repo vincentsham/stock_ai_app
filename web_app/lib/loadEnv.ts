@@ -3,12 +3,15 @@ import path from 'path';
 import fs from 'fs';
 
 // 1. Check for the toggle (defaults to 'local')
-const appEnv = process.env.APP_ENV || 'local';
+//    Vercel automatically sets VERCEL=1; treat it as a cloud environment.
+const appEnv = process.env.APP_ENV || (process.env.VERCEL ? 'vercel' : 'local');
 
-// 2. In AWS, environment variables are injected by ECS task definition
-//    (via Secrets Manager + plain env vars). No file loading needed.
+// 2. In cloud environments (AWS / Vercel), env vars are injected by the
+//    platform — no file loading needed.
 if (appEnv === 'aws') {
   console.log('☁️  Running in AWS — using ECS-injected environment variables.');
+} else if (appEnv === 'vercel') {
+  console.log('▲  Running on Vercel — using platform-injected environment variables.');
 } else {
   // 3. Local development: load .env.local
   const fileName = '.env.local';
