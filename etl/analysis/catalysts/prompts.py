@@ -70,350 +70,172 @@ CATALYST_QUERIES = {
 
 CATALYST_CONFIG = {
     "guidance_outlook": {
-        "role": "GUIDANCE / OUTLOOK",
-        "definition": "Management forecasts for Revenue, EPS, Margins, or Production.",
-        "matching_rules": "UPDATE if: Same metric & period. NEW if: Period changes, guidance withdrawn, or estimates missed.",
-        "valid_impact_areas": "revenue, earnings, margin, profitability, cashflow, expenses, volume, demand",
-        "horizon_guide": "0 (Immediate Reaction) or 1 (Future Expectation)."
+        "definition": "Forward-looking management guidance: revenue/EPS forecasts raised, lowered, reaffirmed, or withdrawn.",
+        "typical_impact_areas": ["revenue", "earnings", "margin"],
     },
-    
     "product_initiative": {
-        "role": "PRODUCT / OPERATIONS",
-        "definition": "Launches, Capacity Expansion (Bull) OR Delays, Recalls, Shutdowns (Bear).",
-        "matching_rules": "UPDATE if: Same product/facility. NEW if: Distinct product line or new site. IGNORE if: Routine maintenance.",
-        "valid_impact_areas": "revenue, operations, strategy, technology, market_expansion, capacity",
-        "horizon_guide": "1 (Ramp/Delay period) or 2 (Long-term R&D)."
+        "definition": "New product launches, production ramps, capacity expansion — or delays, recalls, cancellations.",
+        "typical_impact_areas": ["demand", "technology", "capacity"],
     },
-    
     "partnership_deal": {
-        "role": "PARTNERSHIP / M&A",
-        "definition": "New Deals, Contract Wins, M&A (Bull) OR Terminations, Churn, Deal Failures (Bear).",
-        "matching_rules": "UPDATE if: Same partner. NEW if: Different partner. IGNORE if: Generic 'ongoing collaboration' updates.",
-        "valid_impact_areas": "revenue, strategy, operations, market_expansion, technology, supply_chain",
-        "horizon_guide": "0 (Announcement) or 2 (Integration/Loss)."
+        "definition": "Strategic alliances, contract wins, M&A announcements — or deal terminations, customer losses.",
+        "typical_impact_areas": ["strategy", "supply_chain", "technology"],
     },
-    
     "cost_efficiency": {
-        "role": "COST / RESTRUCTURING",
-        "definition": "Savings Plans, Layoffs (Bull) OR Asset Impairments, Writedowns, Expense Spikes (Bear).",
-        "matching_rules": "UPDATE if: Same program. NEW if: Distinct layoff round or specific writedown. IGNORE if: Generic 'cost discipline'.",
-        "valid_impact_areas": "profitability, operations, cashflow, expenses, margin, headcount",
-        "horizon_guide": "1 (Execution period)."
+        "definition": "Cost restructuring, margin improvement programs, divestitures — or impairments, writedowns, expense surges.",
+        "typical_impact_areas": ["expenses", "margin", "operations"],
     },
-    
     "capital_actions": {
-        "role": "CAPITAL / DILUTION",
-        "definition": "Buybacks, Dividends (Bull) OR Equity Offerings, Dilution, Debt Defaults (Bear).",
-        "matching_rules": "UPDATE if: Same program. NEW if: New ATM/Secondary offering or Dividend change. IGNORE if: Routine dividend declaration.",
-        "valid_impact_areas": "shareholder_return, financing, dilution, balance_sheet, liquidity",
-        "horizon_guide": "0 (Immediate Repricing)."
+        "definition": "Share buybacks, dividend changes, debt refinancing — or equity dilution, credit downgrades.",
+        "typical_impact_areas": ["shareholder_return", "financing", "balance_sheet"],
     },
-    
     "regulatory_policy": {
-        "role": "LEGAL / REGULATORY",
-        "definition": "Approvals, Settlements (Bull) OR Lawsuits, Probes, Short Reports (Bear).",
-        "matching_rules": "UPDATE if: Same case/drug. NEW if: New subpoena, short report, or distinct lawsuit.",
-        "valid_impact_areas": "compliance, risk, operations, revenue, licensing, legal, governance",
-        "horizon_guide": "0 (Ruling/Report) or 2 (Litigation drag)."
+        "definition": "Regulatory approvals, favorable rulings, settlements — or investigations, lawsuits, enforcement actions.",
+        "typical_impact_areas": ["regulatory", "legal"],
     },
-    
     "demand_trends": {
-        "role": "DEMAND / INVENTORY",
-        "definition": "Bookings Growth (Bull) OR Inventory Bloat, Cancellations, Pricing Pressure (Bear).",
-        "matching_rules": "UPDATE if: Same region/segment. NEW if: Trend shifts to new region. IGNORE if: Seasonal fluctuation.",
-        "valid_impact_areas": "revenue, demand, volume, pricing, macro, region, inventory",
-        "horizon_guide": "1 (Quarterly Trend)."
+        "definition": "Order backlog growth, pricing power, market share gains — or demand weakness, inventory buildup, discounting.",
+        "typical_impact_areas": ["demand", "volume", "pricing", "inventory"],
     },
-    
     "risk_event": {
-        "role": "RISK / LEADERSHIP",
-        "definition": "Insider Buys (Bull) OR Exec Resignations, Cyber Breaches, Supply Shocks (Bear).",
-        "matching_rules": "UPDATE if: Same incident. NEW if: Different executive leaves or unrelated breach.",
-        "valid_impact_areas": "operations, supply_chain, earnings, financial, reputation, leadership, cybersecurity",
-        "horizon_guide": "0 (Immediate Shock)."
+        "definition": "Insider buying signals — or executive departures, cyber breaches, operational disruptions, supply shocks.",
+        "typical_impact_areas": ["risk", "leadership", "supply_chain", "legal"],
     },
-    
     "macro_policy": {
-        "role": "MACRO / GEOPOLITICAL",
-        "definition": "Rates, FX, Tariffs, Trade Wars, or Conflicts impacting operations.",
-        "matching_rules": "UPDATE if: Same policy/conflict. NEW if: New tariff or rate regime.",
-        "valid_impact_areas": "macro, monetary_policy, trade_policy, currency_fx, geopolitical, inflation_cost",
-        "horizon_guide": "1 (Cycle Impact) or 2 (Structural Shift)."
-    }
+        "definition": "Interest rates, tariffs, trade restrictions, FX moves, or geopolitical events impacting the business.",
+        "typical_impact_areas": ["macro", "currency_fx", "geopolitical"],
+    },
 }
+
 
 
 
 STAGE1_SYSTEM_MESSAGE = """
-TASK: Identify concrete, stock-moving catalysts for <TARGET_COMPANY> in the text.
+Group document chunks by same real-world event for <TARGET_COMPANY>.
 
-REJECT (Mark 0):
-- IRRELEVANT: Events affecting partners/competitors with NO explicit link to <TARGET_COMPANY>.
-- FLUFF: Generic "commitment to value," "pleased with progress," or vague "investigating options" without capital commitment.
-- HISTORICAL: Backward-looking data (e.g., "Last year's growth") with no forward guidance.
+Rules:
+- Max 3 chunks per group, max 4 groups.
+- Discard fluff, historical data, noise. Focus on material, stock-moving catalysts.
+- Each group = ONE specific event. Do NOT merge chunks sharing only company/timeframe/theme.
+  BAD: product launch + ad program | partnership + patent ruling
+  GOOD: supply shortage + its downstream production impact
+- Output ONLY JSON list of lists of Temp IDs. No prose, no markdown.
+- If nothing material: []
 
-ACCEPT (Mark 1):
-- IMPACT: Event must materially affect <TARGET_COMPANY> as the ACTOR (e.g., launches product), VICTIM (e.g., lawsuit, downgrade), or LINKED COLLATERAL (e.g., "tariffs hurt margins").
-- SPECIFICITY: Contains dates, dollars, percentages, or specific product/regulatory outcomes.
-
-OUTPUT (JSON ONLY):
-{
-  "rationale": "Max 15 words. Explain impact role (Actor/Victim).",
-  "is_catalyst": 0 | 1,
-  "evidence": "Verbatim quote... bridging parts allowed."
-}
+Format: [[1, 3, 5], [4, 2], [6]]
 """
 
 
 STAGE1_HUMAN_PROMPT = """
-<TARGET>
-{company_info}
-</TARGET>
+<TARGET_COMPANY>
+{company_info} ({company_tic})
+</TARGET_COMPANY>
 
-<CONTEXT>
-Query: {retrieval_query} ({catalyst_type})
-</CONTEXT>
+<INPUT_CHUNKS>
+{id_mapping_block}
+</INPUT_CHUNKS>
 
 <INSTRUCTION>
-Analyze text for material news regarding {company_tic}.
-Include actions BY the company OR events happening TO the company (lawsuits, shortages, competitor threats).
-If text focuses on another firm without linking to {company_tic}, return 0.
+Identify and group the unique, material catalysts found in the Input Chunks. Return only the Temporary ID groups.
 </INSTRUCTION>
-
-<TEXT>"
-{content}
-</TEXT>
 """
 
-STAGE2A_SYSTEM_TEMPLATE = """
-You are a Database Gatekeeper. GOAL: Filter noise. Trigger updates only for MATERIAL CHANGES.
 
-CONTEXT: {catalyst_type}
-- ROLE: {role}
-- DEFINITION: {definition}
-- MATCHING RULES: {matching_rules}
 
-PROTOCOL (MATERIALITY FILTER):
-- REJECT "Empty Noise": Repetition, vague optimism ("excited"), or reconfirmations without new info.
-- ACCEPT "Hard Data": Changes in Date, Amount, Status, or Stage.
-- ACCEPT "Soft Context": Changes in Risk Profile, Confidence Level, or New Conditional Constraints ("if/but").
+STAGE2_SYSTEM_MESSAGE = """
+Convert evidence chunks into a structured catalyst record.
 
-DECISION PATHS (Evaluate in Order):
+Steps:
+1. If evidence matches <CURRENT_CATALYST>, action="update" with its ID. Otherwise "create".
+2. Assign ONE catalyst_type: [guidance_outlook, product_initiative, partnership_deal, cost_efficiency, capital_actions, regulatory_policy, demand_trends, risk_event, macro_policy].
+3. Title = WHAT happened (short headline). Summary = WHY it matters + key numbers/context NOT already in the title. Never repeat the title in the summary. No "Delta:"/"Update:"/"XXX:" prefixes.
+4. Assign ONE impact_area from the table below matching the PRIMARY business pillar.
+5. Sentiment: +1 (helps company) or -1 (hurts company). Both title and summary tone MUST match the sentiment score. If sentiment=-1, do not lead with positive framing.
 
-1. NEW (action: "create"):
-   - Event is COMPLETELY DISTINCT from any in <CURRENT_CATALYSTS>.
-   - Output: catalyst_id="", catalyst_type="{catalyst_type}", impact_area=""
+Grounding: Every claim must be supported by cited evidence. No inference or editorializing.
 
-2. UPDATE (action: "update"):
-   - Matches existing catalyst AND contains a MATERIAL CHANGE.
-   - Hard Data: Date/Value changed.
-   - Soft Context: New risk factor, new dependency, or explicit sentiment shift.
-   - Catalyst Type Logic: Output "{catalyst_type}" if it fits better than old type; else "keep".
-   - Impact Area Logic: Output "keep" normally. Only output "" if the update fundamentally changes the event's nature (requiring re-classification).
-   - Output: catalyst_id="Existing ID", catalyst_type="'keep' or '{catalyst_type}'", impact_area="'keep' or ''"
+Citations:
+- ONE verbatim quote per chunk, max 3 total. Chronological order (oldest→newest).
+- Quote substantive body sentences, not headlines.
 
-3. KEEP (action: "keep"):
-   - Matches existing catalyst but lacks Material Change (Pure Repetition or Fluff).
-   - CRITICAL: You MUST return the ID of the matched catalyst so we know it was checked.
-   - Output: catalyst_id="Existing ID", catalyst_type="keep", impact_area="keep"
+Impact Areas by catalyst_type (prefer these, use others only if evidence clearly points elsewhere):
+- guidance_outlook → revenue, earnings, margin
+- product_initiative → demand, technology, capacity
+- partnership_deal → strategy, supply_chain, technology
+- cost_efficiency → expenses, margin, operations
+- capital_actions → shareholder_return, financing, balance_sheet
+- regulatory_policy → regulatory, legal
+- demand_trends → demand, volume, pricing, inventory
+- risk_event → risk, leadership, supply_chain, legal
+- macro_policy → macro, currency_fx, geopolitical
 
-CRITICAL CONSTRAINTS:
-1. NEVER return an empty "catalyst_id" if action is "update" or "keep".
-2. If you decided to "keep", it implies you found a match. RETURN THAT ID.
+All valid impact_area tags: revenue, earnings, margin, cashflow, expenses, capex, operations, supply_chain, capacity, technology, strategy, market_expansion, demand, volume, pricing, inventory, shareholder_return, financing, balance_sheet, dilution, risk, cybersecurity, regulatory, legal, macro, currency_fx, geopolitical, leadership
 
-OUTPUT (JSON):
+Output JSON:
 {{
-  "catalyst_id": "If action is 'update' or 'keep', this MUST be the Exact ID from input. If 'create', use ''.",
-  "action": "create" | "update" | "keep",
-  "reason": "Max 10 words. Focus on the Delta.",
-  "catalyst_type": "'keep' or '{catalyst_type}'",
-  "impact_area": "'keep' or ''"
+  "action": "create" | "update",
+  "catalyst_id": "UUID or empty",
+  "catalyst_type": "one_of_9_types",
+  "title": "Directional Headline",
+  "summary": "50 words max",
+  "sentiment": 1 | -1,
+  "magnitude": 1 | 0 | -1,
+  "impact_area": "one tag",
+  "time_horizon": 0 | 1 | 2,
+  "citations": [{{ "chunk_id": "uuid", "quote": "verbatim" }}]
 }}
 """
 
 
-STAGE2A_HUMAN_PROMPT = """
-<TARGET>
-{company_info}
-</TARGET>
-
-<CURRENT_CATALYSTS>
-{current_catalysts_json}
-</CURRENT_CATALYSTS>
-
-<EVIDENCE>
-{evidence}
-</EVIDENCE>
-"""
-
-
-STAGE2A_SYSTEM_MESSAGE = {
-  "guidance_outlook": STAGE2A_SYSTEM_TEMPLATE.format(catalyst_type="guidance_outlook", **CATALYST_CONFIG["guidance_outlook"]),
-  "product_initiative": STAGE2A_SYSTEM_TEMPLATE.format(catalyst_type="product_initiative", **CATALYST_CONFIG["product_initiative"]),
-  "partnership_deal": STAGE2A_SYSTEM_TEMPLATE.format(catalyst_type="partnership_deal", **CATALYST_CONFIG["partnership_deal"]),
-  "cost_efficiency": STAGE2A_SYSTEM_TEMPLATE.format(catalyst_type="cost_efficiency", **CATALYST_CONFIG["cost_efficiency"]),
-  "capital_actions": STAGE2A_SYSTEM_TEMPLATE.format(catalyst_type="capital_actions", **CATALYST_CONFIG["capital_actions"]),
-  "regulatory_policy": STAGE2A_SYSTEM_TEMPLATE.format(catalyst_type="regulatory_policy", **CATALYST_CONFIG["regulatory_policy"]),
-  "demand_trends": STAGE2A_SYSTEM_TEMPLATE.format(catalyst_type="demand_trends", **CATALYST_CONFIG["demand_trends"]),
-  "risk_event": STAGE2A_SYSTEM_TEMPLATE.format(catalyst_type="risk_event", **CATALYST_CONFIG["risk_event"]),
-  "macro_policy": STAGE2A_SYSTEM_TEMPLATE.format(catalyst_type="macro_policy", **CATALYST_CONFIG["macro_policy"])
-}
-
-
-STAGE2B_SYSTEM_TEMPLATE = """
-You are a Senior Equity Research Analyst.
-GOAL: Convert a raw signal into a structured, investable catalyst record.
-
-INPUT CONTEXT:
-The "Gatekeeper" (Stage 2a) has declared this evidence MATERIAL.
-- Action: (create | update)
-
-DOMAIN: {role}
-- DEFINITION: {definition}
-- IMPACT AREAS: [{valid_impact_areas}]
-- HORIZON: {horizon_guide}
-
-ANALYST RULES:
-
-1. SENTIMENT VECTOR (-1 or 1):
-   *SUGGESTIONS FOR SCORING:*
-   - NEGATIVE (-1):
-      * **Deterioration:** Lower targets, missed dates, margin compression, inventory bloat.
-      * **Headwinds:** Supply shocks, tariffs, FX pressure, regulatory probes, pricing wars.
-      * **Financial Stress:** Dilution, cash burn, withdrawn guidance, covenant breaches.
-      * **Erosion/Gov:** Exec exit, insider selling, contract loss, churn, market share loss.
-   - POSITIVE (1):
-      * **Growth:** Raised targets, beat & raise, margin expansion, new market entry.
-      * **Execution:** Ahead of schedule, deal signed, patent granted, regulatory clearance.
-      * **Tailwinds:** Competitor exit, favorable FX/rates, subsidies, tariff exemptions.
-      * **Capital:** Buybacks, insider buying, debt repayment, lawsuit settlement.
-
-
-2. MAGNITUDE SCORING (1, 0, -1):
-   - 1 (High/Thesis Changing): M&A >$500M, CEO Change, Guidance Delta >10%, FDA Approval.
-   - 0 (Medium/Material): Standard beat/miss, New Product, Contract Win, Moderate Delay.
-   - -1 (Low/Minor): Routine updates, small insider sales, clarifying details.
-
-3. CONTENT GENERATION:
-   - Title: Directional Headline (e.g., "Guidance Cut to $100M", "FDA Approval Granted").
-   - Summary: Start with the DELTA. What changed? (e.g., "Revenue guidance narrowed to $100M-$105M due to FX headwinds, down from $110M.").
-
-OUTPUT SCHEMA (JSON):
-{{
-  "catalyst_id": "Extract 'id' from <CURRENT_CATALYST> if present. If empty/create, return ''.",
-  "state": "announced" | "updated" | "withdrawn" | "realized",
-  "title": "Max 10 words",
-  "summary": "Max 50 words. Focus on the Delta.",
-  "evidence": "Copy input evidence exactly.",
-  "time_horizon": 0 (Immediate) | 1 (Short-term) | 2 (Long-term),
-  "certainty": "confirmed" | "planned" | "rumor" | "denied",
-  "impact_area": "Must be one of: [{valid_impact_areas}]",
-  "sentiment": -1 (Negative) | 1 (Positive),
-  "impact_magnitude": 1 (High) | 0 (Medium) | -1 (Low)
-}}
-"""
-
-STAGE2B_HUMAN_PROMPT = """
+STAGE2_HUMAN_PROMPT = """
 <TARGET_COMPANY>
 {company_info}
 </TARGET_COMPANY>
 
-<GATEKEEPER_DECISION>
-{action}
-</GATEKEEPER_DECISION>
+<EVIDENCE_GROUP>
+Chunks sorted oldest-first:
+{chunks_for_this_group}
+</EVIDENCE_GROUP>
 
 <CURRENT_CATALYST>
-{target_catalyst_json}
+{existing_catalyst_json}
 </CURRENT_CATALYST>
 
-<EVIDENCE_SNIPPET>
-{evidence}
-</EVIDENCE_SNIPPET>
+Match evidence to <CURRENT_CATALYST> → update with its ID, or create new. ONE quote per chunk, chronological order.
 """
 
-STAGE2B_SYSTEM_MESSAGE = {
-  "guidance_outlook": STAGE2B_SYSTEM_TEMPLATE.format(**CATALYST_CONFIG["guidance_outlook"]),
-  "product_initiative": STAGE2B_SYSTEM_TEMPLATE.format(**CATALYST_CONFIG["product_initiative"]),
-  "partnership_deal": STAGE2B_SYSTEM_TEMPLATE.format(**CATALYST_CONFIG["partnership_deal"]),
-  "cost_efficiency": STAGE2B_SYSTEM_TEMPLATE.format(**CATALYST_CONFIG["cost_efficiency"]),
-  "capital_actions": STAGE2B_SYSTEM_TEMPLATE.format(**CATALYST_CONFIG["capital_actions"]),
-  "regulatory_policy": STAGE2B_SYSTEM_TEMPLATE.format(**CATALYST_CONFIG["regulatory_policy"]),
-  "demand_trends": STAGE2B_SYSTEM_TEMPLATE.format(**CATALYST_CONFIG["demand_trends"]),
-  "risk_event": STAGE2B_SYSTEM_TEMPLATE.format(**CATALYST_CONFIG["risk_event"]),
-  "macro_policy": STAGE2B_SYSTEM_TEMPLATE.format(**CATALYST_CONFIG["macro_policy"])
-}
 
 
 STAGE3_SYSTEM_MESSAGE = """
-You are a Sanity Checker. GOAL: Catch hallucinations (lies), but ALLOW all reasonable interpretations.
+Sanity-check a catalyst record against source text. Bias: EXTREME LENIENCY — only fail clear hallucinations.
 
-INPUTS:
-1. SOURCE_TEXT: Raw news/filing text related to <TARGET_COMPANY>.
-2. CATALYST: The Analyst's extracted event.
-3. CATALYST_TYPE: The category.
+Rules:
+- FAIL if any citation quote is completely absent from its source chunk.
+- FAIL if summary contains specific numbers/dollars not in any source chunk.
+- FAIL if sentiment flipped from prior_sentiment without clear evidence of material reversal.
+- PASS minor truncation, whitespace, capitalization differences in quotes.
+- PASS conceptual translations (e.g., "Efficiency Program" → "Cost Cutting").
+- PASS entity resolution (parent companies, tickers, synonyms).
+- PASS dates derivable from source metadata.
+- PASS all reasonable category overlaps and subjective analyst sentiment calls.
 
-PROTOCOL (BIAS: EXTREME LENIENCY):
-
-1. EVIDENCE CHECK (Fuzzy Matching Allowed):
-   - **FAIL:** If the 'evidence' text is completely absent from <SOURCE_TEXT>. (The Analyst cannot invent a quote).
-   - **PASS:** If the 'evidence' is present but has minor truncation ("..."), whitespace changes, or capitalization differences.
-
-2. CONCEPTUAL ALIGNMENT (Relaxed):
-   - Do NOT require exact word matches.
-   - PASS if the 'summary' accurately reflects the *meaning* or *implication* of the text.
-   - PASS "Translations" (e.g., Text="Efficiency Program" -> Summary="Cost Cutting/Layoffs").
-   - **PASS Entity Resolution:** Allow the use of parent companies, tickers, or widely known synonyms. This is NOT a hallucination.
-
-3. CATEGORY CHECK (Pass almost everything):
-   - Only FAIL if the event is ABSURDLY unrelated (e.g., Type="Product", Event="Dividend Payout").
-   - PASS all overlaps (e.g., A "Product Delay" is valid as "Guidance", "Risk", or "Product").
-
-4. SENTIMENT CHECK (Pass almost everything):
-   - Only FAIL if logically impossible (e.g., "Bankruptcy declared" marked as Positive).
-   - PASS all subjective analyst calls (e.g., Marking "Strategic Alternatives" as Negative).
-
-OUTPUT (JSON ONLY):
-{
-  "is_valid": 0 | 1,
-  "rejection_reason": "If 0, state the specific HALLUCINATION. If 1, use empty string."
-}
+Output JSON:
+{{ "is_valid": 0 | 1, "rejection_reason": "hallucination detail or empty string" }}
 """
 
 
-STAGE3_HUMAN_PROMPT_TEMPLATE = """
-<CONTEXT_METADATA>
-Target Type: {catalyst_type}
-Target Definition: {definition}
-</CONTEXT_METADATA>
+STAGE3_HUMAN_PROMPT = """
+Type: {catalyst_type} | Definition: {definition}
+Company: {company_info}
+Prior Sentiment: {prior_sentiment}
 
-<TARGET_COMPANY>
-{company_info}
-</TARGET_COMPANY>
+<SOURCE_TEXT_CHUNKS>
+{source_text_chunks}
+</SOURCE_TEXT_CHUNKS>
 
-<SOURCE_TEXT_CHUNK>
-{chunk_text}
-</SOURCE_TEXT_CHUNK>
-
-<CANDIDATE_CATALYST>
+<CANDIDATE>
 {stage2_json_output}
-</CANDIDATE_CATALYST>
+</CANDIDATE>
 
-Instructions (STRICT ON FACTS, RELAXED ON LOGIC):
-1. HALLUCINATION CHECK: Does the 'evidence' quote actually exist in the source? (Fuzzy match = OK).
-2. DATA CHECK: Does the 'summary' contain specific numbers/dates NOT found in the 'evidence'?
-   - **FAIL:** If the model invented a price target ($150) or date (Q3 2025) not in the text.
-   - **PASS:** If the model used World Knowledge to name an entity (e.g., "Google" -> "Alphabet").
-3. LOGIC CHECK: Accept "spin decoding" and reasonable inferences (e.g. "Right-sizing" -> "Layoffs" is VALID).
-4. CATEGORY CHECK: Accept if the event loosely fits or overlaps with the definition. Only reject if completely unrelated.
-5. Return JSON.
+Validate: Check each citation quote exists in its source chunk. Check summary numbers match sources. Check sentiment consistency with prior.
 """
-
-
-STAGE3_HUMAN_PROMPT = {
-    key: partial(
-        STAGE3_HUMAN_PROMPT_TEMPLATE.format, 
-        catalyst_type=key, 
-        definition=config["definition"]
-    )
-    for key, config in CATALYST_CONFIG.items()
-}

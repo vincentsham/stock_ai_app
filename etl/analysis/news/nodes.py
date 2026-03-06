@@ -42,7 +42,7 @@ def stage2(state: News) -> dict:
     Output: {
         "time_horizon": <str>,
         "duration": <str>,
-        "impact_magnitude": <str>,
+        "magnitude": <str>,
         "affected_dimensions": <list>,
         "sentiment": <str>
     }
@@ -68,13 +68,13 @@ def stage2(state: News) -> dict:
 
     time_horizon = response.get("time_horizon")
     duration = response.get("duration")
-    impact_magnitude = response.get("impact_magnitude")
+    magnitude = response.get("magnitude")
     affected_dimensions = response.get("affected_dimensions")
     sentiment = response.get("sentiment")
     return {
         "time_horizon": time_horizon,
         "duration": duration,
-        "impact_magnitude": impact_magnitude,
+        "magnitude": magnitude,
         "affected_dimensions": affected_dimensions,
         "sentiment": sentiment
     }

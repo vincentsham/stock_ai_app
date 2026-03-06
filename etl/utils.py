@@ -181,19 +181,25 @@ def calculate_capped_rate(current: float, previous: float) -> float:
 
 
 def parse_json_from_llm(response_text):
-    # Pattern to find a JSON object { ... }
+    """Extract and parse JSON from LLM response text.
+    
+    Returns the parsed dict/list on success, or {} on failure.
+    Callers that need strict validation (e.g. Pydantic models) should
+    treat an empty dict as a parse failure and retry or raise.
+    """
+    # Try to find a JSON object { ... } or a JSON array [ ... ]
     # re.DOTALL makes . match newlines as well
-    match = re.search(r'\{.*\}', response_text, re.DOTALL)
+    match = re.search(r'(\{.*\}|\[.*\])', response_text, re.DOTALL)
     
     if match:
         json_str = match.group(0)
         try:
             return json.loads(json_str)
         except json.JSONDecodeError as e:
-            print(f"JSON Decode Error: {e}")
+            print(f"[parse_json_from_llm] JSON Decode Error: {e}")
             return {}
     else:
-        print("No JSON object found in response.")
+        print("[parse_json_from_llm] No JSON object found in response.")
         return {}
     
 

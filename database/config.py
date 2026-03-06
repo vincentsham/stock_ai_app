@@ -8,7 +8,8 @@ def load_config():
         print("Running in AWS mode...")
     else:
         # Locally, it will use your Supabase or local postgres strings
-        load_dotenv(".env.local")
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        load_dotenv(os.path.join(project_root, ".env.local"))
         print("Running in local mode...")
 
 load_config()

@@ -41,6 +41,6 @@ class News(BaseModel):
     # Stage 2 outputs
     time_horizon: Optional[Horizon] = Field(None, description="Time horizon for the news impact")
     duration: Optional[str] = Field(None, description="Duration of the news impact")
-    impact_magnitude: Optional[Tri] = Field(None, description="Impact magnitude of the news")
+    magnitude: Optional[Tri] = Field(None, description="Impact magnitude of the news")
     affected_dimensions: Optional[List[AffectedDimensions]] = Field(None, description="Affected dimensions of the news")
     sentiment: Optional[Tri] = Field(None, description="Sentiment of the news")

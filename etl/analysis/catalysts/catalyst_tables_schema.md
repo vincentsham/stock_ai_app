@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS core.catalyst_master (
   lifecycle_stage  VARCHAR(20),
   sentiment        SMALLINT,
   time_horizon     SMALLINT,
-  impact_magnitude SMALLINT,
+  magnitude SMALLINT,
   certainty        VARCHAR(20),
   impact_area      VARCHAR(32),
 
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS core.catalyst_versions (
   lifecycle_stage  VARCHAR(20),
   sentiment        SMALLINT,
   time_horizon     SMALLINT,
-  impact_magnitude SMALLINT,
+  magnitude SMALLINT,
   certainty        VARCHAR(20),
   impact_area      VARCHAR(32),
 

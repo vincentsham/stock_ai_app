@@ -38,6 +38,12 @@ examples:
 
 | ID  | Category | Description | Priority | Status    | Branch | Open Date  | Close Date |
 |------|----------|-------------|----------|-----------|--------|------------|------------|
+| 46 | Technical | update Catalyst logic to reduce the run time | High | Close | feat_46 |  |  |
+| 46.1 | Technical | existing catalyst | High | Close | feat_46 |  |  |
+| 46.2 | Technical | sorting chunks by date | High | Close | feat_46 |  |  |
+| 46.3 | Technical | main | High | Close | feat_46 |  |  |
+| 46.4 | Technical | catalyst tables | High | Close | feat_46 |  |  |
+| 46.5 | Technical | stage 2 - considering the chunks' timeline | High | Close | feat_46 |  |  |
 | 1007 | Miscellaneous | Extract the most recent records via API (not full history) | Medium | Open |  |  |  |
 | 1008 | Feature | Add a consolidated tag logic| Medium | Open |  |  |  |
 | 1013 | Miscellaneous | Design a survey for classifying stock | High | Open |  |  |  |

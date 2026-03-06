@@ -62,7 +62,7 @@ class News(BaseModel):
     # Stage 2 outputs
     time_horizon: Optional[TimeHorizon] = Field(None, description="Time horizon for the news impact")
     duration: Optional[str] = Field(None, description="Duration of the news impact")
-    impact_magnitude: Optional[ImpactMag] = Field(None, description="Impact magnitude of the news")
+    magnitude: Optional[ImpactMag] = Field(None, description="Impact magnitude of the news")
     affected_dimensions: Optional[List[AffectedDimensions]] = Field(None, description="Affected dimensions of the news")
     sentiment: Optional[Sentiment] = Field(None, description="Sentiment of the news")
 
@@ -94,14 +94,14 @@ def stage2(state: News) -> dict:
     Output: {
         "time_horizon": <str>,
         "duration": <str>,
-        "impact_magnitude": <str>,
+        "magnitude": <str>,
         "affected_dimensions": <list>,
         "sentiment": <str>
     }
     """
     # Inputs include ticker, headline, summary, publisher, publish_date, category, and event_type
-    # Outputs include time_horizon, duration, impact_magnitude, affected_dimensions, and sentiment
-    # Note: No filtering based on impact_magnitude
+    # Outputs include time_horizon, duration, magnitude, affected_dimensions, and sentiment
+    # Note: No filtering based on magnitude
 ```
 
 ### JSON Validation
@@ -114,7 +114,7 @@ def validate_json(state: News) -> bool:
     - Return True if valid, False otherwise.
     """
     # Validation ensures strict adherence to the schema defined in the News model
-    # Note: No highlighting based on impact_magnitude
+    # Note: No highlighting based on magnitude
 ```
 
 ---

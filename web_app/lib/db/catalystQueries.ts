@@ -17,21 +17,19 @@ const CATALYST_SEARCH_QUERY = `
         state,
         sentiment,
         time_horizon,
-        impact_magnitude,
-        certainty,
+        magnitude,
         impact_area,
         mention_count,
-        event_ids,
+        chunk_ids,
         source_types,
-        evidences,
+        citations,
         urls,
         created_at,
         updated_at
     FROM mart.catalyst_master
     WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master)
         AND tic = $1 AND mention_count > 0 AND (sentiment = 1 OR sentiment = -1)
-        AND impact_magnitude <> -1
-    ORDER BY date DESC, impact_magnitude DESC, updated_at DESC, catalyst_id DESC
+    ORDER BY date DESC, magnitude DESC, updated_at DESC, catalyst_id DESC
     LIMIT $2 OFFSET $3;
   `;
 
@@ -46,21 +44,19 @@ const CATALYST_SEARCH_QUERY_BULL = `
         state,
         sentiment,
         time_horizon,
-        impact_magnitude,
-        certainty,
+        magnitude,
         impact_area,
         mention_count,
-        event_ids,
+        chunk_ids,
         source_types,
-        evidences,
+        citations,
         urls,
         created_at,
         updated_at
     FROM mart.catalyst_master
     WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master) 
         AND tic = $1 AND mention_count > 0 AND sentiment = 1
-        AND impact_magnitude <> -1
-    ORDER BY date DESC, impact_magnitude DESC, updated_at DESC, catalyst_id DESC
+    ORDER BY date DESC, magnitude DESC, updated_at DESC, catalyst_id DESC
     LIMIT $2 OFFSET $3;
   `;
 
@@ -75,21 +71,19 @@ const CATALYST_SEARCH_QUERY_BEAR =  `
         state,
         sentiment,
         time_horizon,
-        impact_magnitude,
-        certainty,
+        magnitude,
         impact_area,
         mention_count,
-        event_ids,
+        chunk_ids,
         source_types,
-        evidences,
+        citations,
         urls,
         created_at,
         updated_at
     FROM mart.catalyst_master
     WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master WHERE tic = $1) 
         AND tic = $1 AND mention_count > 0 AND sentiment = -1
-        AND impact_magnitude <> -1
-    ORDER BY date DESC, impact_magnitude DESC, updated_at DESC, catalyst_id DESC
+    ORDER BY date DESC, magnitude DESC, updated_at DESC, catalyst_id DESC
     LIMIT $2 OFFSET $3;
   `;
 
@@ -97,21 +91,21 @@ const CATALYST_COUNT_QUERY = `
     SELECT COUNT(*) FROM mart.catalyst_master
     WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master WHERE tic = $1) 
         AND tic = $1 AND mention_count > 0 
-        AND (sentiment = 1 OR sentiment = -1) AND impact_magnitude <> -1;
+        AND (sentiment = 1 OR sentiment = -1);
   `;
 
 const CATALYST_COUNT_QUERY_BULL = `
     SELECT COUNT(*) FROM mart.catalyst_master
     WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master WHERE tic = $1) 
         AND tic = $1 AND mention_count > 0 
-        AND sentiment = 1 AND impact_magnitude <> -1;
+        AND sentiment = 1;
   `;
 
 const CATALYST_COUNT_QUERY_BEAR = `
     SELECT COUNT(*) FROM mart.catalyst_master
     WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master WHERE tic = $1) 
         AND tic = $1 AND mention_count > 0 
-        AND sentiment = -1 AND impact_magnitude <> -1;
+        AND sentiment = -1;
   `;
 
 const CATALYST_LATEST_DATE_QUERY = `
@@ -168,13 +162,12 @@ const searchCatalysts = cache(async (tic: string, page: number, limit: number, s
         state: row.state,
         sentiment: row.sentiment,
         time_horizon: row.time_horizon,
-        impact_magnitude: row.impact_magnitude,
-        certainty: row.certainty,
+        magnitude: row.magnitude,
         impact_area: row.impact_area,
         mention_count: row.mention_count,
-        event_ids: row.event_ids,
+        chunk_ids: row.chunk_ids,
         source_types: row.source_types,
-        evidences: row.evidences.map(fixQuotes),
+        citations: row.citations.map(fixQuotes),
         urls: row.urls,
         created_at: row.created_at,
         updated_at: row.updated_at,

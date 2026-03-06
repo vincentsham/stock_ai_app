@@ -13,7 +13,7 @@ This agent operates under the **LangGraph framework**, where each stage is imple
 ```
 Input Node (data from raw.news) 
   → Stage 1 Node (category, event_type) → Filter (noise)
-    → Stage 2 Node (time_horizon, duration, impact_magnitude, affected_dimensions, sentiment) → Filter (minor)
+    → Stage 2 Node (time_horizon, duration, magnitude, affected_dimensions, sentiment) → Filter (minor)
       → Output Node (data loaded into core.news_analysis)
 ```
 
@@ -27,7 +27,7 @@ Input Node (data from raw.news)
 ### Input and Output Locations
 
 - **Input Location**: The input data is sourced from the `raw.news` table in the database. This table contains raw news items with fields such as `ticker`, `headline`, `summary`, `publisher`, `publish_date`, and `url`.
-- **Output Location**: The processed data is stored in the `core.news_analysis` table. This table includes additional fields such as `category`, `event_type`, `time_horizon`, `duration`, `impact_magnitude`, `affected_dimensions`, and `sentiment`.
+- **Output Location**: The processed data is stored in the `core.news_analysis` table. This table includes additional fields such as `category`, `event_type`, `time_horizon`, `duration`, `magnitude`, `affected_dimensions`, and `sentiment`.
 
 ---
 
@@ -131,7 +131,7 @@ Fields
 {
   "time_horizon":  "short_term | mid_term | long_term",
   "duration": "specific expected duration (e.g., '2 weeks','3 months','1 year')",
-  "impact_magnitude": "minor | moderate | major",
+  "magnitude": "minor | moderate | major",
   "affected_dimensions": ["revenue","profit","cash","cost","risk","technology","sentiment"],
   "sentiment": "positive | neutral | negative"
 }
@@ -177,7 +177,7 @@ Return only valid JSON with:
 {
   "time_horizon":  "short_term | mid_term | long_term",
   "duration": "specific expected duration (e.g., '2 weeks','3 months','1 year')",
-  "impact_magnitude": "minor | moderate | major",
+  "magnitude": "minor | moderate | major",
   "affected_dimensions": ["revenue","profit","cash","cost","risk","technology","sentiment"],
   "sentiment": "positive | neutral | negative"
 }
@@ -189,7 +189,7 @@ Return only valid JSON with:
 {
   "time_horizon": "short_term | mid_term | long_term",
   "duration": "string (e.g., '2 weeks','3 months','1 year')",
-  "impact_magnitude": "minor | moderate | major",
+  "magnitude": "minor | moderate | major",
   "affected_dimensions": ["revenue","profit","cash","cost","risk","technology","sentiment"],
   "sentiment": "positive | neutral | negative"
 }
@@ -209,7 +209,7 @@ graph.add_node("stage1", stage1)
 graph.add_node("stage2", stage2)
 
 graph.add_edge("stage1", "stage2", condition=lambda s: s.category != "noise")
-graph.add_edge("stage2", "output", condition=lambda s: s.impact_magnitude != "minor")
+graph.add_edge("stage2", "output", condition=lambda s: s.magnitude != "minor")
 ```
 
 - Each node mutates the same `News` state.
@@ -244,7 +244,7 @@ graph.add_edge("stage2", "output", condition=lambda s: s.impact_magnitude != "mi
 {
   "time_horizon": "long_term",
   "duration": "5 years",
-  "impact_magnitude": "major",
+  "magnitude": "major",
   "affected_dimensions": ["revenue", "technology"],
   "sentiment": "positive"
 }
@@ -263,7 +263,7 @@ graph.add_edge("stage2", "output", condition=lambda s: s.impact_magnitude != "mi
   "event_type": "customer_contract",
   "time_horizon": "long_term",
   "duration": "5 years",
-  "impact_magnitude": "major",
+  "magnitude": "major",
   "affected_dimensions": ["revenue", "technology"],
   "sentiment": "positive"
 }

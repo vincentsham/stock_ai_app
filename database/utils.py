@@ -89,16 +89,13 @@ def escape_sql_backslash(val):
     # Avoid converting lists, dicts, or other non-string types to string
     return val
 
-def execute_query(sql: str, params: Optional[dict] = None):
-    """Execute a SQL query with optional parameters."""
+def execute_query(sql: str, params: Optional[tuple] = None):
+    """Execute a SQL query with optional parameterized values (%s placeholders)."""
     
     try:
         conn = connect_to_db()
         with conn.cursor() as cursor:
-            if params:
-                sql = sql.format(**params)
-            # Fetch all records from the earnings_transcript_chunks table
-            cursor.execute(sql)
+            cursor.execute(sql, params)
             records = cursor.fetchall()
 
             # Create a DataFrame from the fetched records
@@ -110,11 +107,11 @@ def execute_query(sql: str, params: Optional[dict] = None):
     finally:
         conn.close()
 
-def read_sql_query(query: str, conn) -> pd.DataFrame:
+def read_sql_query(query: str, conn, params: Optional[tuple] = None) -> pd.DataFrame:
     """Execute a SQL query and return the results as a pandas DataFrame."""
     try:
         with conn.cursor() as cur:
-            cur.execute(query)
+            cur.execute(query, params)
             rows = cur.fetchall()
             columns = [desc[0] for desc in cur.description]
             df = pd.DataFrame(rows, columns=columns)

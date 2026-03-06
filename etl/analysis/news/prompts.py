@@ -55,14 +55,14 @@ Given the company's profile, headline, summary, and Stage-1 labels (category, ev
 
 Encodings:
 - time_horizon: 0 = short_term (≤1 week) | 1 = mid_term (≤3 months) | 2 = long_term (>3 months)
-- impact_magnitude: -1 = minor | 0 = moderate | 1 = major
+- magnitude: -1 = minor | 0 = moderate | 1 = major
 - sentiment: -1 = negative | 0 = neutral | 1 = positive
 
 Return strict JSON only in this exact structure (no extra text or commentary):
 {
   "time_horizon": <integer>,        # 0 = short_term (≤1 week), 1 = mid_term (≤3 months), 2 = long_term (>3 months)
   "duration": "<string>",            # specific duration text, e.g. "1 week", "3 months", "1 year"
-  "impact_magnitude": <integer>,     # -1 = minor, 0 = moderate, 1 = major
+  "magnitude": <integer>,            # -1 = minor, 0 = moderate, 1 = major
   "affected_dimensions": [           # JSON array of lowercase strings; 1–3 directly impacted items
       "revenue", "profit", "cash", "cost", "risk", "technology", "sentiment"
   ],
@@ -74,7 +74,7 @@ Rules:
    analyst opinions or forecasts = moderate; commentary = weak.  
    Analyst *consensus changes* or broad rating shifts may still cause **moderate** short-term impact.
 
-2. **Impact magnitude** —  
+2. **Magnitude** —  
    major → company-wide or structural facts (earnings/guidance change, regulation, M&A, major safety/legal issue).  
    moderate → segment results, consensus revisions, notable analyst calls.  
    minor → speculative, retrospective, or low-confidence stories.  
@@ -104,8 +104,8 @@ Rules:
 
 7. **Speculative or opinion-only stories** —  
    If the story is primarily an analyst opinion, market prediction, or “should you buy…” type article, cap  
-   `impact_magnitude` at **-1 (minor)** or **0 (moderate)** and avoid extreme sentiment unless new verifiable data are provided.  
-   Forecast-only or speculative opinion pieces default to **impact_magnitude = -1** unless verifiable evidence exists.
+   `magnitude` at **-1 (minor)** or **0 (moderate)** and avoid extreme sentiment unless new verifiable data are provided.  
+   Forecast-only or speculative opinion pieces default to **magnitude = -1** unless verifiable evidence exists.
 """
 
 
