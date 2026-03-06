@@ -44,14 +44,12 @@ def process_and_load_chunks():
                 # Insert chunk into core.news_chunks
                 cursor.execute("""
                     INSERT INTO core.news_chunks (
-                        event_id, tic, published_at, url, chunk_id,
+                        event_id, tic, published_at, url, chunk_no,
                         chunk, token_count, chunk_sha256, raw_json_sha256, updated_at
                     ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
-                    ON CONFLICT (tic, url, chunk_id) 
+                    ON CONFLICT (event_id, chunk_no) 
                     DO UPDATE SET
-                        event_id = EXCLUDED.event_id,
                         published_at = EXCLUDED.published_at,
-                        chunk_id = EXCLUDED.chunk_id,
                         chunk = EXCLUDED.chunk,
                         token_count = EXCLUDED.token_count,
                         chunk_sha256 = EXCLUDED.chunk_sha256,

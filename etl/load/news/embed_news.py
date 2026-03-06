@@ -16,12 +16,11 @@ def process_and_store_embeddings():
             cursor = conn.cursor()
             # Fetch chunks without embeddings
             cursor.execute("""
-                SELECT nc.event_id, nc.chunk_id, nc.tic, nc.published_at, nc.url,
+                SELECT nc.chunk_id, nc.event_id, nc.chunk_no, nc.tic, nc.published_at, nc.url,
                        nc.chunk, nc.chunk_sha256, nc.raw_json_sha256
                 FROM core.news_chunks AS nc
                 LEFT JOIN core.news_embeddings AS e
-                ON nc.tic = e.tic
-                    AND nc.url = e.url
+                ON nc.chunk_id = e.chunk_id
                 WHERE nc.chunk_sha256 IS DISTINCT FROM e.chunk_sha256
                     OR nc.raw_json_sha256 IS DISTINCT FROM e.raw_json_sha256;
             """)
@@ -36,33 +35,36 @@ def process_and_store_embeddings():
                 batch = records[i:i + batch_size]
 
                 # Prepare batch chunks for embedding
-                chunk_texts = [record[5] for record in batch]
+                chunk_texts = [record[6] for record in batch]
 
                 # Generate embeddings for the batch
                 embeddings = embedding_model.embed_documents(chunk_texts)
 
                 for record, embedding in zip(batch, embeddings):
-                    event_id = record[0]
-                    chunk_id = record[1]
-                    tic = record[2]
-                    published_at = record[3]
-                    url = record[4]
-                    chunk = record[5]
-                    chunk_hash = record[6]
-                    raw_json_hash = record[7]
+                    chunk_id = record[0]
+                    event_id = record[1]
+                    chunk_no = record[2]
+                    tic = record[3]
+                    published_at = record[4]
+                    url = record[5]
+                    chunk = record[6]
+                    chunk_hash = record[7]
+                    raw_json_hash = record[8]
 
                     # Insert embedding into the database
                     cursor.execute("""
                         INSERT INTO core.news_embeddings (
-                            event_id, chunk_id, tic, published_at, url, 
+                            chunk_id, event_id, chunk_no, tic, published_at, url, 
                             chunk_sha256, raw_json_sha256, 
                             embedding, embedding_model, updated_at
-                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
-                        ON CONFLICT (tic, url, chunk_id) 
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+                        ON CONFLICT (chunk_id) 
                         DO UPDATE SET
                             event_id = EXCLUDED.event_id,
-                            chunk_id = EXCLUDED.chunk_id,
+                            chunk_no = EXCLUDED.chunk_no,
+                            tic = EXCLUDED.tic,
                             published_at = EXCLUDED.published_at,
+                            url = EXCLUDED.url,
                             chunk_sha256 = EXCLUDED.chunk_sha256,
                             raw_json_sha256 = EXCLUDED.raw_json_sha256,
                             embedding = EXCLUDED.embedding,
@@ -71,7 +73,7 @@ def process_and_store_embeddings():
                         WHERE core.news_embeddings.raw_json_sha256 <> EXCLUDED.raw_json_sha256
                             OR core.news_embeddings.chunk_sha256 <> EXCLUDED.chunk_sha256;
                     """, (
-                        event_id, chunk_id, tic, published_at, url,
+                        chunk_id, event_id, chunk_no, tic, published_at, url,
                         chunk_hash, raw_json_hash, embedding, embedding_model_name
                     ))
                     total_records += cursor.rowcount

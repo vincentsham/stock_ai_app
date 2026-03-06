@@ -57,9 +57,7 @@ def process_and_load_chunks():
                        et.earnings_date, et.transcript, et.transcript_sha256
                 FROM core.earnings_transcripts AS et
                 LEFT JOIN core.earnings_transcript_chunks AS etc
-                ON et.tic = etc.tic
-                    AND et.calendar_year = etc.calendar_year
-                    AND et.calendar_quarter = etc.calendar_quarter
+                ON et.event_id = etc.event_id
                 WHERE et.transcript IS NOT NULL
                     AND et.transcript_sha256 IS DISTINCT FROM etc.transcript_sha256
                     AND et.calendar_year >= 2024;
@@ -78,7 +76,7 @@ def process_and_load_chunks():
                 chunks = chunk_text(transcript, max_tokens=512, overlap_tokens=0)
                 
                 # Chunk the transcript
-                for chunk_id, chunk in enumerate(chunks):
+                for chunk_no, chunk in enumerate(chunks):
                     chunk_hash = hash_text(chunk)
 
 
@@ -86,11 +84,10 @@ def process_and_load_chunks():
                     cursor.execute("""
                         INSERT INTO core.earnings_transcript_chunks (
                             event_id, tic, calendar_year, calendar_quarter,
-                            chunk_id, chunk, token_count, chunk_sha256, transcript_sha256, updated_at
+                            chunk_no, chunk, token_count, chunk_sha256, transcript_sha256, updated_at
                         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
-                        ON CONFLICT (tic, calendar_year, calendar_quarter, chunk_id) 
+                        ON CONFLICT (event_id, chunk_no) 
                         DO UPDATE SET
-                            event_id = EXCLUDED.event_id,
                             chunk = EXCLUDED.chunk,
                             token_count = EXCLUDED.token_count,
                             chunk_sha256 = EXCLUDED.chunk_sha256,
@@ -100,7 +97,7 @@ def process_and_load_chunks():
                             OR core.earnings_transcript_chunks.chunk_sha256 <> EXCLUDED.chunk_sha256;
                     """, (
                         event_id, tic, calendar_year, calendar_quarter, 
-                        chunk_id, chunk, len(enc.encode(chunk)), chunk_hash, transcript_hash
+                        chunk_no, chunk, len(enc.encode(chunk)), chunk_hash, transcript_hash
                     ))
                     total_records += cursor.rowcount
 
