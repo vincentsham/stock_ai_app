@@ -42,3 +42,4 @@ logs/
 
 # SQL files
 *.sql
+*.dump
