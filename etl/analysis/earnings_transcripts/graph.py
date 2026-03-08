@@ -70,16 +70,16 @@ if __name__ == "__main__":
     app = graph.compile()
     start_time = time.time()
     # Example: initialize state for AAPL Q2 2025
-    # state = merged_state_factory(
-    #             tic="AAPL",
-    #             company_name="Apple Inc.",
-    #             industry="Technology",
-    #             sector="Consumer Electronics",
-    #             company_description="Apple Inc. is a leading technology company known for its innovative products and services.",
-    #             calendar_year=2025,
-    #             calendar_quarter=2,
-    #             earnings_date="2025-10-28"
-    #     )
+    state = merged_state_factory(
+                tic="AAPL",
+                company_name="Apple Inc.",
+                industry="Technology",
+                sector="Consumer Electronics",
+                company_description="Apple Inc. is a leading technology company known for its innovative products and services.",
+                calendar_year=2025,
+                calendar_quarter=4,
+                earnings_date="2026-01-29"
+        )
 
     # Example: initialize state for NVDA Q2 2025
     # state = merged_state_factory(
@@ -94,28 +94,28 @@ if __name__ == "__main__":
     #         )
 
     # Example: initialize state for TSLA Q2 2025
-    state = merged_state_factory(
-                tic="TSLA",
-                company_name="Tesla, Inc.",
-                industry="Automotive",
-                sector="Consumer Discretionary",
-                company_description="Tesla, Inc. is a leading electric vehicle and clean energy company.",
-                calendar_year=2025,
-                calendar_quarter=2,
-                earnings_date="2025-07-24"
-            )
+    # state = merged_state_factory(
+    #             tic="TSLA",
+    #             company_name="Tesla, Inc.",
+    #             industry="Automotive",
+    #             sector="Consumer Discretionary",
+    #             company_description="Tesla, Inc. is a leading electric vehicle and clean energy company.",
+    #             calendar_year=2025,
+    #             calendar_quarter=2,
+    #             earnings_date="2025-07-24"
+    #         )
 
     # import pdb; pdb.set_trace()
     result = app.invoke(state)
 
     print(result)
-    print("===========past===============")
-    print(result['past_analysis'])
-    print("===========future===============")
-    print(result['future_analysis'])
-    print("===========risk===============")
-    print(result['risk_analysis'])
-    print("===========risk response===============")
-    print(result['risk_response_analysis'])
+    # print("===========past===============")
+    # print(result['past_analysis'])
+    # print("===========future===============")
+    # print(result['future_analysis'])
+    # print("===========risk===============")
+    # print(result['risk_analysis'])
+    # print("===========risk response===============")
+    # print(result['risk_response_analysis'])
     end_time = time.time()
     print(f"Execution time: {end_time - start_time} seconds")

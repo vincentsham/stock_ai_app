@@ -81,7 +81,7 @@ def main():
         today = pd.Timestamp.now().date()
         try:
             total_deleted = delete_published_records(conn_local, "mart.catalyst_master", today, commit=False)
-            delete_published_records(conn_supabase, "mart.catalyst_master", today, commit=False)
+            delete_published_records(conn_supabase, "mart._catalyst_master", today, commit=False)
             print(f"Deleted {total_deleted} records from mart.catalyst_master for as_of_date = {today}")
             for record in records:
                 tic = record[0]
@@ -102,7 +102,7 @@ def main():
                                             ["catalyst_id", "as_of_date"], 
                                             updated_at=False, commit=False,
                                             batch_size=10)
-                insert_records(conn_supabase, df, "mart.catalyst_master", 
+                insert_records(conn_supabase, df, "mart._catalyst_master", 
                                             ["catalyst_id", "as_of_date"], 
                                             updated_at=False, commit=False,
                                             batch_size=10)

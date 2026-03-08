@@ -9,6 +9,9 @@ declare global {
 // can statically analyse pages without requiring a live connection string.
 
 function createPool(): Pool {
+  // Return existing singleton if available (prevents re-creation in production)
+  if (global.postgres) return global.postgres;
+
   // 1. Identify Environment
   const appEnv = process.env.APP_ENV || (process.env.VERCEL ? 'vercel' : 'local');
   const isAWS = appEnv === 'aws';
@@ -31,26 +34,18 @@ function createPool(): Pool {
   // 3. Environment-Specific Config
   const config: PoolConfig = {
     connectionString,
-    max: isAWS ? 20 : 10,
+    max: 20,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: isAWS ? 10000 : 5000,
+    connectionTimeoutMillis: isAWS ? 10000 : 10000,
     ssl: { rejectUnauthorized: false },
   };
 
-  // 4. Singleton Pattern
-  let pool: Pool;
-
-  if (process.env.NODE_ENV === 'production' || isAWS) {
-    pool = new Pool(config);
-  } else {
-    if (!global.postgres) {
-      console.log(`🔌 Initializing ${isAWS ? 'AWS RDS' : 'Local/Supabase'} pool...`);
-      global.postgres = new Pool(config);
-    }
-    pool = global.postgres;
-  }
-
+  // 4. Create & cache the singleton
+  console.log(`🔌 Initializing ${isAWS ? 'AWS RDS' : 'Local/Supabase'} pool (max=${config.max})...`);
+  const pool = new Pool(config);
   pool.on('error', (err) => console.error('❌ DB Pool Error:', err));
+
+  global.postgres = pool;
   return pool;
 }
 
@@ -58,10 +53,10 @@ function createPool(): Pool {
 const pool: Pool = new Proxy({} as Pool, {
   get(_target, prop, receiver) {
     // Lazily create / retrieve the real pool on first access
-    if (!global.postgres || process.env.NODE_ENV === 'production') {
-      global.postgres = createPool();
+    if (!global.postgres) {
+      createPool();
     }
-    return Reflect.get(global.postgres, prop, receiver);
+    return Reflect.get(global.postgres!, prop, receiver);
   },
 });
 

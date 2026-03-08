@@ -1,266 +1,155 @@
 HUMAN_PROMPT_TEMPLATE = """
-You are given several transcript excerpts from a company's earnings call.
+Company: {company_name} ({tic}) | {industry} / {sector}
+Quarter: Q{calendar_quarter} {calendar_year}
 
-Company Metadata:
-- Ticker: {tic}
-- Company Name: {company_name}
-- Industry: {industry}
-- Sector: {sector}
-- Description: {company_description}
-- Calendar Year: {calendar_year}
-- Calendar Quarter: {calendar_quarter}
+Analyze these earnings call excerpts. Follow system instructions exactly.
 
-Each excerpt is from the same quarter and may include management remarks or Q&A.
-Analyze the text according to the system instructions for the {stage} node and produce the required JSON output.
-
-Transcript excerpts:
+Excerpts:
 {context}
 
-Return the analysis in strict JSON format as defined in the system message.
+Return strict JSON only. No commentary.
 """
 
 
 PAST_PERFORMANCE_SYSTEM_MESSAGE = """
-You are a financial transcript analysis agent.
-Analyze the transcript’s past or current quarter discussion and quantify management’s tone
-about recent performance and execution. Ignore forward-looking statements or guidance.
+Analyze ONLY backward-looking statements from an earnings transcript.
 
-Metrics:
-1. sentiment
-    +1 → positive ("strong quarter", "record demand")
-    0 → neutral ("in line with expectations")
-    -1 → negative ("cost headwinds", "execution issues")
-    - If mixed, use dominant polarity.
-2. durability
-    2 → sustainable ("recurring revenue", "expected to continue")
-    1 → unclear
-    0 → one-time/temporary ("one-time benefit", "seasonal impact")
+Output JSON:
+{{
+  "sentiment": +1 positive | 0 neutral | -1 negative,
+  "durability": 2 sustainable | 1 unclear | 0 one-time,
+  "performance_factors": ["<2-5 word phrase>", ...],  // 3-6 items
+  "past_summary": "<2-3 sentences, max 80 words, with 1-2 verbatim quotes>"
+}}
 
-Performance Factors:
-   - List key factual drivers of past results (2–5 words each).
-   - Examples: ["pricing power", "cost discipline", "supply chain recovery", "seasonal weakness"]
-   - Include both positive and negative factors, 3–6 total.
-
-Summary:
-   - Write 2–3 short sentences summarizing past performance tone and key drivers.
-   - Include 1–2 brief verbatim quotes as evidence.
-   - Be factual and concise; no speculation or future outlook.
-
-Output (strict JSON):
-{
-  "sentiment": -1|0|1,
-  "durability": 0|1|2,
-  "performance_factors": ["<factor1>", "<factor2>", ...],
-  "past_summary": "<short summary with quotes>"
-}
+Example:
+{{
+  "sentiment": 1,
+  "durability": 2,
+  "performance_factors": ["record iPhone revenue", "services growth 18%", "supply chain recovery"],
+  "past_summary": "Strong quarter with record results. CEO noted \\"record revenue in our services business.\\" Margins expanded on cost discipline."
+}}
 
 Rules:
-- Focus only on backward-looking statements.
-- Prefer prepared remarks; include Q&A only if directly relevant.
-- Use verbatim quotes; avoid paraphrasing or interpretation.
-  """
+1. Ignore all guidance/forecasts.
+2. Include verbatim quotes as evidence.
+3. If mixed, use dominant polarity.
+"""
 
 FUTURE_OUTLOOK_SYSTEM_MESSAGE = """
-You are a financial transcript analysis agent.
-Your task is to analyze the *forward-looking portion* of an earnings call transcript (plans, guidance, forecasts, expectations).
+Analyze ONLY forward-looking statements (guidance, forecasts, plans) from an earnings transcript.
 
-Ignore all historical or current performance commentary unless directly linked to management’s forward guidance.
+Output JSON:
+{{
+  "guidance_direction": +1 raised | 0 reaffirmed/mixed | -1 lowered,
+  "revenue_outlook": +1 growth | 0 stable | -1 decline,
+  "earnings_outlook": +1 growth | 0 stable | -1 decline,
+  "margin_outlook": +1 expansion | 0 stable | -1 contraction,
+  "cashflow_outlook": +1 growth | 0 stable | -1 decline,
+  "growth_acceleration": +1 accelerating | 0 stable | -1 decelerating,
+  "future_outlook_sentiment": +1 optimistic | 0 neutral | -1 cautious,
+  "growth_drivers": ["<2-5 word phrase>", ...],  // 3-6 forward-looking items
+  "future_summary": "<2-3 sentences, max 80 words, with 1-2 verbatim quotes>"
+}}
 
-Focus on statements containing words such as: "expect", "will", "plan", "target",
-"anticipate", "forecast", "next quarter", "next year", "going forward", "long-term".
+guidance_direction — assess from the RAW guidance language, not from your other outlook fields:
+- +1 if management frames guidance as year-over-year growth or acceleration AND margins not guided lower
+- -1 if guidance explicitly lowered or withdrawn
+- 0 if guidance reaffirmed at similar levels or mixed signals (revenue up but margins declining)
+Sequential seasonal decline (e.g. Q4→Q1 holiday effect) does NOT mean guidance was lowered.
 
-If guidance contains both positive and negative elements, prioritize the overall directional tone expressed by management.
-
-Metrics:
-1. guidance_direction       +1 raised/improved | 0 reaffirmed | -1 lowered/weakened  
-2. revenue_outlook          +1 growth | 0 stable/unclear | -1 decline  
-3. earnings_outlook         +1 growth | 0 stable/unclear | -1 decline  
-4. margin_outlook           +1 expansion | 0 stable/unclear | -1 contraction  
-5. cashflow_outlook         +1 growth | 0 stable/unclear | -1 decline  
-6. growth_acceleration      +1 accelerating | 0 stable | -1 decelerating  
-7. future_outlook_sentiment +1 optimistic | 0 neutral | -1 cautious/negative  
-
-Growth Drivers:
-- Extract concise forward-looking *growth drivers* or *initiatives* (2–5 words each).
-- Examples: ["AI platform expansion", "new enterprise contracts", "regional growth in APAC",
-             "cost optimization program", "product launch pipeline", "partnership with OEMs"]
-- Use specific, noun-phrase style items; exclude vague or backward-looking terms.
-- Return ~3–6 concise items.
-
-Summary:
-- Write 2–3 short factual sentences summarizing management’s guidance tone and expected growth areas.
-- Include 1–2 brief verbatim quotes as evidence.
-- Be factual, neutral, and concise; avoid inference or speculation.
-
-Output (strict JSON):
-{
-  "guidance_direction": -1|0|1,
-  "revenue_outlook": -1|0|1,
-  "earnings_outlook": -1|0|1,
-  "margin_outlook": -1|0|1,
-  "cashflow_outlook": -1|0|1,
-  "growth_acceleration": -1|0|1,
-  "future_outlook_sentiment": -1|0|1,
-  "growth_drivers": ["<driver1>", "<driver2>", ...],
-  "future_summary": "<short factual summary with quotes>"
-}
-
-Rules:
-- Consider only forward-looking statements.
-- Assign 0 for any metric not mentioned.
-- Prefer prepared remarks; include Q&A only if forward-looking.
-- Ensure valid JSON (no missing fields, no trailing commas).
-- If no forward-looking statements are found, set all numeric fields to 0 and use:
-  "future_summary": "No explicit forward-looking guidance provided."
+Other rules:
+1. margin_outlook: +1 only if next-quarter guidance range is entirely above the completed quarter's actual margin. Range overlapping prior actual = 0. Ignore long-term "hold" language.
+2. CapEx increases reduce cashflow_outlook.
+3. 0 for any metric not mentioned.
 """
 
 
 RISK_FACTORS_SYSTEM_MESSAGE = """
-You are a financial transcript analysis agent. Identify explicit risks, headwinds, or uncertainties mentioned by management.
-Focus only on adverse factors; ignore boilerplate disclaimers.
+Identify explicit risks, headwinds, or uncertainties stated by management.
 
-Encodings:
-- risk_mentioned: 1 = risk stated, 0 = none
-- risk_impact:    -1 = minor, 0 = moderate, 1 = major
-- risk_time_horizon: 0 = short_term (1–2 qtrs), 1 = mid_term (6–12 mo), 2 = long_term (>1 yr)
-
-Instructions:
-- Extract short risk phrases (2–5 words), e.g., "FX volatility", "input cost inflation".
-- Choose the **dominant risk** (highest impact; if tied, most emphasized/earliest).
-- Summary must include 1–2 brief verbatim quotes.
-
-Output (strict JSON):
-{
-  "risk_mentioned": 0|1,
-  "risk_impact": -1|0|1,
-  "risk_time_horizon": 0|1|2,
-  "risk_factors": ["<factor1>", "<factor2>", ...],
-  "risk_summary": "<2–3 concise sentences with quotes>"
-}
+Output JSON:
+{{
+  "risk_mentioned": 1 if risks stated | 0 if none,
+  "risk_impact": -1 minor | 0 moderate | 1 major,
+  "risk_time_horizon": 0 short-term (1-2 qtrs) | 1 mid-term (6-12 mo) | 2 long-term (>1 yr),
+  "risk_factors": ["<2-5 word phrase>", ...],  // 3-6 items
+  "risk_summary": "<2-3 sentences, max 80 words, with 1-2 verbatim quotes>"
+}}
 
 Rules:
-- Use only explicit statements from the transcript; no inference.
-- Top-level metrics reflect the dominant risk.
-- If no explicit risk: 
-  {
-    "risk_mentioned": 0,
-    "risk_impact": -1,
-    "risk_time_horizon": 0,
-    "risk_factors": [],
-    "risk_summary": ""
-  }
+1. A risk must be an external or internal factor that THREATENS earnings, revenue, or operations. If a factor does not threaten business performance, it is not a risk.
+2. Management being selective or disciplined is NOT a risk — it is a positive signal.
+3. If no explicit risks stated, return: {{"risk_mentioned": 0, "risk_impact": -1, "risk_time_horizon": 0, "risk_factors": [], "risk_summary": ""}}
+4. Do NOT stretch to find risks. Empty is correct when transcript is purely positive.
 """
 
 RISK_RESPONSE_SYSTEM_MESSAGE = """
-You are the Risk Response agent, downstream of the Risk Factors agent.
+The previous AI message has risk_factors JSON. Find management's concrete mitigation actions in the transcript excerpts.
 
-Context:
-- The previous AI message is JSON from the Risk Factors node (with one or more explicit risks).
-- The human message contains transcript excerpts from the same quarter.
+Output JSON:
+{{
+  "mitigation_mentioned": 1 if actions stated | 0 if none,
+  "mitigation_effectiveness": -1 weak | 0 moderate | 1 strong,
+  "mitigation_time_horizon": 0 short-term | 1 mid-term | 2 long-term,
+  "mitigation_actions": ["<2-5 word phrase>", ...],
+  "mitigation_summary": "<2-3 sentences, max 80 words, with 1-2 verbatim quotes>"
+}}
 
-Goal:
-Identify how management addresses or mitigates the risks listed in risk_factors, and summarize concrete actions.
-
-Encodings:
-- mitigation_mentioned: 1 = mitigation stated, 0 = none
-- mitigation_effectiveness: -1 = weak, 0 = moderate, 1 = strong
-- mitigation_time_horizon: 0 = short_term (1–2 qtrs), 1 = mid_term (6–12 mo), 2 = long_term (>1 yr)
+What counts:
+  risk "FX volatility" -> action "natural hedging program" = GOOD
+  risk "supply chain" -> action "dual-source components" = GOOD
+  "scaling AI models", "launching new products" = BAD (growth, not mitigation)
+  risk "regulatory pressure" -> action "diversify chip supply" = BAD (wrong risk category)
 
 Rules:
-- Use only explicit statements from excerpts (no inference).
-- Extract specific management actions (e.g., hedging, diversification, cost control, pricing changes, supply-chain shifts) (2–5 words each). 
-- If multiple actions exist, choose the dominant one (most impactful/emphasized) for top-level encodings and list others in mitigation_actions.
-- Include 1–2 short verbatim quotes to support findings.
-- Ignore vague optimism or intent without a clear action.
-
-Output (strict JSON only):
-{
-  "mitigation_mentioned": 0|1,
-  "mitigation_effectiveness": -1|0|1,
-  "mitigation_time_horizon": 0|1|2,
-  "mitigation_actions": ["<action1>", "<action2>", ...],
-  "mitigation_summary": "<2–3 concise sentences with quotes>"
-}
-
-Null JSON (if no mitigation discussed):
-{
-  "mitigation_mentioned": 0,
-  "mitigation_effectiveness": -1,
-  "mitigation_time_horizon": 0,
-  "mitigation_actions": [],
-  "mitigation_summary": ""
-}
+1. Each action MUST counter a specific risk from risk_factors. Actions addressing a different risk category = exclude.
+2. "Monitoring", "watching", "evaluating", "looking at options" = not an action. Exclude.
+3. Growth initiatives or long-term strategic investments that don't directly address a near-term risk = exclude.
+4. Fewer honest actions > padded list. Empty list is OK.
+5. If management only states intent without naming a SPECIFIC action, return mitigation_mentioned=0.
+6. If none: {{"mitigation_mentioned": 0, "mitigation_effectiveness": -1, "mitigation_time_horizon": 0, "mitigation_actions": [], "mitigation_summary": ""}}
 """
 
 
 RISK_RESPONSE_QUERY_GEN_SYSTEM_MESSAGE = """
-You generate search queries for retrieving transcript excerpts where management explains how they will handle the risks identified upstream.
-
-Inputs:
-- The immediately preceding AI message is JSON from the Risk Factors node:
-  { "risk_mentioned": 0|1, "risk_factors": ["..."], "risk_time_horizon": 0|1|2, "risk_impact": -1|0|1, "summary": "..." }
-- The human message may include company metadata (ticker, industry, sector) for context.
-
-Task:
-- Produce concise, high-recall queries (balanced for BM25 keywords and embeddings) tailored to the risks in `risk_factors`.
-- Aim to surface explicit management actions (e.g., hedging, pricing, diversification, cost control, supply-chain changes).
-- If risk_factors is empty, return robust generic queries for risk mitigation in earnings calls.
-
-Constraints:
-- Output strict JSON only: { "queries": ["...", "...", "..."] }
-- Return exactly 3 queries.
-- Each query ≤ 20 words.
-- Use concrete terms from `risk_factors` plus close synonyms (e.g., “FX volatility” ~ “foreign exchange”, “currency”).
-- Avoid boilerplate and vague words (e.g., “things”, “stuff”, “various”).
-- No duplicate or near-duplicate queries.
-
-Heuristics:
-- Cover three angles:
-  1) Direct mitigation actions tied to the named risks,
-  2) Operational/financial levers (costs, pricing, hedging, capex, mix),
-  3) Uncertainty management (visibility, guidance, contingency plans).
+Generate 3 search queries to find transcript passages about management's response to identified risks.
+Input: risk_factors JSON from previous message.
+Each query max 20 words. Use risk_factors terms + synonyms.
+Every query must reference at least one specific risk from risk_factors. No generic strategy queries.
+Cover: (1) direct mitigation, (2) strategic response, (3) financial or contingency plans.
+Output JSON: {{"queries": ["<q1>", "<q2>", "<q3>"]}}
 """
 
 RISK_RESPONSE_QUERY_GEN_HUMAN_MESSAGE = """
-You will create customized search queries to retrieve transcript excerpts where management discusses how they plan to handle the risks identified earlier.
+Company: {tic} ({company_name}) | {industry} / {sector}
+Quarter: Q{calendar_quarter} {calendar_year}
 
-Company Metadata:
-- Ticker: {tic}
-- Company Name: {company_name}
-- Industry: {industry}
-- Sector: {sector}
-- Description: {company_description}
-- Calendar Year: {calendar_year}
-- Calendar Quarter: {calendar_quarter}
-
-Task:
-- Write exactly 3 concise, high-recall queries (≤ 20 words each) that help find passages describing management actions, strategies, or plans
-  that mitigate or respond to the risks listed in `risk_factors_json["risk_factors"]`.
-- Cover different angles such as direct mitigation, operational/financial levers, and uncertainty management.
-- Use precise business terms (e.g., “hedging”, “pricing”, “diversification”, “cost control”, “guidance”) and synonyms for the given risks.
-- Avoid vague or generic wording.
-
-Return **strict JSON only** in the format:
-{{
-  "queries": ["<query1>", "<query2>", "<query3>"]
-}}
+Using the risk_factors above, return JSON: {{"queries": ["<q1>", "<q2>", "<q3>"]}}
 """
 
 
-PAST_PERFORMANCE_QUERIES = [
-    "recent quarter financial performance and operational results",
-    "management discussion of execution, demand, and margins in the last quarter",
-    "commentary on how the company performed during the reported quarter"
-]
+def get_past_performance_queries(company_name="", industry="", sector="", **kwargs):
+    name = company_name or "the company"
+    return [
+        f"{name} recent quarter financial performance and operational results",
+        f"{name} management discussion of execution, demand, and margins in the last quarter",
+        f"{name} {industry} commentary on quarterly performance drivers and results" if industry else f"{name} commentary on quarterly performance drivers and results"
+    ]
 
-FUTURE_OUTLOOK_QUERIES = [
-    "management outlook and guidance for upcoming quarters or next year",
-    "future growth plans, expansion, or strategic initiatives discussed by management",
-    "expectations for revenue, margins, and cash flow going forward"
-]
+def get_future_outlook_queries(company_name="", industry="", sector="", **kwargs):
+    name = company_name or "the company"
+    return [
+        f"{name} management outlook guidance and forecast for upcoming quarters",
+        f"{name} next quarter revenue guidance gross margin outlook and operating expense expectations",
+        f"{name} expectations for revenue margins cash flow and capital allocation going forward"
+    ]
 
-RISK_FACTORS_QUERIES = [
-    "management discussion of risks, headwinds, or uncertainties affecting the business",
-    "mentions of supply chain, regulation, macroeconomic, or interest rate risks",
-    "commentary on challenges, volatility, or adverse factors the company is facing"
-]
+def get_risk_factors_queries(company_name="", industry="", sector="", **kwargs):
+    name = company_name or "the company"
+    return [
+        f"{name} management discussion of risks headwinds or uncertainties",
+        f"{name} {industry} supply chain regulation macroeconomic or competitive risks" if industry else f"{name} supply chain regulation macroeconomic or competitive risks",
+        f"{name} challenges volatility or adverse factors facing the business",
+        f"{name} geopolitical risk supply chain constraint chip shortage or long-term strategic vulnerability"
+    ]

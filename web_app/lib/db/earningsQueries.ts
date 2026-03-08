@@ -30,11 +30,8 @@ const EARNINGS_LATEST_DATE_QUERY = `
 `; 
 
 const getLatestEarningsDate = cache(async (tic: string): Promise<string | null> => {
-  let client;
   try {
-    client = await pool.connect();
-
-    const result = await client.query<{ latest_date: string | null }>(EARNINGS_LATEST_DATE_QUERY, [tic.trim().toUpperCase()]);
+    const result = await pool.query<{ latest_date: string | null }>(EARNINGS_LATEST_DATE_QUERY, [tic.trim().toUpperCase()]);
 
     if (result.rows.length > 0) {
       return result.rows[0].latest_date;
@@ -45,25 +42,15 @@ const getLatestEarningsDate = cache(async (tic: string): Promise<string | null> 
   } catch (err) {
     console.error('Database query error:', err);
     return null;
-
-  } finally {
-    if (client) {
-      client.release();
-    }
   }
 });
 
 
 
 const searchEarnings = cache(async (tic: string): Promise<Earnings[]> => {
-  let client;
   try {
-    // 1. Acquire a client (connection) from the pool
-    client = await pool.connect();
+    const result = await pool.query<Earnings>(EARNINGS_SEARCH_QUERY, [tic.trim().toUpperCase()]);
 
-    const result = await client.query<Earnings>(EARNINGS_SEARCH_QUERY, [tic.trim().toUpperCase()]);
-
-    // 2. Map results (omitted for brevity)
     const mapped = result.rows.map((row: Earnings) => ({
         tic: row.tic,
         calendar_year: row.calendar_year,
@@ -83,12 +70,6 @@ const searchEarnings = cache(async (tic: string): Promise<Earnings[]> => {
   } catch (err) {
     console.error('Database query error:', err);
     return [];
-
-  } finally {
-    // 3. IMPORTANT: Release the client back to the pool
-    if (client) {
-      client.release();
-    }
   }
 });
 
@@ -102,14 +83,9 @@ const EARNINGS_REGIME_SEARCH_QUERY = `
 
 
 const searchEarningsRegimes = cache(async (tic: string): Promise<EarningsRegime> => {
-  let client;
   try {
-    // 1. Acquire a client (connection) from the pool
-    client = await pool.connect();
+    const result = await pool.query<EarningsRegime>(EARNINGS_REGIME_SEARCH_QUERY, [tic.trim().toUpperCase()]);
 
-    const result = await client.query<EarningsRegime>(EARNINGS_REGIME_SEARCH_QUERY, [tic.trim().toUpperCase()]);
-
-    // 2. Map results (omitted for brevity)
     const mapped = result.rows.map((row: EarningsRegime) => ({
         eps_surprise_regime: row.eps_surprise_regime.trim().toLowerCase().replace(/\s+/g, '-'),
         revenue_surprise_regime: row.revenue_surprise_regime.trim().toLowerCase().replace(/\s+/g, '-'),
@@ -120,12 +96,6 @@ const searchEarningsRegimes = cache(async (tic: string): Promise<EarningsRegime>
   } catch (err) {
     console.error('Database query error:', err);
     return {} as EarningsRegime;
-
-  } finally {
-    // 3. IMPORTANT: Release the client back to the pool
-    if (client) {
-      client.release();
-    }
   }
 });
 
@@ -143,14 +113,9 @@ const EPS_REGIME_SEARCH_QUERY = `
 
 
 const searchEPSRegimes = cache(async (tic: string): Promise<EPSRegime> => {
-  let client;
   try {
-    // 1. Acquire a client (connection) from the pool
-    client = await pool.connect();
+    const result = await pool.query<EPSRegime>(EPS_REGIME_SEARCH_QUERY, [tic.trim().toUpperCase()]);
 
-    const result = await client.query<EPSRegime>(EPS_REGIME_SEARCH_QUERY, [tic.trim().toUpperCase()]);
-
-    // 2. Map results (omitted for brevity)
     const mapped = result.rows.map((row: EPSRegime) => ({
         yoy_growth_regime: row.yoy_growth_regime.trim().toLowerCase().replace(/\s+/g, '-'),
         yoy_accel_regime: row.yoy_accel_regime.trim().toLowerCase().replace(/\s+/g, '-'),
@@ -161,12 +126,6 @@ const searchEPSRegimes = cache(async (tic: string): Promise<EPSRegime> => {
   } catch (err) {
     console.error('Database query error:', err);
     return {} as EPSRegime;
-
-  } finally {
-    // 3. IMPORTANT: Release the client back to the pool
-    if (client) {
-      client.release();
-    }
   }
 });
 
@@ -182,14 +141,9 @@ const REVENUE_REGIME_SEARCH_QUERY = `
 `;
 
 const searchRevenueRegimes = cache(async (tic: string): Promise<RevenueRegime> => {
-  let client;
   try {
-    // 1. Acquire a client (connection) from the pool
-    client = await pool.connect();
+    const result = await pool.query<RevenueRegime>(REVENUE_REGIME_SEARCH_QUERY, [tic.trim().toUpperCase()]);
 
-    const result = await client.query<RevenueRegime>(REVENUE_REGIME_SEARCH_QUERY, [tic.trim().toUpperCase()]);
-
-    // 2. Map results (omitted for brevity)
     const mapped = result.rows.map((row: RevenueRegime) => ({
         yoy_growth_regime: row.yoy_growth_regime.trim().toLowerCase().replace(/\s+/g, '-'),
         yoy_accel_regime: row.yoy_accel_regime.trim().toLowerCase().replace(/\s+/g, '-'),
@@ -200,12 +154,6 @@ const searchRevenueRegimes = cache(async (tic: string): Promise<RevenueRegime> =
   } catch (err) {
     console.error('Database query error:', err);
     return {} as RevenueRegime;
-
-  } finally {
-    // 3. IMPORTANT: Release the client back to the pool
-    if (client) {
-      client.release();
-    }
   }
 });
 

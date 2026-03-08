@@ -6,7 +6,7 @@ from prompts import CATALYST_QUERIES, CATALYST_CONFIG, STAGE1_HUMAN_PROMPT, STAG
     STAGE1_SYSTEM_MESSAGE, STAGE2_SYSTEM_MESSAGE, STAGE3_HUMAN_PROMPT, STAGE3_SYSTEM_MESSAGE
 from states import CatalystSession, Catalyst, Chunk, CompanyInfo
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
-from etl.utils import run_llm, parse_json_from_llm
+from etl.utils import run_llm, parse_json_with_fallback
 import json
 import os
 from datetime import date, timedelta
@@ -194,8 +194,7 @@ def stage1_node(state: CatalystSession) -> Dict:
     # 5. Run LLM and Parse
     try:
         llm_raw = run_llm(messages).content
-        # parse_json_from_llm handles markdown backticks and whitespace
-        llm_groups = parse_json_from_llm(llm_raw) 
+        llm_groups = parse_json_with_fallback(llm_raw) 
         
         # 6. Re-map Temporary IDs back to real UUIDs
         final_uuid_groups = []
@@ -295,7 +294,7 @@ def stage2_node(state: CatalystSession) -> Dict:
 
             # 5. Run LLM and Parse into Pydantic Model
             llm_raw = run_llm(messages).content
-            catalyst_json = parse_json_from_llm(llm_raw)
+            catalyst_json = parse_json_with_fallback(llm_raw)
             
             # This validation step ensures the LLM didn't hallucinate a tag 
             # outside of your Literal ImpactArea or CatalystType
@@ -390,7 +389,7 @@ def stage3_node(state: CatalystSession) -> Dict:
 
             # 4. Run Validation LLM
             llm_raw = run_llm(messages).content
-            val_result = parse_json_from_llm(llm_raw)
+            val_result = parse_json_with_fallback(llm_raw)
 
             # 5. Update the record — LLM returns is_valid: 0|1
             is_valid = val_result.get("is_valid", 0)

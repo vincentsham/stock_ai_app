@@ -2,7 +2,7 @@ from __future__ import annotations
 from enum import IntEnum
 from typing import TypedDict, List, Optional, Dict, Any
 from pydantic import BaseModel, Field, conint
-from prompts import PAST_PERFORMANCE_QUERIES, FUTURE_OUTLOOK_QUERIES, RISK_FACTORS_QUERIES
+from prompts import get_past_performance_queries, get_future_outlook_queries, get_risk_factors_queries
 
 # ---- Enums / Literals ----
 class Tri(IntEnum):
@@ -19,11 +19,17 @@ class Binary(IntEnum):
     NO = 0
     YES = 1
 
-
-
+class Durability(IntEnum):
+    """Durability of past performance: 0=one-time, 1=unclear, 2=sustainable"""
+    ONE_TIME = 0
+    UNCLEAR = 1
+    SUSTAINABLE = 2
 
 
 # ---- Aspect States ----
+# NOTE: CompanyInfo and RetrieverState remain TypedDict (dict-based) because they hold
+# internal pipeline data (not LLM output) and are accessed with dict-style syntax
+# throughout the codebase. Analysis states use BaseModel for runtime validation of LLM output.
 class CompanyInfo(TypedDict):
     """
     Basic company and earnings information.
@@ -101,14 +107,14 @@ class PastState(BaseModel):
     }
     """
     sentiment: Optional[Tri] = None
-    durability: Optional[TimeHorizon] = None
+    durability: Optional[Durability] = None
     performance_factors: List[str] = []
     past_summary: Optional[str] = None
 
     @classmethod
     def create(cls,
                sentiment: Optional[Tri] = None,
-               durability: Optional[TimeHorizon] = None,
+               durability: Optional[Durability] = None,
                performance_factors: Optional[List[str]] = [],
                past_summary: Optional[str] = None) -> PastState:
         return cls(
@@ -118,7 +124,7 @@ class PastState(BaseModel):
             past_summary=past_summary
         )
 
-class FutureState(TypedDict):
+class FutureState(BaseModel):
     """
     State for analyzing future outlook.
 
@@ -170,7 +176,7 @@ class FutureState(TypedDict):
 
 
 
-class RiskState(TypedDict):
+class RiskState(BaseModel):
     """
     State for analyzing risks.
 
@@ -205,7 +211,7 @@ class RiskState(TypedDict):
         )
 
 
-class RiskResponseState(TypedDict):
+class RiskResponseState(BaseModel):
     """
     State for analyzing risk responses.
 
@@ -281,9 +287,10 @@ def merged_state_factory(
         calendar_quarter=calendar_quarter,
         earnings_date=earnings_date
     )
-    past_retriever_state = RetrieverState.create(top_k=top_k, queries=PAST_PERFORMANCE_QUERIES)
-    future_retriever_state = RetrieverState.create(top_k=top_k, queries=FUTURE_OUTLOOK_QUERIES)
-    risk_retriever_state = RetrieverState.create(top_k=top_k, queries=RISK_FACTORS_QUERIES)
+    query_kwargs = dict(company_name=company_name, industry=industry, sector=sector)
+    past_retriever_state = RetrieverState.create(top_k=top_k, queries=get_past_performance_queries(**query_kwargs))
+    future_retriever_state = RetrieverState.create(top_k=top_k, queries=get_future_outlook_queries(**query_kwargs))
+    risk_retriever_state = RetrieverState.create(top_k=top_k, queries=get_risk_factors_queries(**query_kwargs))
     risk_response_retriever_state = RetrieverState.create(top_k=top_k)
 
     past_state = PastState.create()
