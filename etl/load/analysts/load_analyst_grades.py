@@ -80,8 +80,8 @@ def normalize_analyst_grades(df):
         unclassified_grades = pd.concat([unclassified_new_grades, unclassified_previous_grades]).unique()
         
         for grade in unclassified_grades:
-            if grade:
-                classification = classify_grade_embedding_similarity(grade, ref_grade_list, grade_mapping, update=True)
+            if pd.notna(grade) and grade != "":
+                classification = classify_grade_embedding_similarity(str(grade), ref_grade_list, grade_mapping, update=True)
                 print(f"The grade '{grade}' is classified as: {classification[1]}, {classification[2]}")
         # Re-apply normalization after updating mapping 
         df['new_grade_normalized'] = df['new_grade'].apply(lambda x: grade_mapping.get(x, (None, None, None, None))[0])

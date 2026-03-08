@@ -1,12 +1,9 @@
 import pandas as pd
 from typing import Optional
-from dotenv import load_dotenv
 import os
 from psycopg import connect
 import numpy as np
-
-# Load environment variables from .env file
-load_dotenv(override=True)
+import database.config
 
 # Connect to PostgreSQL
 def connect_to_db(type: str = "localhost"):
@@ -18,6 +15,7 @@ def connect_to_db(type: str = "localhost"):
             db_pass = os.getenv("PGPASSWORD")
             db_host = os.getenv("PGHOST")
             db_port = os.getenv("PGPORT")
+            sslmode = os.getenv("PGSSLMODE")
 
             # 2. Debug: Check for missing values
             missing_vars = []
@@ -26,6 +24,7 @@ def connect_to_db(type: str = "localhost"):
             if not db_pass: missing_vars.append("PGPASSWORD")
             if not db_host: missing_vars.append("PGHOST")
             if not db_port: missing_vars.append("PGPORT")
+            if not sslmode: missing_vars.append("PGSSLMODE")
 
             if missing_vars:
                 print(f"❌ ERROR: Missing environment variables for localhost: {', '.join(missing_vars)}")
@@ -37,19 +36,22 @@ def connect_to_db(type: str = "localhost"):
                 user=db_user,
                 password=db_pass,
                 host=db_host,
-                port=db_port
+                port=db_port,
+                sslmode=sslmode
             )
 
         elif type == "supabase":
             # 1. Fetch Variable
-            connection_string = os.getenv("PGCONNECTION_SESSION")
+            connection_string = os.getenv("SUPABASE_TRANSACTION")
 
             # 2. Debug: Check if missing
             if not connection_string:
-                print("❌ ERROR: Missing environment variable 'PGCONNECTION_SESSION'")
+                print("❌ ERROR: Missing environment variable 'SUPABASE_TRANSACTION'")
                 return None
 
-            # 3. Connect
+            # 3. Connect with prepare_threshold=None to DISABLE prepared statements.
+            #    In psycopg3: 0 = prepare immediately, None = NEVER prepare.
+            #    PgBouncer transaction mode cannot handle named prepared statements.
             conn = connect(
                 connection_string, 
                 connect_timeout=120, 
@@ -57,7 +59,8 @@ def connect_to_db(type: str = "localhost"):
                 keepalives_idle=30, 
                 keepalives_interval=10, 
                 keepalives_count=5,
-                sslmode='require'
+                sslmode='require',
+                prepare_threshold=None
             )
         else:
             raise ValueError(f"Invalid connection type specified: {type}")
@@ -86,16 +89,13 @@ def escape_sql_backslash(val):
     # Avoid converting lists, dicts, or other non-string types to string
     return val
 
-def execute_query(sql: str, params: Optional[dict] = None):
-    """Execute a SQL query with optional parameters."""
+def execute_query(sql: str, params: Optional[tuple] = None):
+    """Execute a SQL query with optional parameterized values (%s placeholders)."""
     
     try:
         conn = connect_to_db()
         with conn.cursor() as cursor:
-            if params:
-                sql = sql.format(**params)
-            # Fetch all records from the earnings_transcript_chunks table
-            cursor.execute(sql)
+            cursor.execute(sql, params)
             records = cursor.fetchall()
 
             # Create a DataFrame from the fetched records
@@ -107,11 +107,11 @@ def execute_query(sql: str, params: Optional[dict] = None):
     finally:
         conn.close()
 
-def read_sql_query(query: str, conn) -> pd.DataFrame:
+def read_sql_query(query: str, conn, params: Optional[tuple] = None) -> pd.DataFrame:
     """Execute a SQL query and return the results as a pandas DataFrame."""
     try:
         with conn.cursor() as cur:
-            cur.execute(query)
+            cur.execute(query, params)
             rows = cur.fetchall()
             columns = [desc[0] for desc in cur.description]
             df = pd.DataFrame(rows, columns=columns)
@@ -167,6 +167,12 @@ def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[],
 
     try:
         total_records = 0
+        # PgBouncer (Supabase) check: executemany() uses pipeline mode which
+        # sends named PREPARE statements (_pg3_X) that collide on recycled
+        # PgBouncer backends. Fall back to individual execute() calls.
+        # prepare_threshold=None means "never prepare" in psycopg3.
+        use_executemany = getattr(conn, 'prepare_threshold', 5) is not None
+
         with conn.cursor() as cursor:
             # Convert DataFrame to a list of tuples (Must be a list to slice it for batches)
             data = list(df.itertuples(index=False, name=None))
@@ -176,13 +182,20 @@ def insert_records(conn, df: pd.DataFrame, table_name: str, keys: list[str]=[],
             # We default to 100, but for transcripts, you might want to pass batch_size=10
             for i in range(0, total_len, batch_size):
                 batch = data[i : i + batch_size]
-                cursor.executemany(sql, batch)
+
+                if use_executemany:
+                    cursor.executemany(sql, batch)
+                else:
+                    # Individual execute() calls respect prepare_threshold=0
+                    # and use the simple query protocol (no PREPARE statements)
+                    for row in batch:
+                        cursor.execute(sql, row)
                 
                 # Vital: Commit after every batch to release memory and DB locks
                 if commit:
                     conn.commit()
                     
-                total_records += cursor.rowcount
+                total_records += len(batch) if not use_executemany else cursor.rowcount
                 # Optional: Print progress for large jobs
                 if total_len > 100:
                     print(f"   - Batch {i//batch_size + 1}: Processed {min(i + batch_size, total_len)}/{total_len} rows")

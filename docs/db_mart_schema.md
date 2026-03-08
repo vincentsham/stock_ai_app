@@ -168,7 +168,7 @@
 | state           | VARCHAR(20)                | YES         |             | Current state (e.g. active)              |
 | sentiment       | SMALLINT                   | YES         |             | Sentiment score                          |
 | time_horizon    | SMALLINT                   | YES         |             | Time horizon estimate                    |
-| impact_magnitude| SMALLINT                   | YES         |             | Impact magnitude estimate                |
+| magnitude.      | SMALLINT                   | YES         |             | Impact magnitude estimate                |
 | certainty       | VARCHAR(20)                | YES         |             | Certainty level                          |
 | impact_area     | VARCHAR(32)                | YES         |             | Business area impacted                   |
 | mention_count   | INTEGER                    | YES         |             | Frequency mentioned                      |

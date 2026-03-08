@@ -2,7 +2,6 @@ from states import News
 from prompts import STAGE1_PROMPT, STAGE2_PROMPT, STAGE1_SYSTEM_MESSAGE, STAGE2_SYSTEM_MESSAGE
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
 from etl.utils import run_llm, parse_json_from_llm
-from dotenv import load_dotenv
 import json
 
 
@@ -43,7 +42,7 @@ def stage2(state: News) -> dict:
     Output: {
         "time_horizon": <str>,
         "duration": <str>,
-        "impact_magnitude": <str>,
+        "magnitude": <str>,
         "affected_dimensions": <list>,
         "sentiment": <str>
     }
@@ -69,13 +68,13 @@ def stage2(state: News) -> dict:
 
     time_horizon = response.get("time_horizon")
     duration = response.get("duration")
-    impact_magnitude = response.get("impact_magnitude")
+    magnitude = response.get("magnitude")
     affected_dimensions = response.get("affected_dimensions")
     sentiment = response.get("sentiment")
     return {
         "time_horizon": time_horizon,
         "duration": duration,
-        "impact_magnitude": impact_magnitude,
+        "magnitude": magnitude,
         "affected_dimensions": affected_dimensions,
         "sentiment": sentiment
     }

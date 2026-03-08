@@ -3,7 +3,8 @@ import pandas as pd
 import numpy as np
 from database.utils import connect_to_db, insert_records, execute_query
 from utils import delete_published_records
-
+import os
+app_env = os.getenv("APP_ENV", "local")
 
 
 def read_records(tic):

@@ -1,4 +1,3 @@
-from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import BaseMessage, SystemMessage, HumanMessage, AIMessage
@@ -12,8 +11,7 @@ import re
 import math
 from decimal import Decimal
 import ast
-
-load_dotenv()
+import database.config
 
 llm_chatgpt = ChatOpenAI(model=os.getenv("OPENAI_LLM_MODEL"), api_key=os.getenv("OPENAI_API_KEY"))
 llm_gemini = ChatGoogleGenerativeAI(model=os.getenv("GEMINI_LLM_MODEL"), google_api_key=os.getenv("GEMINI_API_KEY"))
@@ -183,21 +181,62 @@ def calculate_capped_rate(current: float, previous: float) -> float:
 
 
 def parse_json_from_llm(response_text):
-    # Pattern to find a JSON object { ... }
+    """Extract and parse JSON from LLM response text.
+    
+    Returns the parsed dict/list on success, or {} on failure.
+    Callers that need strict validation (e.g. Pydantic models) should
+    treat an empty dict as a parse failure and retry or raise.
+    """
+    # Try to find a JSON object { ... } or a JSON array [ ... ]
     # re.DOTALL makes . match newlines as well
-    match = re.search(r'\{.*\}', response_text, re.DOTALL)
+    match = re.search(r'(\{.*\}|\[.*\])', response_text, re.DOTALL)
     
     if match:
         json_str = match.group(0)
         try:
             return json.loads(json_str)
         except json.JSONDecodeError as e:
-            print(f"JSON Decode Error: {e}")
+            print(f"[parse_json_from_llm] JSON Decode Error: {e}")
             return {}
     else:
-        print("No JSON object found in response.")
+        print("[parse_json_from_llm] No JSON object found in response.")
         return {}
-    
+
+
+def _strip_plus_outside_strings(s: str) -> str:
+    """Remove leading '+' from numeric values in JSON, preserving '+' inside string literals.
+
+    e.g. {"score": +1, "text": "grew +15%"} -> {"score": 1, "text": "grew +15%"}
+    """
+    result = []
+    in_string = False
+    escape = False
+    for i, ch in enumerate(s):
+        if escape:
+            result.append(ch)
+            escape = False
+            continue
+        if ch == '\\' and in_string:
+            result.append(ch)
+            escape = True
+            continue
+        if ch == '"':
+            in_string = not in_string
+            result.append(ch)
+            continue
+        # Skip '+' before a digit when outside a string literal
+        if not in_string and ch == '+' and i + 1 < len(s) and s[i + 1].isdigit():
+            continue
+        result.append(ch)
+    return ''.join(result)
+
+
+def parse_json_with_fallback(raw: str) -> dict:
+    """Parse JSON from LLM response, falling back to +N sanitization if needed."""
+    output = parse_json_from_llm(raw)
+    if not output:
+        output = parse_json_from_llm(_strip_plus_outside_strings(raw))
+    return output
 
 
 def get_calendar_year_quarter(date):

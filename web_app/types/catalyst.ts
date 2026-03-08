@@ -9,13 +9,12 @@ export type Catalyst = {
   state: string;
   sentiment: number;
   time_horizon: number;
-  impact_magnitude: number;
-  certainty: string;
+  magnitude: number;
   impact_area: string;
   mention_count: number;
-  event_ids: string[];
+  chunk_ids: string[];
   source_types: string[];
-  evidences: string[];
+  citations: string[];
   urls: string[];
   created_at: string;
   updated_at: string;

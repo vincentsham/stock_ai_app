@@ -81,7 +81,7 @@
 | event_type      | TEXT                       | YES         |             | Type of event                            |
 | time_horizon    | SMALLINT                   | YES         |             | Time horizon classification              |
 | duration        | TEXT                       | YES         |             | Duration of impact                       |
-| impact_magnitude| SMALLINT                   | YES         |             | Magnitude of impact                      |
+| magnitude       | SMALLINT                   | YES         |             | Magnitude of impact                      |
 | affected_dimensions| TEXT[]                  | YES         |             | Affected financial dimensions            |
 | sentiment       | SMALLINT                   | YES         |             | Sentiment score                          |
 | raw_json_sha256 | CHAR(64)                   | NO          |             | Hash of the raw JSON payload             |
@@ -183,7 +183,7 @@
 | state           | VARCHAR(20)                | YES         |             | State of catalyst (e.g., active)         |
 | sentiment       | SMALLINT                   | YES         |             | Sentiment analysis result                |
 | time_horizon    | SMALLINT                   | YES         |             | Time horizon                             |
-| impact_magnitude| SMALLINT                   | YES         |             | Magnitude of impact                      |
+| magnitude.      | SMALLINT                   | YES         |             | Magnitude of impact                      |
 | certainty       | VARCHAR(20)                | YES         |             | Certainty level                          |
 | impact_area     | VARCHAR(32)                | YES         |             | Area of impact                           |
 | mention_count   | INTEGER                    | YES         |             | Number of times mentioned                |
@@ -208,7 +208,7 @@
 | state           | VARCHAR(20)                | YES         |             | State                                    |
 | sentiment       | SMALLINT                   | YES         |             | Sentiment                                |
 | time_horizon    | SMALLINT                   | YES         |             | Time horizon                             |
-| impact_magnitude| SMALLINT                   | YES         |             | Impact magnitude                         |
+| magnitude       | SMALLINT                   | YES         |             | Impact magnitude                         |
 | certainty       | VARCHAR(20)                | YES         |             | Certainty                                |
 | impact_area     | VARCHAR(32)                | YES         |             | Impact area                              |
 | is_valid        | SMALLINT                   | YES         |             | Validation flag                          |

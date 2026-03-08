@@ -79,7 +79,7 @@ def main():
                     raise e
                 print(f"Error processing event ID {state[1]}: {e}. Retrying...")
 
-        if "impact_magnitude" in final_state and final_state["impact_magnitude"] == 1:
+        if "magnitude" in final_state and final_state["magnitude"] == 1:
             no_major_news += 1
         final_state["event_id"] = state[1]  # Add the event ID to the final state
         final_state["raw_json_sha256"] = state[2]  # Add the hash to the final state
@@ -95,7 +95,7 @@ def main():
                     "event_type": final_state.get("event_type"),
                     "time_horizon": final_state.get("time_horizon"),
                     "duration": final_state.get("duration"),
-                    "impact_magnitude": final_state.get("impact_magnitude"),
+                    "magnitude": final_state.get("magnitude"),
                     "affected_dimensions": final_state.get("affected_dimensions"),
                     "sentiment": final_state.get("sentiment"),
                     "raw_json_sha256": final_state.get("raw_json_sha256")

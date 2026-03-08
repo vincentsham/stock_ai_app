@@ -3,7 +3,8 @@ import pandas as pd
 import numpy as np
 from database.utils import connect_to_db, insert_records, execute_query
 from utils import delete_published_records
-
+import os
+app_env = os.getenv("APP_ENV", "local")
 
 
 def read_records(tic):
@@ -93,8 +94,8 @@ def main():
         except Exception as e:
             print(f"Error processing efficiency metrics data: {e}")
             conn_local.rollback()
-            conn_supabase.rollback()
             conn_local.close()
+            conn_supabase.rollback()
             conn_supabase.close()
             return
         conn_local.commit()

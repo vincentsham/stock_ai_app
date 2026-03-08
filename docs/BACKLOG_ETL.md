@@ -109,6 +109,13 @@ examples:
 | 43 | Miscellaneous | moving raw, core, ref into local and mart into supabase | High | Close | misc_43  | 2026-01-07 | 2026-01-07 |
 | 44 | Bug | fix a bug in etl | High | Close | bug_44  | 2026-01-07 | 2026-01-07 |
 | 45 | Bug | fix a bug for null stock score in etl | High | Close | bug_45  | 2026-01-26 | 2026-01-26 |
+| 46 | Technical | update Catalyst logic to reduce the run time | High | Close | feat_46 | 2026-03-03 | 2026-03-06 |
+| 46.1 | Technical | existing catalyst | High | Close | feat_46 | 2026-03-03 | 2026-03-06 |
+| 46.2 | Technical | sorting chunks by date | High | Close | feat_46 | 2026-03-03 | 2026-03-06 |
+| 46.3 | Technical | main | High | Close | feat_46 | 2026-03-03 | 2026-03-06 |
+| 46.4 | Technical | catalyst tables | High | Close | feat_46 | 2026-03-03 | 2026-03-06 |
+| 46.5 | Technical | stage 2 - considering the chunks' timeline | High | Close | feat_46 | 2026-03-03 | 2026-03-06 |
+| 47 | Technical | improve earnings transcripts ai agent | High | Close | feat_47 | 2026-03-06 | 2026-03-07 |
 | 1001 | Technical | Rewrite the loading scripts that can just insert and update new data for all tables | Medium | Close | misc_1004 | 2025-10-12 | 2025-10-13 |
 | 1002 | Miscellaneous | Create a md doc for table scehma | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |
 | 1002 | Miscellaneous | Create a md doc for source | Medium | Close | miscellaneous_1002 | 2025-09-30 | 2025-09-30 |

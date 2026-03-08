@@ -40,14 +40,9 @@ const ANALYST_ANALYSIS_LATEST_DATE_QUERY = `
 
 
 const searchAnalystAnalysis = cache(async (tic: string): Promise<AnalystAnalysis[]> => {
-  let client;
   try {
-    // 1. Acquire a client (connection) from the pool
-    client = await pool.connect();
+    const result = await pool.query<AnalystAnalysis>(ANALYST_ANALYSIS_SEARCH_QUERY, [tic.trim().toUpperCase()]);
 
-    const result = await client.query<AnalystAnalysis>(ANALYST_ANALYSIS_SEARCH_QUERY, [tic.trim().toUpperCase()]);
-
-    // 2. Map results (omitted for brevity)
     const mapped = result.rows.map((row: AnalystAnalysis) => ({
         tic: row.tic,
         date: new Date(row.date).toISOString().slice(0, 10),
@@ -77,22 +72,12 @@ const searchAnalystAnalysis = cache(async (tic: string): Promise<AnalystAnalysis
   } catch (err) {
     console.error('Database query error:', err);
     return [];
-
-  } finally {
-    // 3. IMPORTANT: Release the client back to the pool
-    if (client) {
-      client.release();
-    }
   }
 });
 
 const getLatestAnalystAnalysisDate = cache(async (tic: string): Promise<string | null> => {
-  let client;
   try {
-    // 1. Acquire a client (connection) from the pool
-    client = await pool.connect();
-
-    const result = await client.query<{ latest_date: Date | null }>(ANALYST_ANALYSIS_LATEST_DATE_QUERY, [tic.trim().toUpperCase()]);
+    const result = await pool.query<{ latest_date: Date | null }>(ANALYST_ANALYSIS_LATEST_DATE_QUERY, [tic.trim().toUpperCase()]);
 
     if (result.rows.length > 0 && result.rows[0].latest_date) {
       return result.rows[0].latest_date.toISOString().slice(0, 10);
@@ -103,12 +88,6 @@ const getLatestAnalystAnalysisDate = cache(async (tic: string): Promise<string |
   } catch (err) {
     console.error('Database query error:', err);
     return null;
-
-  } finally {
-    // 3. IMPORTANT: Release the client back to the pool
-    if (client) {
-      client.release();
-    }
   }
 });
 

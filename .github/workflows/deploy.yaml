@@ -1,0 +1,62 @@
+name: Winsanity Full Stack Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_WEB_REPO: winsanity-web
+  ECR_ETL_REPO: winsanity-etl
+  ECS_SERVICE: winsanity-web-service
+  ECS_CLUSTER: winsanity-cluster
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # --- WEB BUILD ---
+      - name: Build & Push Web
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build -f Dockerfile.web -t $ECR_REGISTRY/$ECR_WEB_REPO:latest .
+          docker push $ECR_REGISTRY/$ECR_WEB_REPO:latest
+
+      # --- ETL BUILD ---
+      - name: Build & Push ETL
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          # Use 'latest' tag for ETL so the EventBridge Schedule always pulls the newest version
+          docker build -f Dockerfile.etl -t $ECR_REGISTRY/$ECR_ETL_REPO:latest .
+          docker push $ECR_REGISTRY/$ECR_ETL_REPO:latest
+
+  deploy-web:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update ECS Web Service
+        run: |
+          aws ecs update-service --cluster ${{ env.ECS_CLUSTER }} --service ${{ env.ECS_SERVICE }} --force-new-deployment

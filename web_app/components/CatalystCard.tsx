@@ -38,7 +38,7 @@ export const CatalystCard: React.FC<CatalystCardProps> = ({ catalyst }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const isBullish = catalyst.sentiment === CatalystSentiment.Bullish;
-  const isHighImpact = catalyst.impact_magnitude === ImpactMagnitude.Major;
+  const isHighImpact = catalyst.magnitude === ImpactMagnitude.Major;
 
   // Formatting date
   const dateObj = new Date(catalyst.date);
@@ -61,8 +61,8 @@ export const CatalystCard: React.FC<CatalystCardProps> = ({ catalyst }) => {
     ? isBullish ? 'shadow-[0_0_15px_-3px_rgba(16,185,129,0.15)]' : 'shadow-[0_0_15px_-3px_rgba(244,63,94,0.15)]'
     : '';
 
-  const evidenceList = Array.isArray(catalyst.evidences)
-    ? catalyst.evidences.slice(0, 5)
+  const evidenceList = Array.isArray(catalyst.citations)
+    ? catalyst.citations.slice(0, 5)
     : [];
 
   const sourceTypeList = Array.isArray(catalyst.source_types)

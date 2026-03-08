@@ -3,8 +3,9 @@ import pandas as pd
 import numpy as np
 from database.utils import connect_to_db, insert_records, execute_query
 from utils import delete_published_records
+import os 
 
-
+app_env = os.getenv("APP_ENV", "local")
 
 def read_records(tic):
     """
@@ -39,6 +40,7 @@ def main():
     """
     conn_local = connect_to_db("localhost")
     conn_supabase = connect_to_db("supabase")
+         
     if conn_local and conn_supabase:
         cursor = conn_local.cursor()
         cursor.execute("SELECT tic FROM core.stock_profiles;")

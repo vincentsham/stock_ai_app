@@ -1,14 +1,10 @@
 from database.utils import connect_to_db
-from dotenv import load_dotenv
 from langchain_openai import OpenAIEmbeddings
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 import os
 import json
-
-# Load environment variables
-load_dotenv()
-
+import database.config
 
 # Initialize the embedding model
 embedding_model_name = os.getenv("OPENAI_EMBEDDING_MODEL")

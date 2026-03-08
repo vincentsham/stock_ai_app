@@ -4,7 +4,8 @@ import numpy as np
 from database.utils import connect_to_db, insert_records, execute_query
 from utils import delete_published_records
 from etl.utils import fix_quotes
-
+import os
+app_env = os.getenv("APP_ENV", "local")
 
 
 def read_records(tic):
