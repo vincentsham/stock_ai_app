@@ -14,8 +14,6 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    outputs:
-      web_image: ${{ steps.build-web.outputs.image }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,14 +31,11 @@ jobs:
 
       # --- WEB BUILD ---
       - name: Build & Push Web
-        id: build-web
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -f Dockerfile.web -t $ECR_REGISTRY/$ECR_WEB_REPO:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_WEB_REPO:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$ECR_WEB_REPO:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          docker build -f Dockerfile.web -t $ECR_REGISTRY/$ECR_WEB_REPO:latest .
+          docker push $ECR_REGISTRY/$ECR_WEB_REPO:latest
 
       # --- ETL BUILD ---
       - name: Build & Push ETL
