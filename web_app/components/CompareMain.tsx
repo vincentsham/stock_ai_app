@@ -79,7 +79,9 @@ export const CompareMain = () => {
 
             const newProfiles: Record<string, {profile: StockProfile, metrics: AllMetrics, scores: StockScores}> = {};
             
-            await Promise.all(missing.map(async (tic) => {
+            // Process stocks sequentially to avoid exhausting the DB connection pool.
+            // Each stock still runs its 5 metrics queries in parallel (~6 connections).
+            for (const tic of missing) {
               try {
                 const profile = await searchStock(tic);
                 const [
@@ -109,7 +111,7 @@ export const CompareMain = () => {
               } catch (e) {
                 console.error(`Failed to load ${tic}`, e);
               }
-            }));
+            }
 
             // FIX: Only update state if we actually got new data
             // This prevents the infinite loop if a stock fails to load

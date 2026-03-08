@@ -26,8 +26,8 @@ const CATALYST_SEARCH_QUERY = `
         urls,
         created_at,
         updated_at
-    FROM mart._catalyst_master
-    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart._catalyst_master)
+    FROM mart.catalyst_master
+    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master)
         AND tic = $1 AND mention_count > 0 AND (sentiment = 1 OR sentiment = -1)
     ORDER BY date DESC, magnitude DESC, updated_at DESC, catalyst_id DESC
     LIMIT $2 OFFSET $3;
@@ -53,8 +53,8 @@ const CATALYST_SEARCH_QUERY_BULL = `
         urls,
         created_at,
         updated_at
-    FROM mart._catalyst_master
-    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart._catalyst_master) 
+    FROM mart.catalyst_master
+    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master) 
         AND tic = $1 AND mention_count > 0 AND sentiment = 1
     ORDER BY date DESC, magnitude DESC, updated_at DESC, catalyst_id DESC
     LIMIT $2 OFFSET $3;
@@ -80,37 +80,37 @@ const CATALYST_SEARCH_QUERY_BEAR =  `
         urls,
         created_at,
         updated_at
-    FROM mart._catalyst_master
-    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart._catalyst_master WHERE tic = $1) 
+    FROM mart.catalyst_master
+    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master WHERE tic = $1) 
         AND tic = $1 AND mention_count > 0 AND sentiment = -1
     ORDER BY date DESC, magnitude DESC, updated_at DESC, catalyst_id DESC
     LIMIT $2 OFFSET $3;
   `;
 
 const CATALYST_COUNT_QUERY = `
-    SELECT COUNT(*) FROM mart._catalyst_master
-    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart._catalyst_master WHERE tic = $1) 
+    SELECT COUNT(*) FROM mart.catalyst_master
+    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master WHERE tic = $1) 
         AND tic = $1 AND mention_count > 0 
         AND (sentiment = 1 OR sentiment = -1);
   `;
 
 const CATALYST_COUNT_QUERY_BULL = `
-    SELECT COUNT(*) FROM mart._catalyst_master
-    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart._catalyst_master WHERE tic = $1) 
+    SELECT COUNT(*) FROM mart.catalyst_master
+    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master WHERE tic = $1) 
         AND tic = $1 AND mention_count > 0 
         AND sentiment = 1;
   `;
 
 const CATALYST_COUNT_QUERY_BEAR = `
-    SELECT COUNT(*) FROM mart._catalyst_master
-    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart._catalyst_master WHERE tic = $1) 
+    SELECT COUNT(*) FROM mart.catalyst_master
+    WHERE as_of_date = (SELECT MAX(as_of_date) FROM mart.catalyst_master WHERE tic = $1) 
         AND tic = $1 AND mention_count > 0 
         AND sentiment = -1;
   `;
 
 const CATALYST_LATEST_DATE_QUERY = `
     SELECT MAX(as_of_date) AS latest_date
-    FROM mart._catalyst_master
+    FROM mart.catalyst_master
     WHERE tic = $1;
 `;
 

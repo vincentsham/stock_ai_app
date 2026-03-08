@@ -185,7 +185,7 @@ def main(tic: str, calendar_year: int = 2024, calendar_quarter: int = 4, sleep_t
     if sleep_time is not None:
         remaining = max(0, sleep_time - elapsed)
         if remaining > 0:
-            print(f"Rate limiting: sleeping {remaining:.0f}s (elapsed {elapsed:.1f}s, target {target_interval}s)")
+            print(f"Rate limiting: sleeping {remaining:.0f}s (elapsed {elapsed:.1f}s, target {sleep_time}s)")
             time.sleep(remaining)
 
 if __name__ == "__main__":
