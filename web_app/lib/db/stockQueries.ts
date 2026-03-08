@@ -11,17 +11,12 @@ const STOCKS_SEARCH_QUERY = `
 `;
 
 const searchStocks = cache(async (query: string): Promise<StockProfile[]> => {
-  let client;
   try {
-    // 1. Acquire a client (connection) from the pool
-    client = await pool.connect();
-
     const trimmed = query.trim();
     const searchQuery = `%${trimmed}%`;
 
-    const result = await client.query<StockProfile>(STOCKS_SEARCH_QUERY, [searchQuery]);
+    const result = await pool.query<StockProfile>(STOCKS_SEARCH_QUERY, [searchQuery]);
 
-    // 2. Map results (omitted for brevity)
     const mapped = result.rows.map((row: StockProfile) => ({
       tic: row.tic,
       name: row.name,
@@ -35,12 +30,6 @@ const searchStocks = cache(async (query: string): Promise<StockProfile[]> => {
   } catch (err) {
     console.error('Database query error:', err);
     return [];
-
-  } finally {
-    // 3. IMPORTANT: Release the client back to the pool
-    if (client) {
-      client.release();
-    }
   }
 });
 
@@ -54,14 +43,9 @@ const STOCK_SEARCH_QUERY = `
 `;
 
 const searchStock = cache(async (tic: string): Promise<StockProfile | null> => {
-  let client;
   try {
-    // 1. Acquire a client (connection) from the pool
-    client = await pool.connect();
+    const result = await pool.query<StockProfile>(STOCK_SEARCH_QUERY, [tic.trim().toUpperCase()]);
 
-    const result = await client.query<StockProfile>(STOCK_SEARCH_QUERY, [tic.trim().toUpperCase()]);
-
-    // 2. return the first result or null
     const stock = result.rows.map((row: StockProfile) => ({
       tic: row.tic,
       name: row.name,
@@ -75,12 +59,6 @@ const searchStock = cache(async (tic: string): Promise<StockProfile | null> => {
   } catch (err) {
     console.error('Database query error:', err);
     return null;
-
-  } finally {
-    // 3. IMPORTANT: Release the client back to the pool
-    if (client) {
-      client.release();
-    }
   }
 });
 

@@ -12,7 +12,7 @@ const EARNINGS_CALL_SEARCH_QUERY = `
         calendar_year,
         calendar_quarter,
         earnings_date,
-        TRUNC((sentiment + guidance_direction) / 2.0)::INT AS sentiment,
+        ROUND((sentiment + guidance_direction + revenue_outlook + margin_outlook + earnings_outlook + cashflow_outlook + growth_acceleration + future_outlook_sentiment) / 8.0)::INT AS sentiment,
         durability,
         performance_factors,
         past_summary,
@@ -49,11 +49,8 @@ const EARNINGS_CALL_LATEST_DATE_QUERY = `
 `;
 
 export const getLatestEarningsCallDate = cache(async (tic: string): Promise<string | null> => {
-  let client;
   try {
-    client = await pool.connect();
-
-    const result = await client.query<{ latest_date: string | null }>(EARNINGS_CALL_LATEST_DATE_QUERY, [tic.trim().toUpperCase()]);
+    const result = await pool.query<{ latest_date: string | null }>(EARNINGS_CALL_LATEST_DATE_QUERY, [tic.trim().toUpperCase()]);
 
     if (result.rows.length > 0) {
       return result.rows[0].latest_date;
@@ -64,25 +61,15 @@ export const getLatestEarningsCallDate = cache(async (tic: string): Promise<stri
   } catch (err) {
     console.error('Database query error:', err);
     return null;
-
-  } finally {
-    if (client) {
-      client.release();
-    }
   }
 });
 
 
 
 const searchEarningsCalls = cache(async (tic: string): Promise<EarningsCallAnalysis[]> => {
-  let client;
   try {
-    // 1. Acquire a client (connection) from the pool
-    client = await pool.connect();
+    const result = await pool.query<EarningsCallAnalysis>(EARNINGS_CALL_SEARCH_QUERY, [tic.trim().toUpperCase()]);
 
-    const result = await client.query<EarningsCallAnalysis>(EARNINGS_CALL_SEARCH_QUERY, [tic.trim().toUpperCase()]);
-
-    // 2. Map results (omitted for brevity)
     const mapped = result.rows.map((row: EarningsCallAnalysis) => ({
       inference_id: row.inference_id,
       event_id: row.event_id,
@@ -122,12 +109,6 @@ const searchEarningsCalls = cache(async (tic: string): Promise<EarningsCallAnaly
   } catch (err) {
     console.error('Database query error:', err);
     return [];
-
-  } finally {
-    // 3. IMPORTANT: Release the client back to the pool
-    if (client) {
-      client.release();
-    }
   }
 });
 

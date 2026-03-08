@@ -201,7 +201,42 @@ def parse_json_from_llm(response_text):
     else:
         print("[parse_json_from_llm] No JSON object found in response.")
         return {}
-    
+
+
+def _strip_plus_outside_strings(s: str) -> str:
+    """Remove leading '+' from numeric values in JSON, preserving '+' inside string literals.
+
+    e.g. {"score": +1, "text": "grew +15%"} -> {"score": 1, "text": "grew +15%"}
+    """
+    result = []
+    in_string = False
+    escape = False
+    for i, ch in enumerate(s):
+        if escape:
+            result.append(ch)
+            escape = False
+            continue
+        if ch == '\\' and in_string:
+            result.append(ch)
+            escape = True
+            continue
+        if ch == '"':
+            in_string = not in_string
+            result.append(ch)
+            continue
+        # Skip '+' before a digit when outside a string literal
+        if not in_string and ch == '+' and i + 1 < len(s) and s[i + 1].isdigit():
+            continue
+        result.append(ch)
+    return ''.join(result)
+
+
+def parse_json_with_fallback(raw: str) -> dict:
+    """Parse JSON from LLM response, falling back to +N sanitization if needed."""
+    output = parse_json_from_llm(raw)
+    if not output:
+        output = parse_json_from_llm(_strip_plus_outside_strings(raw))
+    return output
 
 
 def get_calendar_year_quarter(date):

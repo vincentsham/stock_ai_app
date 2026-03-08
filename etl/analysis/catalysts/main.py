@@ -195,18 +195,20 @@ if __name__ == "__main__":
         records = cursor.fetchall()
         conn.close()
         batch_size = 10  # number of companies to process before sleeping
-        sleep_time = 65  # seconds to sleep between batches to avoid rate limits
+        sleep_time = 125  # seconds to sleep between batches to avoid rate limits
         for i, record in enumerate(records):
-            print(f"\nProcessing {record[0]} ({i+1}/{len(records)})...")
-            # if i <= 1:
-            #     continue  # Skip the first 2 records for testing
-            if i > 0 and i % 2 == 0:
-                print(f"\n[Rate Limit Protection] Processed {2} items. Sleeping for {125} seconds...")
-                time.sleep(125)
             tic = record[0]
+            print(f"\nProcessing {tic} ({i+1}/{len(records)})...")
             main(tic=tic, top_k=3, batch_size=batch_size, sleep_time=sleep_time)
+            if i > 0 and i % batch_size == 0:
+                print(f"\n[Rate Limit Protection] Processed {batch_size} items. Sleeping for {sleep_time} seconds...")
+                time.sleep(sleep_time)
+            
+            
         # main(tic="AAPL", top_k=3)
         # main(tic="NVDA", top_k=3)
+        # main(tic="SOFI", top_k=3)
         # main(tic="TSLA", top_k=3)
+        conn.close()
 
 

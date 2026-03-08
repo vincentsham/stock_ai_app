@@ -217,12 +217,8 @@ const FINANCIAL_HEALTH_METRICS_SEARCH_QUERY = `
 
 
 const searchMetrics = cache(async (tic: string, category: string, query: string): Promise<MetricList> => {
-  let client;
   try {
-    // 1. Acquire a client (connection) from the pool
-    client = await pool.connect();
-
-    const data = await client.query(query, [tic.trim().toUpperCase()]);
+    const data = await pool.query(query, [tic.trim().toUpperCase()]);
 
     // 2. Process the results
     if (data.rows.length > 0) {
@@ -268,12 +264,6 @@ const searchMetrics = cache(async (tic: string, category: string, query: string)
   } catch (err) {
     console.error('Database query error:', err);
     return { category, tic, score: null, metrics: [], defaultVisibleCount: 0 };
-
-  } finally {
-    // 3. IMPORTANT: Release the client back to the pool
-    if (client) {
-      client.release();
-    }
   }
 
   // Return an empty object if no results are found
@@ -305,12 +295,8 @@ const STOCK_SCORES_SEARCH_QUERY = `
 
 
 export const searchStockScores = cache(async (tic: string) => {
-  let client;
   try {
-    // 1. Acquire a client (connection) from the pool
-    client = await pool.connect();
-
-    const data = await client.query(STOCK_SCORES_SEARCH_QUERY, [tic.trim().toUpperCase()]);
+    const data = await pool.query(STOCK_SCORES_SEARCH_QUERY, [tic.trim().toUpperCase()]);
 
     // 2. Process the results
     if (data.rows.length > 0) {
@@ -347,11 +333,6 @@ export const searchStockScores = cache(async (tic: string) => {
       financial_health_score: null,
       total_score: null,
     };
-  } finally {
-    // 3. IMPORTANT: Release the client back to the pool
-    if (client) {
-      client.release();
-    }
   }
 });
 
@@ -378,15 +359,12 @@ const STOCK_SCORES_LATEST_DATE_QUERY = `
 `;
 
 export const getLatestStockScoresDate = cache(async (tic: string | null): Promise<string | null> => {
-  let client;
   try {
-    // 1. Acquire a client (connection) from the pool
-    client = await pool.connect();
     let result;
     if (tic && tic.trim() !== '') {
-      result = await client.query<{ latest_date: Date | null }>(STOCK_SCORES_LATEST_DATE_WITH_TIC_QUERY, [tic.trim().toUpperCase()]);
+      result = await pool.query<{ latest_date: Date | null }>(STOCK_SCORES_LATEST_DATE_WITH_TIC_QUERY, [tic.trim().toUpperCase()]);
     } else {
-      result = await client.query<{ latest_date: Date | null }>(STOCK_SCORES_LATEST_DATE_QUERY);
+      result = await pool.query<{ latest_date: Date | null }>(STOCK_SCORES_LATEST_DATE_QUERY);
     }
 
     if (result.rows.length > 0 && result.rows[0].latest_date) {
@@ -398,21 +376,12 @@ export const getLatestStockScoresDate = cache(async (tic: string | null): Promis
   } catch (err) {
     console.error('Database query error:', err);
     return null;
-
-  } finally {
-    // 3. IMPORTANT: Release the client back to the pool
-    if (client) {
-      client.release();
-    }
   }
 });
 
 export const searchTopStocks = cache(async (limit: number) => {
-  let client;
   try {
-    // 1. Acquire a client (connection) from the pool
-    client = await pool.connect();
-    const result = await client.query(TOP_STOCKS_SEARCH_QUERY, [limit]);
+    const result = await pool.query(TOP_STOCKS_SEARCH_QUERY, [limit]);
 
     // 2. create a list of tic from result
     const topTics: string[] = result.rows.map((row: any) => row['tic'] as string);
@@ -421,12 +390,6 @@ export const searchTopStocks = cache(async (limit: number) => {
   } catch (err) {
     console.error('Database query error:', err);
     return [];
-
-  } finally {
-    // 3. IMPORTANT: Release the client back to the pool
-    if (client) {
-      client.release();
-    }
   }
 });
 
