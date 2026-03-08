@@ -47,7 +47,7 @@ export const AnalystPTCard: React.FC<{ data: AnalystAnalysis }> = ({ data }) => 
                 </div>
             </div>
 
-            <div className="flex flex-col justify-center flex-1 gap-4 relative z-10">
+            <div className="flex flex-col justify-center flex-1 gap-4 relative">
                 
                 {/* Median Highlight */}
                 <div className="flex flex-col items-center justify-center -mt-2">
@@ -60,19 +60,19 @@ export const AnalystPTCard: React.FC<{ data: AnalystAnalysis }> = ({ data }) => 
                     <div className="grid grid-cols-4 text-center max-w-sm mx-auto w-full">
                         <div className="flex flex-col gap-0.5">
                             <span className="text-red-500 text-[10px] font-bold uppercase">Low</span>
-                            <span className="text-red-500 text-lg font-mono font-semibold">${data.pt_low}</span>
+                            <span className="text-red-500 text-sm sm:text-lg font-mono font-semibold">${data.pt_low}</span>
                         </div>
                         <div className="flex flex-col gap-0.5">
                             <span className="text-[#6366f1ff] text-[10px] font-bold uppercase">25th %</span>
-                            <span className="text-[#6366f1ff] text-lg font-mono font-semibold">${data.pt_p25}</span>
+                            <span className="text-[#6366f1ff] text-sm sm:text-lg font-mono font-semibold">${data.pt_p25}</span>
                         </div>
                         <div className="flex flex-col gap-0.5">
                             <span className="text-[#6366f1ff] text-[10px] font-bold uppercase">75th %</span>
-                            <span className="text-[#6366f1ff] text-lg font-mono font-semibold">${data.pt_p75}</span>
+                            <span className="text-[#6366f1ff] text-sm sm:text-lg font-mono font-semibold">${data.pt_p75}</span>
                         </div>
                         <div className="flex flex-col gap-0.5">
                             <span className="text-emerald-500 text-[10px] font-bold uppercase">High</span>
-                            <span className="text-emerald-500 text-lg font-mono font-semibold">${data.pt_high}</span>
+                            <span className="text-emerald-500 text-sm sm:text-lg font-mono font-semibold">${data.pt_high}</span>
                         </div>
                     </div>
                 </div>
