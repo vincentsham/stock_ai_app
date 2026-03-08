@@ -206,8 +206,8 @@ export const AnalystPTGraph: React.FC<{ data: AnalystAnalysis[] }> = ({ data }) 
                 dataKey="date" 
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: '#6b7280', fontSize: 10, fontFamily: 'monospace' }}
-                tickMargin={10}
+                tick={{ fill: '#6b7280', fontSize: 6, fontFamily: 'monospace' }}
+                tickMargin={6}
                 ticks={xAxisTicks}
                 tickFormatter={formatXAxis}
                 interval={0}
@@ -216,9 +216,10 @@ export const AnalystPTGraph: React.FC<{ data: AnalystAnalysis[] }> = ({ data }) 
             <YAxis 
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: '#6b7280', fontSize: 10, fontFamily: 'monospace' }}
+                tick={{ fill: '#6b7280', fontSize: 6, fontFamily: 'monospace' }}
                 tickFormatter={(val) => `$${val}`}
                 domain={['auto', 'auto']}
+                width={35}
             />
             
             <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }} />
