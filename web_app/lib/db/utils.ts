@@ -33,9 +33,9 @@ function createPool(): Pool {
   const isLocal = appEnv === 'local';
   const config: PoolConfig = {
     connectionString,
-    max: 8,
+    max: 20,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 15000,
+    connectionTimeoutMillis: 10000,
     ssl: isLocal ? false : { rejectUnauthorized: false },
   };
 
