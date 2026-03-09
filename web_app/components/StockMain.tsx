@@ -72,23 +72,13 @@ export const StockMain: React.FC<{ tic: string }> = ({ tic }) => {
         </button>
       </div>
 
-      {/* Content Area */}
+      {/* Content Area — render only the active tab to avoid exhausting the DB connection pool */}
       <div>
-        <div className={activeTab === 'catalysts' ? 'block' : 'hidden'}>
-          <CatalystsSection tic={tic} />
-        </div>
-        <div className={activeTab === 'metrics' ? 'block' : 'hidden'}>
-          <MetricsSection tic={tic} />
-        </div>
-        <div className={activeTab === 'earnings' ? 'block' : 'hidden'}>
-          <EarningsSection tic={tic} />
-        </div>
-        <div className={activeTab === 'earningsCalls' ? 'block' : 'hidden'}>
-          <EarningsCallsSection tic={tic} />
-        </div>
-        <div className={activeTab === 'analysts' ? 'block' : 'hidden'}>
-          <AnalystsSection tic={tic} />
-        </div>
+        {activeTab === 'catalysts' && <CatalystsSection tic={tic} />}
+        {activeTab === 'metrics' && <MetricsSection tic={tic} />}
+        {activeTab === 'earnings' && <EarningsSection tic={tic} />}
+        {activeTab === 'earningsCalls' && <EarningsCallsSection tic={tic} />}
+        {activeTab === 'analysts' && <AnalystsSection tic={tic} />}
       </div>
     </div>
   );

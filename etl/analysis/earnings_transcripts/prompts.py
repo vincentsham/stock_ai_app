@@ -52,6 +52,19 @@ Output JSON:
   "future_summary": "<2-3 sentences, max 80 words, with 1-2 verbatim quotes>"
 }}
 
+Example:
+{{
+  "guidance_direction": 1,
+  "revenue_outlook": 1,
+  "earnings_outlook": 1,
+  "margin_outlook": 0,
+  "cashflow_outlook": 0,
+  "growth_acceleration": 1,
+  "future_outlook_sentiment": 1,
+  "growth_drivers": ["AI infrastructure demand", "cloud revenue acceleration", "new product launches H2"],
+  "future_summary": "Management raised full-year guidance citing strong demand. CFO stated \\"we expect double-digit revenue growth driven by AI.\\" Margins guided flat due to investment cycle."
+}}
+
 guidance_direction — assess from the RAW guidance language, not from your other outlook fields:
 - +1 if management frames guidance as year-over-year growth or acceleration AND margins not guided lower
 - -1 if guidance explicitly lowered or withdrawn
@@ -75,6 +88,15 @@ Output JSON:
   "risk_time_horizon": 0 short-term (1-2 qtrs) | 1 mid-term (6-12 mo) | 2 long-term (>1 yr),
   "risk_factors": ["<2-5 word phrase>", ...],  // 3-6 items
   "risk_summary": "<2-3 sentences, max 80 words, with 1-2 verbatim quotes>"
+}}
+
+Example:
+{{
+  "risk_mentioned": 1,
+  "risk_impact": 0,
+  "risk_time_horizon": 1,
+  "risk_factors": ["enterprise spending slowdown", "FX headwinds from strong dollar", "regulatory uncertainty in EU"],
+  "risk_summary": "Management flagged macro headwinds. CFO noted \\"foreign exchange remains a meaningful headwind.\\" Regulatory timelines in Europe add uncertainty to H2 pipeline."
 }}
 
 Rules:
