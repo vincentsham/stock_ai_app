@@ -35,7 +35,7 @@ function createPool(): Pool {
     connectionString,
     max: 20,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 10000,
+    connectionTimeoutMillis: 60000,
     ssl: isLocal ? false : { rejectUnauthorized: false },
   };
 
