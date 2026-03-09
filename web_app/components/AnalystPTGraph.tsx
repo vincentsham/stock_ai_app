@@ -1,7 +1,7 @@
 
 'use client';
 
-import{ useMemo } from 'react';
+import{ useMemo, useState, useEffect } from 'react';
 import {
     ComposedChart,
     Line,
@@ -101,6 +101,16 @@ const CustomTooltip = ({ active, payload, label }: CustomTooltipProps) => {
 };
 
 export const AnalystPTGraph: React.FC<{ data: AnalystAnalysis[] }> = ({ data }) => {
+    // Responsive tick font size: 6 on sm, 10 on md+
+    const [tickFontSize, setTickFontSize] = useState(6);
+    useEffect(() => {
+        const mq = window.matchMedia('(min-width: 640px)');
+        const update = (e: MediaQueryListEvent | MediaQueryList) => setTickFontSize(e.matches ? 10 : 6);
+        update(mq);
+        mq.addEventListener('change', update);
+        return () => mq.removeEventListener('change', update);
+    }, []);
+
     // Process data: reverse to be chronological (Oldest -> Newest) and add ranges
     const chartData = useMemo(() => {
         // We assume incoming data is reverse chronological (newest first), so we reverse it for the chart.
@@ -206,7 +216,7 @@ export const AnalystPTGraph: React.FC<{ data: AnalystAnalysis[] }> = ({ data }) 
                 dataKey="date" 
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: '#6b7280', fontSize: 6, fontFamily: 'monospace' }}
+                tick={{ fill: '#6b7280', fontSize: tickFontSize, fontFamily: 'monospace' }}
                 tickMargin={6}
                 ticks={xAxisTicks}
                 tickFormatter={formatXAxis}
@@ -216,10 +226,10 @@ export const AnalystPTGraph: React.FC<{ data: AnalystAnalysis[] }> = ({ data }) 
             <YAxis 
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: '#6b7280', fontSize: 6, fontFamily: 'monospace' }}
+                tick={{ fill: '#6b7280', fontSize: tickFontSize, fontFamily: 'monospace' }}
                 tickFormatter={(val) => `$${val}`}
                 domain={['auto', 'auto']}
-                width={35}
+                width={40}
             />
             
             <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }} />
