@@ -32,8 +32,8 @@ run_task() {
     if [ -f "$full_path" ]; then
         log "Running $script_name..."
         python3 "$full_path"
-        log "Completed $script_name. Sleeping 5s..."
-        sleep 5
+        log "Completed $script_name. Sleeping 30s..."
+        sleep 30
     else
         log "⚠️ WARNING: Script not found at $full_path. Skipping."
     fi
