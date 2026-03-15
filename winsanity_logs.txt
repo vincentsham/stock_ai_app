@@ -1,693 +1,0 @@
-b/39511540458448134831898251032135431876880345044115259392/s	f/39511656281605464988410361269083655967051716004762222593/s
-EVENTS	1771758755804	Processing states - news - ORCL - monthly:   0%|          | 0/9 [00:00<?, ?it/s]Processing states - news - ORCL - monthly:  11%|█         | 1/9 [00:32<04:17, 32.25s/it]Processing states - news - ORCL - monthly:  22%|██▏       | 2/9 [03:07<12:10, 104.39s/it]Processing states - news - ORCL - monthly:  33%|███▎      | 3/9 [05:37<12:32, 125.45s/it]Processing states - news - ORCL - monthly:  44%|████▍     | 4/9 [07:27<09:56, 119.38s/it]Processing states - news - ORCL - monthly:  56%|█████▌    | 5/9 [08:49<07:03, 105.92s/it]Processing states - news - ORCL - monthly:  67%|██████▋   | 6/9 [15:32<10:20, 206.95s/it]Processing states - news - ORCL - monthly:  78%|███████▊  | 7/9 [16:01<04:57, 148.72s/it]Processing states - news - ORCL - monthly:  89%|████████▉ | 8/9 [16:38<01:53, 113.07s/it]Processing states - news - ORCL - monthly: 100%|██████████| 9/9 [17:13<00:00, 88.63s/it] Processing states - news - ORCL - monthly: 100%|██████████| 9/9 [17:13<00:00, 114.81s/it]	1771758750961
-EVENTS	1771758755804	ORCL - product_initiative: Total records processed: 3, New records inserted: 0, Existing records updated: 0, Master records updated: 0	1771758751009
-EVENTS	1771758755804	Actions so far - Skip: 4, Keep: 2, Create: 0, Update: 1, Valid: 2, Total Processed Catalysts: 7	1771758751009
-EVENTS	1771758755804	ORCL - partnership_deal: Total records processed: 2, New records inserted: 0, Existing records updated: 0, Master records updated: 0	1771758751009
-EVENTS	1771758755804	Actions so far - Skip: 6, Keep: 3, Create: 0, Update: 2, Valid: 4, Total Processed Catalysts: 11	1771758751009
-EVENTS	1771758755804	ORCL - cost_efficiency: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0	1771758751009
-EVENTS	1771758755804	Actions so far - Skip: 9, Keep: 3, Create: 1, Update: 2, Valid: 5, Total Processed Catalysts: 15	1771758751009
-EVENTS	1771758755804	ORCL - capital_actions: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0	1771758751009
-EVENTS	1771758755804	Actions so far - Skip: 10, Keep: 3, Create: 1, Update: 3, Valid: 6, Total Processed Catalysts: 17	1771758751009
-EVENTS	1771758755804	[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...	1771758751009
-EVENTS	1771758755804	Error processing ORCL: "'regulatory_policy'". Retrying...	1771758751009
-EVENTS	1771758755804	ORCL - regulatory_policy: Total records processed: 3, New records inserted: 0, Existing records updated: 3, Master records updated: 1	1771758751009
-EVENTS	1771758755804	Actions so far - Skip: 11, Keep: 3, Create: 1, Update: 6, Valid: 7, Total Processed Catalysts: 21	1771758751009
-EVENTS	1771758755804	Total new records inserted: 1	1771758751009
-EVENTS	1771758755804	Total existing records updated: 3	1771758751009
-EVENTS	1771758755804	Total master records updated: 1	1771758751009
-EVENTS	1771758755804	ETL process completed in 1033.29 seconds.	1771758751009
-EVENTS	1771758755804	Processing states - earnings_transcript - ABNB - quarterly: 0it [00:00, ?it/s]Processing states - earnings_transcript - ABNB - quarterly: 0it [00:00, ?it/s]	1771758751009
-EVENTS	1771758755804	Total new records inserted: 0	1771758751084
-EVENTS	1771758755804	Total existing records updated: 0	1771758751084
-EVENTS	1771758755804	Total master records updated: 0	1771758751084
-EVENTS	1771758755804	ETL process completed in 0.00 seconds.	1771758751084
-EVENTS	1771759200809	Processing states - news - ABNB - monthly:   0%|          | 0/9 [00:00<?, ?it/s]Processing states - news - ABNB - monthly:  11%|█         | 1/9 [00:40<05:21, 40.16s/it]Processing states - news - ABNB - monthly:  22%|██▏       | 2/9 [00:40<01:59, 17.01s/it]Processing states - news - ABNB - monthly:  33%|███▎      | 3/9 [00:57<01:39, 16.64s/it]Processing states - news - ABNB - monthly:  44%|████▍     | 4/9 [02:07<03:09, 37.93s/it]Processing states - news - ABNB - monthly:  56%|█████▌    | 5/9 [03:24<03:27, 51.92s/it]Processing states - news - ABNB - monthly:  67%|██████▋   | 6/9 [05:30<03:51, 77.06s/it]Processing states - news - ABNB - monthly:  78%|███████▊  | 7/9 [07:04<02:45, 82.77s/it]Processing states - news - ABNB - monthly:  89%|████████▉ | 8/9 [07:05<00:56, 56.55s/it]Processing states - news - ABNB - monthly: 100%|██████████| 9/9 [07:29<00:00, 46.39s/it]Processing states - news - ABNB - monthly: 100%|██████████| 9/9 [07:29<00:00, 49.92s/it]	1771759200388
-EVENTS	1771759200809	ABNB - guidance_outlook: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1	1771759200453
-EVENTS	1771759200809	Actions so far - Skip: 1, Keep: 1, Create: 0, Update: 0, Valid: 1, Total Processed Catalysts: 2	1771759200453
-EVENTS	1771759200809	No results found for query: news, ABNB, 2026, None, 2	1771759200453
-EVENTS	1771759200809	ABNB - cost_efficiency: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0	1771759200453
-EVENTS	1771759200809	Actions so far - Skip: 5, Keep: 1, Create: 0, Update: 1, Valid: 1, Total Processed Catalysts: 7	1771759200453
-EVENTS	1771759200809	ABNB - capital_actions: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0	1771759200453
-EVENTS	1771759200809	Actions so far - Skip: 8, Keep: 1, Create: 1, Update: 1, Valid: 2, Total Processed Catalysts: 11	1771759200453
-EVENTS	1771759200809	[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...	1771759200453
-EVENTS	1771759200809	No results found for query: news, ABNB, 2026, None, 2	1771759200453
-EVENTS	1771759200809	ABNB - demand_trends: Total records processed: 2, New records inserted: 1, Existing records updated: 1, Master records updated: 1	1771759200453
-EVENTS	1771759200809	Actions so far - Skip: 10, Keep: 2, Create: 2, Update: 1, Valid: 4, Total Processed Catalysts: 15	1771759200453
-EVENTS	1771759200809	No results found for query: news, ABNB, 2026, None, 2	1771759200453
-EVENTS	1771759200809	Total new records inserted: 2	1771759200453
-EVENTS	1771759200809	Total existing records updated: 2	1771759200453
-EVENTS	1771759200809	Total master records updated: 2	1771759200453
-EVENTS	1771759200809	ETL process completed in 449.30 seconds.	1771759200453
-EVENTS	1771759200809	Processing states - earnings_transcript - JNJ - quarterly: 0it [00:00, ?it/s]Processing states - earnings_transcript - JNJ - quarterly: 0it [00:00, ?it/s]	1771759200454
-EVENTS	1771759200809	Total new records inserted: 0	1771759200577
-EVENTS	1771759200809	Total existing records updated: 0	1771759200577
-EVENTS	1771759200809	Total master records updated: 0	1771759200577
-EVENTS	1771759200809	ETL process completed in 0.00 seconds.	1771759200577
-EVENTS	1771759825807	Processing states - news - JNJ - monthly:   0%|          | 0/9 [00:00<?, ?it/s]Processing states - news - JNJ - monthly:  11%|█         | 1/9 [01:11<09:29, 71.22s/it]Processing states - news - JNJ - monthly:  22%|██▏       | 2/9 [01:12<03:30, 30.13s/it]Processing states - news - JNJ - monthly:  33%|███▎      | 3/9 [02:56<06:22, 63.67s/it]Processing states - news - JNJ - monthly:  44%|████▍     | 4/9 [03:41<04:42, 56.41s/it]Processing states - news - JNJ - monthly:  56%|█████▌    | 5/9 [04:13<03:10, 47.61s/it]Processing states - news - JNJ - monthly:  67%|██████▋   | 6/9 [07:37<05:02, 100.79s/it]Processing states - news - JNJ - monthly:  78%|███████▊  | 7/9 [08:18<02:42, 81.11s/it] Processing states - news - JNJ - monthly:  89%|████████▉ | 8/9 [10:19<01:33, 93.94s/it]Processing states - news - JNJ - monthly: 100%|██████████| 9/9 [10:20<00:00, 64.89s/it]Processing states - news - JNJ - monthly: 100%|██████████| 9/9 [10:20<00:00, 68.94s/it]	1771759821081
-EVENTS	1771759825807	JNJ - guidance_outlook: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0	1771759821127
-EVENTS	1771759825807	Actions so far - Skip: 3, Keep: 1, Create: 0, Update: 0, Valid: 1, Total Processed Catalysts: 4	1771759821127
-EVENTS	1771759825807	No results found for query: news, JNJ, 2026, None, 2	1771759821127
-EVENTS	1771759825807	JNJ - partnership_deal: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0	1771759821127
-EVENTS	1771759825807	Actions so far - Skip: 6, Keep: 1, Create: 1, Update: 0, Valid: 2, Total Processed Catalysts: 8	1771759821127
-EVENTS	1771759825807	[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...	1771759821127
-EVENTS	1771759825807	JNJ - regulatory_policy: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1	1771759821127
-EVENTS	1771759825807	Actions so far - Skip: 15, Keep: 2, Create: 1, Update: 0, Valid: 3, Total Processed Catalysts: 18	1771759821127
-EVENTS	1771759825807	JNJ - risk_event: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0	1771759821127
-EVENTS	1771759825807	Actions so far - Skip: 21, Keep: 2, Create: 2, Update: 0, Valid: 4, Total Processed Catalysts: 25	1771759821127
-EVENTS	1771759825807	No results found for query: news, JNJ, 2026, None, 2	1771759821127
-EVENTS	1771759825807	Total new records inserted: 2	1771759821127
-EVENTS	1771759825807	Total existing records updated: 1	1771759821127
-EVENTS	1771759825807	Total master records updated: 1	1771759821127
-EVENTS	1771759825807	ETL process completed in 620.50 seconds.	1771759821127
-EVENTS	1771759825807	Processing states - earnings_transcript - SHOP - quarterly: 0it [00:00, ?it/s]Processing states - earnings_transcript - SHOP - quarterly: 0it [00:00, ?it/s]	1771759821127
-EVENTS	1771759825807	Total new records inserted: 0	1771759821248
-EVENTS	1771759825807	Total existing records updated: 0	1771759821248
-EVENTS	1771759825807	Total master records updated: 0	1771759821248
-EVENTS	1771759825807	ETL process completed in 0.00 seconds.	1771759821248
-EVENTS	1771760320805	Processing states - news - SHOP - monthly:   0%|          | 0/9 [00:00<?, ?it/s]Processing states - news - SHOP - monthly:  11%|█         | 1/9 [01:00<08:05, 60.74s/it]Processing states - news - SHOP - monthly:  22%|██▏       | 2/9 [01:01<02:58, 25.53s/it]Processing states - news - SHOP - monthly:  33%|███▎      | 3/9 [01:47<03:28, 34.75s/it]Processing states - news - SHOP - monthly:  44%|████▍     | 4/9 [02:24<02:58, 35.67s/it]Processing states - news - SHOP - monthly:  56%|█████▌    | 5/9 [02:50<02:09, 32.33s/it]Processing states - news - SHOP - monthly:  67%|██████▋   | 6/9 [05:31<03:47, 75.81s/it]Processing states - news - SHOP - monthly:  78%|███████▊  | 7/9 [06:19<02:13, 66.73s/it]Processing states - news - SHOP - monthly:  89%|████████▉ | 8/9 [08:01<01:18, 78.01s/it]Processing states - news - SHOP - monthly: 100%|██████████| 9/9 [08:15<00:00, 57.96s/it]Processing states - news - SHOP - monthly: 100%|██████████| 9/9 [08:15<00:00, 55.01s/it]	1771760316368
-EVENTS	1771760320805	SHOP - guidance_outlook: Total records processed: 2, New records inserted: 0, Existing records updated: 2, Master records updated: 2	1771760316421
-EVENTS	1771760320805	Actions so far - Skip: 1, Keep: 2, Create: 0, Update: 0, Valid: 2, Total Processed Catalysts: 3	1771760316421
-EVENTS	1771760320805	No results found for query: news, SHOP, 2026, None, 2	1771760316421
-EVENTS	1771760320805	[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...	1771760316421
-EVENTS	1771760320805	SHOP - risk_event: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0	1771760316421
-EVENTS	1771760320805	Actions so far - Skip: 22, Keep: 2, Create: 1, Update: 0, Valid: 3, Total Processed Catalysts: 25	1771760316421
-EVENTS	1771760320805	Total new records inserted: 1	1771760316421
-EVENTS	1771760320805	Total existing records updated: 2	1771760316421
-EVENTS	1771760320805	Total master records updated: 2	1771760316421
-EVENTS	1771760320805	ETL process completed in 495.12 seconds.	1771760316421
-EVENTS	1771760320805	Processing states - earnings_transcript - V - quarterly: 0it [00:00, ?it/s]Processing states - earnings_transcript - V - quarterly: 0it [00:00, ?it/s]	1771760316421
-EVENTS	1771760320805	Total new records inserted: 0	1771760316572
-EVENTS	1771760320805	Total existing records updated: 0	1771760316572
-EVENTS	1771760320805	Total master records updated: 0	1771760316572
-EVENTS	1771760320805	ETL process completed in 0.00 seconds.	1771760316572
-EVENTS	1771760695807	Processing states - news - V - monthly:   0%|          | 0/9 [00:00<?, ?it/s]Processing states - news - V - monthly:  11%|█         | 1/9 [00:40<05:21, 40.22s/it]Processing states - news - V - monthly:  22%|██▏       | 2/9 [00:41<02:00, 17.15s/it]Processing states - news - V - monthly:  33%|███▎      | 3/9 [01:15<02:28, 24.79s/it]Processing states - news - V - monthly:  44%|████▍     | 4/9 [01:39<02:02, 24.46s/it]Processing states - news - V - monthly:  56%|█████▌    | 5/9 [02:17<01:58, 29.64s/it]Processing states - news - V - monthly:  67%|██████▋   | 6/9 [04:44<03:27, 69.27s/it]Processing states - news - V - monthly:  78%|███████▊  | 7/9 [05:11<01:51, 55.52s/it]Processing states - news - V - monthly:  89%|████████▉ | 8/9 [05:39<00:46, 46.87s/it]Processing states - news - V - monthly: 100%|██████████| 9/9 [06:17<00:00, 43.94s/it]Processing states - news - V - monthly: 100%|██████████| 9/9 [06:17<00:00, 41.90s/it]	1771760693695
-EVENTS	1771760695807	No results found for query: news, V, 2026, None, 2	1771760693740
-EVENTS	1771760695807	[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...	1771760693740
-EVENTS	1771760695807	Total new records inserted: 0	1771760693740
-EVENTS	1771760695807	Total existing records updated: 0	1771760693740
-EVENTS	1771760695807	Total master records updated: 0	1771760693740
-EVENTS	1771760695807	ETL process completed in 377.12 seconds.	1771760693740
-EVENTS	1771760695807	Processing states - earnings_transcript - UNH - quarterly: 0it [00:00, ?it/s]Processing states - earnings_transcript - UNH - quarterly: 0it [00:00, ?it/s]	1771760693740
-EVENTS	1771760695807	Total new records inserted: 0	1771760693899
-EVENTS	1771760695807	Total existing records updated: 0	1771760693899
-EVENTS	1771760695807	Total master records updated: 0	1771760693899
-EVENTS	1771760695807	ETL process completed in 0.00 seconds.	1771760693899
-EVENTS	1771761275806	Processing states - news - UNH - monthly:   0%|          | 0/9 [00:00<?, ?it/s]Processing states - news - UNH - monthly:  11%|█         | 1/9 [01:50<14:40, 110.04s/it]Processing states - news - UNH - monthly:  22%|██▏       | 2/9 [02:21<07:26, 63.73s/it] Processing states - news - UNH - monthly:  33%|███▎      | 3/9 [03:43<07:11, 71.92s/it]Processing states - news - UNH - monthly:  44%|████▍     | 4/9 [04:14<04:38, 55.76s/it]Processing states - news - UNH - monthly:  56%|█████▌    | 5/9 [04:49<03:14, 48.55s/it]Processing states - news - UNH - monthly:  67%|██████▋   | 6/9 [07:26<04:16, 85.43s/it]Processing states - news - UNH - monthly:  78%|███████▊  | 7/9 [08:04<02:19, 69.74s/it]Processing states - news - UNH - monthly:  89%|████████▉ | 8/9 [08:59<01:05, 65.16s/it]Processing states - news - UNH - monthly: 100%|██████████| 9/9 [09:37<00:00, 56.62s/it]Processing states - news - UNH - monthly: 100%|██████████| 9/9 [09:37<00:00, 64.16s/it]	1771761271311
-EVENTS	1771761275806	UNH - guidance_outlook: Total records processed: 2, New records inserted: 0, Existing records updated: 1, Master records updated: 0	1771761271367
-EVENTS	1771761275806	Actions so far - Skip: 0, Keep: 0, Create: 0, Update: 2, Valid: 1, Total Processed Catalysts: 2	1771761271367
-EVENTS	1771761275806	UNH - partnership_deal: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0	1771761271367
-EVENTS	1771761275806	Actions so far - Skip: 6, Keep: 0, Create: 1, Update: 2, Valid: 2, Total Processed Catalysts: 9	1771761271367
-EVENTS	1771761275806	[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...	1771761271367
-EVENTS	1771761275806	UNH - risk_event: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0	1771761271367
-EVENTS	1771761275806	Actions so far - Skip: 20, Keep: 1, Create: 1, Update: 2, Valid: 3, Total Processed Catalysts: 24	1771761271367
-EVENTS	1771761275806	JSON Decode Error: Expecting ',' delimiter: line 4 column 218 (char 314)	1771761271367
-EVENTS	1771761275806	Total new records inserted: 1	1771761271367
-EVENTS	1771761275806	Total existing records updated: 1	1771761271367
-EVENTS	1771761275806	Total master records updated: 0	1771761271367
-EVENTS	1771761275806	ETL process completed in 577.41 seconds.	1771761271367
-EVENTS	1771761275806	Processing states - earnings_transcript - NFLX - quarterly: 0it [00:00, ?it/s]Processing states - earnings_transcript - NFLX - quarterly: 0it [00:00, ?it/s]	1771761271367
-EVENTS	1771761275806	Total new records inserted: 0	1771761271518
-EVENTS	1771761275806	Total existing records updated: 0	1771761271518
-EVENTS	1771761275806	Total master records updated: 0	1771761271518
-EVENTS	1771761275806	ETL process completed in 0.00 seconds.	1771761271518
-EVENTS	1771761855810	Processing states - news - NFLX - monthly:   0%|          | 0/9 [00:00<?, ?it/s]Processing states - news - NFLX - monthly:  11%|█         | 1/9 [00:25<03:26, 25.83s/it]Processing states - news - NFLX - monthly:  22%|██▏       | 2/9 [01:03<03:47, 32.56s/it]Processing states - news - NFLX - monthly:  33%|███▎      | 3/9 [01:53<04:04, 40.69s/it]Processing states - news - NFLX - monthly:  44%|████▍     | 4/9 [02:29<03:14, 38.92s/it]Processing states - news - NFLX - monthly:  56%|█████▌    | 5/9 [03:07<02:33, 38.45s/it]Processing states - news - NFLX - monthly:  67%|██████▋   | 6/9 [07:28<05:42, 114.24s/it]Processing states - news - NFLX - monthly:  78%|███████▊  | 7/9 [08:31<03:15, 97.53s/it] Processing states - news - NFLX - monthly:  89%|████████▉ | 8/9 [09:00<01:15, 75.71s/it]Processing states - news - NFLX - monthly: 100%|██████████| 9/9 [09:39<00:00, 64.23s/it]Processing states - news - NFLX - monthly: 100%|██████████| 9/9 [09:39<00:00, 64.42s/it]	1771761851257
-EVENTS	1771761855810	NFLX - partnership_deal: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0	1771761851358
-EVENTS	1771761855810	Actions so far - Skip: 10, Keep: 1, Create: 0, Update: 0, Valid: 1, Total Processed Catalysts: 11	1771761851358
-EVENTS	1771761855810	[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...	1771761851358
-EVENTS	1771761855810	NFLX - regulatory_policy: Total records processed: 2, New records inserted: 0, Existing records updated: 2, Master records updated: 1	1771761851358
-EVENTS	1771761855810	Actions so far - Skip: 20, Keep: 1, Create: 0, Update: 2, Valid: 3, Total Processed Catalysts: 23	1771761851358
-EVENTS	1771761855810	NFLX - demand_trends: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1	1771761851358
-EVENTS	1771761855810	Actions so far - Skip: 23, Keep: 2, Create: 0, Update: 2, Valid: 4, Total Processed Catalysts: 27	1771761851358
-EVENTS	1771761855810	Total new records inserted: 0	1771761851358
-EVENTS	1771761855810	Total existing records updated: 3	1771761851358
-EVENTS	1771761855810	Total master records updated: 2	1771761851358
-EVENTS	1771761855810	ETL process completed in 579.74 seconds.	1771761851358
-EVENTS	1771761855810	Processing states - earnings_transcript - PYPL - quarterly: 0it [00:00, ?it/s]Processing states - earnings_transcript - PYPL - quarterly: 0it [00:00, ?it/s]	1771761851358
-EVENTS	1771761855810	Total new records inserted: 0	1771761851469
-EVENTS	1771761855810	Total existing records updated: 0	1771761851469
-EVENTS	1771761855810	Total master records updated: 0	1771761851469
-EVENTS	1771761855810	ETL process completed in 0.00 seconds.	1771761851469
-EVENTS	1771762790812	Processing states - news - PYPL - monthly:   0%|          | 0/9 [00:00<?, ?it/s]Processing states - news - PYPL - monthly:  11%|█         | 1/9 [01:19<10:35, 79.41s/it]Processing states - news - PYPL - monthly:  22%|██▏       | 2/9 [03:14<11:44, 100.64s/it]Processing states - news - PYPL - monthly:  33%|███▎      | 3/9 [04:58<10:11, 101.89s/it]Processing states - news - PYPL - monthly:  44%|████▍     | 4/9 [05:28<06:08, 73.79s/it] Processing states - news - PYPL - monthly:  56%|█████▌    | 5/9 [06:15<04:15, 63.87s/it]Processing states - news - PYPL - monthly:  67%|██████▋   | 6/9 [10:35<06:31, 130.60s/it]Processing states - news - PYPL - monthly:  78%|███████▊  | 7/9 [12:46<04:21, 130.78s/it]Processing states - news - PYPL - monthly:  89%|████████▉ | 8/9 [14:56<02:10, 130.52s/it]Processing states - news - PYPL - monthly: 100%|██████████| 9/9 [15:38<00:00, 102.69s/it]Processing states - news - PYPL - monthly: 100%|██████████| 9/9 [15:38<00:00, 104.23s/it]	1771762789503
-EVENTS	1771762790812	PYPL - guidance_outlook: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0	1771762789548
-EVENTS	1771762790812	Actions so far - Skip: 3, Keep: 1, Create: 0, Update: 0, Valid: 1, Total Processed Catalysts: 4	1771762789548
-EVENTS	1771762790812	PYPL - product_initiative: Total records processed: 2, New records inserted: 1, Existing records updated: 1, Master records updated: 1	1771762789548
-EVENTS	1771762790812	Actions so far - Skip: 4, Keep: 2, Create: 1, Update: 0, Valid: 3, Total Processed Catalysts: 7	1771762789548
-EVENTS	1771762790812	PYPL - partnership_deal: Total records processed: 2, New records inserted: 0, Existing records updated: 0, Master records updated: 0	1771762789548
-EVENTS	1771762790812	Actions so far - Skip: 6, Keep: 4, Create: 1, Update: 0, Valid: 5, Total Processed Catalysts: 11	1771762789548
-EVENTS	1771762790812	[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...	1771762789548
-EVENTS	1771762790812	PYPL - regulatory_policy: Total records processed: 2, New records inserted: 0, Existing records updated: 0, Master records updated: 0	1771762789548
-EVENTS	1771762790812	Actions so far - Skip: 14, Keep: 5, Create: 1, Update: 1, Valid: 7, Total Processed Catalysts: 21	1771762789548
-EVENTS	1771762790812	PYPL - demand_trends: Total records processed: 2, New records inserted: 1, Existing records updated: 0, Master records updated: 0	1771762789548
-EVENTS	1771762790812	Actions so far - Skip: 15, Keep: 6, Create: 2, Update: 1, Valid: 9, Total Processed Catalysts: 24	1771762789548
-EVENTS	1771762790812	PYPL - risk_event: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1	1771762789548
-EVENTS	1771762790812	Actions so far - Skip: 18, Keep: 6, Create: 2, Update: 2, Valid: 10, Total Processed Catalysts: 28	1771762789548
-EVENTS	1771762790812	Total new records inserted: 2	1771762789548
-EVENTS	1771762790812	Total existing records updated: 2	1771762789548
-EVENTS	1771762790812	Total master records updated: 2	1771762789548
-EVENTS	1771762790812	ETL process completed in 938.03 seconds.	1771762789548
-EVENTS	1771762790812	Processing states - earnings_transcript - AVGO - quarterly: 0it [00:00, ?it/s]Processing states - earnings_transcript - AVGO - quarterly: 0it [00:00, ?it/s]	1771762789548
-EVENTS	1771762790812	Total new records inserted: 0	1771762789675
-EVENTS	1771762790812	Total existing records updated: 0	1771762789675
-EVENTS	1771762790812	Total master records updated: 0	1771762789675
-EVENTS	1771762790812	ETL process completed in 0.00 seconds.	1771762789675
-EVENTS	1771763305808	Processing states - news - AVGO - monthly:   0%|          | 0/9 [00:00<?, ?it/s]Processing states - news - AVGO - monthly:  11%|█         | 1/9 [01:03<08:29, 63.72s/it]Processing states - news - AVGO - monthly:  22%|██▏       | 2/9 [01:36<05:17, 45.41s/it]Processing states - news - AVGO - monthly:  33%|███▎      | 3/9 [02:17<04:20, 43.45s/it]Processing states - news - AVGO - monthly:  44%|████▍     | 4/9 [03:57<05:29, 65.82s/it]Processing states - news - AVGO - monthly:  56%|█████▌    | 5/9 [04:41<03:52, 58.03s/it]Processing states - news - AVGO - monthly:  67%|██████▋   | 6/9 [06:47<04:03, 81.01s/it]Processing states - news - AVGO - monthly:  78%|███████▊  | 7/9 [07:28<02:15, 67.95s/it]Processing states - news - AVGO - monthly:  89%|████████▉ | 8/9 [08:09<00:59, 59.24s/it]Processing states - news - AVGO - monthly: 100%|██████████| 9/9 [08:32<00:00, 48.07s/it]Processing states - news - AVGO - monthly: 100%|██████████| 9/9 [08:32<00:00, 56.95s/it]	1771763302207
-EVENTS	1771763305808	AVGO - guidance_outlook: Total records processed: 1, New records inserted: 0, Existing records updated: 1, Master records updated: 1	1771763302252
-EVENTS	1771763305808	Actions so far - Skip: 2, Keep: 1, Create: 0, Update: 0, Valid: 1, Total Processed Catalysts: 3	1771763302252
-EVENTS	1771763305808	AVGO - cost_efficiency: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0	1771763302252
-EVENTS	1771763305808	Actions so far - Skip: 12, Keep: 1, Create: 1, Update: 0, Valid: 2, Total Processed Catalysts: 14	1771763302252
-EVENTS	1771763305808	[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...	1771763302252
-EVENTS	1771763305808	No results found for query: news, AVGO, 2026, None, 2	1771763302252
-EVENTS	1771763305808	Total new records inserted: 1	1771763302252
-EVENTS	1771763305808	Total existing records updated: 1	1771763302252
-EVENTS	1771763305808	Total master records updated: 1	1771763302252
-EVENTS	1771763305808	ETL process completed in 512.53 seconds.	1771763302252
-EVENTS	1771763305808	Processing states - earnings_transcript - CRM - quarterly: 0it [00:00, ?it/s]Processing states - earnings_transcript - CRM - quarterly: 0it [00:00, ?it/s]	1771763302252
-EVENTS	1771763305808	Total new records inserted: 0	1771763302353
-EVENTS	1771763305808	Total existing records updated: 0	1771763302353
-EVENTS	1771763305808	Total master records updated: 0	1771763302353
-EVENTS	1771763305808	ETL process completed in 0.00 seconds.	1771763302353
-EVENTS	1771763850803	Processing states - news - CRM - monthly:   0%|          | 0/9 [00:00<?, ?it/s]Processing states - news - CRM - monthly:  11%|█         | 1/9 [00:33<04:25, 33.21s/it]Processing states - news - CRM - monthly:  22%|██▏       | 2/9 [00:58<03:18, 28.41s/it]Processing states - news - CRM - monthly:  33%|███▎      | 3/9 [02:04<04:34, 45.69s/it]Processing states - news - CRM - monthly:  44%|████▍     | 4/9 [02:39<03:26, 41.27s/it]Processing states - news - CRM - monthly:  56%|█████▌    | 5/9 [03:23<02:49, 42.37s/it]Processing states - news - CRM - monthly:  67%|██████▋   | 6/9 [05:51<03:54, 78.19s/it]Processing states - news - CRM - monthly:  78%|███████▊  | 7/9 [07:39<02:56, 88.21s/it]Processing states - news - CRM - monthly:  89%|████████▉ | 8/9 [08:29<01:15, 75.77s/it]Processing states - news - CRM - monthly: 100%|██████████| 9/9 [09:06<00:00, 63.67s/it]Processing states - news - CRM - monthly: 100%|██████████| 9/9 [09:06<00:00, 60.68s/it]	1771763848457
-EVENTS	1771763850803	CRM - partnership_deal: Total records processed: 1, New records inserted: 1, Existing records updated: 0, Master records updated: 0	1771763848458
-EVENTS	1771763850803	Actions so far - Skip: 9, Keep: 0, Create: 1, Update: 0, Valid: 1, Total Processed Catalysts: 10	1771763848458
-EVENTS	1771763850803	[Rate Limit Protection] Processed 5 items. Sleeping for 125 seconds...	1771763848458
-EVENTS	1771763850803	CRM - demand_trends: Total records processed: 1, New records inserted: 0, Existing records updated: 0, Master records updated: 0	1771763848458
-EVENTS	1771763850803	Actions so far - Skip: 23, Keep: 0, Create: 1, Update: 1, Valid: 1, Total Processed Catalysts: 25	1771763848458
-EVENTS	1771763850803	Total new records inserted: 1	1771763848458
-EVENTS	1771763850803	Total existing records updated: 0	1771763848458
-EVENTS	1771763850803	Total master records updated: 0	1771763848458
-EVENTS	1771763850803	ETL process completed in 546.10 seconds.	1771763848458
-EVENTS	1771763850803	[2026-02-22 12:37:29] Completed catalysts/main.py. Sleeping 5s...	1771763849105
-EVENTS	1771763855786	[2026-02-22 12:37:34] ✅ Analysis Job completed successfully.	1771763854108
-EVENTS	1771763855786	[2026-02-22 12:37:34] 🚀 Starting Data Publish (Production Sync)...	1771763854116
-EVENTS	1771763855786	[2026-02-22 12:37:34] --- Publishing Core Profiles ---	1771763854118
-EVENTS	1771763855786	[2026-02-22 12:37:34] Running publish_stock_profiles.py...	1771763854119
-EVENTS	1771763855786	Running in AWS mode...	1771763854827
-EVENTS	1771763855786	Deleted 31 records from mart.stock_profiles for as_of_date = 2026-02-22	1771763854827
-EVENTS	1771763855786	Total records inserted = 31	1771763854827
-EVENTS	1771763855786	[2026-02-22 12:37:34] Completed publish_stock_profiles.py. Sleeping 5s...	1771763854962
-EVENTS	1771763860786	[2026-02-22 12:37:39] --- Publishing Financial Metrics ---	1771763859965
-EVENTS	1771763860786	[2026-02-22 12:37:39] Running publish_efficiency_metrics.py...	1771763859966
-EVENTS	1771763865786	Running in AWS mode...	1771763861611
-EVENTS	1771763865786	Deleted 31 records from mart.efficiency_metrics for as_of_date = 2026-02-22	1771763861611
-EVENTS	1771763865786	For NVDA: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For AAPL: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For TSLA: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For SOFI: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For GOOGL: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For AMZN: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For XOM: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For JPM: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For PLTR: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For HOOD: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For AMD: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For META: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For MSFT: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For LLY: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For COST: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For INTC: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For CRWD: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For COIN: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For KO: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For UBER: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For DIS: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For ORCL: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For ABNB: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For JNJ: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For SHOP: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For V: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For UNH: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For NFLX: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For PYPL: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For AVGO: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	For CRM: Total records inserted = 1	1771763861611
-EVENTS	1771763865786	[2026-02-22 12:37:41] Completed publish_efficiency_metrics.py. Sleeping 5s...	1771763861771
-EVENTS	1771763870790	[2026-02-22 12:37:46] Running publish_financial_health_metrics.py...	1771763866773
-EVENTS	1771763870790	Running in AWS mode...	1771763868363
-EVENTS	1771763870790	Deleted 31 records from mart.financial_health_metrics for as_of_date = 2026-02-22	1771763868363
-EVENTS	1771763870790	For NVDA: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For AAPL: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For TSLA: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For SOFI: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For GOOGL: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For AMZN: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For XOM: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For JPM: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For PLTR: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For HOOD: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For AMD: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For META: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For MSFT: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For LLY: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For COST: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For INTC: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For CRWD: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For COIN: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For KO: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For UBER: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For DIS: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For ORCL: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For ABNB: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For JNJ: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For SHOP: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For V: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For UNH: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For NFLX: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For PYPL: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For AVGO: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	For CRM: Total records inserted = 1	1771763868363
-EVENTS	1771763870790	[2026-02-22 12:37:48] Completed publish_financial_health_metrics.py. Sleeping 5s...	1771763868495
-EVENTS	1771763875786	[2026-02-22 12:37:53] Running publish_growth_metrics.py...	1771763873498
-EVENTS	1771763875786	Running in AWS mode...	1771763875145
-EVENTS	1771763875786	Deleted 31 records from mart.growth_metrics for as_of_date = 2026-02-22	1771763875145
-EVENTS	1771763875786	For NVDA: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For AAPL: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For TSLA: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For SOFI: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For GOOGL: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For AMZN: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For XOM: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For JPM: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For PLTR: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For HOOD: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For AMD: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For META: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For MSFT: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For LLY: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For COST: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For INTC: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For CRWD: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For COIN: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For KO: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For UBER: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For DIS: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For ORCL: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For ABNB: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For JNJ: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For SHOP: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For V: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For UNH: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For NFLX: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For PYPL: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For AVGO: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	For CRM: Total records inserted = 1	1771763875145
-EVENTS	1771763875786	[2026-02-22 12:37:55] Completed publish_growth_metrics.py. Sleeping 5s...	1771763875273
-EVENTS	1771763880787	[2026-02-22 12:38:00] Running publish_profitability_metrics.py...	1771763880276
-EVENTS	1771763885791	Running in AWS mode...	1771763882952
-EVENTS	1771763885791	Deleted 31 records from mart.profitability_metrics for as_of_date = 2026-02-22	1771763882952
-EVENTS	1771763885791	For NVDA: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For AAPL: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For TSLA: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For SOFI: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For GOOGL: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For AMZN: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For XOM: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For JPM: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For PLTR: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For HOOD: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For AMD: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For META: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For MSFT: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For LLY: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For COST: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For INTC: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For CRWD: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For COIN: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For KO: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For UBER: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For DIS: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For ORCL: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For ABNB: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For JNJ: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For SHOP: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For V: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For UNH: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For NFLX: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For PYPL: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For AVGO: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	For CRM: Total records inserted = 1	1771763882952
-EVENTS	1771763885791	[2026-02-22 12:38:03] Completed publish_profitability_metrics.py. Sleeping 5s...	1771763883113
-EVENTS	1771763890789	[2026-02-22 12:38:08] Running publish_valuation_metrics.py...	1771763888116
-EVENTS	1771763890789	Running in AWS mode...	1771763889760
-EVENTS	1771763890789	Deleted 31 records from mart.valuation_metrics for as_of_date = 2026-02-22	1771763889760
-EVENTS	1771763890789	For NVDA: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For AAPL: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For TSLA: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For SOFI: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For GOOGL: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For AMZN: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For XOM: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For JPM: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For PLTR: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For HOOD: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For AMD: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For META: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For MSFT: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For LLY: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For COST: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For INTC: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For CRWD: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For COIN: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For KO: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For UBER: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For DIS: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For ORCL: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For ABNB: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For JNJ: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For SHOP: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For V: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For UNH: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For NFLX: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For PYPL: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For AVGO: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	For CRM: Total records inserted = 1	1771763889760
-EVENTS	1771763890789	[2026-02-22 12:38:09] Completed publish_valuation_metrics.py. Sleeping 5s...	1771763889932
-EVENTS	1771763895790	[2026-02-22 12:38:14] --- Publishing Earnings & Analysis ---	1771763894935
-EVENTS	1771763895790	[2026-02-22 12:38:14] Running publish_earnings.py...	1771763894936
-EVENTS	1771763900788	Running in AWS mode...	1771763896738
-EVENTS	1771763900788	Deleted 310 records from mart.earnings for as_of_date = 2026-02-22	1771763896738
-EVENTS	1771763900788	For NVDA: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For AAPL: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For TSLA: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For SOFI: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For GOOGL: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For AMZN: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For XOM: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For JPM: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For PLTR: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For HOOD: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For AMD: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For META: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For MSFT: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For LLY: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For COST: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For INTC: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For CRWD: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For COIN: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For KO: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For UBER: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For DIS: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For ORCL: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For ABNB: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For JNJ: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For SHOP: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For V: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For UNH: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For NFLX: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For PYPL: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For AVGO: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	For CRM: Total records inserted = 10	1771763896738
-EVENTS	1771763900788	[2026-02-22 12:38:16] Completed publish_earnings.py. Sleeping 5s...	1771763896872
-EVENTS	1771763905787	[2026-02-22 12:38:21] Running publish_earnings_regime.py...	1771763901875
-EVENTS	1771763905787	Running in AWS mode...	1771763903409
-EVENTS	1771763905787	Deleted 31 records from mart.earnings_regime for as_of_date = 2026-02-22	1771763903409
-EVENTS	1771763905787	For NVDA: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For AAPL: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For TSLA: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For SOFI: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For GOOGL: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For AMZN: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For XOM: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For JPM: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For PLTR: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For HOOD: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For AMD: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For META: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For MSFT: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For LLY: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For COST: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For INTC: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For CRWD: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For COIN: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For KO: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For UBER: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For DIS: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For ORCL: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For ABNB: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For JNJ: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For SHOP: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For V: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For UNH: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For NFLX: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For PYPL: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For AVGO: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	For CRM: Total records inserted = 1	1771763903409
-EVENTS	1771763905787	[2026-02-22 12:38:23] Completed publish_earnings_regime.py. Sleeping 5s...	1771763903560
-EVENTS	1771763910788	[2026-02-22 12:38:28] Running publish_earnings_transcript_analysis.py...	1771763908563
-EVENTS	1771763915789	Running in AWS mode...	1771763912815
-EVENTS	1771763915789	Deleted 157 records from mart.earnings_transcript_analysis for as_of_date = 2026-02-22	1771763912815
-EVENTS	1771763915789	For NVDA: Total records inserted = 7	1771763912815
-EVENTS	1771763915789	For AAPL: Total records inserted = 8	1771763912815
-EVENTS	1771763915789	For TSLA: Total records inserted = 8	1771763912815
-EVENTS	1771763915789	For SOFI: Total records inserted = 8	1771763912815
-EVENTS	1771763915789	For GOOGL: Total records inserted = 5	1771763912815
-EVENTS	1771763915789	For AMZN: Total records inserted = 8	1771763912815
-EVENTS	1771763915789	For XOM: Total records inserted = 5	1771763912815
-EVENTS	1771763915789	For JPM: Total records inserted = 5	1771763912815
-EVENTS	1771763915789	For PLTR: Total records inserted = 8	1771763912815
-EVENTS	1771763915789	For HOOD: Total records inserted = 8	1771763912815
-EVENTS	1771763915789	For AMD: Total records inserted = 5	1771763912815
-EVENTS	1771763915789	For META: Total records inserted = 5	1771763912815
-EVENTS	1771763915789	For MSFT: Total records inserted = 5	1771763912815
-EVENTS	1771763915789	For LLY: Total records inserted = 5	1771763912815
-EVENTS	1771763915789	For COST: Total records inserted = 4	1771763912815
-EVENTS	1771763915789	For INTC: Total records inserted = 5	1771763912815
-EVENTS	1771763915789	For CRWD: Total records inserted = 4	1771763912815
-EVENTS	1771763915789	For COIN: Total records inserted = 5	1771763912815
-EVENTS	1771763915789	For KO: Total records inserted = 4	1771763912815
-EVENTS	1771763915789	For UBER: Total records inserted = 4	1771763912815
-EVENTS	1771763915789	For DIS: Total records inserted = 4	1771763912815
-EVENTS	1771763915789	For ORCL: Total records inserted = 3	1771763912815
-EVENTS	1771763915789	For ABNB: Total records inserted = 4	1771763912815
-EVENTS	1771763915789	For JNJ: Total records inserted = 4	1771763912815
-EVENTS	1771763915789	For SHOP: Total records inserted = 4	1771763912815
-EVENTS	1771763915789	For V: Total records inserted = 4	1771763912815
-EVENTS	1771763915789	For UNH: Total records inserted = 4	1771763912815
-EVENTS	1771763915789	For NFLX: Total records inserted = 4	1771763912815
-EVENTS	1771763915789	For PYPL: Total records inserted = 4	1771763912815
-EVENTS	1771763915789	For AVGO: Total records inserted = 3	1771763912815
-EVENTS	1771763915789	For CRM: Total records inserted = 3	1771763912815
-EVENTS	1771763915789	[2026-02-22 12:38:33] Completed publish_earnings_transcript_analysis.py. Sleeping 5s...	1771763913389
-EVENTS	1771763920789	[2026-02-22 12:38:38] Running publish_analyst_rating_yearly_summary.py...	1771763918391
-EVENTS	1771763925787	Running in AWS mode...	1771763922308
-EVENTS	1771763925787	Deleted 7812 records from mart.analyst_rating_yearly_summary for as_of_date = 2026-02-22	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For NVDA: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For AAPL: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For TSLA: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For SOFI: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For GOOGL: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For AMZN: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For XOM: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For JPM: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For PLTR: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For HOOD: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For AMD: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For META: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For MSFT: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For LLY: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For COST: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For INTC: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For CRWD: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For COIN: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For KO: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For UBER: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For DIS: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For ORCL: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For ABNB: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For JNJ: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For SHOP: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For V: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For UNH: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For NFLX: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For PYPL: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For AVGO: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	   - Batch 1: Processed 100/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 2: Processed 200/252 rows	1771763922308
-EVENTS	1771763925787	   - Batch 3: Processed 252/252 rows	1771763922308
-EVENTS	1771763925787	For CRM: Total records inserted = 252	1771763922308
-EVENTS	1771763925787	[2026-02-22 12:38:42] Completed publish_analyst_rating_yearly_summary.py. Sleeping 5s...	1771763922435
-EVENTS	1771763930786	[2026-02-22 12:38:47] --- Publishing Scores & Catalysts ---	1771763927437
-EVENTS	1771763930786	[2026-02-22 12:38:47] Running publish_stock_scores.py...	1771763927439
-EVENTS	1771763930786	Running in AWS mode...	1771763928851
-EVENTS	1771763930786	Deleted 31 records from mart.stock_scores for as_of_date = 2026-02-22	1771763928851
-EVENTS	1771763930786	For NVDA: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For AAPL: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For TSLA: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For SOFI: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For GOOGL: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For AMZN: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For XOM: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For JPM: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For PLTR: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For HOOD: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For AMD: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For META: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For MSFT: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For LLY: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For COST: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For INTC: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For CRWD: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For COIN: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For KO: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For UBER: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For DIS: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For ORCL: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For ABNB: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For JNJ: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For SHOP: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For V: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For UNH: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For NFLX: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For PYPL: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For AVGO: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	For CRM: Total records inserted = 1	1771763928851
-EVENTS	1771763930786	[2026-02-22 12:38:48] Completed publish_stock_scores.py. Sleeping 5s...	1771763928988
-EVENTS	1771763935787	[2026-02-22 12:38:53] Running publish_catalyst_master.py...	1771763933991
-EVENTS	1771763940786	Running in AWS mode...	1771763939059
-EVENTS	1771763940786	Deleted 2039 records from mart.catalyst_master for as_of_date = 2026-02-22	1771763939059
-EVENTS	1771763940786	For NVDA: Total records inserted = 80	1771763939059
-EVENTS	1771763940786	For AAPL: Total records inserted = 82	1771763939059
-EVENTS	1771763940786	   - Batch 1: Processed 10/111 rows	1771763939059
-EVENTS	1771763940786	   - Batch 2: Processed 20/111 rows	1771763939059
-EVENTS	1771763940786	   - Batch 3: Processed 30/111 rows	1771763939059
-EVENTS	1771763940786	   - Batch 4: Processed 40/111 rows	1771763939059
-EVENTS	1771763940786	   - Batch 5: Processed 50/111 rows	1771763939059
-EVENTS	1771763940786	   - Batch 6: Processed 60/111 rows	1771763939059
-EVENTS	1771763940786	   - Batch 7: Processed 70/111 rows	1771763939059
-EVENTS	1771763940786	   - Batch 8: Processed 80/111 rows	1771763939059
-EVENTS	1771763940786	   - Batch 9: Processed 90/111 rows	1771763939059
-EVENTS	1771763940786	   - Batch 10: Processed 100/111 rows	1771763939059
-EVENTS	1771763940786	   - Batch 11: Processed 110/111 rows	1771763939059
-EVENTS	1771763940786	   - Batch 12: Processed 111/111 rows	1771763939059
-EVENTS	1771763940786	For TSLA: Total records inserted = 111	1771763939059
-EVENTS	1771763940786	For SOFI: Total records inserted = 55	1771763939059
-EVENTS	1771763940786	For GOOGL: Total records inserted = 77	1771763939059
-EVENTS	1771763940786	For AMZN: Total records inserted = 81	1771763939059
-EVENTS	1771763940786	For XOM: Total records inserted = 78	1771763939059
-EVENTS	1771763940786	For JPM: Total records inserted = 58	1771763939059
-EVENTS	1771763940786	For PLTR: Total records inserted = 76	1771763939059
-EVENTS	1771763940786	For HOOD: Total records inserted = 84	1771763939059
-EVENTS	1771763940786	For AMD: Total records inserted = 93	1771763939059
-EVENTS	1771763940786	For META: Total records inserted = 71	1771763939059
-EVENTS	1771763940786	For MSFT: Total records inserted = 77	1771763939059
-EVENTS	1771763940786	For LLY: Total records inserted = 73	1771763939059
-EVENTS	1771763940786	For COST: Total records inserted = 59	1771763939059
-EVENTS	1771763940786	   - Batch 1: Processed 10/108 rows	1771763939059
-EVENTS	1771763940786	   - Batch 2: Processed 20/108 rows	1771763939059
-EVENTS	1771763940786	   - Batch 3: Processed 30/108 rows	1771763939059
-EVENTS	1771763940786	   - Batch 4: Processed 40/108 rows	1771763939059
-EVENTS	1771763940786	   - Batch 5: Processed 50/108 rows	1771763939059
-EVENTS	1771763940786	   - Batch 6: Processed 60/108 rows	1771763939059
-EVENTS	1771763940786	   - Batch 7: Processed 70/108 rows	1771763939059
-EVENTS	1771763940786	   - Batch 8: Processed 80/108 rows	1771763939059
-EVENTS	1771763940786	   - Batch 9: Processed 90/108 rows	1771763939059
-EVENTS	1771763940786	   - Batch 10: Processed 100/108 rows	1771763939059
-EVENTS	1771763940786	   - Batch 11: Processed 108/108 rows	1771763939059
-EVENTS	1771763940786	For INTC: Total records inserted = 108	1771763939059
-EVENTS	1771763940786	For CRWD: Total records inserted = 66	1771763939059
-EVENTS	1771763940786	For COIN: Total records inserted = 62	1771763939059
-EVENTS	1771763940786	For KO: Total records inserted = 44	1771763939059
-EVENTS	1771763940786	For UBER: Total records inserted = 48	1771763939059
-EVENTS	1771763940786	For DIS: Total records inserted = 52	1771763939059
-EVENTS	1771763940786	For ORCL: Total records inserted = 71	1771763939059
-EVENTS	1771763940786	For ABNB: Total records inserted = 39	1771763939059
-EVENTS	1771763940786	For JNJ: Total records inserted = 78	1771763939059
-EVENTS	1771763940786	For SHOP: Total records inserted = 48	1771763939059
-EVENTS	1771763940786	For V: Total records inserted = 41	1771763939059
-EVENTS	1771763940786	For UNH: Total records inserted = 82	1771763939059
-EVENTS	1771763940786	For NFLX: Total records inserted = 32	1771763939059
-EVENTS	1771763940786	For PYPL: Total records inserted = 67	1771763939059
-EVENTS	1771763940786	For AVGO: Total records inserted = 40	1771763939059
-EVENTS	1771763940786	For CRM: Total records inserted = 56	1771763939059
-EVENTS	1771763940786	[2026-02-22 12:38:59] Completed publish_catalyst_master.py. Sleeping 5s...	1771763939646
-EVENTS	1771763945786	[2026-02-22 12:39:04] ✅ Publish Job completed successfully. Production DB is up to date.	1771763944649
-EVENTS	1771763945786	✅ ETL Pipeline Completed Successfully!	1771763944651

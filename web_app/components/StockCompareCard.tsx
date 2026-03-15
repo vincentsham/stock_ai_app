@@ -1,3 +1,5 @@
+'use client';
+
 import { AllMetrics, StockProfile, StockScores } from '@/types';
 import { X, Loader2 } from 'lucide-react';
 import { fetchStockLogo } from '@/lib/actions/finnhub.actions';
