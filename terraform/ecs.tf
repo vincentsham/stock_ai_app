@@ -27,6 +27,7 @@ container_definitions = jsonencode([
         { name = "OPENAI_LLM_MODEL",       value = "gpt-5-nano" },
         { name = "GEMINI_LLM_MODEL",       value = "models/gemini-2.5-flash-lite" },
         { name = "LLM_MODEL",              value = "chatgpt" },
+        { name = "LANGCHAIN_PROJECT",      value = "winsanity-prod" },
         
         # Database variables (Non-sensitive)
         { name = "PGDATABASE",             value = var.db_name },
@@ -46,6 +47,7 @@ container_definitions = jsonencode([
         { name = "PGPASSWORD",             valueFrom = aws_secretsmanager_secret.db_password.arn },
         { name = "PGCONNECTION_TRANSACTION", valueFrom = aws_secretsmanager_secret.db_connection_string.arn },
         { name = "SUPABASE_TRANSACTION",      valueFrom = aws_secretsmanager_secret.supabase_connection_string.arn },
+        { name = "LANGCHAIN_API_KEY",      valueFrom = aws_secretsmanager_secret.langchain_key.arn },
       ]
 
       # Log configuration set to camelCase for AWS API compliance

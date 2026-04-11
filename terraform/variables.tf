@@ -48,3 +48,8 @@ variable "supabase_connection_string" {
   type      = string
   sensitive = true
 }
+
+variable "langchain_api_key" {
+  type      = string
+  sensitive = true
+}
