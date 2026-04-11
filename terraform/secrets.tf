@@ -79,3 +79,12 @@ resource "aws_secretsmanager_secret_version" "supabase_connection_string_val" {
   secret_string = var.supabase_connection_string
 }
 
+resource "aws_secretsmanager_secret" "langchain_key" {
+  name = "winsanity/langchain_key"
+}
+
+resource "aws_secretsmanager_secret_version" "langchain_key_val" {
+  secret_id     = aws_secretsmanager_secret.langchain_key.id
+  secret_string = var.langchain_api_key
+}
+
