@@ -28,6 +28,7 @@ container_definitions = jsonencode([
         { name = "GEMINI_LLM_MODEL",       value = "models/gemini-2.5-flash-lite" },
         { name = "LLM_MODEL",              value = "chatgpt" },
         { name = "LANGCHAIN_PROJECT",      value = "winsanity-prod" },
+        { name = "LANGCHAIN_TRACING_V2",   value = "true" },
         
         # Database variables (Non-sensitive)
         { name = "PGDATABASE",             value = var.db_name },
