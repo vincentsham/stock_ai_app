@@ -8,7 +8,7 @@ import database.config
 
 # Initialize the embedding model
 embedding_model_name = os.getenv("OPENAI_EMBEDDING_MODEL")
-embedding_model = OpenAIEmbeddings(model=embedding_model_name)
+embedding_model = OpenAIEmbeddings(model=embedding_model_name, timeout=30, max_retries=2)
 
 
 init_grade_mapping = [

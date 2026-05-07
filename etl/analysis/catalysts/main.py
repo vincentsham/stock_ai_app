@@ -6,7 +6,6 @@ from states import catalyst_session_factory
 from graph import create_graph
 from tqdm import tqdm
 from datetime import datetime, timezone
-from langchain_openai import OpenAIEmbeddings
 import os
 from etl.utils import fix_quotes
 import database.config
@@ -198,11 +197,15 @@ if __name__ == "__main__":
         sleep_time = 125  # seconds to sleep between batches to avoid rate limits
         for i, record in enumerate(records):
             tic = record[0]
-            print(f"\nProcessing {tic} ({i+1}/{len(records)})...")
-            main(tic=tic, top_k=3, batch_size=batch_size, sleep_time=sleep_time)
-            if i > 0 and i % batch_size == 0:
-                print(f"\n[Rate Limit Protection] Processed {batch_size} items. Sleeping for {sleep_time} seconds...")
-                time.sleep(sleep_time)
+            try:
+                print(f"\nProcessing {tic} ({i+1}/{len(records)})...")
+                main(tic=tic, top_k=3, batch_size=batch_size, sleep_time=sleep_time)
+                if i > 0 and i % batch_size == 0:
+                    print(f"\n[Rate Limit Protection] Processed {batch_size} items. Sleeping for {sleep_time} seconds...")
+                    time.sleep(sleep_time)
+            except Exception as e:
+                print(f"Connection lost or error on {tic}. Reconnecting...")
+                time.sleep(5)
             
             
         # main(tic="AAPL", top_k=3)

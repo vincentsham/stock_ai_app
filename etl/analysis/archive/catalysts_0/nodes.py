@@ -78,7 +78,7 @@ def get_sql_query(source_type: str, tic: str, calendar_year: int, calendar_quart
 # Retriever Node
 def retriever_node(state: CatalystSession) -> dict:
     # print("Starting retriever_node...")
-    embedding_model = OpenAIEmbeddings(model=os.getenv("OPENAI_EMBEDDING_MODEL"))
+    embedding_model = OpenAIEmbeddings(model=os.getenv("OPENAI_EMBEDDING_MODEL"), timeout=30, max_retries=2)
     tic = state.query_params.tic
     top_k = state.query_params.top_k
     source_type = state.query_params.source_type

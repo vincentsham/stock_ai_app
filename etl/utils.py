@@ -13,8 +13,16 @@ from decimal import Decimal
 import ast
 import database.config
 
-llm_chatgpt = ChatOpenAI(model=os.getenv("OPENAI_LLM_MODEL"), api_key=os.getenv("OPENAI_API_KEY"))
-llm_gemini = ChatGoogleGenerativeAI(model=os.getenv("GEMINI_LLM_MODEL"), google_api_key=os.getenv("GEMINI_API_KEY"))
+llm_chatgpt = ChatOpenAI(model=os.getenv("OPENAI_LLM_MODEL"), 
+                         api_key=os.getenv("OPENAI_API_KEY"),
+                         timeout=120,
+                         max_retries=2
+                         )
+llm_gemini = ChatGoogleGenerativeAI(model=os.getenv("GEMINI_LLM_MODEL"),
+                                    google_api_key=os.getenv("GEMINI_API_KEY"),
+                                    timeout=120,
+                                    max_retries=2
+                                    )
 
 def run_llm(messages: list[BaseMessage], model = os.getenv("LLM_MODEL", "chatgpt")) -> dict:
     """Interact with the LLM using a system message and a human prompt."""

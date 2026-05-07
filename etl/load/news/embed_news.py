@@ -6,7 +6,7 @@ import database.config
 
 # Initialize the embedding model
 embedding_model_name = os.getenv("OPENAI_EMBEDDING_MODEL")
-embedding_model = OpenAIEmbeddings(model=embedding_model_name)
+embedding_model = OpenAIEmbeddings(model=embedding_model_name, timeout=30, max_retries=2)
 
 # Main function to process and store embeddings
 def process_and_store_embeddings():
