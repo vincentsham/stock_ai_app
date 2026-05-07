@@ -80,23 +80,15 @@ export const CompareMain = () => {
             const newProfiles: Record<string, {profile: StockProfile, metrics: AllMetrics, scores: StockScores}> = {};
             
             // Process stocks sequentially to avoid exhausting the DB connection pool.
-            // Each stock still runs its 5 metrics queries in parallel (~6 connections).
+            // Each stock now fetches metric categories one by one instead of all at once.
             for (const tic of missing) {
               try {
                 const profile = await searchStock(tic);
-                const [
-                      valuation, 
-                      profitability, 
-                      growth, 
-                      efficiency, 
-                      financialHealth
-                      ] = await Promise.all([
-                              searchValuationMetrics(tic),
-                              searchProfitabilityMetrics(tic),
-                              searchGrowthMetrics(tic),
-                              searchEfficiencyMetrics(tic),
-                              searchFinancialHealthMetrics(tic),
-                          ]);
+                const valuation = await searchValuationMetrics(tic);
+                const profitability = await searchProfitabilityMetrics(tic);
+                const growth = await searchGrowthMetrics(tic);
+                const efficiency = await searchEfficiencyMetrics(tic);
+                const financialHealth = await searchFinancialHealthMetrics(tic);
                 const allMetrics: AllMetrics = {
                               valuation,
                               profitability,
