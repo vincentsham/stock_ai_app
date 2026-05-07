@@ -35,6 +35,7 @@ const SearchBar = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [stocks, setStocks] = useState<StockProfile[]>([]);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   // --- EFFECT: Responsive Placeholder ---
   useEffect(() => {
@@ -109,21 +110,31 @@ const SearchBar = () => {
     debouncedSearch();
   }, [searchTerm, debouncedSearch]);
 
-  const handleSelectStock = useCallback((stock?: StockProfile) => {
+  const handleSelectStock = useCallback(async (stock?: StockProfile) => {
+    if (isNavigating) return;
+
     setSearching(false);
     setLoading(false);
     setSearchTerm("");
     setStocks([]);
 
-    if (stock) {
-        const destination = getDestination(stock.tic);
-        router.push(destination, { scroll: !isCompareMode });
+    if (!stock) return;
+
+    const destination = getDestination(stock.tic);
+    const currentUrl = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+    if (destination === currentUrl) return;
+
+    setIsNavigating(true);
+    try {
+      await router.push(destination, { scroll: !isCompareMode });
+    } finally {
+      setIsNavigating(false);
     }
-  }, [getDestination, router, isCompareMode]);
+  }, [getDestination, isNavigating, pathname, router, searchParams, isCompareMode]);
 
   // --- LOGIC: Enter Key ---
   const handleEnterKey = useCallback((event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== "Enter" || loading || stocks.length === 0) {
+    if (event.key !== "Enter" || loading || stocks.length === 0 || isNavigating) {
       return;
     }
 
@@ -132,7 +143,7 @@ const SearchBar = () => {
     if (!firstStock) return;
 
     handleSelectStock(firstStock);
-  }, [loading, stocks, handleSelectStock]);
+  }, [loading, stocks, handleSelectStock, isNavigating]);
 
   return (
     <div className="group rounded-lg border shadow-md w-full max-w-[300px] md:max-w-none md:min-w-[450px] focus-within:border-white bg-popover text-popover-foreground overflow-hidden">

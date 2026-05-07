@@ -87,7 +87,7 @@ def _build_company_prompt(company_info: dict, context: str = '') -> str:
 def retriever(state: MergedState,
               type: Literal["past", "future", "risk", "risk_response"]
               ) -> dict:
-    embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")
+    embedding_model = OpenAIEmbeddings(model="text-embedding-3-small", timeout=30, max_retries=2)
     all_chunks = []
     all_scores = []
     seen_chunks = set()

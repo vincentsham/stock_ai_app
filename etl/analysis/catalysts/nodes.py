@@ -12,7 +12,7 @@ import os
 from datetime import date, timedelta
 import database.config
 
-embedding_model = OpenAIEmbeddings(model=os.getenv("OPENAI_EMBEDDING_MODEL"))
+embedding_model = OpenAIEmbeddings(model=os.getenv("OPENAI_EMBEDDING_MODEL"), timeout=30, max_retries=2)
 MIN_COSINE_SIMILARITY = 0.35  # Minimum similarity threshold for retrieved chunks
 
 # Helper function to build SQL query

@@ -13,31 +13,39 @@ function createPool(): Pool {
   if (global.postgres) return global.postgres;
 
   // 1. Identify Environment (set APP_ENV in each environment: 'local' | 'vercel' | 'aws')
-  const appEnv = process.env.APP_ENV || 'local';
+  const appEnv = process.env.APP_ENV || (process.env.VERCEL ? 'vercel' : 'local');
   const isAWS = appEnv === 'aws';
+  const isLocal = appEnv === 'local';
 
   // 2. Select Connection String based on environment
   //   - AWS:    PGCONNECTION_TRANSACTION → RDS (injected by ECS / Secrets Manager)
   //   - Vercel: SUPABASE_TRANSACTION     → Supabase (set in Vercel env vars)
   //   - Local:  SUPABASE_TRANSACTION     → Supabase (loaded from .env.local)
-  const connectionString = process.env.PGCONNECTION_TRANSACTION
+  const connectionString = isAWS
+    ? process.env.PGCONNECTION_TRANSACTION
+    : process.env.SUPABASE_TRANSACTION;
+  const connectionSource = isAWS ? 'PGCONNECTION_TRANSACTION' : 'SUPABASE_TRANSACTION';
 
   if (!connectionString) {
     throw new Error(
       `❌ FATAL: Connection string missing. APP_ENV=${appEnv}, ` +
-      `expected ${'PGCONNECTION_TRANSACTION'} env var to be set.`
+      `expected ${connectionSource} env var to be set.`
     );
   }
 
   // 3. Environment-Specific Config
-  const isLocal = appEnv === 'local';
+  const connectionTimeoutMillis = process.env.DB_CONNECTION_TIMEOUT_MS
+    ? Number(process.env.DB_CONNECTION_TIMEOUT_MS)
+    : 60000;
+
   const config: PoolConfig = {
     connectionString,
     max: 20,
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 60000,
+    connectionTimeoutMillis,
     ssl: isLocal ? false : { rejectUnauthorized: false },
   };
+  console.log(`🔌 Using ${connectionSource} for APP_ENV=${appEnv} (timeout=${connectionTimeoutMillis}ms)`);
 
   // 4. Create & cache the singleton
   console.log(`🔌 Initializing ${isAWS ? 'AWS RDS' : 'Local/Supabase'} pool (max=${config.max})...`);
